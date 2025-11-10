@@ -1,18 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sales Projections Dashboard — Brand Share It</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Example XYZ Company B2B Dashboard Suite</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        .swoffle-brand {
+            text-align: left; 
+            font-size: 1.5em; 
+            font-weight: 500; 
+            margin-bottom: 20px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: white;
+        }
+        .header h1, .header p, .header div {
+            color: white;
+        }
+        .header {
+            background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .brand-name {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .brand-tagline {
+            font-size: 1em;
+            font-weight: 300;
+            color: white;
+            opacity: 0.9;
+            margin-top: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .dashboard-content {
+            display: none;
+        }
+        .dashboard-content.active {
+            display: block;
+        }
+    </style>
 </head>
-<body>
-  <h1>Sales Projections Dashboard</h1>
-  <p>Explore projected performance across key accounts and seasonal categories.</p>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: white; min-height: 100vh; color: #333;">
+
+    <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 1400px; margin: 0 auto; border: 1px solid #e0e0e0;">
+        
+        <!-- Dynamic Header -->
+        <div id="dynamic-header"></div>
+
+        <!-- Tab Navigation -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; font-size: 0.9em; color: #000000;">
+            Click any tab to view interactive data
+        </div>
+        <div style="display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
+            <button onclick="showDashboard('projections')" id="tab-projections" class="tab-button" style="padding: 15px 25px; background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; margin: 0 8px; transition: all 0.3s ease;">B2B 2025 Projections</button>
+            <button onclick="showDashboard('yoy')" id="tab-yoy" class="tab-button" style="padding: 15px 25px; background: white; color: #2563eb; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; margin: 0 8px; transition: all 0.3s ease;">B2B YTD VS YOY</button>
+            <button onclick="showDashboard('strategic')" id="tab-strategic" class="tab-button" style="padding: 15px 25px; background: white; color: #2563eb; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; margin: 0 8px; transition: all 0.3s ease;">B2B Partner Network</button>
+        </div>
+
+        <!-- Dashboard 1: B2B Sales Projections 2025 -->
+        <div id="dashboard-projections" class="dashboard-content active">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px;">
+                <div style="background: white; border-radius: 15px; padding: 20px 20px 40px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 450px;">
+                    <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #2c3e50; margin-bottom: 15px;">Top Projected B2B Growth Opportunities</div>
+                    <canvas id="growthChart"></canvas>
+                </div>
+                
+                <div style="background: white; border-radius: 15px; padding: 20px 20px 40px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 450px;">
+                    <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Top Five Major B2B Distribution Partners</div>
+                    <div style="text-align: center; margin-bottom: 10px; color: #666; font-size: 0.9em;">Total Projected 1-1 to 12-31-2025</div>
+                    <canvas id="distributorChart"></canvas>
+                </div>
+            </div>
+            
+            <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 450px; margin-bottom: 30px;">
+                <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #2c3e50; margin-bottom: 15px;">Tier 1 B2B Accounts - Top Distribution Partners</div>
+                <canvas id="salesChart1"></canvas>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">$3,508,855</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Total B2B Projected Sales</div>
+                        <div style="font-size: 0.6em; opacity: 0.7; margin-top: 3px;">(does not include Amazon and other online marketplaces)</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">53.7%</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Overall B2B Growth Target</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">8,025</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Total Verified Accounts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard 2: B2B Sales YOY Analysis -->
+        <div id="dashboard-yoy" class="dashboard-content">
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 30px;">
+                <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 500px;">
+                    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                        <div style="text-align: center; margin-right: 30px;">
+                            <div class="pulse-animation" style="font-size: 2em; font-weight: bold; color: #28a745;">+45%</div>
+                            <div style="font-size: 0.7em; color: #666;">YTD 2024 VS 2025</div>
+                        </div>
+                        <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #2c3e50;">YTD Growth - Total Year Projections, YOY 2024 versus 2025</div>
+                        <div style="text-align: center; margin-left: 30px;">
+                            <div class="pulse-animation" style="font-size: 2em; font-weight: bold; color: #28a745;">+53.7%</div>
+                            <div style="font-size: 0.7em; color: #666;">Full year projected 2024 vs 2025</div>
+                        </div>
+                    </div>
+                    <canvas id="yoyGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard 3: Strategic B2B Relationships -->
+        <div id="dashboard-strategic" class="dashboard-content">
+            
+            <!-- Side-by-Side Account Performance Tables -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                
+                <!-- Left Side: Top 15 Accounts -->
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #000000; margin-bottom: 5px;">Top 15 Accounts</div>
+                    <div style="text-align: center; font-size: 0.6em; color: #000000; margin-bottom: 15px;">January 1st through August 31st: 2024 vs 2025 Performance Comparison (Does not include Amazon or other B2C platforms)</div>
+                    
+                    <div style="overflow-x: auto; max-height: 600px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85em;">
+                            <thead style="position: sticky; top: 0; background: white;">
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 10px; text-align: left; font-weight: 600; color: #000000;">Chain</th>
+                                    <th style="padding: 10px; text-align: center; font-weight: 600; color: #000000;">Growth %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">1. HARMONS NEIGHBORHOOD GROCER - 20 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">714%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">2. SUPER ONE FOODS - 32 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">513%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">3. SHOPRITE - 50 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">406%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">4. JIMBOS</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">310%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">5. WHOLE FOODS - 192 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">235%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">6. URM STORES - 123 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">114%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">7. ARAMARK</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">104%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">8. PALO ALTO EGG COMPANY</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">100%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">9. BIG Y - 94 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">100%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">10. BRISTOL FARMS/NEW LEAF - 24 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">100%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">11. MURPHYS MARKETS</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">80%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">12. NCG/INFRA</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">58%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">13. THE PAPER STORE - 110 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">52%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">14. HEINEN'S SUPERMARKETS - 24 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">24%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">15. NATURAL GROCERS CO MARKET - 30 stores</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">23%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right Side: Top 5 Distributors -->
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; font-size: 1.3em; font-weight: 600; color: #000000; margin-bottom: 5px;">Top 5 Distributors</div>
+                    <div style="text-align: center; font-size: 0.6em; color: #000000; margin-bottom: 15px;">January 1st through August 31st: 2024 vs 2025 Performance Comparison (Does not include Amazon or other B2C platforms)</div>
+                    
+                    <div style="overflow-x: auto; max-height: 600px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85em;">
+                            <thead style="position: sticky; top: 0; background: white;">
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 10px; text-align: left; font-weight: 600; color: #000000;">Account</th>
+                                    <th style="padding: 10px; text-align: center; font-weight: 600; color: #000000;">Growth %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">1. COMPASS USA-MINIMUS DISTRIBUTION</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">987%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">2. PARAMOUNT FOODS</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">406%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">3. RAINFOREST DISTRIBUTION</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">169.7%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">4. UNFI</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">86.2%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 8px; font-weight: 500; color: #000000;">5. NORTHEAST SPECIALTY FOODS</td>
+                                    <td style="padding: 8px; text-align: center; color: #28a745; font-weight: bold;">60%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Regional Partnership Overview -->
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <div style="text-align: center; font-size: 1.4em; font-weight: 600; color: #2c3e50; margin-bottom: 20px;">Regional Partnership Network</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;">
+                    
+                    <!-- East Region -->
+                    <div style="border: 2px solid #17a2b8; border-radius: 12px; padding: 20px;">
+                        <div style="color: #17a2b8; font-weight: bold; font-size: 1.2em; margin-bottom: 15px; text-align: center;">🌊 EAST REGION</div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #17a2b8; margin-bottom: 10px;">Distributors</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Rainforest Distribution</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast, Mid-Atlantic • 6 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Boston Bean Company</div>
+                            <div style="font-size: 0.85em; color: #666;">Massachusetts • 6 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Atlantic Beverages</div>
+                            <div style="font-size: 0.85em; color: #666;">Massachusetts • 6 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Gartland Distributors</div>
+                            <div style="font-size: 0.85em; color: #666;">Maine • 6 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Carlisle</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast, North Atlantic • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">KeHe Highland</div>
+                            <div style="font-size: 0.85em; color: #666;">D.C., Maryland, Mid-Atlantic • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Paramount Foods</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Northeast Specialty Foods</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Compass USA</div>
+                            <div style="font-size: 0.85em; color: #666;">East • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Frankferd Farms</div>
+                            <div style="font-size: 0.85em; color: #666;">East • 2 Years</div>
+                        </div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #17a2b8; margin-bottom: 10px;">Other Chain Retail Partners</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Acme-Safeway East - 232 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Major Regional Chain</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Market Basket - 95 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Regional Grocery Chain • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Mom's Organic - 24 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Organic Specialty Chain • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Gristedes - 32 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">NYC Metro Area • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Foodtown - 51 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast Regional • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">AGNE - Wholesaler</div>
+                            <div style="font-size: 0.85em; color: #666;">Northeast Regional</div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px; padding: 8px; background: #e8f4fd; border-radius: 6px;">
+                            <div style="font-size: 0.9em; color: #17a2b8; font-weight: 600;">Longest Partnerships: 6 Years</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Midwest Region -->
+                    <div style="border: 2px solid #ffc107; border-radius: 12px; padding: 20px;">
+                        <div style="color: #ffc107; font-weight: bold; font-size: 1.2em; margin-bottom: 15px; text-align: center;">🌾 MIDWEST REGION</div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #ffc107; margin-bottom: 10px;">Distributors</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Greenwood</div>
+                            <div style="font-size: 0.85em; color: #666;">Ohio • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Fortune Fish and Gourmet</div>
+                            <div style="font-size: 0.85em; color: #666;">Illinois • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Racine</div>
+                            <div style="font-size: 0.85em; color: #666;">Wisconsin • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Twin Cities</div>
+                            <div style="font-size: 0.85em; color: #666;">Minnesota • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Minimus Distribution</div>
+                            <div style="font-size: 0.85em; color: #666;">Midwest • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Compass USA</div>
+                            <div style="font-size: 0.85em; color: #666;">Midwest • 2 Years</div>
+                        </div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #ffc107; margin-bottom: 10px;">Other Chain Retail Partners</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Hy-Vee - 30+ stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Major Regional Chain</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Festival Foods - 32 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Regional Grocery Chain • 3 Years</div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px; padding: 8px; background: #fff3cd; border-radius: 6px;">
+                            <div style="font-size: 0.9em; color: #856404; font-weight: 600;">Established Network: 2-5 Years</div>
+                        </div>
+                    </div>
+                    
+                    <!-- West Region -->
+                    <div style="border: 2px solid #28a745; border-radius: 12px; padding: 20px;">
+                        <div style="color: #28a745; font-weight: bold; font-size: 1.2em; margin-bottom: 15px; text-align: center;">🏔️ WEST REGION</div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #28a745; margin-bottom: 10px;">Distributors</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Ridgefield</div>
+                            <div style="font-size: 0.85em; color: #666;">Washington • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Rocklin</div>
+                            <div style="font-size: 0.85em; color: #666;">California • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Moreno Valley</div>
+                            <div style="font-size: 0.85em; color: #666;">Southern California • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">UNFI Aurora</div>
+                            <div style="font-size: 0.85em; color: #666;">Colorado • 5 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">ITAL Foods</div>
+                            <div style="font-size: 0.85em; color: #666;">Northern California • 4 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Quality Foods Distributing</div>
+                            <div style="font-size: 0.85em; color: #666;">Montana • 3 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Minimus Distribution</div>
+                            <div style="font-size: 0.85em; color: #666;">West • 2 Years</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Compass USA</div>
+                            <div style="font-size: 0.85em; color: #666;">West • 2 Years</div>
+                        </div>
+                        
+                        <div style="font-weight: bold; font-size: 0.9em; color: #28a745; margin-bottom: 10px;">Other Chain Retail Partners</div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Town and Country - 6 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Regional Specialty Chain</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Lunardi's - 8 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">California Regional</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Market of Choice - 12 stores</div>
+                            <div style="font-size: 0.85em; color: #666;">Pacific Northwest</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 600; color: #2c3e50;">Berkeley Bowl</div>
+                            <div style="font-size: 0.85em; color: #666;">Northern CA</div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px; padding: 8px; background: #d4edda; border-radius: 6px;">
+                            <div style="font-size: 0.9em; color: #155724; font-weight: 600;">Strong Coverage: 2-5 Years</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Metrics -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">30+</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Strategic Partners</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">6</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Longest Partnership (Years)</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">3</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Regional Markets</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4); color: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; opacity: 0.1; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="font-size: 2.2em; font-weight: bold; margin-bottom: 5px;">UNFI</div>
+                        <div style="font-size: 1em; opacity: 0.9;">Top Volume Account</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const headers = {
+            'projections': `
+                <div class="header">
+                    <div class="texture-overlay"></div>
+                    <div class="header-content">
+                        <div class="header-left">
+                            <div class="swoffle-brand">Dashboard Example XYZ Company</div>
+                            <h1 style="text-align: left; margin-bottom: 15px; font-size: 1.33em; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;">B2B Total Sales Projections 2025 + B2B YTD Sales 1-1 to 8-31 2025 vs 2024 YOY</h1>
+                            <div style="text-align: left; font-size: 1.33em; opacity: 0.8; font-weight: 500; margin-top: 15px; color: white;">
+                                Verified Direct + Indirect Accounts: <span class="pulse-animation" style="font-size: 1.5em;">8,025</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="brand-name">Brand Share It Sales Partners</div>
+                            <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'yoy': `
+                <div class="header">
+                    <div class="texture-overlay"></div>
+                    <div class="header-content">
+                        <div class="header-left">
+                            <div class="swoffle-brand">Dashboard Example XYZ Company</div>
+                            <h1 style="text-align: left; margin-bottom: 15px; font-size: 1.67em; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;">B2B 2025 Performance Analysis</h1>
+                        </div>
+                        <div class="header-right">
+                            <div class="brand-name">Brand Share It Sales Partners</div>
+                            <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'strategic': `
+                <div class="header">
+                    <div class="texture-overlay"></div>
+                    <div class="header-content">
+                        <div class="header-left">
+                            <div class="swoffle-brand" style="margin-bottom: 25px;">Dashboard Example XYZ Company</div>
+                            <h1 style="text-align: left; margin-bottom: 25px; font-size: 1.0em; font-weight: 300; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: white;">Strategic B2B Relationships</h1>
+                            <div style="text-align: left; font-size: 1.07em; opacity: 0.9; margin-bottom: 25px; color: white;">
+                                30+ Strategic Partners across 3 regions | Up to 6 years of partnership history
+                            </div>
+                            <div style="text-align: left; font-size: 1.0em; opacity: 0.8; color: white;">
+                                East • Midwest • West regional distribution network with proven long-term relationships
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="brand-name">Brand Share It Sales Partners</div>
+                            <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        function showDashboard(dashboardName) {
+            var dashboards = document.querySelectorAll('.dashboard-content');
+            for (var i = 0; i < dashboards.length; i++) {
+                dashboards[i].classList.remove('active');
+            }
+            
+            var buttons = document.querySelectorAll('.tab-button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].style.background = 'white';
+                buttons[i].style.color = '#2563eb';
+                buttons[i].style.border = 'none';
+            }
+            
+            document.getElementById('dashboard-' + dashboardName).classList.add('active');
+            document.getElementById('dynamic-header').innerHTML = headers[dashboardName];
+            
+            var activeButton = document.getElementById('tab-' + dashboardName);
+            activeButton.style.background = 'linear-gradient(to bottom right, #22a8e0, #2563eb, #06b6d4)';
+            activeButton.style.color = 'white';
+            activeButton.style.border = 'none';
+        }
+        
+        window.onload = function() {
+            // Initialize first dashboard header
+            document.getElementById('dynamic-header').innerHTML = headers['projections'];
+            
+            // Dashboard 1 Charts (5x multiplied values)
+            var ctx1 = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Rainforest - 169.7%', 'Compass-Minimus - 133.6%', 'UNFI East-West - 75.0%', 'Independents - 33.0%', 'KeHe Distributors - 17.5%'],
+                    datasets: [{
+                        data: [169.7, 133.6, 75.0, 33.0, 17.5],
+                        backgroundColor: ['#e74c3c', '#9b59b6', '#3498db', '#f39c12', '#27ae60']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'rect'
+                            }
+                        }
+                    }
+                }
+            });
+
+            var ctx2 = document.getElementById('distributorChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['UNFI', 'Minimus', 'Rainforest', 'Independents', 'KeHe'],
+                    datasets: [{
+                        data: [1067.0, 422.0, 377.0, 318.5, 312.0],
+                        backgroundColor: ['#667eea', '#4facfe', '#764ba2', '#f093fb', '#f5576c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total 2025 Projected Sales ($K)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            var ctx3 = document.getElementById('salesChart1').getContext('2d');
+            new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: ['UNFI East-West - +75.0% projected 2025', 'Rainforest - +169.7% projected 2025', 'Compass-Minimus - +133.6% projected 2025', 'KeHe Distributors - +17.5% projected 2025'],
+                    datasets: [
+                        {
+                            label: 'B2B YTD 2025 (1-1 to 8-31-2025)',
+                            data: [745125, 201615, 190400, 175375],
+                            backgroundColor: '#74b9ff'
+                        },
+                        {
+                            label: 'B2B 2024 (1-1 to 8-31-2024)',
+                            data: [400200, 74765, 17515, 191405],
+                            backgroundColor: '#e74c3c'
+                        },
+                        {
+                            label: 'Total Sales 2024',
+                            data: [640620, 136660, 180500, 311350],
+                            backgroundColor: '#ffa500'
+                        },
+                        {
+                            label: 'Total B2B 2025 Projected Sales (1-1 to 12-31-2025)',
+                            data: [1066980, 377160, 421750, 366100],
+                            backgroundColor: '#00b894'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Sales ($)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+
+            // Dashboard 2 Charts (5x multiplied values)
+            var yoyGrowthElement = document.getElementById('yoyGrowthChart');
+            if (yoyGrowthElement) {
+                var ctxYoyGrowth = yoyGrowthElement.getContext('2d');
+                new Chart(ctxYoyGrowth, {
+                    type: 'bar',
+                    data: {
+                        labels: ['2024 YTD\n(Jan-Aug)', '2025 YTD\n(Jan-Aug)', '2025 Projected\n(Sep-Dec)', '2024 Total\nFull Year', '2025 Total\nProjected'],
+                        datasets: [{
+                            label: 'Sales ($)',
+                            data: [1420000, 2058855, 1450000, 2282415, 3508855],
+                            backgroundColor: ['#64748b', '#10b981', '#22c55e', '#374151', '#16a34a'],
+                            borderColor: ['#64748b', '#10b981', '#22c55e', '#374151', '#16a34a'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Sales ($)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + (value/1000).toFixed(0) + 'K';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Sales: $' + context.parsed.y.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+    </script>
+
 </body>
 </html>
