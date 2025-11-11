@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Share It Sales Partners - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .blur-text {
+            filter: blur(5px);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .pulsate { animation: pulse 2s ease-in-out infinite; }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content { position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { color: white; }
+        .brand-name { font-size: 1.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem; }
+        .brand-tagline { font-size: 1rem; font-style: italic; color: white; opacity: 0.95; margin-bottom: 1rem; }
+        .header-title { font-size: 1.875rem; font-weight: bold; color: white; margin-bottom: 0.5rem; margin-top: 1rem; }
+        .header-subtitle { font-size: 0.875rem; color: white; margin-top: 0.25rem; }
+        .header-right { text-align: right; color: white; }
+        .stat-item { margin-bottom: 1.5rem; }
+        .stat-item:last-child { margin-bottom: 0; }
+        .stat-label { color: white; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .stat-value { font-size: 2.25rem; font-weight: bold; color: white; }
+        .spacer { height: 1.5rem; background-color: white; }
+        .tab-navigation { background-color: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .tab-container { padding: 0 2rem; overflow-x: auto; }
+        .tab-list { display: flex; gap: 0.25rem; min-width: max-content; }
+        .tab-button { padding: 1rem 1.5rem; font-weight: 600; white-space: nowrap; border: none; background: transparent; color: #4b5563; cursor: pointer; transition: all 0.2s; border-bottom: 4px solid transparent; }
+        .tab-button:hover { color: #1f2937; background-color: #f9fafb; }
+        .tab-button.active { background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee); color: white; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-bottom-color: #22d3ee; }
+        .tab-content { padding: 0 2rem 1.5rem; max-width: 1152px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .collapsible-card { border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; background-color: white; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .collapsible-header { width: 100%; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; transition: background-color 0.2s; text-align: left; }
+        .collapsible-header:hover { background-color: #f9fafb; }
+        .collapsible-title { font-size: 1.125rem; font-weight: 600; color: #1f2937; }
+        .collapsible-icon { width: 1.25rem; height: 1.25rem; color: #4b5563; transition: transform 0.2s; }
+        .collapsible-icon.open { transform: rotate(90deg); }
+        .collapsible-content { display: none; padding: 1.5rem; border-top: 1px solid #e5e7eb; }
+        .collapsible-content.open { display: block; }
+        .order-item { color: #374151; padding: 0.25rem 0; border-bottom: 1px solid #e5e7eb; }
+        .order-total { margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #0284c7; }
+        .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .total-label { font-weight: 600; color: #374151; }
+        .total-value { font-size: 1.25rem; font-weight: bold; color: #1f2937; }
+        .total-amount { font-size: 1.5rem; font-weight: bold; color: #0284c7; }
+        .summary-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid #d1d5db; }
+        .summary-title { font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem; }
+        .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .summary-card { background-color: white; border: 2px solid #d1d5db; border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .summary-card-title { font-size: 0.875rem; font-weight: 600; color: #4b5563; margin-bottom: 0.75rem; }
+        .summary-card-stat { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .summary-card-label { color: #374151; }
+        .summary-card-value { font-size: 1.25rem; font-weight: bold; color: #1f2937; }
+        .summary-card-total { padding-top: 0.5rem; border-top: 1px solid #e5e7eb; }
+        .summary-card-amount { font-size: 1.25rem; font-weight: bold; color: #0284c7; }
+        .info-box { background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #0284c7; margin-bottom: 1rem; }
+        .info-box.red { background-color: #fef2f2; border-left-color: #dc2626; }
+        .info-box.blue { background-color: #dbeafe; border-left-color: #2563eb; }
+        .info-box h4 { font-weight: bold; color: #1f2937; margin-bottom: 0.75rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .info-stat { margin-bottom: 0.5rem; }
+        .info-stat-label { font-size: 0.875rem; color: #4b5563; margin-bottom: 0.25rem; }
+        .info-stat-value { font-size: 1.5rem; font-weight: bold; color: #1f2937; }
+        .info-stat-value.green { color: #059669; }
+        .info-stat-value.red { color: #dc2626; }
+        .info-stat-value.blue { color: #0284c7; }
+        .data-table { border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; max-height: 384px; overflow-y: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background-color: #f9fafb; position: sticky; top: 0; }
+        th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #374151; text-transform: uppercase; }
+        th.text-right { text-align: right; }
+        th.text-center { text-align: center; }
+        td { padding: 0.75rem 1rem; font-size: 0.875rem; color: #374151; border-top: 1px solid #e5e7eb; }
+        td.text-right { text-align: right; }
+        td.text-center { text-align: center; }
+        td.font-semibold { font-weight: 600; }
+        td.green { color: #059669; }
+        td.blue { color: #0284c7; }
+        tr:hover { background-color: #f9fafb; }
+        .status-badge { background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-weight: 600; display: inline-block; }
+        .gray-box { background: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; }
+        .white-box { background: white; padding: 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; margin-bottom: 1rem; }
+        .link-button { display: inline-block; background: #0284c7; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .link-button:hover { background: #0369a1; }
+        .content-text { color: #374151; margin-bottom: 0.75rem; line-height: 1.5; }
+        .content-list { color: #374151; padding-left: 1.5rem; }
+        .content-list li { margin-bottom: 0.25rem; }
+        .border-section { border-left: 4px solid #0284c7; padding-left: 1rem; margin-top: 1rem; }
+        .section-title { font-weight: bold; color: #1f2937; margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="texture-overlay"></div>
+        <div class="header-content">
+            <div class="header-left">
+                <div class="brand-name">Brand Share It Sales Partners</div>
+                <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                <h1 class="header-title">Bi-Weekly Report Example</h1>
+                <p class="header-subtitle">October 16th to October 31st</p>
+            </div>
+            <div class="header-right">
+                <div class="stat-item">
+                    <p class="stat-label">Total Sales</p>
+                    <p class="stat-value pulsate">$223,144</p>
+                </div>
+                <div class="stat-item">
+                    <p class="stat-label">Total Orders</p>
+                    <p class="stat-value">978</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="tab-navigation">
+        <div class="tab-container">
+            <div class="tab-list">
+                <button class="tab-button active" data-tab="0">Direct Orders</button>
+                <button class="tab-button" data-tab="1">Admin-Data Reporting</button>
+                <button class="tab-button" data-tab="2">New Distributor Prospects</button>
+                <button class="tab-button" data-tab="3">New Business Development</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content">
+        <!-- TAB 0: DIRECT ORDERS - Content preserved from original with all 8 order sections + summary -->
+        <div class="tab-panel active" data-panel="0">
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Distributor Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">54</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$12,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Direct Orders Channel 1</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">220</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$50,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Independents Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">180</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$42,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Direct Orders Channel 2</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">150</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$35,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Indirect Turnover Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">135</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$31,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Marketplace Direct Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">110</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$25,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Sales Channel Direct Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">85</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$20,000</span></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Specialty Direct Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-item"><span class="blur-text">[Date] | [Store Name] | [Items] | $XXX.XX</span></div>
+                    <div class="order-total"><div class="total-row"><span class="total-label">Orders:</span><span class="total-value">44</span></div><div class="total-row"><span class="total-label" style="font-size: 1.125rem;">Total:</span><span class="total-amount">$8,144</span></div></div>
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <h2 class="summary-title">Order Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card"><h3 class="summary-card-title">Distributor Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">54</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$12,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Direct Orders Channel 1</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">220</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$50,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Independents Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">180</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$42,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Direct Orders Channel 2</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">150</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$35,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Indirect Turnover Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">135</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$31,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Marketplace Direct Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">110</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$25,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Sales Channel Direct Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">85</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$20,000</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Specialty Direct Orders</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">44</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$8,144</span></div></div>
+                    <div class="summary-card"><h3 class="summary-card-title">Grand Totals</h3><div class="summary-card-stat"><span class="summary-card-label">Orders:</span><span class="summary-card-value">978</span></div><div class="summary-card-stat summary-card-total"><span class="summary-card-label">Total:</span><span class="summary-card-amount">$223,144</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: ADMIN-DATA REPORTING - All 12 sections preserved -->
+        <div class="tab-panel" data-panel="1">
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Bi-Weekly Report W/E [Date] +XX%</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="info-box"><h4>Year-to-Date Performance</h4><div class="info-grid"><div class="info-stat"><p class="info-stat-label">Current Year Sales YTD</p><p class="info-stat-value"><span class="blur-text">$XXX,XXX</span></p></div><div class="info-stat"><p class="info-stat-label">Prior Year Sales</p><p class="info-stat-value"><span class="blur-text">$XXX,XXX</span></p></div><div class="info-stat"><p class="info-stat-label">YoY Growth</p><p class="info-stat-value green"><span class="blur-text">+XX.X%</span></p></div></div></div>
+                    <div class="border-section"><h4 class="section-title">Detailed Sales Comparison Table</h4><div class="data-table"><table><thead><tr><th>Month</th><th class="text-right">Current Year</th><th class="text-right">Prior Year</th><th class="text-right">Difference</th><th class="text-right">% Change</th></tr></thead><tbody><tr><td><span class="blur-text">Month 1</span></td><td class="text-right"><span class="blur-text">$XX,XXX</span></td><td class="text-right"><span class="blur-text">$XX,XXX</span></td><td class="text-right green font-semibold"><span class="blur-text">+$X,XXX</span></td><td class="text-right green font-semibold"><span class="blur-text">+XX%</span></td></tr><tr><td><span class="blur-text">Month 2</span></td><td class="text-right"><span class="blur-text">$XX,XXX</span></td><td class="text-right"><span class="blur-text">$XX,XXX</span></td><td class="text-right green font-semibold"><span class="blur-text">+$X,XXX</span></td><td class="text-right green font-semibold"><span class="blur-text">+XX%</span></td></tr></tbody></table></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Q3 Sales Dashboard YOY +XX%</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="info-box"><h4>Q3 Performance</h4><div class="info-grid" style="grid-template-columns: repeat(2, 1fr);"><div class="info-stat"><p class="info-stat-label">Total Q3 Sales</p><p class="info-stat-value"><span class="blur-text">$XXX,XXX</span></p></div><div class="info-stat"><p class="info-stat-label">YoY Growth</p><p class="info-stat-value green"><span class="blur-text">+XX.XX%</span></p></div></div></div>
+                    <div class="border-section"><h4 class="section-title">Distributor Performance - Q3</h4><div style="display:grid;gap:0.5rem;"><div class="white-box" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;"><p style="font-weight:600;color:#1f2937;"><span class="blur-text">Distributor 1</span></p><p style="text-align:right;"><span class="blur-text">$XX,XXX</span></p><p style="text-align:right;font-weight:bold;color:#059669;"><span class="blur-text">+XXX%</span></p></div><div class="white-box" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;"><p style="font-weight:600;color:#1f2937;"><span class="blur-text">Distributor 2</span></p><p style="text-align:right;"><span class="blur-text">$XX,XXX</span></p><p style="text-align:right;font-weight:bold;color:#059669;"><span class="blur-text">+XXX%</span></p></div></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Sales Dashboard YTD +XX%</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="info-box"><h4>Year-to-Date Performance</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div class="info-stat"><p class="info-stat-label">Total YTD Sales</p><p class="info-stat-value"><span class="blur-text">$XXX,XXX</span></p></div><div class="info-stat"><p class="info-stat-label">YoY Growth</p><p class="info-stat-value green"><span class="blur-text">+XX%</span></p></div></div></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Regional Store Account Analysis</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="info-box"><h4>Account Portfolio Overview</h4><div class="info-grid"><div class="info-stat"><p class="info-stat-label">Total Stores Tracked</p><p class="info-stat-value"><span class="blur-text">XXX</span></p></div><div class="info-stat"><p class="info-stat-label">Active Accounts</p><p class="info-stat-value green"><span class="blur-text">XX</span></p></div><div class="info-stat"><p class="info-stat-label">Penetration Rate</p><p class="info-stat-value blue"><span class="blur-text">XX.X%</span></p></div></div></div>
+                    <div class="data-table"><table><thead><tr><th>Store Name</th><th>City</th><th>Phone</th><th>Status</th></tr></thead><tbody><tr><td class="font-semibold"><span class="blur-text">Store 1</span></td><td><span class="blur-text">City</span></td><td><span class="blur-text">XXX-XXX-XXXX</span></td><td><span class="status-badge">Y</span></td></tr><tr><td class="font-semibold"><span class="blur-text">Store 2</span></td><td><span class="blur-text">City</span></td><td><span class="blur-text">XXX-XXX-XXXX</span></td><td><span class="status-badge">Y</span></td></tr></tbody></table></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Distributor #1 Supplier Policies & Procedures Interactive Dashboard</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="info-box"><p class="content-text">Click the link below to access the complete supplier policies & procedures interactive dashboard.</p><a href="#" class="link-button"><span class="blur-text">Open Interactive Dashboard →</span></a></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Distributor #2 Supplier Policies & Guidelines Interactive Dashboard</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="info-box"><p class="content-text">Click the link below to access the complete supplier policies & guidelines interactive dashboard.</p><a href="#" class="link-button"><span class="blur-text">Open Interactive Dashboard →</span></a></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Sales Calls - Retail Chain</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="data-table"><table><thead><tr><th>Location</th><th>Contact</th><th>Current Status</th><th>Action/Notes</th></tr></thead><tbody><tr><td class="font-semibold"><span class="blur-text">Location 1</span></td><td><span class="blur-text">Contact</span></td><td class="green font-semibold"><span class="blur-text">Status</span></td><td><span class="blur-text">Notes redacted</span></td></tr></tbody></table></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Weekly Account Summary</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="info-box"><h4>Activity Summary by Type</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div class="info-stat"><p class="info-stat-label">Sample Requests</p><p class="info-stat-value green"><span class="blur-text">X</span></p></div><div class="info-stat"><p class="info-stat-label">Reorders Placed</p><p class="info-stat-value green"><span class="blur-text">X</span></p></div></div></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Distributor Deduction Summary Analysis</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="info-box red"><h4>Total Deductions Overview</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div class="info-stat"><p class="info-stat-label">Total Deductions</p><p class="info-stat-value red"><span class="blur-text">$X,XXX.XX</span></p></div><div class="info-stat"><p class="info-stat-label">% of Total Invoices</p><p class="info-stat-value red"><span class="blur-text">XX.XX%</span></p></div></div></div>
+                    <div class="border-section"><h4 class="section-title">Deduction Breakdown by Category</h4><div class="data-table"><table><thead><tr><th>Category</th><th class="text-right">Amount</th><th>Notes</th></tr></thead><tbody><tr><td class="font-semibold"><span class="blur-text">Category 1</span></td><td class="text-right font-semibold"><span class="blur-text">$X,XXX</span></td><td><span class="blur-text">Notes</span></td></tr></tbody></table></div></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Order Placements for Turnover Orders</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="data-table"><table><thead><tr><th>Date</th><th>Store</th><th>Items</th><th class="text-center">Units</th></tr></thead><tbody><tr><td><span class="blur-text">[Date]</span></td><td class="font-semibold"><span class="blur-text">Store</span></td><td><span class="blur-text">Items</span></td><td class="text-center font-semibold blue"><span class="blur-text">X units</span></td></tr></tbody></table></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Other KPI Dashboards Created and Available</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content">
+                    <div class="border-section"><h4 class="section-title"><a href="#" style="color:#0284c7;text-decoration:none;"><span class="blur-text">Sales Velocity Analytics Dashboard →</span></a></h4><p class="content-text">Tracks rate of product movement through retail locations.</p></div>
+                    <div class="border-section"><h4 class="section-title"><a href="#" style="color:#0284c7;text-decoration:none;"><span class="blur-text">ROI and Promotion Effectiveness Dashboard →</span></a></h4><p class="content-text">Measures return on investment for promotional activities.</p></div>
+                    <div class="border-section"><h4 class="section-title"><a href="#" style="color:#0284c7;text-decoration:none;"><span class="blur-text">Market Coverage Distribution Intelligence Dashboard →</span></a></h4><p class="content-text">Visualizes market penetration and distribution gaps.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Work Summary</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="white-box"><p class="content-text">Summary report prepared by <span class="blur-text">[Name Redacted]</span></p><p class="content-text">From: <span class="blur-text">[Name]</span></p><p class="content-text">Date: <span class="blur-text">[Date]</span></p></div><div class="border-section"><h4 class="section-title">Summary Report Overview</h4><div class="white-box"><p class="content-text"><span class="blur-text">Detailed summary content redacted for privacy</span></p></div></div></div>
+            </div>
+
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">New Email Script Created</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="white-box"><h3 style="font-size:1.25rem;font-weight:bold;color:#1f2937;margin-bottom:1rem;"><span class="blur-text">Professional Outreach Email Template</span></h3><p class="content-text"><span class="blur-text">Dear [Buyer],</span></p><p class="content-text"><span class="blur-text">Email content redacted for confidentiality...</span></p></div></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: NEW DISTRIBUTOR PROSPECTS - All 6 prospects -->
+        <div class="tab-panel" data-panel="2">
+            <div class="collapsible-card">
+                <button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #1</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div>
+            </div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #2</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #3</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #4</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #5</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Distributor Prospect #6</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Contact Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Primary Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div><div><p class="info-stat-label">Phone</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">(XXX) XXX-XXXX</span></p></div><div><p class="info-stat-label">Email</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">email@redacted.com</span></p></div><div><p class="info-stat-label">Address</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Address]</span></p></div></div></div><div class="info-box blue"><h4>Follow-Up Email Status</h4><p class="content-text"><span class="blur-text">Communication details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Awaiting response</span></p></div><div class="info-box"><h4>Company Overview</h4><p class="content-text"><strong>Business Type:</strong> <span class="blur-text">[Type]</span></p><div class="info-grid" style="grid-template-columns:repeat(2,1fr);margin-top:0.75rem;"><div><p class="info-stat-label">Annual Revenue</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">$XX Million</span></p></div><div><p class="info-stat-label">Customer Base</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XXX+ Accounts</span></p></div></div></div><div class="white-box"><h4 class="section-title">Strategic Assessment</h4><p class="content-text"><span class="blur-text">Strategic analysis redacted</span></p></div></div></div>
+        </div>
+
+        <!-- TAB 3: NEW BUSINESS DEVELOPMENT - All 8 opportunities -->
+        <div class="tab-panel" data-panel="3">
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #1</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #2</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #3</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #4</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #5</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #6</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #7</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+            <div class="collapsible-card"><button class="collapsible-header"><h3 class="collapsible-title">Business Development Opportunity #8</h3><svg class="collapsible-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button><div class="collapsible-content"><div class="gray-box"><h4 class="section-title">Account Information</h4><div class="info-grid" style="grid-template-columns:repeat(2,1fr);"><div><p class="info-stat-label">Account Name</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Account]</span></p></div><div><p class="info-stat-label">Store Count</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">XX Stores</span></p></div><div><p class="info-stat-label">Region</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Region]</span></p></div><div><p class="info-stat-label">Contact</p><p style="font-weight:600;color:#1f2937;"><span class="blur-text">[Name]</span></p></div></div></div><div class="info-box blue"><h4>Initial Outreach Status</h4><p class="content-text"><span class="blur-text">Outreach details redacted</span></p><p style="font-size:0.75rem;color:#4b5563;font-style:italic;">Status: <span class="blur-text">Pending</span></p></div><div class="info-box"><h4>Strategic Opportunity</h4><p class="content-text"><span class="blur-text">Opportunity analysis redacted</span></p></div><div class="white-box"><h4 class="section-title">Next Steps</h4><ul class="content-list"><li><span class="blur-text">Action item 1</span></li><li><span class="blur-text">Action item 2</span></li><li><span class="blur-text">Action item 3</span></li></ul></div></div></div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                button.classList.add('active');
+                document.querySelector(`[data-panel="${tabId}"]`).classList.add('active');
+            });
+        });
+
+        // Collapsible cards
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.collapsible-icon');
+                content.classList.toggle('open');
+                icon.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
