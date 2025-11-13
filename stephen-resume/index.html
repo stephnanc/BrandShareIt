@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stephen Nance - Resume</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: 8.5in 11in;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: Calibri, sans-serif;
+            font-size: 11pt;
+            line-height: 1.25;
+            color: #333;
+            background: white;
+            width: 8.5in;
+            margin: 0 auto;
+            padding: 0.5in;
+        }
+
+        /* Header Styling */
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .header-company {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 0.15rem;
+        }
+
+        .header-name {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 0.15rem;
+        }
+
+        .header-title {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 0.15rem;
+        }
+
+        .header-contact {
+            font-size: 10pt;
+            margin-top: 0.15rem;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 0.8rem;
+        }
+
+        .section-header {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1f2937;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .content {
+            line-height: 1.25;
+        }
+
+        .job {
+            margin-bottom: 0.6rem;
+        }
+
+        .job-title {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        .job-company {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .job-date {
+            font-style: italic;
+            color: #666;
+            font-size: 10pt;
+        }
+
+        .job-description {
+            margin-top: 0.2rem;
+            font-size: 10pt;
+            line-height: 1.25;
+        }
+
+        .job-bullet {
+            margin-left: 0;
+            margin-bottom: 0.25rem;
+            margin-top: 0.3rem;
+            font-size: 10pt;
+            line-height: 1.3;
+        }
+
+        .job-bullet:first-of-type {
+            margin-top: 0.4rem;
+        }
+
+        .job-bullet::before {
+            content: "➜ ";
+            color: #3b82f6;
+            margin-right: 0.3rem;
+        }
+
+        .competency {
+            display: inline-block;
+            margin-right: 1rem;
+            margin-bottom: 0.3rem;
+            font-size: 10pt;
+        }
+
+        .education-item {
+            margin-bottom: 0.3rem;
+            font-size: 10pt;
+        }
+
+        .education-degree {
+            font-weight: bold;
+        }
+
+        .education-school {
+            color: #666;
+            font-size: 10pt;
+        }
+
+        .summary-text {
+            font-size: 10pt;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+            text-align: justify;
+        }
+
+        .skills-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+
+        .skills-chart {
+            position: relative;
+            width: 100%;
+            height: 90px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0.5in;
+                width: 100%;
+            }
+            .header {
+                page-break-inside: avoid;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="texture-overlay"></div>
+        <div class="header-content">
+            <div class="header-company">Brand Share It Sales Partners</div>
+            <div class="header-name">Stephen Nance</div>
+            <div class="header-title">Resume</div>
+            <div class="header-contact">Ellenton, Florida | 941-803-6221 | stephen@brandshareit.com</div>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="section">
+        <div class="section-header">Executive Summary</div>
+        <div class="content">
+            <p class="summary-text">Accomplished Senior Sales Market Positioning Specialist with over 15 years of success driving exceptional brand growth across national and regional specialty-organic markets. Distinguished by a vast, trusted network of relationships cultivated within leading distributors and natural/grocery chains nationwide—relationships that consistently unlock doors, accelerate market penetration, and transform connections into sustained revenue growth.</p>
+            <p class="summary-text">A strategic leader who applies the AI Advantage to sales planning: adept at transforming complex data streams into compelling visual dashboards that reveal predictive sales patterns, optimize decision-making, and drive strategic action. Proven track record delivering 30-93% YoY growth by fusing deep market expertise with cutting-edge analytical insight.</p>
+        </div>
+    </div>
+
+    <!-- Core Competencies -->
+    <div class="section">
+        <div class="section-header">Core Competencies</div>
+        <div class="content">
+            <div class="competency"><strong>Distributor Partnerships:</strong> 50+ distributor/retail partnerships</div>
+            <div class="competency"><strong>Dashboard Creation:</strong> CRM pipeline tracking, distributor resource hubs, sales analytics</div>
+            <div class="competency"><strong>AI Advantage:</strong> Trade spend precision and B2B sales planning</div>
+            <div class="competency"><strong>Growth Track Record:</strong> 30-93% YoY growth</div>
+        </div>
+    </div>
+
+    <!-- Professional Experience -->
+    <div class="section">
+        <div class="section-header">Professional Experience</div>
+        <div class="content">
+            <div class="job">
+                <div class="job-title">Principal</div>
+                <div class="job-company">Brand Share It Sales Partners</div>
+                <div class="job-date">2020 - Present</div>
+                <div class="job-description">Strategic sales consulting and advanced analytics dashboards for startups and medium-sized CPG companies. Comprehensive business intelligence solutions to drive growth and optimize trade spend ROI.</div>
+            </div>
+
+            <div class="job">
+                <div class="job-title">Director of Sales</div>
+                <div class="job-company">Swoffle | Gluten-Free Cookies</div>
+                <div class="job-date">January 2019 - Present</div>
+                <div class="job-bullet">93% Q3 2025 growth, 53% YoY managing 17+ distribution centers (UNFI, KeHE, Rainforest, Compass Group USA)</div>
+                <div class="job-bullet">Executed three Compass Group USA incubator programs in 2025, delivering 3,335 B2B accounts</div>
+                <div class="job-bullet">Expanded distribution: WFM (2 regions, 3 SKUs), Big Y, ShopRite, Harmons, Super1 Foods/URM (260+ stores)</div>
+            </div>
+
+            <div class="job">
+                <div class="job-title">Director of Sales</div>
+                <div class="job-company">Fiorella's Pasta Sauces</div>
+                <div class="job-date">October 2022 - October 2025</div>
+                <div class="job-bullet">33% YoY through October 2025, 30% growth for 3 consecutive years</div>
+                <div class="job-bullet">YoY October 2025: The Fresh Markets 48%, Market Basket 20%, Big Y 67%</div>
+                <div class="job-bullet">New Distribution October 2025: Hannaford, Wegmans</div>
+            </div>
+
+            <div class="job">
+                <div class="job-title">Sales Leadership</div>
+                <div class="job-company">Sobe Sales & SPN Go Sales</div>
+                <div class="job-date">2008 - 2020</div>
+                <div class="job-bullet">Orchestrated national expansion for Phone Fresh Wipes, Rabbit Coffee, Mack Daddy Sauces, Fest Cola</div>
+                <div class="job-bullet">Built foundational relationships with UNFI, KeHE, Quality Foods, Publix, WFM, TFM, Cost Plus World Markets</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Education -->
+    <div class="section">
+        <div class="section-header">Education</div>
+        <div class="content">
+            <div class="education-item">
+                <span class="education-degree">Associate of Arts | General Studies</span>
+            </div>
+            <div class="education-item">
+                <span class="education-school">Prince George's Community College | GPA: 3.8</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Chart -->
+    <div class="section">
+        <div class="section-header">Core Skills</div>
+        <div class="skills-container">
+            <div class="skills-chart">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('skillsChart').getContext('2d');
+        const skillsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Leadership', 'Communication', 'Analytics', 'Execution', 'Strategy'],
+                datasets: [{
+                    label: 'Proficiency %',
+                    data: [100, 95, 90, 95, 80],
+                    backgroundColor: '#39A3F7',
+                    borderColor: '#39A3F7',
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    barThickness: 20
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            font: {
+                                size: 9
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: 10,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            display: false
+                        },
+                        categoryPercentage: 0.4,
+                        barPercentage: 1.0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
