@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Share It Sales Partners - Business Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .header-top {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .brand-tagline {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-title {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .header-right {
+            display: none;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .service-box {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .service-box:nth-child(1) {
+            background-color: #f0f9ff;
+        }
+
+        .service-box:nth-child(2) {
+            background-color: white;
+        }
+
+        .service-box:nth-child(3) {
+            background-color: #f3faff;
+        }
+
+        .service-box:nth-child(4) {
+            background-color: white;
+        }
+
+        .service-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-list {
+            list-style: none;
+            font-size: 0.95rem;
+        }
+
+        .service-list li {
+            margin-bottom: 0.625rem;
+            color: #374151;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .service-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .cta-section {
+            background-color: white;
+            padding: 1.75rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-item strong {
+            color: #1e40af;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-top">
+                    <div class="brand-name">Brand Share It Sales Partners</div>
+                    <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                </div>
+                <div class="header-left">
+                    <h1 class="header-title">Leading the Way with Proven Sales Leadership and the AI Advantage<br>for Premium Natural, Organic & Specialty Food Brands</h1>
+                    <p class="header-subtitle">Ready to Drive Your Sales Growth | Let's Connect</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Services Grid -->
+            <div class="section">
+                <h2 class="section-title">Our Services</h2>
+                <div class="services-grid">
+                    <!-- Sales Growth -->
+                    <div class="service-box">
+                        <div class="service-title">📈 Sales Growth</div>
+                        <ul class="service-list">
+                            <li><strong>Increasing Brand Power with the AI Advantage</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    Proactive upselling approaches, Multi-channel distribution, Brand aligning AI Advantage predictive analysis
+                                </div>
+                            </li>
+                            <li style="margin-top: 0.875rem;"><strong>Proven Results with VP Level Focus</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    CPG leadership track record, Tailored sales plans, Long-term buyer partnerships
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Brand Strategy -->
+                    <div class="service-box">
+                        <div class="service-title">💎 Brand Strategy</div>
+                        <ul class="service-list">
+                            <li><strong>Market Intelligence Powered by AI</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    Competitive analysis & positioning, Consumer insights & forecasting, Accelerated by the AI advantage
+                                </div>
+                            </li>
+                            <li style="margin-top: 0.875rem;"><strong>Purposeful Planning</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    Product launch strategies, Brand positioning roadmaps, Growth opportunity identification
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Data Analytics -->
+                    <div class="service-box">
+                        <div class="service-title">📊 Data Analytics</div>
+                        <ul class="service-list">
+                            <li><strong>Smart Data Solutions</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    The AI Advantage in action, Data consolidation dashboard, Vendor performance tracking
+                                </div>
+                            </li>
+                            <li style="margin-top: 0.875rem;"><strong>Seamless Integration</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    No operational disruption, Real-time data aggregation, Growth readiness assessment
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Social Media/Dashboards -->
+                    <div class="service-box">
+                        <div class="service-title">🌐 Social Media/Dashboards</div>
+                        <ul class="service-list">
+                            <li><strong>Smart AI + Skilled Expertise</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    Automated content creation, Smart scheduling & publishing, Multi-platform optimization
+                                </div>
+                            </li>
+                            <li style="margin-top: 0.875rem;"><strong>AI Advantage Collateral Solutions</strong>
+                                <div style="margin-top: 0.5rem; color: #6b7280;">
+                                    Sales and Key Account Dashboards, Scripts, Collateral & Presentations, Quickly optimized by AI advantage tools
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Performance Metrics -->
+            <div class="section">
+                <h2 class="section-title">Results Delivered</h2>
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">360°</div>
+                        <div class="metric-label">Brand Execution</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">REAL-TIME</div>
+                        <div class="metric-label">Data + Insights</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">15%-30%</div>
+                        <div class="metric-label">Market Share Gains</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <div class="cta-text">Ready to Transform Your Sales Strategy?</div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <strong>📞</strong> (941) 776-4775
+                    </div>
+                    <div class="contact-item">
+                        <strong>✉️</strong> stephen@brandshareit.com
+                    </div>
+                    <div class="contact-item">
+                        <strong>📱</strong> (941) 803-6221
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; font-size: 1rem; font-weight: 600; color: #1e40af;">
+                    Stephen Nance – Principle
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
