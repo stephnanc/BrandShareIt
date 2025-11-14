@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YoY Growth Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            padding: 30px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2.5rem 2rem;
+            margin-bottom: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .top-label {
+            text-align: left;
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+            opacity: 0.85;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-title { 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin-bottom: 8px;
+            color: white;
+        }
+        .header-subtitle { 
+            font-size: 16px; 
+            opacity: 0.9;
+            color: #e0f2fe;
+        }
+        .header-right {
+            text-align: right;
+            color: white;
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .brand-tagline {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 16px;
+        }
+        .control-group { flex: 1; }
+        .control-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #475569; }
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .metric-label { font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 12px; }
+        .metric-value { font-size: 36px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+        .metric-change { font-size: 14px; color: #10b981; font-weight: 600; }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chart-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+            margin-top: 20px;
+        }
+        .y-labels {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 30px;
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .y-label { font-size: 11px; color: #64748b; text-align: right; padding-right: 8px; }
+        
+        .chart-area {
+            position: absolute;
+            left: 60px;
+            right: 0;
+            top: 0;
+            bottom: 30px;
+            border-left: 2px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .bars {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            padding: 0 10px;
+        }
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        .bar-pair {
+            width: 100%;
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            flex: 1;
+        }
+        .bar {
+            flex: 1;
+            min-width: 6px;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            cursor: pointer;
+        }
+        .bar:hover { opacity: 0.7; }
+        .bar-py { background: linear-gradient(to top, #10b981, #34d399); }
+        .bar-cy { background: linear-gradient(to top, #3b82f6, #60a5fa); }
+        .bar-fc { background: linear-gradient(to top, #f59e0b, #fbbf24); opacity: 0.8; }
+        .bar-month { font-size: 10px; color: #64748b; margin-top: 6px; }
+        
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .table-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .filter-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        th.right { text-align: right; }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+        td.right { text-align: right; font-weight: 600; }
+        .growth-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .positive { background: #dcfce7; color: #15803d; }
+        .negative { background: #fee2e2; color: #b91c1c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="top-label">Dashboard Example</div>
+                <div class="header-main">
+                    <div class="header-left">
+                        <h1 class="header-title">Year-Over-Year Growth & Trend Analysis Dashboard</h1>
+                        <p class="header-subtitle">Track seasonal patterns and 52-week trends with predictive modeling</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="brand-name">Brand Share It Sales Partners</div>
+                        <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Category</label>
+                <select id="catSelect"></select>
+            </div>
+            <div class="control-group">
+                <label>Region</label>
+                <select id="regSelect"></select>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">TOTAL SALES (CY)</div>
+                <div class="metric-value" id="m1">$0M</div>
+                <div class="metric-change" id="c1">+0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">UNITS SOLD</div>
+                <div class="metric-value" id="m2">0K</div>
+                <div class="metric-change" id="c2">+0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">AVG GROWTH RATE</div>
+                <div class="metric-value" id="m3">+0%</div>
+                <div class="metric-change">52-week average</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">FORECAST ACCURACY</div>
+                <div class="metric-value">92%</div>
+                <div class="metric-change">High confidence</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">Sales Comparison & Forecast</h2>
+            <div class="chart-wrapper" id="chartDiv"></div>
+        </div>
+
+        <div class="table-section">
+            <h2 class="chart-title">Detailed Forecast by Period</h2>
+            <div class="table-controls">
+                <input type="text" class="search-input" id="searchBox" placeholder="Search by month...">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="actual">Actual</button>
+                <button class="filter-btn" data-filter="forecast">Forecast</button>
+                <button class="filter-btn" data-filter="growth">High Growth</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th class="right">Previous Year</th>
+                        <th class="right">Current Year</th>
+                        <th class="right">YoY Growth</th>
+                        <th class="right">Forecast</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const CATS = ['All','Organic Snacks','Protein Bars','Energy Drinks','Trail Mix','Healthy Cereals'];
+        const REGS = ['All','Northeast','Southeast','Midwest','Southwest','West Coast'];
+        const CAT_SHARE = {'Organic Snacks':0.28,'Protein Bars':0.24,'Energy Drinks':0.22,'Trail Mix':0.15,'Healthy Cereals':0.11};
+        const REG_SHARE = {'Northeast':0.23,'Southeast':0.21,'Midwest':0.19,'Southwest':0.18,'West Coast':0.19};
+        
+        let master = {};
+        let current = {};
+        
+        function genData() {
+            const d = {py:[],cy:[],fc:[]};
+            const sf = [0.75,0.7,0.8,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.35,1.45];
+            const base = 850000;
+            for(let i=0;i<12;i++){
+                const py = base*sf[i]*(0.95+Math.random()*0.1);
+                const cy = py*1.18*(0.98+Math.random()*0.04);
+                d.py.push({m:MONTHS[i],s:Math.round(py),u:Math.round(py/12.5)});
+                d.cy.push({m:MONTHS[i],s:Math.round(cy),u:Math.round(cy/12.5)});
+            }
+            for(let i=0;i<3;i++){
+                const fc = d.py[i].s*1.24*sf[i]*(0.97+Math.random()*0.06);
+                d.fc.push({m:MONTHS[i],s:Math.round(fc),u:Math.round(fc/12.5)});
+            }
+            return d;
+        }
+        
+        function filt(cat,reg) {
+            let m = 1;
+            if(cat!=='All') m*=CAT_SHARE[cat];
+            if(reg!=='All') m*=REG_SHARE[reg];
+            return {
+                py:master.py.map(x=>({m:x.m,s:Math.round(x.s*m),u:Math.round(x.u*m)})),
+                cy:master.cy.map(x=>({m:x.m,s:Math.round(x.s*m),u:Math.round(x.u*m)})),
+                fc:master.fc.map(x=>({m:x.m,s:Math.round(x.s*m),u:Math.round(x.u*m)}))
+            };
+        }
+        
+        function updMetrics() {
+            const tpy = current.py.reduce((a,b)=>a+b.s,0);
+            const tcy = current.cy.reduce((a,b)=>a+b.s,0);
+            const tuy = current.cy.reduce((a,b)=>a+b.u,0);
+            const sg = ((tcy-tpy)/tpy*100).toFixed(1);
+            
+            document.getElementById('m1').textContent = '$'+(tcy/1e6).toFixed(2)+'M';
+            document.getElementById('m2').textContent = Math.round(tuy/1000)+'K';
+            document.getElementById('m3').textContent = (sg>0?'+':'')+sg+'%';
+            document.getElementById('c1').textContent = (sg>0?'+':'')+sg+'% vs PY';
+            document.getElementById('c2').textContent = (sg>0?'+':'')+sg+'% vs PY';
+        }
+        
+        function updChart() {
+            const div = document.getElementById('chartDiv');
+            div.innerHTML = '';
+            
+            const all = [...current.py.map(x=>x.s),...current.cy.map(x=>x.s),...current.fc.map(x=>x.s)];
+            const max = Math.max(...all);
+            
+            const yax = document.createElement('div');
+            yax.className = 'y-labels';
+            for(let i=5;i>=0;i--){
+                const lbl = document.createElement('div');
+                lbl.className = 'y-label';
+                lbl.textContent = '$'+Math.round(max/5*i/1000)+'K';
+                yax.appendChild(lbl);
+            }
+            div.appendChild(yax);
+            
+            const ca = document.createElement('div');
+            ca.className = 'chart-area';
+            const bs = document.createElement('div');
+            bs.className = 'bars';
+            
+            for(let i=0;i<12;i++){
+                const bg = document.createElement('div');
+                bg.className = 'bar-group';
+                const bp = document.createElement('div');
+                bp.className = 'bar-pair';
+                
+                const b1 = document.createElement('div');
+                b1.className = 'bar bar-py';
+                b1.style.height = (current.py[i].s/max*100)+'%';
+                const b2 = document.createElement('div');
+                b2.className = 'bar bar-cy';
+                b2.style.height = (current.cy[i].s/max*100)+'%';
+                
+                bp.appendChild(b1);
+                bp.appendChild(b2);
+                bg.appendChild(bp);
+                
+                const ml = document.createElement('div');
+                ml.className = 'bar-month';
+                ml.textContent = MONTHS[i];
+                bg.appendChild(ml);
+                bs.appendChild(bg);
+            }
+            
+            for(let i=0;i<3;i++){
+                const bg = document.createElement('div');
+                bg.className = 'bar-group';
+                const bp = document.createElement('div');
+                bp.className = 'bar-pair';
+                
+                const b = document.createElement('div');
+                b.className = 'bar bar-fc';
+                b.style.height = (current.fc[i].s/max*100)+'%';
+                bp.appendChild(b);
+                bg.appendChild(bp);
+                
+                const ml = document.createElement('div');
+                ml.className = 'bar-month';
+                ml.textContent = MONTHS[i];
+                bg.appendChild(ml);
+                bs.appendChild(bg);
+            }
+            
+            ca.appendChild(bs);
+            div.appendChild(ca);
+        }
+        
+        function updTable() {
+            const tb = document.getElementById('tableBody');
+            tb.innerHTML = '';
+            
+            for(let i=0;i<12;i++){
+                const g = ((current.cy[i].s-current.py[i].s)/current.py[i].s*100).toFixed(1);
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-type','actual');
+                tr.setAttribute('data-month',MONTHS[i].toLowerCase());
+                tr.setAttribute('data-growth',g);
+                tr.innerHTML = '<td><strong>'+MONTHS[i]+' 2024</strong></td>'+
+                    '<td class="right">$'+Math.round(current.py[i].s/1000)+'K</td>'+
+                    '<td class="right">$'+Math.round(current.cy[i].s/1000)+'K</td>'+
+                    '<td class="right"><span class="growth-badge '+(g>0?'positive':'negative')+'">'+(g>0?'▲':'▼')+' '+Math.abs(g)+'%</span></td>'+
+                    '<td class="right">—</td>';
+                tb.appendChild(tr);
+            }
+            
+            for(let i=0;i<3;i++){
+                const tr = document.createElement('tr');
+                tr.style.background = '#fffbeb';
+                tr.setAttribute('data-type','forecast');
+                tr.setAttribute('data-month',MONTHS[i].toLowerCase());
+                tr.innerHTML = '<td><strong>'+MONTHS[i]+' (Next)</strong></td>'+
+                    '<td class="right">—</td><td class="right">—</td><td class="right">—</td>'+
+                    '<td class="right" style="color:#f59e0b;font-weight:700;">$'+Math.round(current.fc[i].s/1000)+'K</td>';
+                tb.appendChild(tr);
+            }
+        }
+        
+        function filtTable(type,search) {
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            for(let r of rows){
+                let show = true;
+                if(type==='actual' && r.getAttribute('data-type')!=='actual') show=false;
+                if(type==='forecast' && r.getAttribute('data-type')!=='forecast') show=false;
+                if(type==='growth'){
+                    const g = parseFloat(r.getAttribute('data-growth'));
+                    if(isNaN(g) || g<15) show=false;
+                }
+                if(search){
+                    const m = r.getAttribute('data-month')||'';
+                    if(!m.includes(search.toLowerCase())) show=false;
+                }
+                r.style.display = show?'':'none';
+            }
+        }
+        
+        function ref() {
+            const cat = document.getElementById('catSelect').value;
+            const reg = document.getElementById('regSelect').value;
+            current = filt(cat,reg);
+            updMetrics();
+            updChart();
+            updTable();
+        }
+        
+        function init() {
+            CATS.forEach(c=>{
+                const o = document.createElement('option');
+                o.value = c;
+                o.textContent = c;
+                document.getElementById('catSelect').appendChild(o);
+            });
+            REGS.forEach(r=>{
+                const o = document.createElement('option');
+                o.value = r;
+                o.textContent = r;
+                document.getElementById('regSelect').appendChild(o);
+            });
+            
+            master = genData();
+            current = filt('All','All');
+            updMetrics();
+            updChart();
+            updTable();
+            
+            document.getElementById('catSelect').addEventListener('change',ref);
+            document.getElementById('regSelect').addEventListener('change',ref);
+            
+            let cf = 'all';
+            document.querySelectorAll('.filter-btn').forEach(b=>{
+                b.addEventListener('click',function(){
+                    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+                    this.classList.add('active');
+                    cf = this.getAttribute('data-filter');
+                    filtTable(cf,document.getElementById('searchBox').value);
+                });
+            });
+            
+            document.getElementById('searchBox').addEventListener('input',function(){
+                filtTable(cf,this.value);
+            });
+        }
+        
+        init();
+    </script>
+</body>
+</html>
