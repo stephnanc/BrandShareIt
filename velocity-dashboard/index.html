@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Velocity Analytics Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f9fafb;
+            padding: 24px;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+            min-height: 140px;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 60px;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header h1 { color: white; font-size: 28px; margin-bottom: 8px; }
+        .header p { color: #e0f2fe; font-size: 16px; }
+        .header .company {
+            position: absolute;
+            bottom: 24px;
+            right: 40px;
+            text-align: right;
+            color: white;
+            z-index: 1;
+        }
+        .company-name { font-size: 16px; font-weight: 600; }
+        .company-tagline { font-size: 12px; margin-top: 4px; opacity: 0.9; }
+        
+        .filters {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .filters h2 { font-size: 18px; margin-bottom: 16px; color: #111827; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+        .filter-group label { display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px; }
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+        .filter-group select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .metric-card {
+            background: white;
+            border: 2px solid #e0f2fe;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14,165,233,0.15);
+        }
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .metric-icon.blue {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        }
+        .metric-icon.orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+        .metric-icon.purple {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+        }
+        .metric-icon.green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .metric-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+        .metric-label { font-size: 14px; color: #64748b; margin-bottom: 8px; font-weight: 500; }
+        .metric-value { font-size: 32px; font-weight: bold; color: #0f172a; }
+        .metric-unit { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .chart-card h3 { font-size: 18px; margin-bottom: 20px; color: #111827; }
+        
+        .bar-chart { display: flex; flex-direction: column; gap: 12px; }
+        .bar-item { display: flex; align-items: center; gap: 12px; }
+        .bar-label { 
+            min-width: 150px; 
+            font-size: 12px; 
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bar-container { flex: 1; height: 24px; background: #f3f4f6; border-radius: 4px; position: relative; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+        .bar-value { 
+            position: absolute; 
+            right: 8px; 
+            top: 50%; 
+            transform: translateY(-50%);
+            font-size: 11px; 
+            font-weight: 600;
+            color: white;
+        }
+        
+        .legend {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .legend h3 { font-size: 18px; margin-bottom: 16px; color: #111827; }
+        .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 12px; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .legend-text { font-size: 14px; color: #374151; }
+        .legend-range { font-size: 12px; color: #6b7280; }
+        
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .table-header:hover { background: #f9fafb; border-radius: 8px; }
+        .table-header h3 { font-size: 18px; color: #111827; }
+        .chevron { transition: transform 0.2s; }
+        .chevron.expanded { transform: rotate(180deg); }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .search-box:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        th:hover { background: #f3f4f6; }
+        th.align-right { text-align: right; }
+        td {
+            padding: 12px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #374151;
+        }
+        td.align-right { text-align: right; }
+        tr:hover { background: #f9fafb; }
+        
+        .velocity-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .velocity-excellent { background: #dcfce7; color: #166534; }
+        .velocity-good { background: #dbeafe; color: #1e40af; }
+        .velocity-fair { background: #fef3c7; color: #92400e; }
+        .velocity-poor { background: #fee2e2; color: #991b1b; }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Sales Velocity Analytics Dashboard Example</h1>
+                    <p>Track units per store per week across your retail network</p>
+                </div>
+                <div class="company">
+                    <div class="company-name">Brand Share It Sales Partners</div>
+                    <div class="company-tagline">"One Step Ahead, Reaching for Tomorrow."</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <h2>Filters</h2>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Region</label>
+                    <select id="regionFilter">
+                        <option value="All">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Retailer</label>
+                    <select id="retailerFilter">
+                        <option value="All">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>SKU</label>
+                    <select id="skuFilter">
+                        <option value="All">All SKUs</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-icon blue">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                </div>
+                <div class="metric-label">Avg Velocity</div>
+                <div class="metric-value" id="avgVelocity">0.00</div>
+                <div class="metric-unit">units/store/week</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon orange">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <div class="metric-label">Total Stores</div>
+                <div class="metric-value" id="totalStores">0</div>
+                <div class="metric-unit">active locations</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon purple">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </div>
+                <div class="metric-label">Weekly Units</div>
+                <div class="metric-value" id="weeklyUnits">0</div>
+                <div class="metric-unit">units sold/week</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon green">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <div class="metric-label">Annual Revenue</div>
+                <div class="metric-value" id="annualRevenue">$0.00M</div>
+                <div class="metric-unit">projected annual</div>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Top Retailers by Velocity</h3>
+                <div class="bar-chart" id="retailerChart"></div>
+            </div>
+            <div class="chart-card">
+                <h3>SKU Performance</h3>
+                <div class="bar-chart" id="skuChart"></div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Velocity Performance Zones</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #10b981;"></div>
+                    <div>
+                        <div class="legend-text">Excellent</div>
+                        <div class="legend-range">≥5.0 units/store/week</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3b82f6;"></div>
+                    <div>
+                        <div class="legend-text">Good</div>
+                        <div class="legend-range">3.0-4.9 units/store/week</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f59e0b;"></div>
+                    <div>
+                        <div class="legend-text">Fair</div>
+                        <div class="legend-range">2.0-2.9 units/store/week</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ef4444;"></div>
+                    <div>
+                        <div class="legend-text">Needs Attention</div>
+                        <div class="legend-range">&lt;2.0 units/store/week</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header" onclick="toggleTable()">
+                <h3>Detailed View <span id="recordCount">(0 records)</span></h3>
+                <svg class="chevron" id="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div id="tableContent">
+                <input type="text" class="search-box" id="searchBox" placeholder="Search by product name or retailer...">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('region')">Region <span id="sort-region"></span></th>
+                                <th onclick="sortTable('retailer')">Retailer <span id="sort-retailer"></span></th>
+                                <th onclick="sortTable('skuName')">SKU <span id="sort-skuName"></span></th>
+                                <th class="align-right" onclick="sortTable('storeCount')">Stores <span id="sort-storeCount"></span></th>
+                                <th class="align-right" onclick="sortTable('velocity')">Velocity <span id="sort-velocity"></span></th>
+                                <th class="align-right" onclick="sortTable('weeklyUnits')">Weekly Units <span id="sort-weeklyUnits"></span></th>
+                                <th class="align-right" onclick="sortTable('weeklyRevenue')">Weekly Revenue <span id="sort-weeklyRevenue"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RETAILERS = {
+            'North Atlantic': {'Whole Foods': 45, 'Trader Joe\'s': 38, 'Wegmans': 22, 'Stop & Shop': 68, 'ShopRite': 52, 'Giant Food': 31},
+            'Mid Atlantic': {'MOM\'s Organic Market': 18, 'Whole Foods': 52, 'Wegmans': 34, 'The Fresh Market': 28, 'Weis Markets': 42, 'ACME': 45, 'Safeway East': 36},
+            'Southeast': {'Earth Fare': 15, 'Sprouts Farmers Market': 42, 'The Fresh Market': 31, 'Harris Teeter': 62, 'Dekalb': 8},
+            'Florida': {'Whole Foods': 28, 'Lucky\'s Market': 6, 'The Fresh Market': 19, 'Winn-Dixie': 92, 'Sedano\'s': 34},
+            'Midwest': {'Fresh Thyme': 31, 'Natural Grocers': 45, 'Mariano\'s': 38, 'Hy-Vee': 125, 'Meijer': 94, 'Kroger': 142},
+            'Southwest': {'Sprouts Farmers Market': 68, 'Natural Grocers': 38, 'Central Market': 9, 'Fiesta Mart': 34, 'H-E-B': 186, 'Albertsons': 54, 'El Super': 28},
+            'Mountain': {'Natural Grocers': 42, 'Sprouts Farmers Market': 36, 'AJ\'s Fine Foods': 8, 'King Soopers': 78, 'Albertsons': 48, 'Smith\'s': 52},
+            'Pacific Northwest': {'New Seasons Market': 19, 'PCC Community Markets': 15, 'Metropolitan Market': 8, 'Town & Country': 6, 'Safeway': 64, 'Fred Meyer': 58, 'QFC': 32},
+            'North Pacific': {'Berkeley Bowl': 3, 'Rainbow Grocery': 2, 'Andronico\'s': 7, 'Mollie Stone\'s': 6, 'Safeway': 72, 'Lucky Supermarkets': 38, 'Raley\'s': 48},
+            'South Pacific': {'Erewhon': 6, 'Bristol Farms': 14, 'Lazy Acres': 5, 'Gelson\'s': 27, 'Northgate González': 42, 'Vons': 68, 'Stater Bros': 72}
+        };
+
+        const SKUS = [
+            {id: 'SKU-001', name: 'Organic Granola Bar - Chocolate', price: 8.99, category: 'Organic'},
+            {id: 'SKU-002', name: 'Organic Granola Bar - Almond', price: 8.99, category: 'Organic'},
+            {id: 'SKU-003', name: 'Protein Bar - Peanut Butter', price: 11.99, category: 'Specialty'},
+            {id: 'SKU-004', name: 'Energy Bites - Mixed Berry', price: 9.49, category: 'Specialty'},
+            {id: 'SKU-005', name: 'Trail Mix Bar - Classic', price: 7.99, category: 'Grocery'},
+            {id: 'SKU-006', name: 'Organic Snack Bar - Coconut', price: 8.99, category: 'Organic'},
+            {id: 'SKU-007', name: 'Protein Bar - Chocolate Chip', price: 11.99, category: 'Specialty'},
+            {id: 'SKU-008', name: 'Kids Snack Bar - Honey', price: 6.99, category: 'Grocery'},
+            {id: 'SKU-009', name: 'Organic Energy Bar - Date', price: 10.49, category: 'Organic'},
+            {id: 'SKU-010', name: 'Nut Butter Bar - Cashew', price: 9.99, category: 'Specialty'}
+        ];
+
+        let salesData = [];
+        let currentSort = {key: 'velocity', direction: 'desc'};
+        let tableExpanded = true;
+
+        function generateSalesData() {
+            const data = [];
+            Object.entries(RETAILERS).forEach(([region, retailers]) => {
+                Object.entries(retailers).forEach(([retailer, storeCount]) => {
+                    const isOrganic = retailer.includes('Whole Foods') || retailer.includes('Organic') || 
+                                    retailer.includes('Sprouts') || retailer.includes('Natural') ||
+                                    retailer.includes('Earth Fare') || retailer.includes('Erewhon');
+                    const isSpecialty = retailer.includes('Fresh Market') || retailer.includes('Wegmans') || retailer.includes('Bristol');
+                    const isPremium = isOrganic || isSpecialty;
+                    
+                    SKUS.forEach(sku => {
+                        let performanceMultiplier = 1.0;
+                        if (isPremium && (sku.category === 'Organic' || sku.category === 'Specialty')) {
+                            performanceMultiplier = 0.9 + Math.random() * 0.4;
+                        } else if (!isPremium && sku.category === 'Grocery') {
+                            performanceMultiplier = 0.7 + Math.random() * 0.3;
+                        } else {
+                            performanceMultiplier = 0.3 + Math.random() * 0.5;
+                        }
+                        
+                        const baseVelocity = 0.35 + Math.random() * 0.55;
+                        const velocity = baseVelocity * performanceMultiplier;
+                        const weeklyUnits = Math.round(velocity * storeCount * 100) / 100;
+                        const weeklyRevenue = weeklyUnits * sku.price;
+                        
+                        data.push({
+                            region, retailer, storeCount,
+                            sku: sku.id, skuName: sku.name, category: sku.category, price: sku.price,
+                            weeklyUnits, velocity: parseFloat(velocity.toFixed(2)),
+                            weeklyRevenue: parseFloat(weeklyRevenue.toFixed(2))
+                        });
+                    });
+                });
+            });
+            return data;
+        }
+
+        function populateFilters() {
+            const regions = ['All', ...new Set(salesData.map(d => d.region))];
+            const skus = ['All', ...SKUS.map(s => s.id)];
+            
+            const regionSelect = document.getElementById('regionFilter');
+            regions.forEach(r => {
+                const option = document.createElement('option');
+                option.value = r;
+                option.textContent = r;
+                regionSelect.appendChild(option);
+            });
+            
+            const skuSelect = document.getElementById('skuFilter');
+            skus.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s === 'All' ? 'All SKUs' : SKUS.find(sku => sku.id === s).name;
+                skuSelect.appendChild(option);
+            });
+        }
+
+        function updateRetailerFilter() {
+            const region = document.getElementById('regionFilter').value;
+            const filtered = region === 'All' ? salesData : salesData.filter(d => d.region === region);
+            const retailers = ['All', ...new Set(filtered.map(d => d.retailer))];
+            
+            const select = document.getElementById('retailerFilter');
+            select.innerHTML = '';
+            retailers.forEach(r => {
+                const option = document.createElement('option');
+                option.value = r;
+                option.textContent = r;
+                select.appendChild(option);
+            });
+        }
+
+        function getFilteredData() {
+            const region = document.getElementById('regionFilter').value;
+            const retailer = document.getElementById('retailerFilter').value;
+            const sku = document.getElementById('skuFilter').value;
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            
+            let filtered = salesData;
+            if (region !== 'All') filtered = filtered.filter(d => d.region === region);
+            if (retailer !== 'All') filtered = filtered.filter(d => d.retailer === retailer);
+            if (sku !== 'All') filtered = filtered.filter(d => d.sku === sku);
+            if (search) filtered = filtered.filter(d => 
+                d.skuName.toLowerCase().includes(search) || 
+                d.retailer.toLowerCase().includes(search)
+            );
+            
+            return filtered;
+        }
+
+        function updateMetrics() {
+            const filtered = getFilteredData();
+            const selectedSKU = document.getElementById('skuFilter').value;
+            
+            const totalStores = filtered.reduce((sum, d) => sum + d.storeCount, 0);
+            const totalUnits = filtered.reduce((sum, d) => sum + d.weeklyUnits, 0);
+            const totalRevenue = filtered.reduce((sum, d) => sum + d.weeklyRevenue, 0);
+            const avgVelocity = filtered.length > 0 ? filtered.reduce((sum, d) => sum + d.velocity, 0) / filtered.length : 0;
+            
+            document.getElementById('avgVelocity').textContent = avgVelocity.toFixed(2);
+            document.getElementById('totalStores').textContent = Math.round(totalStores / (selectedSKU === 'All' ? SKUS.length : 1)).toLocaleString();
+            document.getElementById('weeklyUnits').textContent = Math.round(totalUnits).toLocaleString();
+            document.getElementById('annualRevenue').textContent = '$' + (totalRevenue * 52 / 1000000).toFixed(2) + 'M';
+        }
+
+        function getBarColor(velocity) {
+            if (velocity >= 5) return '#10b981';
+            if (velocity >= 3) return '#3b82f6';
+            if (velocity >= 2) return '#f59e0b';
+            return '#ef4444';
+        }
+
+        function updateCharts() {
+            const filtered = getFilteredData();
+            
+            // Retailer chart
+            const retailerAgg = {};
+            filtered.forEach(d => {
+                if (!retailerAgg[d.retailer]) {
+                    retailerAgg[d.retailer] = {retailer: d.retailer, totalUnits: 0, totalStores: d.storeCount};
+                }
+                retailerAgg[d.retailer].totalUnits += d.weeklyUnits;
+            });
+            
+            const retailerData = Object.values(retailerAgg)
+                .map(d => ({...d, velocity: d.totalUnits / d.totalStores}))
+                .sort((a, b) => b.velocity - a.velocity)
+                .slice(0, 10);
+            
+            const retailerChart = document.getElementById('retailerChart');
+            retailerChart.innerHTML = '';
+            retailerData.forEach(d => {
+                const maxVel = Math.max(...retailerData.map(r => r.velocity));
+                const width = (d.velocity / maxVel * 100) + '%';
+                retailerChart.innerHTML += `
+                    <div class="bar-item">
+                        <div class="bar-label">${d.retailer}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${width}; background: ${getBarColor(d.velocity)};"></div>
+                            <div class="bar-value">${d.velocity.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // SKU chart
+            const skuAgg = {};
+            filtered.forEach(d => {
+                if (!skuAgg[d.sku]) {
+                    skuAgg[d.sku] = {sku: d.skuName, totalUnits: 0, totalStores: 0};
+                }
+                skuAgg[d.sku].totalUnits += d.weeklyUnits;
+                skuAgg[d.sku].totalStores += d.storeCount;
+            });
+            
+            const skuData = Object.values(skuAgg)
+                .map(d => ({...d, velocity: d.totalUnits / d.totalStores}))
+                .sort((a, b) => b.velocity - a.velocity);
+            
+            const skuChart = document.getElementById('skuChart');
+            skuChart.innerHTML = '';
+            skuData.forEach(d => {
+                const maxVel = Math.max(...skuData.map(s => s.velocity));
+                const width = (d.velocity / maxVel * 100) + '%';
+                skuChart.innerHTML += `
+                    <div class="bar-item">
+                        <div class="bar-label">${d.sku}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${width}; background: ${getBarColor(d.velocity)};"></div>
+                            <div class="bar-value">${d.velocity.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getVelocityClass(velocity) {
+            if (velocity >= 5) return 'velocity-excellent';
+            if (velocity >= 3) return 'velocity-good';
+            if (velocity >= 2) return 'velocity-fair';
+            return 'velocity-poor';
+        }
+
+        function updateTable() {
+            let filtered = getFilteredData();
+            
+            // Sort
+            filtered.sort((a, b) => {
+                const aVal = a[currentSort.key];
+                const bVal = b[currentSort.key];
+                if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            filtered = filtered.slice(0, 100);
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            filtered.forEach(row => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${row.region}</td>
+                        <td>${row.retailer}</td>
+                        <td>${row.skuName}</td>
+                        <td class="align-right">${row.storeCount}</td>
+                        <td class="align-right">
+                            <span class="velocity-badge ${getVelocityClass(row.velocity)}">${row.velocity}</span>
+                        </td>
+                        <td class="align-right">${row.weeklyUnits.toLocaleString()}</td>
+                        <td class="align-right">$${row.weeklyRevenue.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('recordCount').textContent = `(${filtered.length} records)`;
+            
+            // Update sort indicators
+            Object.keys(currentSort).forEach(key => {
+                const indicator = document.getElementById(`sort-${currentSort.key}`);
+                if (indicator) indicator.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+            });
+        }
+
+        function sortTable(key) {
+            if (currentSort.key === key) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort = {key, direction: 'desc'};
+            }
+            
+            // Clear all indicators
+            document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+            
+            updateTable();
+        }
+
+        function toggleTable() {
+            tableExpanded = !tableExpanded;
+            document.getElementById('tableContent').classList.toggle('hidden');
+            document.getElementById('chevron').classList.toggle('expanded');
+        }
+
+        function updateAll() {
+            updateMetrics();
+            updateCharts();
+            updateTable();
+        }
+
+        // Initialize
+        salesData = generateSalesData();
+        populateFilters();
+        updateAll();
+
+        // Event listeners
+        document.getElementById('regionFilter').addEventListener('change', () => {
+            updateRetailerFilter();
+            updateAll();
+        });
+        document.getElementById('retailerFilter').addEventListener('change', updateAll);
+        document.getElementById('skuFilter').addEventListener('change', updateAll);
+        document.getElementById('searchBox').addEventListener('input', updateTable);
+    </script>
+</body>
+</html>
