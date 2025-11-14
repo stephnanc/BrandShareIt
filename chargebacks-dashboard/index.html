@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNFI Chargebacks YTD Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #ffffff;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-overview {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .header-subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .accounts-section {
+            margin-bottom: 2rem;
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .account-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .account-card.high-alert {
+        }
+
+        .account-card.warning {
+        }
+
+        .account-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .account-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .percentage-high {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .percentage-warning {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .impact-cards-section {
+            margin-bottom: 2rem;
+        }
+
+        .impact-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .impact-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .impact-card-header {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .impact-metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .impact-metric-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .impact-metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .impact-metric-value.chargebacks {
+            color: #dc2626;
+        }
+
+        .impact-net-sales {
+            background: #f3f4f6;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .impact-net-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .impact-net-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .impact-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .impact-bar {
+            flex: 1;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .impact-bar-sales {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 0.25rem;
+        }
+
+        .impact-bar-chargebacks {
+            position: absolute;
+            height: 100%;
+            background: #ef4444;
+            border-radius: 0.25rem;
+        }
+
+        .impact-percentage {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ef4444;
+            min-width: 45px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <h1 class="header-title">UNFI Chargebacks YTD</h1>
+                <p class="header-overview">Overview: Total Sales, Total Invoices, Total Chargebacks & Variance %</p>
+                <p class="header-subtitle">January 1st, 2025 to October 1st, 2025</p>
+            </div>
+        </header>
+
+        <!-- Summary Metrics -->
+        <div class="summary-section">
+            <div class="summary-card">
+                <div class="summary-label">Total Sales (All Accounts)</div>
+                <div class="summary-value">$244,022</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Chargebacks</div>
+                <div class="summary-value">$10,173</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Overall Chargeback %</div>
+                <div class="summary-value">4.17%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Accounts Tracked</div>
+                <div class="summary-value">19</div>
+            </div>
+        </div>
+
+        <!-- Impact Cards Section -->
+        <div class="impact-cards-section">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: #1f2937;">Chargeback Impact - Top 10 Accounts</h2>
+            <div class="impact-cards-grid">
+                <!-- Independent Stores -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Independent Stores</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$127,177</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$3,872</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$123,305</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 3.04%;"></div>
+                        </div>
+                        <div class="impact-percentage">3.04%</div>
+                    </div>
+                </div>
+
+                <!-- Market Basket -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Market Basket</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$12,833</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$1,468</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$11,365</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 11.4%;"></div>
+                        </div>
+                        <div class="impact-percentage">11.4%</div>
+                    </div>
+                </div>
+
+                <!-- Harmon's -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Harmon's Neighborhood Grocer</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$9,095</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$0</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$9,095</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0%;"></div>
+                        </div>
+                        <div class="impact-percentage">0%</div>
+                    </div>
+                </div>
+
+                <!-- NCGA -->
+                <div class="impact-card">
+                    <div class="impact-card-header">National Co-op Grocers</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$8,127</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$59</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$8,068</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0.73%;"></div>
+                        </div>
+                        <div class="impact-percentage">0.73%</div>
+                    </div>
+                </div>
+
+                <!-- Festival Foods -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Festival Foods</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$7,445</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$170</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$7,275</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 2.3%;"></div>
+                        </div>
+                        <div class="impact-percentage">2.3%</div>
+                    </div>
+                </div>
+
+                <!-- Super One -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Super One</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$7,288</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$1,237</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$6,051</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 17%;"></div>
+                        </div>
+                        <div class="impact-percentage">17%</div>
+                    </div>
+                </div>
+
+                <!-- Palo Alto Egg Company -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Palo Alto Egg Company</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$7,303</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$0</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$7,303</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0%;"></div>
+                        </div>
+                        <div class="impact-percentage">0%</div>
+                    </div>
+                </div>
+
+                <!-- Heinen's -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Heinen's</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$5,430</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$0</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$5,430</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0%;"></div>
+                        </div>
+                        <div class="impact-percentage">0%</div>
+                    </div>
+                </div>
+
+                <!-- Big Y Grocery -->
+                <div class="impact-card">
+                    <div class="impact-card-header">Big Y Grocery (Full Service)</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$6,721</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$0</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$6,721</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0%;"></div>
+                        </div>
+                        <div class="impact-percentage">0%</div>
+                    </div>
+                </div>
+
+                <!-- URM Stores -->
+                <div class="impact-card">
+                    <div class="impact-card-header">URM Stores</div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Total Sales</div>
+                            <div class="impact-metric-value">$5,385</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="impact-metric-label">Chargebacks</div>
+                            <div class="impact-metric-value chargebacks">$0</div>
+                        </div>
+                    </div>
+                    <div class="impact-net-sales">
+                        <div class="impact-net-label">Net Sales</div>
+                        <div class="impact-net-value">$5,385</div>
+                    </div>
+                    <div class="impact-bar-container">
+                        <div class="impact-bar">
+                            <div class="impact-bar-sales" style="width: 100%;"></div>
+                            <div class="impact-bar-chargebacks" style="width: 0%;"></div>
+                        </div>
+                        <div class="impact-percentage">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Accounts Section -->
+        <div class="accounts-section">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: #1f2937;">UNFI Other Accounts Tracked</h2>
+            <div class="accounts-grid">
+                <!-- Northwest Grocers -->
+                <div class="account-card">
+                    <div class="account-name">Northwest Grocers</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$1,011</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">N/A</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$0</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-normal">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Raise the Bar Inc -->
+                <div class="account-card">
+                    <div class="account-name">Raise the Bar Inc</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$4,621</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">N/A</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$39</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-normal">0.08%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Good Earth, Fairfax -->
+                <div class="account-card">
+                    <div class="account-name">Good Earth, Fairfax</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$2,791</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">N/A</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$0</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-normal">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lazy Acres -->
+                <div class="account-card high-alert">
+                    <div class="account-name">Lazy Acres</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$1,048</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">5</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$208</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-high">19.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Leaf -->
+                <div class="account-card warning">
+                    <div class="account-name">New Leaf</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$2,836</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">7</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$244</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-warning">8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jensen's -->
+                <div class="account-card high-alert">
+                    <div class="account-name">Jensen's</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$137</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">3</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$236</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-high">172%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jimbo's -->
+                <div class="account-card high-alert">
+                    <div class="account-name">Jimbo's</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$2,649</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">33</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$64</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-normal">2.4%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clark's Nutrition -->
+                <div class="account-card high-alert">
+                    <div class="account-name">Clark's Nutrition</div>
+                    <div class="account-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Total Sales:</span>
+                            <span class="metric-value">$511</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Invoices:</span>
+                            <span class="metric-value">8</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Total Chargebacks:</span>
+                            <span class="metric-value">$479</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Chargeback %:</span>
+                            <span class="metric-value percentage-high">93.7%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+</body>
+</html>
