@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution & Market Coverage Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            padding: 1.5rem;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header-left {
+            flex: 1;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+        
+        .header p {
+            font-size: 0.875rem;
+            color: white;
+        }
+        
+        .header-footer {
+            text-align: right;
+        }
+        
+        .header-footer p:first-child {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .header-footer p:last-child {
+            font-size: 0.75rem;
+            color: white;
+            margin-top: 0.25rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card h2, .card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 2px solid #bae6fd;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #4b5563;
+            flex: 1;
+        }
+        
+        .metric-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .metric-subtext {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .legend-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .legend-color {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+            flex-shrink: 0;
+        }
+        
+        .legend-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #111827;
+        }
+        
+        .legend-subtext {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .search-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: #f9fafb;
+        }
+        
+        th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        
+        th.text-right {
+            text-align: right;
+        }
+        
+        th.text-center {
+            text-align: center;
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: #111827;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        td.text-right {
+            text-align: right;
+        }
+        
+        td.text-center {
+            text-align: center;
+        }
+        
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-new {
+            background-color: #d1fae5;
+            color: #065f46;
+            margin-left: 0.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .record-count {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+            margin-left: 0.5rem;
+        }
+        
+        .table-subtitle {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .overflow-container {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Market Coverage % ACV Distribution</h1>
+                    <h1>Intelligence Dashboard Example</h1>
+                    <p>Real-time visibility into where you're winning and where opportunities exist</p>
+                </div>
+                <div class="header-footer">
+                    <p>Brand Share It Sales Partners</p>
+                    <p>"One Step Ahead, Reaching for Tomorrow."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="card">
+            <h2>Filters</h2>
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>Region</label>
+                    <select id="regionFilter" class="form-control">
+                        <option value="All">All</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Product Filter</label>
+                    <select id="productFilter" class="form-control">
+                        <option value="All">All Products</option>
+                        <option value="Granola">Granola Bars</option>
+                        <option value="Protein">Protein Bars</option>
+                        <option value="Energy">Energy Bites</option>
+                        <option value="Trail Mix">Trail Mix Bars</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Buttons -->
+        <div class="button-group" style="margin-bottom: 1.5rem;">
+            <button id="distributionBtn" class="btn btn-primary">
+                Current Distribution
+            </button>
+            <button id="gapsBtn" class="btn btn-secondary">
+                Gap Opportunities
+            </button>
+        </div>
+
+        <!-- Key Metrics -->
+        <div id="metricsContainer" class="metrics-grid"></div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="card">
+                <h3>ACV Distribution by Region</h3>
+                <canvas id="barChart" width="600" height="300"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>Distribution Quality Status</h3>
+                <canvas id="pieChart" width="600" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Performance Legend -->
+        <div class="card">
+            <h3>Distribution Quality Indicators</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #10b981;"></div>
+                    <div>
+                        <div class="legend-text">Excellent</div>
+                        <div class="legend-subtext">≥90% stores</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3b82f6;"></div>
+                    <div>
+                        <div class="legend-text">Good</div>
+                        <div class="legend-subtext">75-89% stores</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #f59e0b;"></div>
+                    <div>
+                        <div class="legend-text">Fair</div>
+                        <div class="legend-subtext">50-74% stores</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ef4444;"></div>
+                    <div>
+                        <div class="legend-text">Poor</div>
+                        <div class="legend-subtext">&lt;50% stores</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="card">
+            <div style="margin-bottom: 1rem;">
+                <div class="table-title">
+                    <span id="tableTitle">Current Distribution Details</span>
+                    <span class="record-count" id="recordCount">(0 records)</span>
+                </div>
+                <p class="table-subtitle" id="tableSubtitle" style="color: #0891b2;">Showing retailers where you currently have distribution</p>
+            </div>
+            
+            <div class="search-grid">
+                <input type="text" id="searchInput" placeholder="Search by retailer, region, SKUs, status..." class="form-control">
+                
+                <div id="statusFilterContainer">
+                    <select id="statusFilter" class="form-control">
+                        <option value="All">All Status</option>
+                        <option value="Excellent">Excellent (≥90%)</option>
+                        <option value="Good">Good (75-89%)</option>
+                        <option value="Fair">Fair (50-74%)</option>
+                        <option value="Poor">Poor (&lt;50%)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="overflow-container">
+                <table>
+                    <thead id="tableHeader"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data
+            const RETAILERS = {
+              'North Atlantic': {'Whole Foods': 45, 'Trader Joe\'s': 38, 'Wegmans': 22, 'Stop & Shop': 68, 'ShopRite': 52, 'Giant Food': 31},
+              'Mid Atlantic': {'MOM\'s Organic Market': 18, 'Whole Foods': 52, 'Wegmans': 34, 'The Fresh Market': 28, 'Weis Markets': 42, 'ACME': 45, 'Safeway East': 36},
+              'Southeast': {'Earth Fare': 15, 'Sprouts Farmers Market': 42, 'The Fresh Market': 31, 'Harris Teeter': 62, 'Dekalb': 8},
+              'Florida': {'Whole Foods': 28, 'Lucky\'s Market': 6, 'The Fresh Market': 19, 'Winn-Dixie': 92, 'Sedano\'s': 34},
+              'Midwest': {'Fresh Thyme': 31, 'Natural Grocers': 45, 'Mariano\'s': 38, 'Hy-Vee': 125, 'Meijer': 94, 'Kroger': 142},
+              'Southwest': {'Sprouts Farmers Market': 68, 'Natural Grocers': 38, 'Central Market': 9, 'Fiesta Mart': 34, 'H-E-B': 186, 'Albertsons': 54, 'El Super': 28},
+              'Mountain': {'Natural Grocers': 42, 'Sprouts Farmers Market': 36, 'AJ\'s Fine Foods': 8, 'King Soopers': 78, 'Albertsons': 48, 'Smith\'s': 52},
+              'Pacific Northwest': {'New Seasons Market': 19, 'PCC Community Markets': 15, 'Metropolitan Market': 8, 'Town & Country': 6, 'Safeway': 64, 'Fred Meyer': 58, 'QFC': 32},
+              'North Pacific': {'Berkeley Bowl': 3, 'Rainbow Grocery': 2, 'Andronico\'s': 7, 'Mollie Stone\'s': 6, 'Safeway': 72, 'Lucky Supermarkets': 38, 'Raley\'s': 48},
+              'South Pacific': {'Erewhon': 6, 'Bristol Farms': 14, 'Lazy Acres': 5, 'Gelson\'s': 27, 'Northgate González': 42, 'Vons': 68, 'Stater Bros': 72}
+            };
+
+            const SKUS = [
+              { id: 'SKU-001', name: 'Organic Granola Bar - Chocolate' },
+              { id: 'SKU-002', name: 'Organic Granola Bar - Almond' },
+              { id: 'SKU-003', name: 'Protein Bar - Peanut Butter' },
+              { id: 'SKU-004', name: 'Energy Bites - Mixed Berry' },
+              { id: 'SKU-005', name: 'Trail Mix Bar - Classic' }
+            ];
+
+            // State
+            let state = {
+                viewMode: 'distribution',
+                selectedRegion: 'All',
+                selectedSKU: 'All',
+                statusFilter: 'All',
+                searchTerm: '',
+                distributionData: [],
+                gapData: []
+            };
+
+            // Initialize data
+            function initializeData() {
+                const allRetailers = [];
+                Object.entries(RETAILERS).forEach(([region, retailers]) => {
+                    Object.entries(retailers).forEach(([retailer, storeCount]) => {
+                        allRetailers.push({ region, retailer, storeCount });
+                    });
+                });
+                
+                const shuffled = allRetailers.sort(() => Math.random() - 0.5);
+                const splitPoint = Math.floor(shuffled.length * 0.75);
+                
+                state.distributionData = generateDistributionData(shuffled.slice(0, splitPoint));
+                state.gapData = generateGapData(shuffled.slice(splitPoint));
+            }
+
+            function generateDistributionData(retailers) {
+                return retailers.map(({ region, retailer, storeCount }) => {
+                    const isHighVolume = retailer.includes('Whole Foods') || retailer.includes('Kroger') || 
+                                        retailer.includes('H-E-B') || retailer.includes('Hy-Vee') ||
+                                        retailer.includes('Meijer') || retailer.includes('Safeway');
+                    
+                    const skusCarried = Math.floor(Math.random() * 5) + 1;
+                    const selectedSKUs = SKUS.slice(0, skusCarried);
+                    const avgStoreVolume = isHighVolume ? 800000 : 450000;
+                    const totalVolume = avgStoreVolume * storeCount;
+                    const storesWithProduct = Math.floor(storeCount * (0.7 + Math.random() * 0.3));
+                    const numericDistribution = (storesWithProduct / storeCount) * 100;
+                    const baseOOS = isHighVolume ? 2 : 5;
+                    const oosRate = baseOOS + Math.random() * 8;
+                    const categoryShelfSpace = 24;
+                    const ourShelfSpace = 0.5 + Math.random() * 2.5;
+                    const shareOfShelf = (ourShelfSpace / categoryShelfSpace) * 100;
+                    const avgFacings = 1 + Math.floor(Math.random() * 3);
+                    const isNewWin = Math.random() < 0.1;
+                    
+                    return {
+                        region,
+                        retailer,
+                        totalStores: storeCount,
+                        storesWithProduct,
+                        numericDistribution: parseFloat(numericDistribution.toFixed(1)),
+                        avgStoreVolume: parseFloat(avgStoreVolume.toFixed(0)),
+                        totalVolume: parseFloat(totalVolume.toFixed(0)),
+                        skusCarried: skusCarried,
+                        skuNames: selectedSKUs.map(s => s.name),
+                        oosRate: parseFloat(oosRate.toFixed(1)),
+                        shareOfShelf: parseFloat(shareOfShelf.toFixed(1)),
+                        avgFacings: avgFacings,
+                        totalFacings: avgFacings * skusCarried * storesWithProduct,
+                        isNewWin: isNewWin,
+                        distributionStatus: numericDistribution >= 90 ? 'Excellent' :
+                                          numericDistribution >= 75 ? 'Good' :
+                                          numericDistribution >= 50 ? 'Fair' : 'Poor'
+                    };
+                });
+            }
+
+            function generateGapData(retailers) {
+                return retailers.map(({ region, retailer, storeCount }) => {
+                    const isHighVolume = retailer.includes('Whole Foods') || retailer.includes('Kroger') || 
+                                        retailer.includes('H-E-B') || retailer.includes('Hy-Vee');
+                    const avgStoreVolume = isHighVolume ? 800000 : 450000;
+                    const potentialVolume = avgStoreVolume * storeCount * 0.02;
+                    
+                    return {
+                        region,
+                        retailer,
+                        storeCount,
+                        avgStoreVolume,
+                        potentialAnnualVolume: parseFloat(potentialVolume.toFixed(0)),
+                        priority: isHighVolume ? 'High' : storeCount > 50 ? 'Medium' : 'Low',
+                        estimatedTimeToWin: Math.floor(Math.random() * 180) + 30
+                    };
+                }).sort((a, b) => b.potentialAnnualVolume - a.potentialAnnualVolume);
+            }
+
+            // Filter data
+            function getFilteredData() {
+                const data = state.viewMode === 'distribution' ? state.distributionData : state.gapData;
+                let filtered = data;
+
+                if (state.selectedRegion !== 'All') {
+                    filtered = filtered.filter(d => d.region === state.selectedRegion);
+                }
+
+                if (state.viewMode === 'distribution') {
+                    if (state.selectedSKU !== 'All') {
+                        filtered = filtered.filter(d => d.skuNames.some(name => name.includes(state.selectedSKU)));
+                    }
+                    if (state.statusFilter !== 'All') {
+                        filtered = filtered.filter(d => d.distributionStatus === state.statusFilter);
+                    }
+                }
+
+                if (state.searchTerm.trim()) {
+                    const search = state.searchTerm.toLowerCase();
+                    filtered = filtered.filter(d => {
+                        const baseMatch = d.retailer.toLowerCase().includes(search) ||
+                                        d.region.toLowerCase().includes(search);
+                        if (state.viewMode === 'distribution') {
+                            return baseMatch || 
+                                   d.distributionStatus.toLowerCase().includes(search) ||
+                                   d.skuNames.some(name => name.toLowerCase().includes(search));
+                        } else {
+                            return baseMatch || d.priority.toLowerCase().includes(search);
+                        }
+                    });
+                }
+
+                return filtered;
+            }
+
+            // Calculate metrics
+            function calculateMetrics(filtered) {
+                if (state.viewMode === 'distribution') {
+                    const totalVolumeInUniverse = Object.entries(RETAILERS).reduce((sum, [region, retailers]) => {
+                        return sum + Object.entries(retailers).reduce((s, [retailer, count]) => {
+                            const isHighVolume = retailer.includes('Whole Foods') || retailer.includes('Kroger') || 
+                                                retailer.includes('H-E-B') || retailer.includes('Hy-Vee');
+                            const avgVol = isHighVolume ? 800000 : 450000;
+                            return s + (avgVol * count);
+                        }, 0);
+                    }, 0);
+
+                    const totalStoresWithProduct = filtered.reduce((sum, d) => sum + d.storesWithProduct, 0);
+                    const totalVolume = filtered.reduce((sum, d) => sum + d.totalVolume, 0);
+                    const acvDistribution = (totalVolume / totalVolumeInUniverse) * 100;
+                    const avgOOS = filtered.reduce((sum, d) => sum + d.oosRate, 0) / filtered.length;
+                    const avgSOS = filtered.reduce((sum, d) => sum + d.shareOfShelf, 0) / filtered.length;
+                    const totalFacings = filtered.reduce((sum, d) => sum + d.totalFacings, 0);
+                    const newWins = filtered.filter(d => d.isNewWin).length;
+                    const currentSalesVolume = totalVolume * 0.02;
+
+                    return {
+                        acvDistribution: acvDistribution.toFixed(1),
+                        currentSalesVolume: (currentSalesVolume / 1000000).toFixed(2),
+                        avgOOS: avgOOS.toFixed(1),
+                        avgSOS: avgSOS.toFixed(1),
+                        totalDistributionPoints: filtered.length,
+                        totalStoresWithProduct: totalStoresWithProduct.toLocaleString(),
+                        totalFacings: totalFacings.toLocaleString(),
+                        newWins
+                    };
+                } else {
+                    const totalGapOpportunities = filtered.length;
+                    const totalPotentialVolume = filtered.reduce((sum, d) => sum + d.potentialAnnualVolume, 0);
+                    const highPriorityGaps = filtered.filter(d => d.priority === 'High').length;
+                    const highPriorityStores = filtered.filter(d => d.priority === 'High').reduce((sum, d) => sum + d.storeCount, 0);
+                    const mediumPriorityGaps = filtered.filter(d => d.priority === 'Medium').length;
+                    const mediumPriorityStores = filtered.filter(d => d.priority === 'Medium').reduce((sum, d) => sum + d.storeCount, 0);
+                    const lowPriorityGaps = filtered.filter(d => d.priority === 'Low').length;
+                    const lowPriorityStores = filtered.filter(d => d.priority === 'Low').reduce((sum, d) => sum + d.storeCount, 0);
+                    const avgTimeToWin = filtered.reduce((sum, d) => sum + d.estimatedTimeToWin, 0) / (filtered.length || 1);
+                    const totalGapStores = filtered.reduce((sum, d) => sum + d.storeCount, 0);
+
+                    return {
+                        totalGapOpportunities,
+                        totalGapStores: totalGapStores.toLocaleString(),
+                        totalPotentialVolume: (totalPotentialVolume / 1000000).toFixed(2),
+                        highPriorityGaps,
+                        highPriorityStores,
+                        avgTimeToWin: avgTimeToWin.toFixed(0),
+                        mediumPriorityGaps,
+                        mediumPriorityStores,
+                        lowPriorityGaps,
+                        lowPriorityStores
+                    };
+                }
+            }
+
+            // SVG Icons
+            const icons = {
+                target: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>',
+                store: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>',
+                alert: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+                package: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
+                award: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>',
+                mapPin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>'
+            };
+
+            // Render metrics
+            function renderMetrics(metrics) {
+                const container = document.getElementById('metricsContainer');
+                
+                if (state.viewMode === 'distribution') {
+                    container.innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">ACV Distribution</div>
+                                <div class="metric-icon" style="background-color: #d1fae5; color: #059669;">${icons.target}</div>
+                            </div>
+                            <div class="metric-value">${metrics.acvDistribution}%</div>
+                            <div class="metric-subtext">Volume-weighted coverage</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Current Sales Volume</div>
+                                <div class="metric-icon" style="background-color: #dbeafe; color: #2563eb;">${icons.store}</div>
+                            </div>
+                            <div class="metric-value">$${metrics.currentSalesVolume}M</div>
+                            <div class="metric-subtext">Annual sales from distribution</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Avg Out-of-Stock</div>
+                                <div class="metric-icon" style="background-color: #fed7aa; color: #ea580c;">${icons.alert}</div>
+                            </div>
+                            <div class="metric-value">${metrics.avgOOS}%</div>
+                            <div class="metric-subtext">Availability: ${(100 - parseFloat(metrics.avgOOS)).toFixed(1)}%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Share of Shelf</div>
+                                <div class="metric-icon" style="background-color: #e9d5ff; color: #9333ea;">${icons.package}</div>
+                            </div>
+                            <div class="metric-value">${metrics.avgSOS}%</div>
+                            <div class="metric-subtext">${metrics.totalFacings} total facings</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Distribution Points</div>
+                                <div class="metric-icon" style="background-color: #cffafe; color: #0891b2;">${icons.store}</div>
+                            </div>
+                            <div class="metric-value">${metrics.totalDistributionPoints}</div>
+                            <div class="metric-subtext">${metrics.totalStoresWithProduct} stores with product</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">New Account Wins</div>
+                                <div class="metric-icon" style="background-color: #d1fae5; color: #059669;">${icons.award}</div>
+                            </div>
+                            <div class="metric-value">${metrics.newWins}</div>
+                            <div class="metric-subtext">Last 30 days</div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Total Opportunities</div>
+                                <div class="metric-icon" style="background-color: #fee2e2; color: #dc2626;">${icons.mapPin}</div>
+                            </div>
+                            <div class="metric-value">${metrics.totalGapOpportunities}</div>
+                            <div class="metric-subtext">${metrics.totalGapStores} stores total</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Potential Volume</div>
+                                <div class="metric-icon" style="background-color: #d1fae5; color: #059669;">${icons.target}</div>
+                            </div>
+                            <div class="metric-value">$${metrics.totalPotentialVolume}M</div>
+                            <div class="metric-subtext">Annual opportunity value</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">High Priority Gaps</div>
+                                <div class="metric-icon" style="background-color: #ffe4e6; color: #e11d48;">${icons.alert}</div>
+                            </div>
+                            <div class="metric-value">${metrics.highPriorityGaps}</div>
+                            <div class="metric-subtext">${metrics.highPriorityStores.toLocaleString()} stores</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Avg Time to Win</div>
+                                <div class="metric-icon" style="background-color: #fef3c7; color: #d97706;">${icons.store}</div>
+                            </div>
+                            <div class="metric-value">${metrics.avgTimeToWin} days</div>
+                            <div class="metric-subtext">Estimated sales cycle</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Medium Priority Gaps</div>
+                                <div class="metric-icon" style="background-color: #fef9c3; color: #ca8a04;">${icons.target}</div>
+                            </div>
+                            <div class="metric-value">${metrics.mediumPriorityGaps}</div>
+                            <div class="metric-subtext">${metrics.mediumPriorityStores.toLocaleString()} stores</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-label">Low Priority Gaps</div>
+                                <div class="metric-icon" style="background-color: #f3f4f6; color: #6b7280;">${icons.package}</div>
+                            </div>
+                            <div class="metric-value">${metrics.lowPriorityGaps}</div>
+                            <div class="metric-subtext">${metrics.lowPriorityStores.toLocaleString()} stores</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Chart helpers
+            function getACVColor(acv) {
+                if (acv >= 70) return '#10b981';
+                if (acv >= 50) return '#3b82f6';
+                if (acv >= 30) return '#f59e0b';
+                return '#ef4444';
+            }
+
+            function getStatusColor(status) {
+                const colors = {
+                    'Excellent': '#10b981',
+                    'Good': '#3b82f6',
+                    'Fair': '#f59e0b',
+                    'Poor': '#ef4444'
+                };
+                return colors[status] || '#6b7280';
+            }
+
+            // Render charts using Canvas
+            function renderBarChart() {
+                const canvas = document.getElementById('barChart');
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+
+                ctx.clearRect(0, 0, width, height);
+
+                const aggregated = {};
+                state.distributionData.forEach(d => {
+                    if (!aggregated[d.region]) {
+                        aggregated[d.region] = { region: d.region, totalVolume: 0 };
+                    }
+                    aggregated[d.region].totalVolume += d.totalVolume;
+                });
+
+                const regionalData = Object.values(aggregated).map(d => {
+                    const regionRetailers = RETAILERS[d.region];
+                    const totalRegionVolume = Object.entries(regionRetailers).reduce((sum, [retailer, count]) => {
+                        const isHighVolume = retailer.includes('Whole Foods') || retailer.includes('Kroger') || 
+                                            retailer.includes('H-E-B') || retailer.includes('Hy-Vee');
+                        const avgVol = isHighVolume ? 800000 : 450000;
+                        return sum + (avgVol * count);
+                    }, 0);
+                    return {
+                        region: d.region,
+                        acvDistribution: (d.totalVolume / totalRegionVolume) * 100
+                    };
+                }).sort((a, b) => b.acvDistribution - a.acvDistribution);
+
+                const padding = { top: 20, right: 20, bottom: 120, left: 60 };
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
+
+                const maxValue = Math.max(...regionalData.map(d => d.acvDistribution));
+                const barWidth = chartWidth / regionalData.length;
+                const scaleY = chartHeight / maxValue;
+
+                regionalData.forEach((d, i) => {
+                    const barHeight = d.acvDistribution * scaleY;
+                    const x = padding.left + i * barWidth + barWidth * 0.1;
+                    const y = padding.top + chartHeight - barHeight;
+                    const w = barWidth * 0.8;
+                    
+                    ctx.fillStyle = getACVColor(d.acvDistribution);
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, w, barHeight, [8, 8, 0, 0]);
+                    ctx.fill();
+                });
+
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, padding.top);
+                ctx.lineTo(padding.left, padding.top + chartHeight);
+                ctx.lineTo(width - padding.right, padding.top + chartHeight);
+                ctx.stroke();
+
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                regionalData.forEach((d, i) => {
+                    const x = padding.left + i * barWidth + barWidth / 2;
+                    const y = padding.top + chartHeight + 15;
+                    
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(d.region, 0, 0);
+                    ctx.restore();
+                });
+
+                ctx.save();
+                ctx.translate(15, height / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.textAlign = 'center';
+                ctx.fillText('ACV %', 0, 0);
+                ctx.restore();
+            }
+
+            function renderPieChart() {
+                const canvas = document.getElementById('pieChart');
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+
+                ctx.clearRect(0, 0, width, height);
+
+                const filtered = getFilteredData();
+                const statusCounts = { 'Excellent': 0, 'Good': 0, 'Fair': 0, 'Poor': 0 };
+                filtered.forEach(d => statusCounts[d.distributionStatus]++);
+                
+                const data = Object.entries(statusCounts)
+                    .map(([status, count]) => ({
+                        status,
+                        count,
+                        percent: (count / filtered.length) * 100
+                    }))
+                    .filter(d => d.count > 0);
+
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = Math.min(width, height) / 2 - 60;
+
+                let currentAngle = -Math.PI / 2;
+                const total = data.reduce((sum, d) => sum + d.count, 0);
+
+                data.forEach(d => {
+                    const sliceAngle = (d.count / total) * 2 * Math.PI;
+                    
+                    ctx.fillStyle = getStatusColor(d.status);
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    const labelAngle = currentAngle + sliceAngle / 2;
+                    const labelX = centerX + Math.cos(labelAngle) * radius * 0.7;
+                    const labelY = centerY + Math.sin(labelAngle) * radius * 0.7;
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${d.status}: ${d.percent.toFixed(0)}%`, labelX, labelY);
+
+                    currentAngle += sliceAngle;
+                });
+            }
+
+            function renderCharts() {
+                renderBarChart();
+                renderPieChart();
+            }
+
+            // Render table
+            function renderTable(data) {
+                const tableHeader = document.getElementById('tableHeader');
+                const tableBody = document.getElementById('tableBody');
+                
+                const displayData = data.slice(0, 50);
+                document.getElementById('recordCount').textContent = `(${displayData.length} records)`;
+
+                if (state.viewMode === 'distribution') {
+                    tableHeader.innerHTML = `
+                        <tr>
+                            <th>Retailer</th>
+                            <th>Region</th>
+                            <th class="text-right">Store %</th>
+                            <th class="text-right">SKUs</th>
+                            <th class="text-right">OOS %</th>
+                            <th class="text-right">SOS %</th>
+                            <th class="text-right">Facings</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    `;
+
+                    tableBody.innerHTML = displayData.map(row => {
+                        const oosColor = row.oosRate <= 3 ? '#10b981' : row.oosRate <= 7 ? '#f59e0b' : '#ef4444';
+                        const statusColor = getStatusColor(row.distributionStatus);
+                        return `
+                            <tr>
+                                <td>
+                                    ${row.retailer}
+                                    ${row.isNewWin ? '<span class="badge badge-new">NEW</span>' : ''}
+                                </td>
+                                <td style="color: #4b5563;">${row.region}</td>
+                                <td class="text-right">${row.numericDistribution}%</td>
+                                <td class="text-right">${row.skusCarried} of 5</td>
+                                <td class="text-right">
+                                    <span style="font-weight: 500; color: ${oosColor}">${row.oosRate}%</span>
+                                </td>
+                                <td class="text-right">${row.shareOfShelf}%</td>
+                                <td class="text-right">${row.avgFacings}</td>
+                                <td class="text-center">
+                                    <span class="badge" style="background-color: ${statusColor}20; color: ${statusColor}">
+                                        ${row.distributionStatus}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tableHeader.innerHTML = `
+                        <tr>
+                            <th>Retailer</th>
+                            <th>Region</th>
+                            <th class="text-right">Stores</th>
+                            <th class="text-right">Potential Volume</th>
+                            <th class="text-center">Priority</th>
+                            <th class="text-right">Est. Time</th>
+                        </tr>
+                    `;
+
+                    tableBody.innerHTML = displayData.map(row => {
+                        const priorityStyles = {
+                            'High': 'background-color: #fee2e2; color: #991b1b;',
+                            'Medium': 'background-color: #fef3c7; color: #92400e;',
+                            'Low': 'background-color: #f3f4f6; color: #374151;'
+                        };
+                        return `
+                            <tr>
+                                <td>${row.retailer}</td>
+                                <td style="color: #4b5563;">${row.region}</td>
+                                <td class="text-right">${row.storeCount}</td>
+                                <td class="text-right">$${(row.potentialAnnualVolume / 1000).toFixed(0)}K</td>
+                                <td class="text-center">
+                                    <span class="badge" style="${priorityStyles[row.priority]}">
+                                        ${row.priority}
+                                    </span>
+                                </td>
+                                <td class="text-right" style="color: #4b5563;">${row.estimatedTimeToWin} days</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // Update UI
+            function updateUI() {
+                const filtered = getFilteredData();
+                const metrics = calculateMetrics(filtered);
+                
+                renderMetrics(metrics);
+                renderCharts();
+                renderTable(filtered);
+
+                if (state.viewMode === 'distribution') {
+                    document.getElementById('tableTitle').textContent = 'Current Distribution Details';
+                    document.getElementById('tableSubtitle').textContent = 'Showing retailers where you currently have distribution';
+                    document.getElementById('tableSubtitle').style.color = '#0891b2';
+                    document.getElementById('statusFilterContainer').style.display = 'block';
+                    document.getElementById('searchInput').placeholder = 'Search by retailer, region, SKUs, status...';
+                } else {
+                    document.getElementById('tableTitle').textContent = 'Distribution Gap Opportunities';
+                    document.getElementById('tableSubtitle').textContent = "Showing retailers where you don't currently have distribution";
+                    document.getElementById('tableSubtitle').style.color = '#ea580c';
+                    document.getElementById('statusFilterContainer').style.display = 'none';
+                    document.getElementById('searchInput').placeholder = 'Search by retailer, region, priority...';
+                }
+            }
+
+            // Event listeners
+            document.getElementById('regionFilter').addEventListener('change', (e) => {
+                state.selectedRegion = e.target.value;
+                updateUI();
+            });
+
+            document.getElementById('productFilter').addEventListener('change', (e) => {
+                state.selectedSKU = e.target.value;
+                updateUI();
+            });
+
+            document.getElementById('statusFilter').addEventListener('change', (e) => {
+                state.statusFilter = e.target.value;
+                updateUI();
+            });
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                state.searchTerm = e.target.value;
+                updateUI();
+            });
+
+            document.getElementById('distributionBtn').addEventListener('click', () => {
+                state.viewMode = 'distribution';
+                state.searchTerm = '';
+                state.statusFilter = 'All';
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = 'All';
+                document.getElementById('productFilter').disabled = false;
+                
+                document.getElementById('distributionBtn').className = 'btn btn-primary';
+                document.getElementById('gapsBtn').className = 'btn btn-secondary';
+                
+                updateUI();
+            });
+
+            document.getElementById('gapsBtn').addEventListener('click', () => {
+                state.viewMode = 'gaps';
+                state.searchTerm = '';
+                state.statusFilter = 'All';
+                document.getElementById('searchInput').value = '';
+                document.getElementById('productFilter').disabled = true;
+                
+                document.getElementById('gapsBtn').className = 'btn btn-primary';
+                document.getElementById('distributionBtn').className = 'btn btn-secondary';
+                
+                updateUI();
+            });
+
+            // Initialize
+            initializeData();
+
+            const regions = ['All', ...new Set(state.distributionData.map(d => d.region))];
+            const regionFilter = document.getElementById('regionFilter');
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionFilter.appendChild(option);
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
