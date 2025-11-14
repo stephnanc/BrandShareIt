@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeSpin ROI Dashboard Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom right, #dbeafe, #e0f2fe, #cffafe);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .container {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(to bottom right, #0ea5e9, #2563eb, #06b6d4);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content {
+            position: relative;
+            z-index: 10;
+        }
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .brand-info {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            text-align: right;
+        }
+        .brand-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 0.25rem;
+        }
+        .filters {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #bfdbfe;
+        }
+        .filters h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #93c5fd;
+            border-radius: 0.5rem;
+            background: white;
+            font-family: inherit;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border: 1px solid #bfdbfe;
+        }
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            color: #374151;
+            font-weight: 500;
+        }
+        .metric-icon {
+            padding: 0.375rem;
+            border-radius: 0.5rem;
+        }
+        .icon-green { background: #15803d; }
+        .icon-purple { background: #7e22ce; }
+        .icon-amber { background: #b45309; }
+        .icon-emerald { background: #047857; }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #111827;
+        }
+        .metric-subtext {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 1px solid #bfdbfe;
+        }
+        .chart-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .zones-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #bfdbfe;
+        }
+        .zones-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        .zone-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .zone-color {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+        }
+        .zone-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #111827;
+        }
+        .zone-range {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        .table-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 1px solid #bfdbfe;
+        }
+        .table-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        .record-count {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border: 1px solid #93c5fd;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            min-width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: #f9fafb;
+        }
+        th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        th.text-right {
+            text-align: right;
+        }
+        tbody tr {
+            border-top: 1px solid #e5e7eb;
+        }
+        td {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+        }
+        td.text-right {
+            text-align: right;
+        }
+        .roi-badge {
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        .roi-excellent {
+            color: #047857;
+            background-color: #d1fae5;
+            border: 1px solid #6ee7b7;
+        }
+        .roi-good {
+            color: #4338ca;
+            background-color: #e0e7ff;
+            border: 1px solid #a5b4fc;
+        }
+        .roi-breakeven {
+            color: #92400e;
+            background-color: #fef3c7;
+            border: 1px solid #fcd34d;
+        }
+        .roi-losing {
+            color: #991b1b;
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <h1 class="header-title">TradeSpin ROI and Promotion</h1>
+                <h1 class="header-title">Effectiveness Dashboard Example</h1>
+                <p class="header-subtitle">Stop wasting money on promotions that don't break even</p>
+                <div class="brand-info">
+                    <div class="brand-name">Brand Share It Sales Partners</div>
+                    <div class="brand-tagline">"One Step Ahead, Reaching for Tomorrow."</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h2>Filters</h2>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Region</label>
+                    <select id="regionFilter">
+                        <option value="All">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Retailer</label>
+                    <select id="retailerFilter">
+                        <option value="All">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Promotion Type</label>
+                    <select id="promoTypeFilter">
+                        <option value="All">All Types</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">Total Trade Spend</div>
+                    <div class="metric-icon icon-green">
+                        <svg style="width: 1rem; height: 1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-value" id="totalSpend">$0K</div>
+                <div class="metric-subtext" id="promoCount">0 promotions</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">Blended ROI</div>
+                    <div class="metric-icon icon-purple">
+                        <svg style="width: 1rem; height: 1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-value" id="blendedROI">0%</div>
+                <div class="metric-subtext" id="profitablePercent">0% profitable</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">Avg Lift</div>
+                    <div class="metric-icon icon-amber">
+                        <svg style="width: 1rem; height: 1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-value" id="avgLift">0%</div>
+                <div class="metric-subtext">incremental volume</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-label">Cost/Incr. Unit</div>
+                    <div class="metric-icon icon-emerald">
+                        <svg style="width: 1rem; height: 1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-value" id="costPerUnit">$0</div>
+                <div class="metric-subtext">efficiency metric</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>ROI by Promotion Type</h3>
+                <div class="chart-container">
+                    <canvas id="promoTypeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Top 10 Retailers by ROI</h3>
+                <div class="chart-container">
+                    <canvas id="retailerChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Performance Zones -->
+        <div class="zones-card">
+            <h3>ROI Performance Zones</h3>
+            <div class="zones-grid">
+                <div class="zone-item">
+                    <div class="zone-color" style="background-color: #10b981;"></div>
+                    <div>
+                        <div class="zone-label">Excellent</div>
+                        <div class="zone-range">≥50% ROI</div>
+                    </div>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-color" style="background-color: #6366f1;"></div>
+                    <div>
+                        <div class="zone-label">Good</div>
+                        <div class="zone-range">20-49% ROI</div>
+                    </div>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-color" style="background-color: #f59e0b;"></div>
+                    <div>
+                        <div class="zone-label">Break Even</div>
+                        <div class="zone-range">0-19% ROI</div>
+                    </div>
+                </div>
+                <div class="zone-item">
+                    <div class="zone-color" style="background-color: #ef4444;"></div>
+                    <div>
+                        <div class="zone-label">Losing Money</div>
+                        <div class="zone-range">&lt;0% ROI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Promotions Table -->
+        <div class="table-card">
+            <h3>Promotion Details <span class="record-count" id="recordCount">(0 records)</span></h3>
+            
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by retailer, promotion type, product, spend, lift, or ROI...">
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Retailer</th>
+                            <th>Type</th>
+                            <th>Product</th>
+                            <th class="text-right">Spend</th>
+                            <th class="text-right">Lift %</th>
+                            <th class="text-right">Incr. Units</th>
+                            <th class="text-right">ROI</th>
+                            <th class="text-right">Efficiency</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structures
+        const RETAILERS = {
+            'North Atlantic': {'Whole Foods': 45, 'Trader Joe\'s': 38, 'Wegmans': 22, 'Stop & Shop': 68, 'ShopRite': 52, 'Giant Food': 31},
+            'Mid Atlantic': {'MOM\'s Organic Market': 18, 'Whole Foods': 52, 'Wegmans': 34, 'The Fresh Market': 28, 'Weis Markets': 42, 'ACME': 45, 'Safeway East': 36},
+            'Southeast': {'Earth Fare': 15, 'Sprouts Farmers Market': 42, 'The Fresh Market': 31, 'Harris Teeter': 62, 'Dekalb': 8},
+            'Florida': {'Whole Foods': 28, 'Lucky\'s Market': 6, 'The Fresh Market': 19, 'Winn-Dixie': 92, 'Sedano\'s': 34},
+            'Midwest': {'Fresh Thyme': 31, 'Natural Grocers': 45, 'Mariano\'s': 38, 'Hy-Vee': 125, 'Meijer': 94, 'Kroger': 142},
+            'Southwest': {'Sprouts Farmers Market': 68, 'Natural Grocers': 38, 'Central Market': 9, 'Fiesta Mart': 34, 'H-E-B': 186, 'Albertsons': 54, 'El Super': 28},
+            'Mountain': {'Natural Grocers': 42, 'Sprouts Farmers Market': 36, 'AJ\'s Fine Foods': 8, 'King Soopers': 78, 'Albertsons': 48, 'Smith\'s': 52},
+            'Pacific Northwest': {'New Seasons Market': 19, 'PCC Community Markets': 15, 'Metropolitan Market': 8, 'Town & Country': 6, 'Safeway': 64, 'Fred Meyer': 58, 'QFC': 32},
+            'North Pacific': {'Berkeley Bowl': 3, 'Rainbow Grocery': 2, 'Andronico\'s': 7, 'Mollie Stone\'s': 6, 'Safeway': 72, 'Lucky Supermarkets': 38, 'Raley\'s': 48},
+            'South Pacific': {'Erewhon': 6, 'Bristol Farms': 14, 'Lazy Acres': 5, 'Gelson\'s': 27, 'Northgate González': 42, 'Vons': 68, 'Stater Bros': 72}
+        };
+
+        const PROMOTION_TYPES = [
+            {id: 'TPR', name: 'Temporary Price Reduction', avgCost: 15, baseROI: 1.15},
+            {id: 'Feature', name: 'Feature Ad', avgCost: 25, baseROI: 1.5},
+            {id: 'Display', name: 'End Cap Display', avgCost: 35, baseROI: 1.7},
+            {id: 'TPR+Feature', name: 'TPR + Feature', avgCost: 35, baseROI: 1.9},
+            {id: 'TPR+Display', name: 'TPR + Display', avgCost: 45, baseROI: 2.1},
+            {id: 'Full Combo', name: 'TPR + Feature + Display', avgCost: 55, baseROI: 2.4}
+        ];
+
+        const SKUS = [
+            {id: 'SKU-001', name: 'Organic Granola Bar - Chocolate', avgPrice: 8.99, margin: 0.42},
+            {id: 'SKU-002', name: 'Organic Granola Bar - Almond', avgPrice: 8.99, margin: 0.42},
+            {id: 'SKU-003', name: 'Protein Bar - Peanut Butter', avgPrice: 11.99, margin: 0.48},
+            {id: 'SKU-004', name: 'Energy Bites - Mixed Berry', avgPrice: 9.49, margin: 0.45},
+            {id: 'SKU-005', name: 'Trail Mix Bar - Classic', avgPrice: 7.99, margin: 0.38}
+        ];
+
+        function generatePromotionData() {
+            const data = [];
+            const promoCount = 150;
+            
+            for (let i = 0; i < promoCount; i++) {
+                const regions = Object.keys(RETAILERS);
+                const region = regions[Math.floor(Math.random() * regions.length)];
+                const retailersInRegion = Object.keys(RETAILERS[region]);
+                const retailer = retailersInRegion[Math.floor(Math.random() * retailersInRegion.length)];
+                const storeCount = RETAILERS[region][retailer];
+                
+                const promoType = PROMOTION_TYPES[Math.floor(Math.random() * PROMOTION_TYPES.length)];
+                const sku = SKUS[Math.floor(Math.random() * SKUS.length)];
+                
+                const isPremium = retailer.includes('Whole Foods') || retailer.includes('Wegmans') || 
+                                 retailer.includes('Sprouts') || retailer.includes('Natural');
+                
+                const retailerMultiplier = isPremium ? (1.0 + Math.random() * 0.5) : (0.7 + Math.random() * 0.6);
+                
+                const baseStores = Math.min(storeCount, Math.floor(5 + Math.random() * 15));
+                const costPerStore = promoType.avgCost * (0.8 + Math.random() * 0.4);
+                const totalCost = baseStores * costPerStore;
+                
+                const baselineUnits = baseStores * (8 + Math.random() * 12);
+                const baseLift = promoType.baseROI * retailerMultiplier * (0.65 + Math.random() * 0.6);
+                const liftPercent = (baseLift - 1) * 100;
+                const incrementalUnits = baselineUnits * (baseLift - 1);
+                
+                const incrementalRevenue = incrementalUnits * sku.avgPrice;
+                const incrementalProfit = incrementalUnits * sku.avgPrice * sku.margin;
+                
+                const roi = ((incrementalProfit - totalCost) / totalCost) * 100;
+                const costPerIncrementalUnit = totalCost / incrementalUnits;
+                const efficiency = incrementalProfit / totalCost;
+                
+                data.push({
+                    id: `PROMO-${String(i + 1).padStart(3, '0')}`,
+                    region,
+                    retailer,
+                    storeCount: baseStores,
+                    promoType: promoType.id,
+                    promoTypeName: promoType.name,
+                    sku: sku.id,
+                    skuName: sku.name,
+                    totalCost: parseFloat(totalCost.toFixed(2)),
+                    baselineUnits: parseFloat(baselineUnits.toFixed(0)),
+                    incrementalUnits: parseFloat(incrementalUnits.toFixed(0)),
+                    liftPercent: parseFloat(liftPercent.toFixed(1)),
+                    incrementalRevenue: parseFloat(incrementalRevenue.toFixed(2)),
+                    incrementalProfit: parseFloat(incrementalProfit.toFixed(2)),
+                    roi: parseFloat(roi.toFixed(1)),
+                    costPerUnit: parseFloat(costPerIncrementalUnit.toFixed(2)),
+                    efficiency: parseFloat(efficiency.toFixed(2)),
+                    isProfitable: roi > 0
+                });
+            }
+            
+            return data;
+        }
+
+        let allData = generatePromotionData();
+        let filteredData = allData;
+        let promoTypeChart, retailerChart;
+
+        function getROIColor(roi) {
+            if (roi >= 50) return '#10b981';
+            if (roi >= 20) return '#6366f1';
+            if (roi >= 0) return '#f59e0b';
+            return '#ef4444';
+        }
+
+        function getROIBadgeClass(roi) {
+            if (roi >= 50) return 'roi-excellent';
+            if (roi >= 20) return 'roi-good';
+            if (roi >= 0) return 'roi-breakeven';
+            return 'roi-losing';
+        }
+
+        function updateMetrics() {
+            const totalSpend = filteredData.reduce((sum, d) => sum + d.totalCost, 0);
+            const totalProfit = filteredData.reduce((sum, d) => sum + d.incrementalProfit, 0);
+            const totalIncrementalUnits = filteredData.reduce((sum, d) => sum + d.incrementalUnits, 0);
+            const blendedROI = totalSpend > 0 ? ((totalProfit - totalSpend) / totalSpend) * 100 : 0;
+            const avgLift = filteredData.length > 0 
+                ? filteredData.reduce((sum, d) => sum + d.liftPercent, 0) / filteredData.length 
+                : 0;
+            const costPerUnit = totalSpend / totalIncrementalUnits;
+            const profitableCount = filteredData.filter(d => d.isProfitable).length;
+            const profitablePercent = (profitableCount / filteredData.length) * 100;
+
+            document.getElementById('totalSpend').textContent = `$${(totalSpend / 1000).toFixed(1)}K`;
+            document.getElementById('promoCount').textContent = `${filteredData.length} promotions`;
+            document.getElementById('blendedROI').textContent = `${blendedROI.toFixed(1)}%`;
+            document.getElementById('profitablePercent').textContent = `${profitablePercent.toFixed(0)}% profitable`;
+            document.getElementById('avgLift').textContent = `${avgLift.toFixed(1)}%`;
+            document.getElementById('costPerUnit').textContent = `$${costPerUnit.toFixed(2)}`;
+        }
+
+        function updateCharts() {
+            const aggregated = {};
+            filteredData.forEach(d => {
+                if (!aggregated[d.promoType]) {
+                    aggregated[d.promoType] = {promoType: d.promoTypeName, totalCost: 0, totalProfit: 0, count: 0};
+                }
+                aggregated[d.promoType].totalCost += d.totalCost;
+                aggregated[d.promoType].totalProfit += d.incrementalProfit;
+                aggregated[d.promoType].count += 1;
+            });
+            
+            const promoTypeData = Object.values(aggregated)
+                .map(d => ({...d, roi: ((d.totalProfit - d.totalCost) / d.totalCost) * 100}))
+                .sort((a, b) => b.roi - a.roi);
+
+            if (promoTypeChart) promoTypeChart.destroy();
+            const ctx1 = document.getElementById('promoTypeChart').getContext('2d');
+            promoTypeChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: promoTypeData.map(d => d.promoType),
+                    datasets: [{
+                        label: 'ROI %',
+                        data: promoTypeData.map(d => d.roi),
+                        backgroundColor: promoTypeData.map(d => getROIColor(d.roi)),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {display: false}},
+                    scales: {y: {beginAtZero: true, title: {display: true, text: 'ROI %'}}}
+                }
+            });
+
+            const retailerAgg = {};
+            filteredData.forEach(d => {
+                if (!retailerAgg[d.retailer]) {
+                    retailerAgg[d.retailer] = {retailer: d.retailer, totalCost: 0, totalProfit: 0};
+                }
+                retailerAgg[d.retailer].totalCost += d.totalCost;
+                retailerAgg[d.retailer].totalProfit += d.incrementalProfit;
+            });
+            
+            const retailerData = Object.values(retailerAgg)
+                .map(d => ({...d, roi: ((d.totalProfit - d.totalCost) / d.totalCost) * 100}))
+                .sort((a, b) => b.roi - a.roi)
+                .slice(0, 10);
+
+            if (retailerChart) retailerChart.destroy();
+            const ctx2 = document.getElementById('retailerChart').getContext('2d');
+            retailerChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: retailerData.map(d => d.retailer),
+                    datasets: [{
+                        label: 'ROI %',
+                        data: retailerData.map(d => d.roi),
+                        backgroundColor: retailerData.map(d => getROIColor(d.roi)),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {display: false}},
+                    scales: {x: {beginAtZero: true, title: {display: true, text: 'ROI %'}}}
+                }
+            });
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('tableBody');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let displayData = filteredData.filter(row => 
+                row.retailer.toLowerCase().includes(searchTerm) ||
+                row.promoTypeName.toLowerCase().includes(searchTerm) ||
+                row.skuName.toLowerCase().includes(searchTerm) ||
+                row.totalCost.toString().includes(searchTerm) ||
+                row.liftPercent.toString().includes(searchTerm) ||
+                row.roi.toString().includes(searchTerm)
+            ).slice(0, 50);
+
+            document.getElementById('recordCount').textContent = `(${displayData.length} records)`;
+
+            tbody.innerHTML = displayData.map(row => `
+                <tr>
+                    <td>${row.retailer}</td>
+                    <td style="color: #6b7280;">${row.promoTypeName}</td>
+                    <td style="color: #6b7280;">${row.skuName}</td>
+                    <td class="text-right" style="color: #111827;">$${row.totalCost.toLocaleString()}</td>
+                    <td class="text-right" style="color: #111827;">${row.liftPercent}%</td>
+                    <td class="text-right" style="color: #111827;">${row.incrementalUnits.toLocaleString()}</td>
+                    <td class="text-right">
+                        <span class="roi-badge ${getROIBadgeClass(row.roi)}">${row.roi}%</span>
+                    </td>
+                    <td class="text-right" style="color: #111827;">${row.efficiency.toFixed(2)}x</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const region = document.getElementById('regionFilter').value;
+            const retailer = document.getElementById('retailerFilter').value;
+            const promoType = document.getElementById('promoTypeFilter').value;
+
+            filteredData = allData.filter(d => {
+                return (region === 'All' || d.region === region) &&
+                       (retailer === 'All' || d.retailer === retailer) &&
+                       (promoType === 'All' || d.promoType === promoType);
+            });
+
+            updateMetrics();
+            updateCharts();
+            updateTable();
+        }
+
+        function initializeFilters() {
+            const regions = ['All', ...new Set(allData.map(d => d.region))];
+            const retailers = ['All', ...new Set(allData.map(d => d.retailer))];
+            const promoTypes = ['All', ...PROMOTION_TYPES.map(p => p.id)];
+
+            document.getElementById('regionFilter').innerHTML = regions.map(r => 
+                `<option value="${r}">${r}</option>`
+            ).join('');
+
+            document.getElementById('retailerFilter').innerHTML = retailers.map(r => 
+                `<option value="${r}">${r}</option>`
+            ).join('');
+
+            document.getElementById('promoTypeFilter').innerHTML = promoTypes.map(p => 
+                `<option value="${p}">${p === 'All' ? 'All Types' : PROMOTION_TYPES.find(pt => pt.id === p)?.name || p}</option>`
+            ).join('');
+        }
+
+        document.getElementById('regionFilter').addEventListener('change', applyFilters);
+        document.getElementById('retailerFilter').addEventListener('change', applyFilters);
+        document.getElementById('promoTypeFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('input', updateTable);
+
+        initializeFilters();
+        applyFilters();
+    </script>
+</body>
+</html>
