@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Library - AI Advantage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            gap: 0.75rem;
+        }
+
+        .header-title {
+            font-size: 2.15rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-tagline {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .ai-advantage {
+            font-weight: 700;
+            font-style: italic;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .intro-section {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .intro-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+        }
+
+        .intro-subtitle {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+        }
+
+        .intro-note {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #3b82f6;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .kpi-section {
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #16a34a;
+            padding: 1.25rem 1.5rem;
+            background: #ffffff;
+        }
+
+        .kpi-header.customer {
+            color: #2563eb;
+        }
+
+        .kpi-icon {
+            font-size: 1.5rem;
+        }
+
+        .kpi-list {
+            background: #ffffff;
+        }
+
+        .kpi-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .kpi-item:last-child {
+            border-bottom: none;
+        }
+
+        .kpi-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.125rem 1.5rem;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .kpi-item-header:hover {
+            background: #f8f9fa;
+            padding-left: 1.75rem;
+        }
+
+        .kpi-title {
+            font-size: 0.9375rem;
+            font-weight: 400;
+            color: #1f2937;
+        }
+
+        .kpi-arrow {
+            color: #9ca3af;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+            font-weight: 300;
+        }
+
+        .kpi-arrow.expanded {
+            transform: rotate(90deg);
+        }
+
+        .kpi-content {
+            display: none;
+            padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .kpi-content.show {
+            display: block;
+        }
+
+        .kpi-description {
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: #4b5563;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <h1 class="header-title">KPI Library - <span class="ai-advantage">AI Advantage</span> Key Performance Indicators</h1>
+                <div style="margin-top: 1rem;">
+                    <div class="brand-name">Brand Share It Sales Partners</div>
+                    <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="intro-section">
+            <h2 class="intro-title">Key Performance Indicators Library</h2>
+            <p class="intro-subtitle">Comprehensive KPI Framework for Sales Performance Excellence</p>
+            <p class="intro-note">Click arrows on each KPI to view additional details.</p>
+        </div>
+
+        <!-- Revenue & Growth Metrics Section -->
+        <div class="kpi-section">
+            <div class="kpi-header">
+                <span class="kpi-icon">💰</span>
+                <span>Revenue & Growth Metrics</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Total Revenue (Monthly/Quarterly/Annual)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the total income generated from all sales activities over a specific time period. It's your company's top-line number and the foundation for understanding overall business performance. Tracking this across different time frames helps identify seasonal trends and growth patterns.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue Growth Rate (YoY %)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage increase or decrease in revenue compared to the same period last year. It's a critical indicator of business health and market position. Consistent positive growth rates demonstrate strong business momentum and competitive advantage.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue by Channel (Distributor vs Direct)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This breaks down revenue sources between distributor partnerships and direct-to-customer sales. Understanding channel performance helps optimize resource allocation and identify the most profitable sales strategies. It reveals which channels are driving growth and where to focus expansion efforts.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Channel Growth Rate (% growth by channel)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures how fast each sales channel is growing over time. It helps identify which channels are gaining traction and which may need attention or optimization. Comparing growth rates across channels guides strategic decisions about where to invest resources.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Monthly Recurring Revenue (MRR)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks predictable revenue that repeats each month from ongoing orders or subscriptions. For B2B sales, this includes regular reorders from established accounts. High MRR indicates strong customer relationships and business stability.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue per Account</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the average revenue generated from each customer account. It helps identify high-value accounts and opportunities to increase sales to existing customers. Growing this metric indicates successful account expansion and upselling strategies.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Average Order Value (AOV)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the typical dollar amount of each order placed by customers. Increasing AOV through bundling, promotions, or product mix optimization directly impacts revenue without acquiring new customers. It's a key indicator of sales effectiveness and customer buying behavior.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Year-over-Year Revenue Comparison</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This compares current period revenue directly against the same period in the previous year. It accounts for seasonal variations and provides clear insight into business trajectory. This comparison is essential for setting realistic forecasts and identifying areas requiring strategic attention.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Metrics Section -->
+        <div class="kpi-section">
+            <div class="kpi-header customer">
+                <span class="kpi-icon">👥</span>
+                <span>Customer Metrics</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Total Active Customers/Accounts</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This counts all customers who have made purchases within a defined recent period (typically 90-180 days). It represents your current customer base and market reach. Tracking this number over time shows whether you're successfully expanding your market presence.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">New Customers Acquired</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the number of brand-new customers who made their first purchase during a specific period. It measures the effectiveness of your marketing and sales efforts to expand market share. Consistent new customer acquisition is essential for long-term growth.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Acquisition Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage increase in your customer base over time. It shows how quickly you're growing your market presence relative to your existing customer base. A healthy acquisition rate indicates effective sales and marketing strategies.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Retention Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the percentage of customers who continue to purchase from you over time. High retention rates indicate strong customer satisfaction and product-market fit. Retaining existing customers is typically more cost-effective than acquiring new ones.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Churn Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the percentage of customers who stop purchasing within a given period. It's the inverse of retention rate and signals potential issues with product quality, service, or competitive positioning. Reducing churn is critical for sustainable growth.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Lifetime Value (CLV)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This estimates the total revenue a customer will generate throughout their entire relationship with your business. It helps determine how much you can afford to spend on customer acquisition while remaining profitable. High CLV customers should receive focused retention efforts.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Net Customer Growth</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the net change in customer count by subtracting lost customers from new customers acquired. It provides a clear picture of whether your customer base is actually growing or shrinking. Positive net growth indicates healthy business expansion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Team Performance Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #7c3aed;">
+                <span class="kpi-icon">🎯</span>
+                <span>Sales Team Performance</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue per Sales Rep</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the total revenue generated by each individual sales representative over a specific period. It helps identify top performers and those who may need additional training or support. Tracking this metric ensures equitable territory distribution and fair compensation structures.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Accounts per Sales Rep</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the number of active customer accounts managed by each sales representative. It reveals workload distribution across your team and helps optimize territory assignments. Balancing account load ensures reps can provide adequate attention to each customer while maximizing coverage.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">New Accounts per Rep</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This counts how many new customer accounts each sales rep successfully brings onboard during a given timeframe. It measures individual contribution to business expansion and new market penetration. High performers in this area demonstrate strong prospecting and closing skills.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Average Deal Size per Rep</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the typical value of deals closed by each sales representative. It identifies reps who excel at selling to larger accounts or upselling products. Understanding deal size patterns helps align reps with appropriate customer segments and opportunities.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Sales Target Achievement</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the percentage of assigned sales quotas that each rep actually achieves. It provides clear visibility into individual performance against expectations and helps identify coaching needs. Consistent achievement above 100% indicates strong performers who may be ready for bigger territories or leadership roles.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Win Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage of opportunities that result in closed deals. It reveals how effectively your team converts prospects into customers and indicates the quality of your sales process. Low win rates may signal issues with lead qualification, pricing, or competitive positioning.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Sales Cycle Length</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the average time from initial contact to closed deal. Shorter cycles indicate efficient sales processes and strong product-market fit. Monitoring this metric helps identify bottlenecks in your sales process and opportunities to accelerate revenue generation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Activity Metrics (Calls, Emails, Meetings)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">These track the volume of outreach activities performed by each sales rep. Activity levels correlate strongly with pipeline development and revenue generation. Consistent tracking helps ensure reps maintain adequate prospecting efforts while balancing existing account management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distributor Performance Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #ea580c;">
+                <span class="kpi-icon">🚚</span>
+                <span>Distributor Performance</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue by Distributor</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures total sales generated through each distribution partner. It identifies your most valuable distributor relationships and reveals concentration risks in your channel strategy. Understanding distributor contribution helps prioritize partnership investments and relationship management efforts.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Distributor Growth Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the sales growth rate for each distributor partner over time. It reveals which partnerships are expanding and which may be stagnating or declining. Strong growth rates indicate effective collaboration and mutual success in the market.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Accounts per Distributor</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This counts how many end customers each distributor serves with your products. It shows market penetration depth through each channel partner and indicates their reach within target segments. High account counts demonstrate effective distributor sales force engagement.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Average Account Value per Distributor</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the typical revenue per customer account within each distributor's portfolio. It reveals whether distributors are focused on high-value or volume-based accounts. Understanding this helps align distributor incentives with your strategic priorities.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Market Share by Distributor</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures each distributor's market penetration within their territory or segment. It shows how effectively they're competing against other channels and competitors. Strong market share indicates effective distributor sales execution and brand representation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Distributor Performance Ranking</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This creates a comparative ranking of distributors based on key performance metrics. It enables data-driven decisions about partnership investments and resource allocation. Rankings help identify best practices from top performers that can be shared with other partners.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">On-Time Delivery Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the percentage of orders delivered on or before the promised date by each distributor. Reliable delivery is crucial for customer satisfaction and repeat business. Poor performance in this area can damage your brand reputation regardless of distributor responsibility.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Order Accuracy Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the percentage of orders fulfilled correctly without errors in product selection, quantity, or specifications. High accuracy reduces returns, customer complaints, and administrative overhead. It's a key indicator of distributor operational excellence and attention to detail.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profitability Metrics Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #db2777;">
+                <span class="kpi-icon">💎</span>
+                <span>Profitability Metrics</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Gross Profit Margin (Overall %)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage of revenue remaining after subtracting cost of goods sold. It's a fundamental indicator of business health and pricing effectiveness. Declining margins may signal pricing pressure, rising costs, or unfavorable product mix shifts.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Gross Profit by Channel</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This breaks down profit margins across different sales channels like distributors, direct sales, or online. Different channels typically have varying cost structures and margin profiles. Understanding channel profitability helps optimize your go-to-market strategy and resource allocation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Profit per Customer</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the average profit generated from each customer account. It helps identify your most valuable customers beyond just revenue volume. High-profit customers should receive prioritized service and retention efforts to protect this critical revenue base.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Cost of Goods Sold (COGS)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the direct costs associated with producing or purchasing products sold. Monitoring COGS trends helps identify opportunities for supplier negotiations or production efficiencies. Rising COGS relative to revenue indicates margin compression that requires strategic action.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Sales & Marketing Expenses</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures total spending on sales team compensation, marketing campaigns, and customer acquisition activities. Analyzing these costs as a percentage of revenue reveals efficiency of your go-to-market investments. Optimizing this ratio while maintaining growth is key to sustainable profitability.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Return on Sales (ROS)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates net profit as a percentage of total revenue, showing how much profit you generate per dollar of sales. It's a comprehensive profitability metric that accounts for all operating expenses. Strong ROS indicates effective cost management and competitive pricing power.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Performance Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #0891b2;">
+                <span class="kpi-icon">📦</span>
+                <span>Product Performance</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue by Product Category</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This breaks down sales across your different product lines or categories. It reveals which product groups drive the most revenue and where growth opportunities exist. Understanding category performance guides inventory decisions, marketing focus, and new product development priorities.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Top 10 Products by Revenue</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This ranks your best-selling individual products by total revenue generated. It helps you identify star performers that deserve promotional investment and stock prioritization. These top products often represent your strongest competitive advantages and customer value propositions.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Product Growth Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures sales growth for each product or category over time. Fast-growing products indicate strong market demand and may warrant increased production or inventory investment. Declining products may need revitalization strategies or eventual phase-out decisions.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">New Product Revenue</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks sales generated by recently launched products within their first year. It measures innovation success and market acceptance of new offerings. Strong new product revenue indicates effective product development and launch execution capabilities.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Product Mix Analysis</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This examines the relative proportion of sales across your entire product portfolio. Understanding product mix helps optimize pricing strategies and identify cross-selling opportunities. Shifts in mix can significantly impact overall profitability even when total revenue remains stable.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Cross-Sell/Up-Sell Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures how often customers purchase additional or premium products beyond their initial order. High rates indicate effective sales techniques and complementary product positioning. Improving this metric directly increases revenue per customer without additional acquisition costs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operational Efficiency Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #f59e0b;">
+                <span class="kpi-icon">⚡</span>
+                <span>Operational Efficiency</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Order Frequency</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks how often customers place orders within a given timeframe. Higher frequency indicates strong product-market fit and reliable customer relationships. Monitoring changes in order frequency provides early warning of satisfaction issues or competitive threats.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Reorder Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the percentage of customers who make repeat purchases after their initial order. High reorder rates indicate customer satisfaction and successful product delivery. It's a leading indicator of customer retention and lifetime value potential.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Quote-to-Close Ratio</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage of quotes or proposals that convert into actual sales. A low ratio may indicate pricing issues, poor qualification, or competitive disadvantages. Improving this metric increases revenue without requiring additional prospecting effort.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Sales Productivity</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures revenue generated per sales employee or per hour of selling time. It reveals how efficiently your sales team converts effort into results. Improving productivity through better tools, training, or processes directly impacts profitability without increasing headcount.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Days Sales Outstanding (DSO)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the average number of days it takes to collect payment after a sale. Lower DSO improves cash flow and reduces financing costs. High DSO may indicate credit policy issues or customer financial difficulties requiring attention.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Inventory Turnover</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures how many times inventory is sold and replaced during a period. Higher turnover indicates efficient inventory management and strong sales velocity. Low turnover ties up capital and increases storage costs and obsolescence risk.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographic/Territory Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #059669;">
+                <span class="kpi-icon">🗺️</span>
+                <span>Geographic/Territory</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Revenue by Territory/Region</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This breaks down sales performance across different geographic areas or sales territories. It identifies high-performing regions and untapped market opportunities. Understanding geographic distribution helps optimize resource allocation and expansion strategies.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Territory Growth Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures sales growth within each territory over time. It reveals which markets are expanding and which may be saturated or declining. Comparing growth rates helps prioritize market development investments and identify successful strategies to replicate.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Market Penetration</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage of potential customers in a territory who actually purchase from you. Low penetration indicates significant growth opportunity while high penetration suggests market saturation. This metric guides decisions about territory expansion versus deepening existing market presence.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Territory Performance vs Target</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This compares actual sales in each territory against assigned goals or quotas. It enables objective evaluation of sales rep effectiveness when accounting for territory potential. Consistent underperformance may indicate need for strategy adjustment or resource reallocation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Geographic Customer Concentration</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This analyzes how your customer base is distributed geographically. High concentration in specific areas creates risk if regional economic conditions deteriorate. Balanced geographic distribution provides stability and resilience against localized market disruptions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline & Forecasting Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #6366f1;">
+                <span class="kpi-icon">🔮</span>
+                <span>Pipeline & Forecasting</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Pipeline Value</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the total potential revenue from all active opportunities in your sales pipeline. A healthy pipeline value should be 3-5x your quarterly revenue target. Tracking pipeline trends provides early warning of future revenue shortfalls or surpluses.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Qualified Leads</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This counts prospects who meet your criteria for budget, authority, need, and timeline. Tracking qualified leads helps predict future sales and assess marketing effectiveness. A steady flow of qualified leads is essential for consistent revenue growth.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Conversion Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures the percentage of leads that progress through each stage of your sales funnel. Understanding conversion rates at each stage identifies bottlenecks in your sales process. Improving conversion rates directly increases revenue without requiring more leads.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Forecast Accuracy</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This compares predicted sales against actual results to measure forecasting reliability. Accurate forecasting enables better resource planning and inventory management. Improving forecast accuracy reduces waste and missed opportunities from over or under-preparation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Pipeline Velocity</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates how quickly opportunities move through your sales pipeline to closure. Faster velocity means revenue is realized sooner and sales capacity is freed for new opportunities. Slow velocity may indicate process inefficiencies or poor lead quality.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Satisfaction Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #ec4899;">
+                <span class="kpi-icon">😊</span>
+                <span>Customer Satisfaction</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Net Promoter Score (NPS)</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures customer willingness to recommend your business to others on a -100 to +100 scale. High NPS correlates with strong customer loyalty and organic growth through referrals. It's one of the most widely used indicators of overall customer satisfaction.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Satisfaction Score</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This captures direct customer ratings of their satisfaction with your products and services. Regular satisfaction tracking helps identify issues before they result in churn. Improving satisfaction scores typically leads to higher retention and increased lifetime value.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Customer Complaint Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the frequency of customer complaints relative to total transactions or customers. Rising complaint rates signal quality or service issues requiring immediate attention. Proactive complaint management prevents customer loss and protects brand reputation.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Resolution Time</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures how quickly customer issues or complaints are fully resolved. Fast resolution demonstrates commitment to customer service and helps maintain relationships despite problems. Long resolution times damage trust and increase churn risk even when issues are eventually fixed.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Repeat Purchase Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This calculates the percentage of customers who make multiple purchases over time. High repeat rates indicate customer satisfaction and successful relationship building. This metric is closely tied to customer lifetime value and overall business sustainability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Competitive Intelligence Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #dc2626;">
+                <span class="kpi-icon">⚔️</span>
+                <span>Competitive Intelligence</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Market Share</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures your percentage of total sales within your target market or category. Growing market share indicates competitive strength even in flat markets. Understanding share trends helps assess whether your growth comes from market expansion or winning competitor customers.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Competitive Win Rate</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the percentage of competitive opportunities where you win the business. High win rates indicate strong competitive positioning and value proposition. Analyzing losses reveals where competitors have advantages you need to address.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Price Position</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This compares your pricing relative to competitors in the market. Understanding price position helps optimize the balance between volume and margins. Being too expensive or too cheap relative to value delivered can both damage long-term business success.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Lost Deal Analysis</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This systematically examines why you lose deals to better understand competitive weaknesses. Common loss reasons might include price, features, service, or relationship factors. Acting on loss analysis insights helps improve win rates and competitive positioning over time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Distribution Section -->
+        <div class="kpi-section">
+            <div class="kpi-header" style="color: #84cc16;">
+                <span class="kpi-icon">🥘</span>
+                <span>Food Distribution</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Delivery Performance</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This measures on-time delivery rates and condition of products upon arrival for food distribution. Reliable delivery is critical in food service where late arrivals can disrupt restaurant operations. Strong delivery performance differentiates you from competitors and builds customer loyalty.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Order Accuracy</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks the percentage of orders fulfilled correctly without substitutions or errors. In food distribution, order accuracy directly impacts customer operations and satisfaction. High accuracy reduces returns, credits, and the administrative burden of fixing mistakes.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Product Quality Metrics</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This monitors food quality indicators including freshness, temperature compliance, and damage rates. Quality issues in food distribution can have serious health and safety implications. Consistent quality tracking protects brand reputation and ensures regulatory compliance.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Cold Chain Compliance</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This verifies that temperature-sensitive products maintain required temperatures throughout storage and transport. Cold chain breaches can compromise food safety and quality. Rigorous compliance prevents waste, protects consumers, and meets regulatory requirements.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <span class="kpi-title">Shelf Life Management</span>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">This tracks inventory age and ensures products are sold before expiration dates. Effective shelf life management minimizes waste and ensures customers receive fresh products. Poor management results in costly spoilage and dissatisfied customers receiving short-dated items.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Roadmap Section -->
+        <div class="kpi-section" style="margin-top: 2rem;">
+            <div class="kpi-header" style="color: #1e293b; background: #ffffff;">
+                <span class="kpi-icon">🎯</span>
+                <span>Implementation Priority Framework</span>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">🔴</span>
+                            <span class="kpi-title">High Priority: Revenue Growth, Customer Retention, Profit Margins</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Focus on Revenue Growth, Customer Retention, and Profit Margins as your foundational metrics. These KPIs directly impact business sustainability and should be implemented first. They provide the essential insights needed to make critical strategic decisions.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">🟡</span>
+                            <span class="kpi-title">Medium Priority: Pipeline Metrics, Territory Analysis, Product Mix</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Add Pipeline Metrics, Territory Analysis, and Product Mix tracking once foundational metrics are stable. These provide deeper insights into sales operations and market dynamics. They help optimize resource allocation and identify growth opportunities.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">🟢</span>
+                            <span class="kpi-title">Future Enhancement: Customer Satisfaction, Competitive Intelligence</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Incorporate Customer Satisfaction and Competitive Intelligence as your system matures. These advanced metrics provide strategic context and early warning signals. They enable proactive decision-making and competitive positioning refinement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Phases Section -->
+        <div class="kpi-section" style="margin-top: 2rem;">
+            <div class="kpi-header" style="color: #1e293b; background: #ffffff;">
+                <span class="kpi-icon">📈</span>
+                <span>Ready to Implement?</span>
+            </div>
+            <div style="padding: 1.5rem 1.5rem 0.5rem 1.5rem; background: #ffffff;">
+                <p style="font-size: 0.9375rem; line-height: 1.7; color: #4b5563; margin-bottom: 1.5rem;">These KPIs can be implemented gradually to build a comprehensive sales performance measurement system. Start with the high-priority metrics and expand based on your business needs.</p>
+            </div>
+            <div class="kpi-list">
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">📊</span>
+                            <span class="kpi-title">Phase 1: Foundation</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Begin by implementing basic revenue tracking, customer metrics, and sales representative performance indicators. These foundational KPIs establish your baseline performance and create the infrastructure for future analytics. Focus on data accuracy and consistent reporting cadence during this phase.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">🚀</span>
+                            <span class="kpi-title">Phase 2: Enhancement</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Expand your system to include profitability metrics, detailed product performance tracking, and operational efficiency indicators. This phase adds depth to your analysis and reveals optimization opportunities. These enhanced metrics enable more sophisticated decision-making and strategic planning.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-item">
+                    <div class="kpi-item-header" onclick="toggleKPI(this)">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">🎯</span>
+                            <span class="kpi-title">Phase 3: Optimization</span>
+                        </div>
+                        <span class="kpi-arrow">›</span>
+                    </div>
+                    <div class="kpi-content">
+                        <p class="kpi-description">Complete your analytics ecosystem with competitive intelligence tracking and advanced customer insights. This final phase transforms your KPI system into a comprehensive strategic tool. You'll gain market context and predictive capabilities that drive sustained competitive advantage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleKPI(header) {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector('.kpi-arrow');
+                
+                content.classList.toggle('show');
+                arrow.classList.toggle('expanded');
+            }
+        </script>
+    </div>
+</body>
+</html>
