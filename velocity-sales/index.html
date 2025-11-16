@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNFI Sales & Velocity Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f9fafb;
+            padding: 2rem;
+            color: #333;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content { position: relative; z-index: 1; }
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alert-banner {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .alert-banner h2 {
+            color: #1e40af;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .alert-banner p {
+            color: #1f2937;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+        .summary-card h3 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .summary-card .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .summary-card .big-number.positive { color: #16a34a; }
+        .summary-card .big-number.negative { color: #dc2626; }
+        .summary-card .big-number.neutral { color: #1f2937; }
+        .summary-card .subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            margin-bottom: 2rem;
+        }
+        .card h2 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 1rem;
+        }
+        
+        .channel-comparison {
+            display: grid;
+            gap: 1rem;
+        }
+        .channel-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            align-items: center;
+        }
+        
+        .channel-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1.05rem;
+        }
+        .channel-metric {
+            text-align: center;
+        }
+        .channel-metric .label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .channel-metric .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .channel-metric .value.positive { color: #16a34a; }
+        .channel-metric .value.negative { color: #dc2626; }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        .risk-badge.excellent { background: #10b981; color: white; }
+        .risk-badge.healthy { background: #16a34a; color: white; }
+        .risk-badge.good { background: #3b82f6; color: white; }
+        .risk-badge.monitor { background: #f59e0b; color: white; }
+        
+        .insight-box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+        .insight-box h3 {
+            color: #1e40af;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .insight-box p {
+            color: #1f2937;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        .insight-box ul {
+            margin-left: 1.5rem;
+            color: #1f2937;
+        }
+        .insight-box li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 0.25rem;
+        }
+        
+        .sidebar-branding {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+        .sidebar-branding .company-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .sidebar-branding .tagline {
+            font-size: 0.7rem;
+            color: #6b7280;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1>UNFI Sales and Velocity Alignment Report</h1>
+                        <p>Year-to-Date 1/1 to 10/31 2025 versus 2024 - Strong Performance</p>
+                    </div>
+                    <div style="text-align: right; padding-left: 2rem;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Brand Share It Sales Partners</div>
+                        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.9); font-weight: 500; letter-spacing: 0.05em;">One Step Ahead Reaching for Tomorrow</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert-banner">
+            <h2>✅ Healthy Growth Alignment Achieved</h2>
+            <p>Sales and velocity are moving in tandem with an 8-point variance, demonstrating strong consumer demand matching our distribution expansion. Our promotional strategies and account management are delivering sustainable, balanced growth across the UNFI network.</p>
+        </div>
+        
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Sales Growth</h3>
+                <div class="big-number positive">+43%</div>
+                <div class="subtitle">$380.4K → $666.4K</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">What we shipped to UNFI</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Total Velocity Growth</h3>
+                <div class="big-number positive">+35%</div>
+                <div class="subtitle">$82.3K → $111.1K</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">What consumers bought</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Sales vs Velocity Gap</h3>
+                <div class="big-number positive">8 pts</div>
+                <div class="subtitle">Healthy Alignment</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">Target: <10 points ✓</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Channels Performing</h3>
+                <div class="big-number positive">5 of 5</div>
+                <div class="subtitle">All channels positive velocity</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">Sustainable growth achieved</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Sales vs Velocity: Channel-by-Channel Comparison</h2>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3b82f6;"></div>
+                    <span>Sales Growth %</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #22d3ee;"></div>
+                    <span>Velocity Growth %</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Channel Health Assessment</h2>
+            <div class="channel-comparison">
+                <div class="channel-row" style="background: #e5e7eb; font-weight: 700;">
+                    <div class="channel-name">CHANNEL</div>
+                    <div class="channel-metric">
+                        <div class="label">SALES GROWTH</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="label">VELOCITY GROWTH</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="label">PERFORMANCE</div>
+                    </div>
+                </div>
+                
+                <div class="channel-row">
+                    <div class="channel-name">Independents</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+47%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+38%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge healthy">HEALTHY</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row">
+                    <div class="channel-name">Market Basket</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+37%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+32%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge excellent">EXCELLENT</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row">
+                    <div class="channel-name">Harmons-Super 1-URM</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+68%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+58%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge healthy">HEALTHY</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row">
+                    <div class="channel-name">Heinen's</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+19%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+23%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge excellent">EXCELLENT</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row">
+                    <div class="channel-name">Festival Foods</div>
+                    <div class="channel-metric">
+                        <div class="value negative">-34%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+12%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge good">IMPROVING</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Dollar Value Analysis: Sales vs Velocity</h2>
+            <div class="chart-container">
+                <canvas id="dollarChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Key Success Factors & Strategic Insights</h2>
+            
+            <div class="insight-box">
+                <h3>🎯 Strong Performance: Independents Channel</h3>
+                <p><strong>The Achievement:</strong> Sales up 47% ($210K → $392.8K) with velocity up 38% ($56.0K → $77.3K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>9-point gap indicates healthy inventory turnover across 344 stores</li>
+                    <li>Consumer demand is keeping pace with distribution expansion</li>
+                    <li>Promotional programs and merchandising support are effective</li>
+                </ul>
+                <p><strong>Action:</strong> Continue current strategy; consider controlled expansion to additional independent accounts</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>⭐ Best-in-Class: Market Basket</h3>
+                <p><strong>The Win:</strong> Sales up 37% ($36.4K → $58K) with velocity up 32% ($7.7K → $10.1K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>5-point gap represents near-perfect alignment</li>
+                    <li>32 stores showing consistent, sustainable growth</li>
+                    <li>Model execution that should be replicated</li>
+                </ul>
+                <p><strong>Action:</strong> Document success factors for regional rollout; explore additional promotional opportunities</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>📈 Growth Leader: Harmons-Super 1-URM</h3>
+                <p><strong>The Achievement:</strong> Sales up 68% ($15.2K → $47.6K) with velocity up 58% ($3.6K → $5.7K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>10-point gap at the upper threshold but manageable</li>
+                    <li>Rapid expansion supported by strong consumer adoption</li>
+                    <li>Combined channel leveraging three strong regional partners</li>
+                </ul>
+                <p><strong>Action:</strong> Monitor inventory levels monthly; maintain promotional cadence to support velocity</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>✨ Perfect Balance: Heinen's</h3>
+                <p><strong>The Win:</strong> Sales up 19% ($19.2K → $23.6K) with velocity up 23% ($4.2K → $5.1K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>Velocity slightly exceeding sales = optimal inventory health</li>
+                    <li>Steady, sustainable growth across all 23 locations</li>
+                    <li>Premium positioning resonating with target consumers</li>
+                </ul>
+                <p><strong>Action:</strong> Maintain current approach; explore line extensions or new SKU opportunities</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>🔄 Turnaround Story: Festival Foods</h3>
+                <p><strong>The Progress:</strong> Sales down 34% ($44.8K → $29.6K) but velocity up 12% ($10.8K → $12.1K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>Consumer demand growing despite reduced shipments</li>
+                    <li>Previous over-inventory situation being corrected</li>
+                    <li>Strong velocity indicates brand health in the channel</li>
+                </ul>
+                <p><strong>Action:</strong> Gradual sales increases in Q1 2026 to match growing consumer demand</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Understanding the Metrics</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                <div>
+                    <h3 style="color: #3b82f6; margin-bottom: 1rem;">Sales (Sell-In)</h3>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Revenue from shipments to UNFI/retailers</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product leaves our warehouse</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> Our revenue and market expansion</p>
+                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #16a34a; font-weight: 700;">+43% growth</span></p>
+                </div>
+                <div>
+                    <h3 style="color: #22d3ee; margin-bottom: 1rem;">Velocity (Sell-Through)</h3>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Actual consumer purchases at checkout</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product scans at retail POS</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> True consumer demand and inventory health</p>
+                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #16a34a; font-weight: 700;">+35% growth</span></p>
+                </div>
+            </div>
+            
+            <div style="background: #eff6ff; padding: 1.5rem; border-radius: 0.5rem; margin-top: 2rem; border-left: 4px solid #3b82f6;">
+                <h3 style="color: #1e40af; margin-bottom: 0.75rem; font-size: 1.1rem;">Why This 8-Point Gap Matters</h3>
+                <p style="color: #1f2937; line-height: 1.6;">An 8-point gap between sales and velocity growth indicates healthy business expansion. We're growing distribution faster than demand, but within sustainable limits. This suggests proper promotional support, good inventory management, and strong retailer partnerships. Industry best practice targets gaps under 10 points - we're executing at that benchmark.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Comparison Chart
+        new Chart(document.getElementById('comparisonChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
+                datasets: [{
+                    label: 'Sales Growth %',
+                    data: [47, 37, 68, 19, -34],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }, {
+                    label: 'Velocity Growth %',
+                    data: [38, 32, 58, 23, 12],
+                    backgroundColor: '#22d3ee',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Growth Rate (%)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Channel',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Dollar Value Chart
+        new Chart(document.getElementById('dollarChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
+                datasets: [{
+                    label: '2024 Sales',
+                    data: [210, 36.4, 15.2, 19.2, 44.8],
+                    backgroundColor: '#94a3b8',
+                    borderRadius: 6
+                }, {
+                    label: '2025 Sales',
+                    data: [392.8, 58, 47.6, 23.6, 29.6],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }, {
+                    label: '2024 Velocity',
+                    data: [56.0, 7.67, 3.62, 4.16, 10.81],
+                    backgroundColor: '#cbd5e1',
+                    borderRadius: 6
+                }, {
+                    label: '2025 Velocity',
+                    data: [77.3, 10.1, 5.7, 5.1, 12.1],
+                    backgroundColor: '#22d3ee',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Dollars (Thousands)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value + 'K';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toFixed(1) + 'K';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
