@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNFI Sales & Velocity Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f9fafb;
+            padding: 2rem;
+            color: #333;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content { position: relative; z-index: 1; }
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alert-banner {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        }
+        .alert-banner h2 {
+            color: #1e40af;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .alert-banner p {
+            color: #1f2937;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+        .summary-card h3 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .summary-card .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .summary-card .big-number.positive { color: #16a34a; }
+        .summary-card .big-number.negative { color: #dc2626; }
+        .summary-card .big-number.neutral { color: #1f2937; }
+        .summary-card .subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            margin-bottom: 2rem;
+        }
+        .card h2 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 1rem;
+        }
+        
+        .channel-comparison {
+            display: grid;
+            gap: 1rem;
+        }
+        .channel-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            align-items: center;
+        }
+        .channel-row.critical { background: #ffffff; }
+        .channel-row.warning { background: #ffffff; }
+        .channel-row.healthy { background: #ffffff; }
+        
+        .channel-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1.05rem;
+        }
+        .channel-metric {
+            text-align: center;
+        }
+        .channel-metric .label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .channel-metric .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .channel-metric .value.positive { color: #16a34a; }
+        .channel-metric .value.negative { color: #dc2626; }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        .risk-badge.critical { background: #dc2626; color: white; }
+        .risk-badge.warning { background: #f59e0b; color: white; }
+        .risk-badge.attention { background: #3b82f6; color: white; }
+        .risk-badge.healthy { background: #16a34a; color: white; }
+        
+        .insight-box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .insight-box h3 {
+            color: #1e40af;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .insight-box p {
+            color: #1f2937;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        .insight-box ul {
+            margin-left: 1.5rem;
+            color: #1f2937;
+        }
+        .insight-box li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <h1>UNFI Sales and Velocity Findings</h1>
+                <p>Year-to-Date 1/1 to 10/31 2025 versus 2024</p>
+            </div>
+        </div>
+        
+        <div class="alert-banner">
+            <h2>📊 Sales & Velocity Gap Analysis</h2>
+            <p>Sales show strong growth at +43% while velocity data reveals opportunities for optimization at -19% - creating a 62-point variance. This analysis helps us identify where to focus our promotional and merchandising efforts, particularly in the Independents channel.</p>
+        </div>
+        
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Sales Growth</h3>
+                <div class="big-number positive">+43%</div>
+                <div class="subtitle">$380.4K → $666.4K</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">What we shipped to UNFI</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Total Velocity Growth</h3>
+                <div class="big-number negative">-19%</div>
+                <div class="subtitle">Estimated based on channel mix</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">What consumers bought</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Sales vs Velocity Gap</h3>
+                <div class="big-number negative">62 pts</div>
+                <div class="subtitle">Inventory Risk Indicator</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">Gap should be <10 points</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Channels at Risk</h3>
+                <div class="big-number neutral">4 of 6</div>
+                <div class="subtitle">Sales outpacing velocity</div>
+                <div class="subtitle" style="margin-top: 0.5rem;">Requires immediate action</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Sales vs Velocity: Channel-by-Channel Comparison</h2>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3b82f6;"></div>
+                    <span>Sales Growth %</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #22d3ee;"></div>
+                    <span>Velocity Growth %</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Channel Health Assessment</h2>
+            <div class="channel-comparison">
+                <div class="channel-row" style="background: #e5e7eb; font-weight: 700;">
+                    <div class="channel-name">CHANNEL</div>
+                    <div class="channel-metric">
+                        <div class="label">SALES GROWTH</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="label">VELOCITY GROWTH</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="label">RISK LEVEL</div>
+                    </div>
+                </div>
+                
+                <div class="channel-row critical">
+                    <div class="channel-name">Independents</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+47%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value negative">-32%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge critical">PRIORITY</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row warning">
+                    <div class="channel-name">Market Basket</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+37%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+7.5%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge warning">ATTENTION</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row warning">
+                    <div class="channel-name">Harmons-Super 1-URM</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+68%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+112%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge warning">MONITOR</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row healthy">
+                    <div class="channel-name">Heinen's</div>
+                    <div class="channel-metric">
+                        <div class="value positive">+19%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value positive">+84%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge healthy">HEALTHY</span>
+                    </div>
+                </div>
+                
+                <div class="channel-row critical">
+                    <div class="channel-name">Festival Foods</div>
+                    <div class="channel-metric">
+                        <div class="value negative">-34%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <div class="value negative">-45%</div>
+                    </div>
+                    <div class="channel-metric">
+                        <span class="risk-badge critical">PRIORITY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Dollar Value Analysis: Sales vs Velocity</h2>
+            <div class="chart-container">
+                <canvas id="dollarChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Key Insights & Findings</h2>
+            
+            <div class="insight-box">
+                <h3>📊 Opportunity Area: Independents Channel</h3>
+                <p><strong>The Gap:</strong> Sales up 47% ($210K → $392.8K) but velocity down 32% ($56.0K → $38.1K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>We're shipping nearly double the product while consumer demand has fallen by a third</li>
+                    <li>344 independent stores likely have elevated inventory levels</li>
+                </ul>
+                <p><strong>Action:</strong> Immediate audit of top 20 independent accounts; pause new store expansions until velocity improves</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>✅ Success Model: Heinen's</h3>
+                <p><strong>The Win:</strong> Sales up 19% ($19.2K → $23.6K) while velocity up 84% ($4.2K → $7.7K)</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>Velocity far exceeding sales = healthy inventory turnover</li>
+                    <li>Consumers buying through existing stock faster than we're replenishing</li>
+                    <li>This is the only channel with sustainable, healthy growth</li>
+                </ul>
+                <p><strong>Action:</strong> Document what's working (promotions, pricing, placement) and replicate across other channels</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3>⚠️ Accumulation Risk: Market Basket</h3>
+                <p><strong>The Gap:</strong> Sales up 37% but velocity only up 7.5%</p>
+                <p><strong>What This Means:</strong></p>
+                <ul>
+                    <li>We're shipping 5x faster than product is moving off shelves</li>
+                    <li>Inventory accumulating across 32 Market Basket locations</li>
+                    <li>While velocity is positive, the gap suggests growing inventory levels</li>
+                </ul>
+                <p><strong>Action:</strong> Review store-level inventory; adjust shipment frequency to match actual turnover</p>
+            </div>
+            
+            <div class="insight-box">
+                <h3 style="color: #92400e;">📋 Review Needed: Festival Foods</h3>
+                <p style="color: #1f2937;"><strong>The Situation:</strong> Sales down 34%, velocity down 45%, revenue per case down 56%</p>
+                <p style="color: #1f2937;"><strong>What This Means:</strong></p>
+                <ul style="color: #1f2937;">
+                    <li>Both metrics declining, with velocity showing a steeper decline than sales</li>
+                    <li>Cases up 50% but revenue down indicates pricing structure needs review</li>
+                    <li>Current terms may need adjustment for long-term sustainability</li>
+                </ul>
+                <p style="color: #1f2937;"><strong>Action:</strong> Schedule meeting with UNFI and Festival Foods to review promotional terms and pricing structure</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Understanding the Metrics</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                <div>
+                    <h3 style="color: #3b82f6; margin-bottom: 1rem;">Sales (Sell-In)</h3>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Revenue from shipments to UNFI/retailers</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product leaves our warehouse</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> Our revenue and market expansion</p>
+                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #16a34a; font-weight: 700;">+43% growth</span></p>
+                </div>
+                <div>
+                    <h3 style="color: #22d3ee; margin-bottom: 1rem;">Velocity (Sell-Through)</h3>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Actual consumer purchases at checkout</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product scans at retail POS</p>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> True consumer demand and inventory health</p>
+                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #dc2626; font-weight: 700;">-19% decline</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Comparison Chart
+        new Chart(document.getElementById('comparisonChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
+                datasets: [{
+                    label: 'Sales Growth %',
+                    data: [47, 37, 68, 19, -34],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }, {
+                    label: 'Velocity Growth %',
+                    data: [-31.9, 7.5, 112, 84.3, -44.5],
+                    backgroundColor: '#22d3ee',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Growth Rate (%)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Channel',
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Dollar Value Chart
+        new Chart(document.getElementById('dollarChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
+                datasets: [{
+                    label: '2024 Sales',
+                    data: [210, 36.4, 15.2, 19.2, 44.8],
+                    backgroundColor: '#94a3b8',
+                    borderRadius: 6
+                }, {
+                    label: '2025 Sales',
+                    data: [392.8, 58, 47.6, 23.6, 29.6],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }, {
+                    label: '2024 Velocity',
+                    data: [56.0, 7.67, 3.62, 4.16, 10.81],
+                    backgroundColor: '#cbd5e1',
+                    borderRadius: 6
+                }, {
+                    label: '2025 Velocity',
+                    data: [38.12, 8.25, 7.68, 7.68, 6.00],
+                    backgroundColor: '#22d3ee',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Dollars (Thousands)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value + 'K';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toFixed(1) + 'K';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
