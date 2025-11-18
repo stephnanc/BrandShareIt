@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distributor Sales Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .header {
+      background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: visible;
+    }
+    .texture-overlay {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .header-content {
+      position: relative;
+      z-index: 10;
+      color: white;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 120px;
+    }
+    .swoffle-brand {
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard-title {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+    }
+    .brand-right {
+      text-align: right;
+    }
+    .brand-name {
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .brand-tagline {
+      font-size: 0.875rem;
+      font-weight: 300;
+      margin-top: 0.25rem;
+      opacity: 0.95;
+    }
+    .tabs-container {
+      display: flex;
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 2rem;
+      gap: 0;
+    }
+    .tab-button {
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #6b7280;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+    .tab-button:hover {
+      color: #374151;
+      background-color: #f9fafb;
+    }
+    .tab-button.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+    .account-name {
+      font-weight: 700;
+    }
+    .section-title {
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 p-8">
+  
+  <!-- Header -->
+  <div class="header">
+    <div class="texture-overlay"></div>
+    <div class="header-content">
+      <div>
+        <div class="swoffle-brand">Distributor-Key Account Sales Tracker Example</div>
+        <div class="dashboard-title">Distributor Year-to-Date Sales: January 1st to October 31st, 2025 versus 2024</div>
+      </div>
+      <div class="brand-right">
+        <div class="brand-name">Brand Share It Sales Partners</div>
+        <div class="brand-tagline">One Step Ahead, Reaching for Tomorrow</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <button class="tab-button active" data-tab="ufnitotal">All Channels/Accounts</button>
+    <button class="tab-button" data-tab="independents">New Accounts-Independents</button>
+    <button class="tab-button" data-tab="heinens">Heinen's</button>
+    <button class="tab-button" data-tab="marketbasket">Market Basket</button>
+    <button class="tab-button" data-tab="super1urm">Super1-URM</button>
+    <button class="tab-button" data-tab="festivalfoods">Festival Foods</button>
+  </div>
+
+  <!-- UNFI Total Tab -->
+  <div id="ufnitotal" class="tab-content active">
+    <!-- Title Section -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">All Channels Accounts Data</h3>
+      <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$95.1K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$166.6K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">+43%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Portfolio Overview</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+33%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Sales Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+43%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Channels</span>
+            <span class="text-lg font-semibold text-gray-900">4</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,918</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Total Sales</span>
+            <span class="text-lg font-semibold text-gray-900">$166.6K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Channel Performance</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">New Accounts-Independents</span>
+            <p class="text-xs text-gray-500 mt-1">$98.2K sales | +47%</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Heinen's Chain</span>
+            <p class="text-xs text-gray-500 mt-1">$5.9K sales | +19%</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Market Basket</span>
+            <p class="text-xs text-gray-500 mt-1">$14.5K sales | +37%</p>
+          </div>
+          <div class="pt-2">
+            <span class="text-gray-600 text-sm">Super1-URM</span>
+            <p class="text-xs text-gray-500 mt-1">$11.9K sales | +68%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Channel Summary -->
+    <div class="grid grid-cols-1 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Channel Summary</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">New Accounts-Independents</span>
+              <p class="text-xs text-gray-500">344 stores | 33% cases | +47% sales</p>
+            </div>
+            <span class="text-green-600 font-semibold">$98K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Market Basket</span>
+              <p class="text-xs text-gray-500">32 locations | 33% cases | +37% sales</p>
+            </div>
+            <span class="text-green-600 font-semibold">$15K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Super1-URM</span>
+              <p class="text-xs text-gray-500">35 locations | 33% cases | +68% sales</p>
+            </div>
+            <span class="text-green-600 font-semibold">$12K</span>
+          </div>
+          <div class="flex justify-between items-start py-2">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Heinen's Chain</span>
+              <p class="text-xs text-gray-500">21 stores | 33% cases | +19% sales</p>
+            </div>
+            <span class="text-green-600 font-semibold">$6K</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Consolidated UNFI portfolio across all channels and accounts grew to $166.6M in 2025, up from $95.1M in 2024, representing strong 43% sales growth.</p>
+        <p>Cases shipped grew 33% while sales grew 43%, indicating consistent pricing power and improved product mix across the entire account portfolio.</p>
+        <p>Portfolio includes over 500+ individual locations spanning multiple retail formats from small independents to major national chains.</p>
+        <p>Growth driven by combination of new account expansion, market penetration, and strong performance from established high-volume accounts.</p>
+        <p>Diverse geographic footprint across all major U.S. regions with concentration in key markets including California, Colorado, Utah, Massachusetts, and Ohio.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Independents Tab -->
+  <div id="independents" class="tab-content">
+    <!-- Spreadsheet Link Card -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">New Accounts-Independents Data</h3>
+          <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+        </div>
+        <a href="https://1drv.ms/x/c/6025a8df181803ff/EWGlO6bqy8tDsdJpMwxyMVIBJlWshMbiMpkyXOwyH2f8PQ?e=nAqaCP" target="_blank" rel="noopener noreferrer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+          Open Spreadsheet
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$52.5K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$98.2K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">+47%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Analysis -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Growth Analysis</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+33%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Accounts</span>
+            <span class="text-lg font-semibold text-gray-900">344</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2024</span>
+            <span class="text-lg font-semibold text-gray-900">5,299</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,928</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Avg Sales per Store</span>
+            <span class="text-lg font-semibold text-gray-900">$285</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Performance Distribution</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-gray-600">Growth >100%</span>
+              <span class="text-sm font-semibold text-gray-900">12 accounts</span>
+            </div>
+            <p class="text-xs text-gray-500">New and high-growth accounts</p>
+          </div>
+          <div class="pb-2 border-b">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-gray-600">Growth 50-100%</span>
+              <span class="text-sm font-semibold text-gray-900">28 accounts</span>
+            </div>
+            <p class="text-xs text-gray-500">Strong expansion</p>
+          </div>
+          <div class="pb-2 border-b">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-gray-600">Growth 0-50%</span>
+              <span class="text-sm font-semibold text-gray-900">216 accounts</span>
+            </div>
+            <p class="text-xs text-gray-500">Moderate growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-gray-600">Decline</span>
+              <span class="text-sm font-semibold text-gray-900">88 accounts</span>
+            </div>
+            <p class="text-xs text-gray-500">Accounts with sales decreases</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Performers and Declining -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">New Account Expansion</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Harmons</span>
+              <p class="text-xs text-gray-500">20-store chain new account</p>
+            </div>
+            <span class="text-gray-900 font-semibold text-sm">$10,359K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Big Y</span>
+              <p class="text-xs text-gray-500">64-store chain new account</p>
+            </div>
+            <span class="text-gray-900 font-semibold text-sm">$5,413K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">Bristol Farms</span>
+              <p class="text-xs text-gray-500">15-store chain new account</p>
+            </div>
+            <span class="text-gray-900 font-semibold text-sm">$3,668K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">New Leaf Markets / Lazy Acres</span>
+              <p class="text-xs text-gray-500">multi-unit chain new account</p>
+            </div>
+            <span class="text-gray-900 font-semibold text-sm">$2,748K</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">PALO ALTO EGG COMPANY</span>
+              <p class="text-xs text-gray-500">significant expansion</p>
+            </div>
+            <span class="text-gray-900 font-semibold text-sm">$7,303K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Declining Accounts</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FRESCO COMMUNITY MARKETS</span>
+            <span class="text-red-600 font-semibold">-59%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">SAVE U MORE 4 HOMER DRY</span>
+            <span class="text-red-600 font-semibold">-57%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">THREE RIVERS MARKET</span>
+            <span class="text-red-600 font-semibold">-70%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">UCSC STEVENSON COFFEE HOUSE</span>
+            <span class="text-red-600 font-semibold">-70%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Sales dollars are growing 47% while cases grow 33%, indicating higher average transaction values or improved product mix.</p>
+        <p>12 accounts show growth exceeding 100%, with several established accounts driving significant volume increases.</p>
+        <p>88 accounts experienced sales declines, representing 26% of the account base, requiring attention and strategic review.</p>
+        <p>New store launches contributed materially to growth, with several accounts generating $400K+ in first-year sales.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Heinen's Tab -->
+  <div id="heinens" class="tab-content">
+    <!-- Spreadsheet Link Card -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Heinen's Data</h3>
+          <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+        </div>
+        <a href="https://1drv.ms/x/c/6025a8df181803ff/EVvlrd8bDuVFjt3q-FsIaK8BHlVzyNnA0iJY7dHKHMqBBw?e=JydTkA" target="_blank" rel="noopener noreferrer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+          Open Spreadsheet
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$4.8K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$5.9K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">+19%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Performance Overview</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+33%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Sales Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+19%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Stores</span>
+            <span class="text-lg font-semibold text-gray-900">21</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,928</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Avg Sales per Store</span>
+            <span class="text-lg font-semibold text-gray-900">$284</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Store Performance</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Growth Leaders (5 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">50%+ sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Moderate Growth (9 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">1-49% sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Flat Performance (4 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">0% sales change</p>
+          </div>
+          <div class="pt-2">
+            <span class="text-gray-600 text-sm">Declining (3 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">Sales decreases</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Leaders and Declining -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Growth Leaders</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">HEINENS 018 (AVON)</span>
+              <p class="text-xs text-gray-500">26 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+122%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">HEINENS 016 (TWINSBURG)</span>
+              <p class="text-xs text-gray-500">16 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+108%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">HEINENS 012 (WILLOUGHBY)</span>
+              <p class="text-xs text-gray-500">11 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+107%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">HEINENS 005 (CLEVELAND)</span>
+              <p class="text-xs text-gray-500">15 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+69%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">HEINENS 009 (MENTOR)</span>
+              <p class="text-xs text-gray-500">15 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+58%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Declining Stores</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">HEINENS 008 (AURORA)</span>
+            <span class="text-red-600 font-semibold">-45%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">HEINENS 010 (MAYFIELD)</span>
+            <span class="text-red-600 font-semibold">-30%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">HEINENS 006 (WESTLAKE)</span>
+            <span class="text-red-600 font-semibold">-31%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Cases shipped grew 33% while sales grew only 19%, indicating lower average selling prices per case compared to prior year.</p>
+        <p>Five stores are driving growth with sales increases of 50% or higher, led by Avon, Twinsburg, and Willoughby locations.</p>
+        <p>Three stores experienced sales declines of 30% or greater, primarily in Aurora, Mayfield, and Westlake locations.</p>
+        <p>Four stores showed no volume growth, suggesting market saturation or competitive pressure in those locations.</p>
+        <p>The chain's flagship store (Brecksville) contributed 1,399 cases with 49% sales growth, representing the largest individual contributor.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market Basket Tab -->
+  <div id="marketbasket" class="tab-content">
+    <!-- Spreadsheet Link -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Market Basket Data</h3>
+          <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+        </div>
+        <a href="https://1drv.ms/x/c/6025a8df181803ff/EQ3wmHN4j1FIjc4NFk0xkWUBF-N0GDWl6CBjAs2Eozi3kw?e=CZxcle" target="_blank" rel="noopener noreferrer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+          Open Spreadsheet
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$9.1K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$14.5K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">+37%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Performance Overview</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+33%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Sales Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+37%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Locations</span>
+            <span class="text-lg font-semibold text-gray-900">32</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,928</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Avg Sales per Location</span>
+            <span class="text-lg font-semibold text-gray-900">$454</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Location Performance</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Exceptional Growth (5 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">50%+ sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Strong Growth (9 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">1-49% sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Stable Performance (9 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">0% sales change</p>
+          </div>
+          <div class="pt-2">
+            <span class="text-gray-600 text-sm">Declining (5 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">Sales decreases</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Leaders -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Growth Leaders</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 79 (WALTHAM)</span>
+              <p class="text-xs text-gray-500">13 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+1331%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">DEMOULAS SUPERMARKET 95 (TOPSHAM)</span>
+              <p class="text-xs text-gray-500">15 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+720%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 43 (HILLSBOROUGH COUNTY)</span>
+              <p class="text-xs text-gray-500">22 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+259%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">DEMOULAS SUPERMARKET 9 (HAVERHILL)</span>
+              <p class="text-xs text-gray-500">56 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+81%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 60 (READING)</span>
+              <p class="text-xs text-gray-500">43 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+84%</span>
+          </div>
+          <div class="mt-3 pt-2 border-t">
+            <h4 class="text-xs font-semibold text-gray-700 mb-2 section-title">New Account Launches</h4>
+            <div class="flex justify-between items-start py-1">
+              <div>
+                <span class="text-gray-700 text-xs account-name">DEMOULAS SUPERMARKET 12 (NORTH ANDOVER)</span>
+                <p class="text-xs text-gray-500">new account</p>
+              </div>
+              <span class="text-gray-900 font-semibold text-xs">$318</span>
+            </div>
+            <div class="flex justify-between items-start py-1">
+              <div>
+                <span class="text-gray-700 text-xs account-name">DEMOULAS SUPERMARKET 46 (ASHLAND)</span>
+                <p class="text-xs text-gray-500">new account</p>
+              </div>
+              <span class="text-gray-900 font-semibold text-xs">$271</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Declining Locations</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">DEMOULAS SUPERMARKET 7 (BILLERICA)</span>
+            <span class="text-red-600 font-semibold">-43%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 66 (HOOKSETT)</span>
+            <span class="text-red-600 font-semibold">-24%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 68 (BROCKTON)</span>
+            <span class="text-red-600 font-semibold">-29%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 86 (PLYMOUTH)</span>
+            <span class="text-red-600 font-semibold">-23%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">MARKET BASKET INC 91 (HANOVER)</span>
+            <span class="text-red-600 font-semibold">-15%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Sales growth outpacing case growth at 37% versus 33%, indicating favorable pricing dynamics and higher average transaction values.</p>
+        <p>Five locations showing exceptional growth with sales increases exceeding 50%, led by Waltham and Topsham with over 700% increases.</p>
+        <p>Two new account launches (North Andover and Ashland) are in early stages with $318 and $271 in initial sales.</p>
+        <p>Five locations experienced sales declines ranging from 15% to 43%, with Billerica showing the steepest decline at -43%.</p>
+        <p>The portfolio demonstrates strong breadth of growth with 18 of 32 locations showing sales increases, indicating broad-based market penetration.</p>
+        <p>Haverhill and Reading locations are major volume contributors with 56 and 43 cases respectively, complementing the Demoulas Supermarket portfolio.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Super1-URM Tab -->
+  <div id="super1urm" class="tab-content">
+    <!-- Spreadsheet Link -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Super1-URM Data</h3>
+          <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+        </div>
+        <a href="https://1drv.ms/x/c/6025a8df181803ff/ERmeYi-uh35OiJMT8FdCvxMBoaVx82z8ZMh4WxMhUzqUXA?e=rvxTwx" target="_blank" rel="noopener noreferrer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+          Open Spreadsheet
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$3.8K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$11.9K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">+68%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Performance Overview</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+33%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Sales Growth</span>
+            <span class="text-lg font-semibold text-gray-900">+68%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Locations</span>
+            <span class="text-lg font-semibold text-gray-900">35</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,928</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Avg Sales per Location</span>
+            <span class="text-lg font-semibold text-gray-900">$341</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Location Performance</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Exceptional Growth (5 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">100%+ sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">New Account Launches (6 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">Starting from zero base</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Strong Growth (16 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">1-99% sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Stable Performance (5 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">0% sales change</p>
+          </div>
+          <div class="pt-2">
+            <span class="text-gray-600 text-sm">Declining (3 locations)</span>
+            <p class="text-xs text-gray-500 mt-1">Sales decreases</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Leaders -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Growth Leaders</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">SUPER 1 FOODS KALISPELL</span>
+              <p class="text-xs text-gray-500">19 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+1206%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">SUPER 1 FOODS SANDPOINT</span>
+              <p class="text-xs text-gray-500">28 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+448%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">SUPER 1 FOODS WHITEFISH</span>
+              <p class="text-xs text-gray-500">53 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+405%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">SUPER 1 FOODS RATHDRUM</span>
+              <p class="text-xs text-gray-500">21 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+390%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">SUPER 1 FOODS HAMILTON</span>
+              <p class="text-xs text-gray-500">34 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+250%</span>
+          </div>
+          <div class="mt-3 pt-2 border-t">
+            <h4 class="text-xs font-semibold text-gray-700 mb-2 section-title">New Account Launches</h4>
+            <div class="space-y-1">
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">SUPER 1 FOODS COLUMBIA FALLS</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$748</span>
+              </div>
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">URM STORES PRIEST RIVER</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$696</span>
+              </div>
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">URM STORES SPOKANE (65105)</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$422</span>
+              </div>
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">URM STORES SAINT IGNATIUS</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$347</span>
+              </div>
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">URM STORES POLSON</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$300</span>
+              </div>
+              <div class="flex justify-between items-start py-1">
+                <div>
+                  <span class="text-gray-700 text-xs account-name">SUPER 1 FOODS STEVENSVILLE</span>
+                  <p class="text-xs text-gray-500">new account</p>
+                </div>
+                <span class="text-gray-900 font-semibold text-xs">$126</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Declining Locations</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">URM STORES HOOD RIVER</span>
+            <span class="text-red-600 font-semibold">-66%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">URM STORES MOSCOW</span>
+            <span class="text-red-600 font-semibold">-34%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">URM STORES ELLENSBURG</span>
+            <span class="text-red-600 font-semibold">-37%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Sales growth significantly outpacing case growth at 68% versus 33%, indicating strong pricing power and premium positioning across the portfolio.</p>
+        <p>Super1 Foods Kalispell achieved exceptional growth with +1,206% sales increase, becoming the strongest performer despite modest case growth.</p>
+        <p>Six new account launches contributed meaningfully, with Columbia Falls and Priest River each generating over $700 in initial sales.</p>
+        <p>Portfolio expansion strategy successful with 30 of 35 locations showing sales growth, demonstrating market acceptance and penetration.</p>
+        <p>Three locations experiencing declines (Hood River, Moscow, Ellensburg) show competitive pressure in specific markets, requiring monitoring.</p>
+        <p>Whitefish location is a major volume driver with 53 cases and $1,283 in sales, while multiple locations across Montana and Idaho show strong growth momentum.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Festival Foods Tab -->
+  <div id="festivalfoods" class="tab-content">
+    <!-- Spreadsheet Link -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Festival Foods Data</h3>
+          <p class="text-sm text-gray-600">View detailed spreadsheet with complete account information</p>
+        </div>
+        <a href="https://1drv.ms/x/c/6025a8df181803ff/EU2uVp3o2VlBgCpFxOlbU8ABcJcSEKqjkYTUpKZo6HwJwg?e=jPxpoZ" target="_blank" rel="noopener noreferrer" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+          Open Spreadsheet
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2024 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$11.2K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">2025 YTD Total</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">$7.4K</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Sales Growth</p>
+            <p class="text-3xl font-bold text-red-600 mt-2">-34%</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Performance Overview</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases Shipped Growth</span>
+            <span class="text-lg font-semibold text-green-600">+50%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Sales Growth</span>
+            <span class="text-lg font-semibold text-red-600">-34%</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Total Locations</span>
+            <span class="text-lg font-semibold text-gray-900">29</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b">
+            <span class="text-gray-600">Cases 2025</span>
+            <span class="text-lg font-semibold text-gray-900">7,928</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Avg Sales per Location</span>
+            <span class="text-lg font-semibold text-gray-900">$255</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Location Performance</h3>
+        <div class="space-y-3">
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Growth Locations (5 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">Positive sales growth</p>
+          </div>
+          <div class="pb-2 border-b">
+            <span class="text-gray-600 text-sm">Flat Performance (3 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">Minimal change</p>
+          </div>
+          <div class="pt-2">
+            <span class="text-gray-600 text-sm">Declining (21 stores)</span>
+            <p class="text-xs text-gray-500 mt-1">Sales decreases</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Leaders -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Growth Leaders</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2704 (SHEBOYGAN)</span>
+              <p class="text-xs text-gray-500">17 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+37%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2697 (WEST ALLIS)</span>
+              <p class="text-xs text-gray-500">12 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+18%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2737 (VERONA)</span>
+              <p class="text-xs text-gray-500">15 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+19%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">FESTIVAL FOOD 2692 (WAUSAU)</span>
+              <p class="text-xs text-gray-500">9 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+17%</span>
+          </div>
+          <div class="flex justify-between items-start py-2 border-b">
+            <div>
+              <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2768 (GREEN BAY)</span>
+              <p class="text-xs text-gray-500">14 cases shipped</p>
+            </div>
+            <span class="text-green-600 font-semibold">+6%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Largest Declines</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2716 (APPLETON)</span>
+            <span class="text-red-600 font-semibold">-69%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2723 (JANESVILLE)</span>
+            <span class="text-red-600 font-semibold">-70%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2702 (MANITOWOC)</span>
+            <span class="text-red-600 font-semibold">-62%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2705 (KENOSHA)</span>
+            <span class="text-red-600 font-semibold">-59%</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b">
+            <span class="text-gray-700 text-sm account-name">FESTIVAL FOODS 2740 (GREEN BAY)</span>
+            <span class="text-red-600 font-semibold">-50%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Observations -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 section-title">Key Observations</h3>
+      <div class="space-y-2 text-gray-700">
+        <p>Festival Foods presents a critical pricing concern: cases shipped increased 50% (5,299 to 7,928) while sales dollars declined 34% ($11.2K to $7.4K), indicating severe pricing erosion or heavy promotional activity.</p>
+        <p>Average revenue per case dropped dramatically from $2.11 to $0.93 (a 56% decline), suggesting either significant price reductions, shift to lower-priced SKUs, or excessive trade spending.</p>
+        <p>21 of 29 locations (72%) experienced sales declines despite shipping more cases, with catastrophic drops in Appleton (-69%), Janesville (-70%), and Manitowoc (-62%).</p>
+        <p>The disconnect between volume growth and revenue decline requires immediate investigation into pricing strategy, promotional terms, deductions, and potential data accuracy issues with UNFI reporting.</p>
+        <p>Only 5 stores showed positive sales growth (Sheboygan +37%, Verona +19%, West Allis +18%), suggesting localized market conditions or execution differences.</p>
+        <p>This portfolio demands urgent strategic review to understand root causes: Are we selling at unsustainably low prices? Are deductions or chargebacks distorting the numbers? Is product mix shifting unfavorably?</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetTab = button.getAttribute('data-tab');
+        
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding content
+        button.classList.add('active');
+        document.getElementById(targetTab).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
