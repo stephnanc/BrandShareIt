@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeHE Shipping and Transportation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .dashboard {
+      min-height: 100vh;
+      background: #ffffff;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .texture-overlay {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      letter-spacing: -0.02em;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .header-subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .header-date {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+    }
+
+    .policies-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .policies-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .policy-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .policy-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .policy-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #f8fafc;
+    }
+
+    .policy-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .policy-icon.green {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .policy-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .policy-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .policy-body {
+      padding: 1.5rem;
+    }
+
+    .policy-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .policy-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .policy-section-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .new-badge {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .policy-list {
+      list-style: none;
+    }
+
+    .policy-list li {
+      font-size: 0.875rem;
+      color: #475569;
+      padding: 0.5rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+      line-height: 1.6;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .policy-list li:last-child {
+      border-bottom: none;
+    }
+
+    .policy-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.85rem;
+      width: 6px;
+      height: 6px;
+      background: #38bdf8;
+      border-radius: 50%;
+    }
+
+    .policy-highlight {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border: 1px solid #a7f3d0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .policy-highlight p {
+      font-size: 0.875rem;
+      color: #166534;
+      line-height: 1.6;
+    }
+
+    .policy-highlight.blue {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-color: #93c5fd;
+    }
+
+    .policy-highlight.blue p {
+      color: #1e40af;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .contact-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e0f2fe;
+      color: #0284c7;
+      flex-shrink: 0;
+    }
+
+    .contact-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-value {
+      font-size: 0.85rem;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .contact-value a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+
+    .contact-value a:hover {
+      text-decoration: underline;
+    }
+
+    .benefit-list {
+      list-style: none;
+    }
+
+    .benefit-list li {
+      font-size: 0.875rem;
+      color: #475569;
+      padding: 0.625rem 0;
+      padding-left: 2rem;
+      position: relative;
+      line-height: 1.6;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .benefit-list li:last-child {
+      border-bottom: none;
+    }
+
+    .benefit-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 0.625rem;
+      width: 20px;
+      height: 20px;
+      background: #dcfce7;
+      color: #16a34a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .link-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #e0f2fe;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      color: #0284c7;
+      margin-bottom: 1rem;
+    }
+
+    .link-box svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .link-box a {
+      color: #0284c7;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-box a:hover {
+      text-decoration: underline;
+    }
+
+    .policy-text {
+      font-size: 0.875rem;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <div class="texture-overlay"></div>
+      <div class="header-content">
+        <div class="header-top">
+          <div class="header-left">
+            <h1 class="header-title">KeHE Shipping and Transportation</h1>
+            <p class="header-subtitle">Prepared by Stephen Nance</p>
+          </div>
+          <div class="header-date">11-25-2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policies Grid -->
+    <div class="policies-grid">
+      <!-- Scheduling & Appointment Costs -->
+      <div class="policy-card">
+        <div class="policy-header">
+          <div class="policy-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <h2 class="policy-title">Scheduling & Appointment Costs</h2>
+        </div>
+        <div class="policy-body">
+          <div class="policy-section">
+            <div class="policy-section-title">C3 Online Scheduling System</div>
+            <div class="link-box">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <a href="https://www.c3reservations.com/KeHE" target="_blank" rel="noopener noreferrer">www.c3reservations.com/KeHE</a>
+            </div>
+            <ul class="policy-list">
+              <li>Separate C3 User ID required for each DC (contact receiving DC for User ID)</li>
+              <li>Appointment requests required at least 7 days prior to "Ship To Arrive" date</li>
+            </ul>
+          </div>
+
+          <div class="policy-section">
+            <div class="policy-section-title">Rescheduling Fees</div>
+            <ul class="policy-list">
+              <li>Must be done through C3 system</li>
+              <li>Carrier's responsibility to reschedule</li>
+              <li>Fees apply for rescheduling within 3 days of scheduled appointment</li>
+            </ul>
+          </div>
+
+          <div class="policy-section">
+            <div class="policy-section-title">Small Parcel Shipments (FedEx/UPS Ground)</div>
+            <ul class="policy-list">
+              <li>No C3 appointment needed</li>
+              <li>Typically a few cases, less than 150 lbs</li>
+              <li>Lumper fees apply</li>
+            </ul>
+          </div>
+
+          <div class="policy-section">
+            <div class="policy-section-title">FedEx/UPS Freight</div>
+            <ul class="policy-list">
+              <li>C3 appointment required</li>
+              <li>Shipments typically on pallets, over 150 lbs</li>
+              <li>Lumper fees apply</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Transportation-Related Costs -->
+      <div class="policy-card">
+        <div class="policy-header">
+          <div class="policy-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h2 class="policy-title">Additional Transportation-Related Costs</h2>
+        </div>
+        <div class="policy-body">
+          <div class="policy-section">
+            <div class="policy-section-title">On-Time Delivery Performance Fee</div>
+            <ul class="policy-list">
+              <li>If supplier's average On-Time Delivery rate is less than percentage specified in Inbound Routing Guide Fee Schedule during a calendar quarter, fee assessed on all late shipments in that quarter</li>
+              <li>Fee assessed as deduction at end of non-compliance quarter</li>
+              <li>This is IN ADDITION to Late or No Show fee charged to carrier at time of delivery</li>
+            </ul>
+          </div>
+
+          <div class="policy-section">
+            <div class="policy-section-title">Expedited Shipping</div>
+            <ul class="policy-list">
+              <li>KeHE NOT responsible for unauthorized expedited, rushed, or air freight charges</li>
+              <li>All such charges are supplier's or supplier's carrier's responsibility</li>
+              <li>Authorization for such charges must be in writing from KeHE personnel</li>
+            </ul>
+          </div>
+
+          <div class="policy-section">
+            <div class="policy-section-title">
+              Storage Fees
+              <span class="new-badge">New Nov 2025</span>
+            </div>
+            <div class="policy-highlight">
+              <p><strong>VALUE-ADD:</strong> KeHE will no longer charge storage fees of $25/pallet/week for products unable to accept as inventory (overage, non-conforming, short-dated, etc.). This is now provided as a value-add to suppliers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Contacts -->
+      <div class="policy-card">
+        <div class="policy-header">
+          <div class="policy-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <h2 class="policy-title">Key Contacts for Transportation Issues</h2>
+        </div>
+        <div class="policy-body">
+          <div class="contact-grid">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+              </div>
+              <div class="contact-info">
+                <div class="contact-label">Transportation Issues</div>
+                <div class="contact-value">
+                  <a href="mailto:ibtrans@kehe.com">ibtrans@kehe.com</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+              </div>
+              <div class="contact-info">
+                <div class="contact-label">Lumping, Pallet Labeling, Warehouse</div>
+                <div class="contact-value">
+                  <a href="mailto:inboundlogistics@kehe.com">inboundlogistics@kehe.com</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <div class="contact-info">
+                <div class="contact-label">Delivery Method Changes</div>
+                <div class="contact-value">
+                  <a href="mailto:freightrequests@kehe.com">freightrequests@kehe.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="policy-highlight blue" style="margin-top: 1rem;">
+            <p><strong>NEW (Nov 2025):</strong> Warehouse receiving hours now included in Inbound Routing Guide Contact List</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost-Saving Opportunity -->
+      <div class="policy-card">
+        <div class="policy-header">
+          <div class="policy-icon green">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <polyline points="20 12 20 22 4 22 4 12"></polyline>
+              <rect x="2" y="7" width="20" height="5"></rect>
+              <line x1="12" y1="22" x2="12" y2="7"></line>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+          </div>
+          <h2 class="policy-title">Cost-Saving: Administrative Allowance Program (AAP)</h2>
+        </div>
+        <div class="policy-body">
+          <p class="policy-text">
+            <strong>New & Small Supplier Program</strong> — This program can significantly reduce transportation-related costs for eligible new and small suppliers.
+          </p>
+
+          <div class="policy-section">
+            <div class="policy-section-title">Program Benefits</div>
+            <ul class="benefit-list">
+              <li>2% flat rate off-invoice allowance</li>
+              <li>Lumping fees WAIVED for participating suppliers</li>
+              <li>Exemption from fees associated with gaining distribution (setup fees, placement fees, slotting fees)</li>
+              <li>Consolidates multiple fees into one simplified allowance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
