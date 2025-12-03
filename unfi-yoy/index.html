@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle UNFI Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+        }
+
+        .header-prepared {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .metric-change {
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric-change.positive {
+            color: #27ae60;
+        }
+
+        .metric-change.negative {
+            color: #e74c3c;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .data-table {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+        }
+
+        .data-table h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(to right, #3b82f6, #38bdf8);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .change-positive {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .arrow {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.8em;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="header-title">Swoffle UNFI Sales Dashboard</h1>
+                    <p class="header-subtitle">Year-to-Date Performance: January 1 - November 30, 2025</p>
+                    <p class="header-prepared">Prepared by Stephen Nance</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total UNFI Sales YTD</div>
+                <div class="metric-value">$204,963</div>
+                <div class="metric-change positive">
+                    <span class="arrow">↑</span>
+                    <span>39% vs Prior Year</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Total Cases Shipped</div>
+                <div class="metric-value" id="totalCases">9,596</div>
+                <div class="metric-change positive" id="casesChange">
+                    <span class="arrow">↑</span>
+                    <span>17% vs Prior Year</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Active Distribution Centers</div>
+                <div class="metric-value">10</div>
+                <div class="metric-change" style="color: #7f8c8d;">
+                    <span>Nationwide Coverage</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Top Performing Channel</div>
+                <div class="metric-value">+151%</div>
+                <div class="metric-change positive">
+                    <span class="arrow">↑</span>
+                    <span>Natural - Chain</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Sales by Distribution Center</h2>
+            <div class="chart-wrapper">
+                <canvas id="dcSalesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Distribution Center Performance - Percent Change</h2>
+            <div class="chart-wrapper">
+                <canvas id="dcPercentChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h2>Distribution Center Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Distribution Center</th>
+                        <th>Cases Shipped</th>
+                        <th>Prior Year</th>
+                        <th>Change</th>
+                        <th>% Change</th>
+                        <th>Sales Dollars</th>
+                        <th>Prior Year</th>
+                        <th>% Change Sales</th>
+                    </tr>
+                </thead>
+                <tbody id="dcData">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <h2>Sales by Channel - Percent Growth</h2>
+            <div class="chart-wrapper">
+                <canvas id="channelChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h2>Channel Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>Cases Shipped</th>
+                        <th>Prior Year</th>
+                        <th>Change</th>
+                        <th>% Change</th>
+                        <th>Sales Dollars</th>
+                        <th>Prior Year</th>
+                        <th>% Change Sales</th>
+                    </tr>
+                </thead>
+                <tbody id="channelData">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <h2>Top 10 Accounts by Sales Growth</h2>
+            <div class="chart-wrapper">
+                <canvas id="accountsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h2>Top Accounts Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>Cases Shipped</th>
+                        <th>Prior Year</th>
+                        <th>% Change Cases</th>
+                        <th>Sales Dollars</th>
+                        <th>Prior Year</th>
+                        <th>% Change Sales</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsData">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Distribution Center Data
+        const dcData = [
+            {name: 'MOR', cases: 1483, priorCases: 739, sales: 30572, priorSales: 13454, percentChange: 127},
+            {name: 'AUR', cases: 936, priorCases: 504, sales: 18701, priorSales: 8538, percentChange: 119},
+            {name: 'RID', cases: 2225, priorCases: 1744, sales: 51343, priorSales: 30792, percentChange: 67},
+            {name: 'DAY', cases: 1068, priorCases: 812, sales: 23433, priorSales: 15039, percentChange: 56},
+            {name: 'ROC', cases: 1642, priorCases: 1525, sales: 34311, priorSales: 28409, percentChange: 21},
+            {name: 'ATL', cases: 221, priorCases: 259, sales: 4956, priorSales: 4761, percentChange: 4},
+            {name: 'GRW', cases: 905, priorCases: 985, sales: 17794, priorSales: 17590, percentChange: 1},
+            {name: 'TWC', cases: 297, priorCases: 360, sales: 5726, priorSales: 6115, percentChange: -6},
+            {name: 'SAR', cases: 108, priorCases: 307, sales: 4558, priorSales: 5777, percentChange: -21},
+            {name: 'RAC', cases: 449, priorCases: 746, sales: 9675, priorSales: 13062, percentChange: -26}
+        ];
+
+        // Channel Data
+        const channelData = [
+            {name: 'Natural - Chain', cases: 1361, priorCases: 633, sales: 26178, priorSales: 10426, percentChange: 151},
+            {name: 'SuperMarket Chain', cases: 3568, priorCases: 2639, sales: 75122, priorSales: 46110, percentChange: 63},
+            {name: 'Alternative Channel', cases: 25, priorCases: 20, sales: 519, priorSales: 336, percentChange: 55},
+            {name: 'Independents', cases: 2467, priorCases: 2567, sales: 54557, priorSales: 46331, percentChange: 18},
+            {name: 'SuperMarket Independent', cases: 1012, priorCases: 1067, sales: 23024, priorSales: 20385, percentChange: 13},
+            {name: 'Food Service', cases: 1075, priorCases: 1136, sales: 23574, priorSales: 21329, percentChange: 11},
+            {name: 'International', cases: 32, priorCases: 36, sales: 739, priorSales: 727, percentChange: 2},
+            {name: 'E-Commerce', cases: 56, priorCases: 103, sales: 1111, priorSales: 1944, percentChange: -43}
+        ];
+
+        // Top Accounts Data
+        // Combined NCG accounts: NCGA (272/315), NCG Central (186/180), Generic EDI (95/61), Coop EDI (55/75)
+        // Total cases: 272+186+95+55 = 608 current, 315+180+61+75 = 631 prior
+        // Total sales: 5213+3361+2498+1458 = 12530 current, 5097+2831+1185+1479 = 10592 prior
+        // Percent change: (12530-10592)/10592 = 18.3%
+        const accountsData = [
+            {name: 'CONFIDENTIAL', cases: 1682, priorCases: 1620, sales: 33693, priorSales: 28472, percentChange: 18},
+            {name: 'DEMOULAS SUPERMARKET', cases: 696, priorCases: 747, sales: 15625, priorSales: 13901, percentChange: 12},
+            {name: 'NATIONAL CO-OP GROCERS', cases: 608, priorCases: 631, sales: 12530, priorSales: 10592, percentChange: 18},
+            {name: 'URM STORES', cases: 345, priorCases: 167, sales: 10172, priorSales: 3427, percentChange: 197},
+            {name: 'HARMONS NEIGHBORHOOD GROCER', cases: 527, priorCases: 132, sales: 9683, priorSales: 2215, percentChange: 337},
+            {name: 'SUPER 1 FOODS', cases: 419, priorCases: 210, sales: 9047, priorSales: 2944, percentChange: 207},
+            {name: 'FESTIVAL FOODS', cases: 415, priorCases: 799, sales: 8526, priorSales: 13661, percentChange: -38},
+            {name: 'PALO ALTO EGG COMPANY', cases: 390, priorCases: 0, sales: 7636, priorSales: 0, percentChange: null},
+            {name: 'BIGY GROCERY FULL SERVICE', cases: 344, priorCases: 0, sales: 7114, priorSales: 0, percentChange: null},
+            {name: 'HEINENS INC', cases: 359, priorCases: 342, sales: 6609, priorSales: 5612, percentChange: 18},
+            {name: 'RAISE THE BAR', cases: 244, priorCases: 247, sales: 5843, priorSales: 5090, percentChange: 15},
+            {name: 'BRISTOL FARMS', cases: 258, priorCases: 0, sales: 4030, priorSales: 0, percentChange: null},
+            {name: 'ARAMARK', cases: 169, priorCases: 121, sales: 3940, priorSales: 2292, percentChange: 72},
+            {name: 'JIMBOS', cases: 131, priorCases: 74, sales: 3229, priorSales: 1065, percentChange: 203},
+            {name: 'GOOD EARTH FAIRFAX', cases: 126, priorCases: 93, sales: 3052, priorSales: 1921, percentChange: 59},
+            {name: 'BROULIMS SUPERMARKET', cases: 67, priorCases: 69, sales: 1401, priorSales: 1212, percentChange: 16},
+            {name: 'TOWN AND COUNTRY FOODS MONTANA', cases: 61, priorCases: 25, sales: 1353, priorSales: 443, percentChange: 205},
+            {name: 'NEW LEAF INDEPENDENTS', cases: 69, priorCases: 59, sales: 1325, priorSales: 986, percentChange: 34},
+            {name: 'NORTHWEST GROCERS', cases: 45, priorCases: 1, sales: 1212, priorSales: 9, percentChange: 13367},
+            {name: 'UNIVERSITY OF CALIFORNIA SCHOOL SYSTEM', cases: 60, priorCases: 95, sales: 1152, priorSales: 1577, percentChange: -27},
+            {name: 'DAVES - LUCKY MARKET', cases: 61, priorCases: 40, sales: 1151, priorSales: 691, percentChange: 67},
+            {name: 'LAZY ACRES', cases: 70, priorCases: 0, sales: 1147, priorSales: 0, percentChange: null},
+            {name: 'SOUTH REGION INDIES', cases: 48, priorCases: 46, sales: 1124, priorSales: 833, percentChange: 35}
+        ];
+
+        // Populate DC Table
+        const dcTableBody = document.getElementById('dcData');
+        dcData.forEach(dc => {
+            const caseChange = dc.cases - dc.priorCases;
+            const casePercentChange = ((caseChange / dc.priorCases) * 100).toFixed(0);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${dc.name}</strong></td>
+                <td>${dc.cases.toLocaleString()}</td>
+                <td>${dc.priorCases.toLocaleString()}</td>
+                <td class="${caseChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${caseChange >= 0 ? '↑' : '↓'} ${Math.abs(caseChange).toLocaleString()}
+                </td>
+                <td class="${casePercentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${caseChange >= 0 ? '↑' : '↓'} ${Math.abs(casePercentChange)}%
+                </td>
+                <td>$${dc.sales.toLocaleString()}</td>
+                <td>$${dc.priorSales.toLocaleString()}</td>
+                <td class="${dc.percentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${dc.percentChange >= 0 ? '↑' : '↓'} ${Math.abs(dc.percentChange)}%
+                </td>
+            `;
+            dcTableBody.appendChild(row);
+        });
+
+        // Populate Channel Table
+        const channelTableBody = document.getElementById('channelData');
+        channelData.forEach(channel => {
+            const caseChange = channel.cases - channel.priorCases;
+            const casePercentChange = ((caseChange / channel.priorCases) * 100).toFixed(0);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${channel.name}</strong></td>
+                <td>${channel.cases.toLocaleString()}</td>
+                <td>${channel.priorCases.toLocaleString()}</td>
+                <td class="${caseChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${caseChange >= 0 ? '↑' : '↓'} ${Math.abs(caseChange).toLocaleString()}
+                </td>
+                <td class="${casePercentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${caseChange >= 0 ? '↑' : '↓'} ${Math.abs(casePercentChange)}%
+                </td>
+                <td>$${channel.sales.toLocaleString()}</td>
+                <td>$${channel.priorSales.toLocaleString()}</td>
+                <td class="${channel.percentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${channel.percentChange >= 0 ? '↑' : '↓'} ${Math.abs(channel.percentChange)}%
+                </td>
+            `;
+            channelTableBody.appendChild(row);
+        });
+
+        // Populate Accounts Table
+        const accountsTableBody = document.getElementById('accountsData');
+        accountsData.forEach(account => {
+            const casePercentChange = account.priorCases > 0 ? ((account.cases - account.priorCases) / account.priorCases * 100).toFixed(0) : 'N/A';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${account.name}</strong></td>
+                <td>${account.cases.toLocaleString()}</td>
+                <td>${account.priorCases.toLocaleString()}</td>
+                <td class="${account.percentChange !== null && casePercentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${casePercentChange !== 'N/A' ? (casePercentChange >= 0 ? '↑' : '↓') + ' ' + Math.abs(casePercentChange) + '%' : 'New'}
+                </td>
+                <td>$${account.sales.toLocaleString()}</td>
+                <td>$${account.priorSales.toLocaleString()}</td>
+                <td class="${account.percentChange !== null && account.percentChange >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${account.percentChange !== null ? (account.percentChange >= 0 ? '↑' : '↓') + ' ' + Math.abs(account.percentChange) + '%' : 'New'}
+                </td>
+            `;
+            accountsTableBody.appendChild(row);
+        });
+
+        // DC Sales Chart
+        const ctx1 = document.getElementById('dcSalesChart').getContext('2d');
+        const dcSalesChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: dcData.map(dc => dc.name),
+                datasets: [{
+                    label: '2025 Sales',
+                    data: dcData.map(dc => dc.sales),
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'Prior Year Sales',
+                    data: dcData.map(dc => dc.priorSales),
+                    backgroundColor: 'rgba(56, 189, 248, 0.6)',
+                    borderColor: 'rgba(56, 189, 248, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // DC Percent Change Chart
+        const ctx2 = document.getElementById('dcPercentChart').getContext('2d');
+        const dcPercentChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: dcData.map(dc => dc.name),
+                datasets: [{
+                    label: '% Change in Sales',
+                    data: dcData.map(dc => dc.percentChange),
+                    backgroundColor: dcData.map(dc => dc.percentChange >= 0 ? 'rgba(39, 174, 96, 0.8)' : 'rgba(231, 76, 60, 0.8)'),
+                    borderColor: dcData.map(dc => dc.percentChange >= 0 ? 'rgba(39, 174, 96, 1)' : 'rgba(231, 76, 60, 1)'),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Channel Chart
+        const ctx3 = document.getElementById('channelChart').getContext('2d');
+        const channelChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: channelData.map(ch => ch.name),
+                datasets: [{
+                    label: '% Change in Sales',
+                    data: channelData.map(ch => ch.percentChange),
+                    backgroundColor: channelData.map(ch => ch.percentChange >= 0 ? 'rgba(59, 130, 246, 0.8)' : 'rgba(231, 76, 60, 0.8)'),
+                    borderColor: channelData.map(ch => ch.percentChange >= 0 ? 'rgba(59, 130, 246, 1)' : 'rgba(231, 76, 60, 1)'),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Top 10 Accounts Chart (by highest percent growth with measurable prior year)
+        const topAccounts = accountsData
+            .filter(a => a.percentChange !== null && a.priorSales > 0 && a.percentChange > 0)
+            .sort((a, b) => b.percentChange - a.percentChange)
+            .slice(0, 10);
+
+        const ctx4 = document.getElementById('accountsChart').getContext('2d');
+        const accountsChart = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: topAccounts.map(a => a.name),
+                datasets: [{
+                    label: '% Growth',
+                    data: topAccounts.map(a => a.percentChange),
+                    backgroundColor: 'rgba(39, 174, 96, 0.8)',
+                    borderColor: 'rgba(39, 174, 96, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
