@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWOFFLE Sales Dashboard - YoY Comparison</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+        }
+
+        .header-prepared {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .metric-change {
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric-change.positive {
+            color: #27ae60;
+        }
+
+        .metric-change.negative {
+            color: #e74c3c;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .monthly-table {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+        }
+
+        .monthly-table h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(to right, #3b82f6, #38bdf8);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #2c3e50;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .change-positive {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .arrow {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="header-title">Swoffle Sales Dashboard</h1>
+                    <p class="header-subtitle">Year-Over-Year Comparison: January - November 2025 vs 2024</p>
+                    <p class="header-prepared">Prepared by Stephen Nance</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Revenue 2025</div>
+                <div class="metric-value" id="revenue2025">$0</div>
+                <div class="metric-change positive" id="revenueChange">
+                    <span class="arrow">↑</span>
+                    <span>0% vs 2024</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Total Revenue 2024</div>
+                <div class="metric-value" id="revenue2024">$0</div>
+                <div class="metric-change" style="color: #7f8c8d;">
+                    <span>Jan - Nov 2024</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Revenue Growth</div>
+                <div class="metric-value" id="growthAmount">$0</div>
+                <div class="metric-change positive" id="growthPercent">
+                    <span class="arrow">↑</span>
+                    <span>0% increase</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Average Monthly Revenue</div>
+                <div class="metric-value" id="avgMonthly2025">$0</div>
+                <div class="metric-change" id="avgChange">
+                    <span class="arrow">↑</span>
+                    <span>0% vs 2024</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Quarterly Revenue Comparison</h2>
+            <div class="chart-wrapper">
+                <canvas id="quarterlyChart"></canvas>
+            </div>
+        </div>
+
+        <div class="monthly-table">
+            <h2>Quarterly Breakdown</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quarter</th>
+                        <th>2025 Revenue</th>
+                        <th>2024 Revenue</th>
+                        <th>$ Change</th>
+                        <th>% Change</th>
+                    </tr>
+                </thead>
+                <tbody id="quarterlyData">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <h2>Monthly Revenue Comparison</h2>
+            <div class="chart-wrapper">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Cumulative Revenue Growth</h2>
+            <div class="chart-wrapper">
+                <canvas id="cumulativeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="monthly-table">
+            <h2>Monthly Breakdown</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>2025 Revenue</th>
+                        <th>2024 Revenue</th>
+                        <th>$ Change</th>
+                        <th>% Change</th>
+                    </tr>
+                </thead>
+                <tbody id="monthlyData">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sales data based on provided information
+        const salesData = {
+            months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November'],
+            revenue2025: [25878.86, 30678.97, 53769.35, 42263.54, 73348.39, 56891.32, 89035.15, 54378.02, 65522.11, 90199.16, 102258.87],
+            revenue2024: [13874.53, 50250.02, 35444.46, 47527.43, 36671.15, 26849.29, 38022.16, 49731.90, 23581.26, 103246.10, 37820.13]
+        };
+
+        // Calculate totals and metrics
+        const total2025 = salesData.revenue2025.reduce((a, b) => a + b, 0);
+        const total2024 = salesData.revenue2024.reduce((a, b) => a + b, 0);
+        const growth = total2025 - total2024;
+        const growthPercent = ((growth / total2024) * 100).toFixed(1);
+        const avg2025 = total2025 / 11;
+        const avg2024 = total2024 / 11;
+        const avgGrowth = (((avg2025 - avg2024) / avg2024) * 100).toFixed(1);
+
+        // Update metric cards
+        document.getElementById('revenue2025').textContent = '$' + total2025.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('revenue2024').textContent = '$' + total2024.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('growthAmount').textContent = '$' + growth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('revenueChange').innerHTML = `<span class="arrow">↑</span><span>${growthPercent}% vs 2024</span>`;
+        document.getElementById('growthPercent').innerHTML = `<span class="arrow">↑</span><span>${growthPercent}% increase</span>`;
+        document.getElementById('avgMonthly2025').textContent = '$' + avg2025.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('avgChange').innerHTML = `<span class="arrow">↑</span><span>${avgGrowth}% vs 2024</span>`;
+
+        // Set positive/negative classes
+        if (growth >= 0) {
+            document.getElementById('revenueChange').className = 'metric-change positive';
+            document.getElementById('growthPercent').className = 'metric-change positive';
+        } else {
+            document.getElementById('revenueChange').className = 'metric-change negative';
+            document.getElementById('growthPercent').className = 'metric-change negative';
+        }
+
+        if (avgGrowth >= 0) {
+            document.getElementById('avgChange').className = 'metric-change positive';
+        } else {
+            document.getElementById('avgChange').className = 'metric-change negative';
+        }
+
+        // Populate monthly table
+        const tbody = document.getElementById('monthlyData');
+        salesData.months.forEach((month, index) => {
+            const rev2025 = salesData.revenue2025[index];
+            const rev2024 = salesData.revenue2024[index];
+            const change = rev2025 - rev2024;
+            const changePercent = ((change / rev2024) * 100).toFixed(1);
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${month}</strong></td>
+                <td>$${rev2025.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td>$${rev2024.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td class="${change >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${change >= 0 ? '↑' : '↓'} $${Math.abs(change).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </td>
+                <td class="${changePercent >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${change >= 0 ? '↑' : '↓'} ${Math.abs(changePercent)}%
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Calculate quarterly data
+        const quarterlyData = {
+            quarters: ['Q1 (Jan-Mar)', 'Q2 (Apr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Nov)'],
+            revenue2025: [
+                salesData.revenue2025[0] + salesData.revenue2025[1] + salesData.revenue2025[2], // Q1
+                salesData.revenue2025[3] + salesData.revenue2025[4] + salesData.revenue2025[5], // Q2
+                salesData.revenue2025[6] + salesData.revenue2025[7] + salesData.revenue2025[8], // Q3
+                salesData.revenue2025[9] + salesData.revenue2025[10] // Q4 (Oct-Nov only)
+            ],
+            revenue2024: [
+                salesData.revenue2024[0] + salesData.revenue2024[1] + salesData.revenue2024[2], // Q1
+                salesData.revenue2024[3] + salesData.revenue2024[4] + salesData.revenue2024[5], // Q2
+                salesData.revenue2024[6] + salesData.revenue2024[7] + salesData.revenue2024[8], // Q3
+                salesData.revenue2024[9] + salesData.revenue2024[10] // Q4 (Oct-Nov only)
+            ]
+        };
+
+        // Populate quarterly table
+        const quarterlyTbody = document.getElementById('quarterlyData');
+        quarterlyData.quarters.forEach((quarter, index) => {
+            const rev2025 = quarterlyData.revenue2025[index];
+            const rev2024 = quarterlyData.revenue2024[index];
+            const change = rev2025 - rev2024;
+            const changePercent = ((change / rev2024) * 100).toFixed(1);
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${quarter}</strong></td>
+                <td>$${rev2025.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td>$${rev2024.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td class="${change >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${change >= 0 ? '↑' : '↓'} $${Math.abs(change).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </td>
+                <td class="${changePercent >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${change >= 0 ? '↑' : '↓'} ${Math.abs(changePercent)}%
+                </td>
+            `;
+            quarterlyTbody.appendChild(row);
+        });
+
+        // Monthly Revenue Comparison Chart
+        const ctx1 = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: salesData.months,
+                datasets: [{
+                    label: '2025 Revenue',
+                    data: salesData.revenue2025,
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2
+                }, {
+                    label: '2024 Revenue',
+                    data: salesData.revenue2024,
+                    backgroundColor: 'rgba(118, 75, 162, 0.6)',
+                    borderColor: 'rgba(118, 75, 162, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cumulative Revenue Chart
+        function calculateCumulative(arr) {
+            let cumulative = [];
+            let sum = 0;
+            arr.forEach(val => {
+                sum += val;
+                cumulative.push(sum);
+            });
+            return cumulative;
+        }
+
+        const cumulative2025 = calculateCumulative(salesData.revenue2025);
+        const cumulative2024 = calculateCumulative(salesData.revenue2024);
+
+        const ctx2 = document.getElementById('cumulativeChart').getContext('2d');
+        const cumulativeChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: salesData.months,
+                datasets: [{
+                    label: '2025 Cumulative',
+                    data: cumulative2025,
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: '2024 Cumulative',
+                    data: cumulative2024,
+                    borderColor: 'rgba(118, 75, 162, 1)',
+                    backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Quarterly Chart
+        const ctx3 = document.getElementById('quarterlyChart').getContext('2d');
+        const quarterlyChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: quarterlyData.quarters,
+                datasets: [{
+                    label: '2025 Revenue',
+                    data: quarterlyData.revenue2025,
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
+                }, {
+                    label: '2024 Revenue',
+                    data: quarterlyData.revenue2024,
+                    backgroundColor: 'rgba(56, 189, 248, 0.6)',
+                    borderColor: 'rgba(56, 189, 248, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
