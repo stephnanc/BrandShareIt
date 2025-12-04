@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle KeHE Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+        }
+
+        .header-prepared {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .metric-change {
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric-change.positive {
+            color: #27ae60;
+        }
+
+        .metric-change.negative {
+            color: #e74c3c;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .data-table {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+        }
+
+        .data-table h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(to right, #3b82f6, #38bdf8);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .change-positive {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .arrow {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.8em;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="header-title">Swoffle KeHE Sales Dashboard</h1>
+                    <p class="header-subtitle">Year-to-Date Sales: January 1 - November 28, 2025 vs 2024</p>
+                    <p class="header-prepared">Prepared by Stephen Nance</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total KeHE Sales YTD</div>
+                <div class="metric-value">$53,057</div>
+                <div class="metric-change negative">
+                    <span class="arrow">↓</span>
+                    <span>9.04% vs Prior Year</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Prior Year Sales</div>
+                <div class="metric-value">$58,333</div>
+                <div class="metric-change" style="color: #7f8c8d;">
+                    <span>Jan - Nov 2024</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Total Cases Shipped</div>
+                <div class="metric-value">46,682</div>
+                <div class="metric-change negative">
+                    <span class="arrow">↓</span>
+                    <span>16.04% vs Prior Year</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Top Performing Channel</div>
+                <div class="metric-value">+12.30%</div>
+                <div class="metric-change positive">
+                    <span class="arrow">↑</span>
+                    <span>All Other</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Monthly Sales Trend - Current Year vs Prior Year</h2>
+            <div class="chart-wrapper">
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Channel Performance - Percent Change</h2>
+            <div class="chart-wrapper">
+                <canvas id="channelChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h2>Channel Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>CY Sales</th>
+                        <th>PY Sales</th>
+                        <th>% Change</th>
+                        <th>CY POD</th>
+                        <th>PY POD</th>
+                        <th>CY Sku Prod</th>
+                        <th>PY Sku Prod</th>
+                    </tr>
+                </thead>
+                <tbody id="channelData">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <h2>Top 10 Retailer Areas by Sales Volume</h2>
+            <div class="chart-wrapper">
+                <canvas id="retailerChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h2>Retailer Area Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Retailer Area</th>
+                        <th>CY Sales</th>
+                        <th>PY Sales</th>
+                        <th>% Change</th>
+                        <th>CY POD</th>
+                        <th>PY POD</th>
+                        <th>CY Sku Prod</th>
+                        <th>PY Sku Prod</th>
+                    </tr>
+                </thead>
+                <tbody id="retailerData">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Monthly Sales Data (from the trend chart image)
+        const monthlyData = {
+            months: ['Nov 2024', 'Dec 2024', 'Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025', 'Oct 2025'],
+            cy: [6000, 6000, 5500, 5500, 4500, 5000, 4000, 4000, 6000, 4500, 4500, 5000, 4500],
+            py: [4000, 3000, 6000, 6000, 4500, 6500, 4000, 6000, 6000, 4000, 5500, 7000, 6000]
+        };
+
+        // Channel Data
+        const channelData = [
+            {name: 'Regional Accounts', cySales: 25030, pySales: 25501, change: -1.85, cyPod: 81, pyPod: 100, cySkuProd: 8343, pySkuProd: 8500},
+            {name: 'Independent East', cySales: 14315, pySales: 17636, change: -18.99, cyPod: 217, pyPod: 370, cySkuProd: 4938, pySkuProd: 5879},
+            {name: 'Chain Grocery', cySales: 6821, pySales: 8974, change: -23.99, cyPod: 122, pyPod: 127, cySkuProd: 6821, pySkuProd: 8974},
+            {name: 'Alternate Channel', cySales: 6390, pySales: 6222, change: 2.70, cyPod: 42, pyPod: 38, cySkuProd: 2130, pySkuProd: 2074}
+        ];
+
+        // Retailer Area Data (filtered to accounts with $367 or more in sales)
+        const retailerData = [
+            {name: "Mom's Organic Market", cySales: 25030, pySales: 24599, change: 1.76, cyPod: 81, pyPod: 75, cySkuProd: 8343, pySkuProd: 8200},
+            {name: 'All Other', cySales: 7931, pySales: 7062, change: 12.30, cyPod: 38, pyPod: 40, cySkuProd: 2644, pySkuProd: 2354},
+            {name: 'INFRA Atlantic', cySales: 6821, pySales: 8974, change: -23.99, cyPod: 122, pyPod: 127, cySkuProd: 6821, pySkuProd: 8974},
+            {name: 'INFRA Northeast', cySales: 3670, pySales: 2469, change: 48.67, cyPod: 37, pyPod: 35, cySkuProd: 1223, pySkuProd: 823},
+            {name: 'AG New England', cySales: 3464, pySales: 3734, change: -7.22, cyPod: 29, pyPod: 37, cySkuProd: 1155, pySkuProd: 1245},
+            {name: 'Single-Store Retailers', cySales: 2188, pySales: 2800, change: -21.86, cyPod: 57, pyPod: 69, cySkuProd: 729, pySkuProd: 933},
+            {name: "Gristedes/D'Agostinos", cySales: 1226, pySales: 2210, change: -44.52, cyPod: 27, pyPod: 54, cySkuProd: 613, pySkuProd: 1105},
+            {name: 'PQA-NH', cySales: 622, pySales: 1451, change: -57.12, cyPod: 15, pyPod: 31, cySkuProd: 207, pySkuProd: 484},
+            {name: 'ARS, All Other', cySales: 411, pySales: 602, change: -31.73, cyPod: 17, pyPod: 107, cySkuProd: 137, pySkuProd: 867},
+            {name: 'HCMC', cySales: 410, pySales: 0, change: null, cyPod: 8, pyPod: 0, cySkuProd: 137, pySkuProd: 0},
+            {name: 'INFRA NON-SA', cySales: 367, pySales: 447, change: -17.88, cyPod: 6, pyPod: 6, cySkuProd: 122, pySkuProd: 149}
+        ];
+
+        // Populate Channel Table
+        const channelTableBody = document.getElementById('channelData');
+        channelData.forEach(channel => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${channel.name}</strong></td>
+                <td>$${channel.cySales.toLocaleString()}</td>
+                <td>$${channel.pySales.toLocaleString()}</td>
+                <td class="${channel.change >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${channel.change >= 0 ? '↑' : '↓'} ${Math.abs(channel.change).toFixed(2)}%
+                </td>
+                <td>${channel.cyPod}</td>
+                <td>${channel.pyPod}</td>
+                <td>$${channel.cySkuProd.toLocaleString()}</td>
+                <td>$${channel.pySkuProd.toLocaleString()}</td>
+            `;
+            channelTableBody.appendChild(row);
+        });
+
+        // Populate Retailer Table
+        const retailerTableBody = document.getElementById('retailerData');
+        retailerData.forEach(retailer => {
+            const row = document.createElement('tr');
+            const changeDisplay = retailer.change !== null ? 
+                `<td class="${retailer.change >= 0 ? 'change-positive' : 'change-negative'}">
+                    ${retailer.change >= 0 ? '↑' : '↓'} ${Math.abs(retailer.change).toFixed(2)}%
+                </td>` :
+                `<td style="color: #7f8c8d;">New</td>`;
+            
+            row.innerHTML = `
+                <td><strong>${retailer.name}</strong></td>
+                <td>$${retailer.cySales.toLocaleString()}</td>
+                <td>$${retailer.pySales.toLocaleString()}</td>
+                ${changeDisplay}
+                <td>${retailer.cyPod}</td>
+                <td>${retailer.pyPod}</td>
+                <td>$${retailer.cySkuProd.toLocaleString()}</td>
+                <td>$${retailer.pySkuProd.toLocaleString()}</td>
+            `;
+            retailerTableBody.appendChild(row);
+        });
+
+        // Monthly Trend Chart
+        const ctx1 = document.getElementById('monthlyTrendChart').getContext('2d');
+        const monthlyTrendChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: monthlyData.months,
+                datasets: [{
+                    label: 'Current Year 2025',
+                    data: monthlyData.cy,
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Prior Year 2024',
+                    data: monthlyData.py,
+                    borderColor: 'rgba(56, 189, 248, 1)',
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.y.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'K';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Channel Performance Chart
+        const ctx2 = document.getElementById('channelChart').getContext('2d');
+        const channelChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: channelData.map(ch => ch.name),
+                datasets: [{
+                    label: '% Change in Sales',
+                    data: channelData.map(ch => ch.change),
+                    backgroundColor: channelData.map(ch => ch.change >= 0 ? 'rgba(39, 174, 96, 0.8)' : 'rgba(231, 76, 60, 0.8)'),
+                    borderColor: channelData.map(ch => ch.change >= 0 ? 'rgba(39, 174, 96, 1)' : 'rgba(231, 76, 60, 1)'),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x.toFixed(2) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Top 10 Retailers Chart
+        const topRetailers = retailerData
+            .filter(r => r.cySales > 0)
+            .sort((a, b) => b.cySales - a.cySales)
+            .slice(0, 10);
+
+        const ctx3 = document.getElementById('retailerChart').getContext('2d');
+        const retailerChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: topRetailers.map(r => r.name),
+                datasets: [{
+                    label: '2025 Sales',
+                    data: topRetailers.map(r => r.cySales),
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2
+                }, {
+                    label: '2024 Sales',
+                    data: topRetailers.map(r => r.pySales),
+                    backgroundColor: 'rgba(56, 189, 248, 0.6)',
+                    borderColor: 'rgba(56, 189, 248, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '$' + context.parsed.x.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
