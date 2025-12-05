@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainforest Distribution Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: white;
+            padding: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-left {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .brand-tagline {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+
+        .dashboard-content {
+            padding: 1rem;
+        }
+
+        .collapsible-section {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            cursor: pointer;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: #f3f4f6;
+        }
+
+        .collapsible-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #6b7280;
+            transition: transform 0.3s;
+        }
+
+        .arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-content.open {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .org-chart-content {
+            padding: 2rem;
+        }
+
+        .leadership-section {
+            margin-bottom: 2rem;
+        }
+
+        .leader-card {
+            background: #f0f9ff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .leader-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        .leader-title {
+            font-size: 1rem;
+            color: #374151;
+        }
+
+        .managers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .manager-card {
+            background: #f0f9ff;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .manager-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.25rem;
+        }
+
+        .manager-title {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .manager-region {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .team-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+
+        .team-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .team-size {
+            font-size: 0.875rem;
+            color: #3b82f6;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .team-managers {
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .team-managers strong {
+            color: #1f2937;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-managers ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .team-managers li {
+            margin-bottom: 0.25rem;
+            color: #4b5563;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .contact-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .contact-table thead {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .contact-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 0.875rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .contact-table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .contact-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .contact-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #38bdf8, #3b82f6);
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #3b82f6, #2563eb);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header-title {
+                font-size: 1.5rem;
+            }
+            
+            .managers-grid,
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .collapsible-header {
+                padding: 1rem;
+            }
+            
+            .collapsible-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="texture-overlay"></div>
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="header-title">Rainforest Distribution Contact and Account Information</h1>
+                <p class="header-subtitle">Manage your contacts and account details</p>
+            </div>
+            <div class="header-right">
+                <div class="brand-name">Brand Share It Sales Partners</div>
+                <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Organization Chart Section -->
+        <div class="collapsible-section" id="orgChartSection">
+            <div class="collapsible-header" onclick="toggleSection('orgChart')">
+                <h2 class="collapsible-title">Rainforest Distribution Organization Chart 📊 <span style="font-size: 0.75rem; font-weight: normal;">(click arrow to view)</span></h2>
+                <div class="arrow" id="arrowOrgChart"></div>
+            </div>
+            
+            <div class="collapsible-content" id="contentOrgChart">
+                <div class="org-chart-content">
+                    <div class="leadership-section">
+                        <div class="leader-card">
+                            <div class="leader-name">Amaury Schoon</div>
+                            <div class="leader-title">SVP of Sales</div>
+                        </div>
+                    </div>
+
+                    <div class="managers-grid">
+                        <div class="manager-card">
+                            <div class="manager-name">Jimmy Sebbah</div>
+                            <div class="manager-title">Regional Sales Manager</div>
+                            <div class="manager-region">Northeast Region</div>
+                        </div>
+
+                        <div class="manager-card">
+                            <div class="manager-name">Matthew Alongi</div>
+                            <div class="manager-title">Regional Sales Manager</div>
+                            <div class="manager-region">Mid-Atlantic Region</div>
+                        </div>
+
+                        <div class="manager-card">
+                            <div class="manager-name">Timothy Boyenton</div>
+                            <div class="manager-title">District Sales Manager</div>
+                            <div class="manager-region">North Atlantic Region</div>
+                        </div>
+
+                        <div class="manager-card">
+                            <div class="manager-name">Melissa Ramcharitar</div>
+                            <div class="manager-title">Customer Service Manager</div>
+                        </div>
+
+                        <div class="manager-card">
+                            <div class="manager-name">Jeffrey Kravitz</div>
+                            <div class="manager-title">Regional Sales Manager</div>
+                            <div class="manager-region">South Region</div>
+                        </div>
+
+                        <div class="manager-card">
+                            <div class="manager-name">TBD</div>
+                            <div class="manager-title">District Sales Manager</div>
+                            <div class="manager-region">Florida Region</div>
+                        </div>
+                    </div>
+
+                    <div class="teams-grid">
+                        <div class="team-card">
+                            <div class="team-header">Mid-Atlantic Sales Team</div>
+                            <div class="team-size">14 Team Members</div>
+                            <div class="team-managers">
+                                <strong>District Manager:</strong>
+                                <ul>
+                                    <li>Joshua Hursey</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-header">Northeast Sales Team</div>
+                            <div class="team-size">35 Team Members</div>
+                            <div class="team-managers">
+                                <strong>District Managers:</strong>
+                                <ul>
+                                    <li>Fred Santana - NYC</li>
+                                    <li>Angel Anchundia - Long Island & WFM NYC</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-header">North Atlantic Sales Team</div>
+                            <div class="team-size">8 Team Members</div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-header">Customer Service Team</div>
+                            <div class="team-size">5 Team Members</div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-header">South Team</div>
+                            <div class="team-size">6 Team Members</div>
+                        </div>
+
+                        <div class="team-card">
+                            <div class="team-header">Florida Team</div>
+                            <div class="team-size">5 Team Members</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="collapsible-section" id="contactInfoSection">
+            <div class="collapsible-header" onclick="toggleSection('contactInfo')">
+                <h2 class="collapsible-title">Rainforest Distribution Key Contact Information 📞 <span style="font-size: 0.75rem; font-weight: normal;">(w/vertical scrollbar - click arrow to view)</span></h2>
+                <div class="arrow" id="arrowContactInfo"></div>
+            </div>
+            
+            <div class="collapsible-content" id="contentContactInfo">
+                <div class="table-container">
+                    <table class="contact-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Title</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Amaury Schoon</td>
+                                <td>SVP of Sales</td>
+                                <td>(917) 428-2557</td>
+                                <td>amaury.schoon@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Stephanie Obin</td>
+                                <td>Sales Administrator</td>
+                                <td>(201) 565-7694</td>
+                                <td>stephanie.obin@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Kerri Ann Goodwin</td>
+                                <td>Sales Coordinator</td>
+                                <td>(603) 973-1958</td>
+                                <td>kerri-ann.goodwin@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Lissette Guzman</td>
+                                <td>Sales Coordinator</td>
+                                <td>(201) 790-1232</td>
+                                <td>lissette.guzman@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Sheree Graham</td>
+                                <td>Sales Coordinator</td>
+                                <td>(603) 507-8176</td>
+                                <td>sheree.graham@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Carla Rosalel de Castro</td>
+                                <td>Sales Coordinator</td>
+                                <td>(201) 683-7953</td>
+                                <td>carla.castro@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Anthony Bolarinwa</td>
+                                <td>Sales Coordinator</td>
+                                <td>(201) 683-7953</td>
+                                <td>anthony.bolarinwa@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Paul Sasenbury</td>
+                                <td>Senior Whole Foods Market Coordinator</td>
+                                <td>(603) 421-4393</td>
+                                <td>paul.sasenbury@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Terri Clyne</td>
+                                <td>Whole Foods Market Coordinator</td>
+                                <td>(201) 835-5331</td>
+                                <td>terri.clyne@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Victoria Rodriguez</td>
+                                <td>Whole Foods Market Coordinator</td>
+                                <td>(201) 993-7019</td>
+                                <td>victoria.rodriguez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Rose Jean Muyrong</td>
+                                <td>Whole Foods Market Coordinator</td>
+                                <td>(201) 683-7953</td>
+                                <td>rose.muyrong@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Brian Parrott</td>
+                                <td>Inside Sales Manager</td>
+                                <td>(603) 918-7492</td>
+                                <td>brian.parrott@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Melissa Ramcharitar</td>
+                                <td>Customer Service Manager</td>
+                                <td>(201) 683-7953</td>
+                                <td>melissa.ramcharitar@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Anthony Lebby</td>
+                                <td>Customer Service Associate</td>
+                                <td>(201) 683-7953</td>
+                                <td>anthony.lebby@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Daniel Cortez</td>
+                                <td>Customer Service Associate</td>
+                                <td>(201) 683-7953</td>
+                                <td>daniel.cortez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Dominique Baskerville</td>
+                                <td>Customer Service Associate</td>
+                                <td>(201) 683-7953</td>
+                                <td>dominique.baskerville@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Ryan Kershow</td>
+                                <td>Customer Service Associate</td>
+                                <td>(201) 683-7953</td>
+                                <td>ryan.kershow@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Jimmy Sebbah</td>
+                                <td>Regional Sales Manager - Northeast</td>
+                                <td>(631) 408-6126</td>
+                                <td>jimmy.sebbah@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Lina Sierra</td>
+                                <td>District Sales Manager - New Jersey</td>
+                                <td>(201) 776-2578</td>
+                                <td>lina.sierra@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Alexandros Alexiou</td>
+                                <td>WFM Specialist & Area Sales Manager</td>
+                                <td>(732) 890-6408</td>
+                                <td>alexandros.alexiou@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Anthony Stambo</td>
+                                <td>WFM & ShopRite Specialist</td>
+                                <td>(848) 702-4979</td>
+                                <td>anthony.stambo@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Christian Hessenius</td>
+                                <td>WFM & ShopRite Specialist</td>
+                                <td>(973) 632-5639</td>
+                                <td>chris.hessenius@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Daniel Maxwell</td>
+                                <td>WFM & ShopRite Specialist</td>
+                                <td>(908) 878-9274</td>
+                                <td>daniel.maxwell@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Jhovanni Ore</td>
+                                <td>WFM Specialist & Area Sales Manager</td>
+                                <td>(201) 256-7469</td>
+                                <td>jhovanni.ore@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Michael Castro</td>
+                                <td>WFM Specialist & Area Sales Manager</td>
+                                <td>(201) 927-1531</td>
+                                <td>michael.castro@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Michael Martinez</td>
+                                <td>Area Sales Manager</td>
+                                <td>(845) 300-7901</td>
+                                <td>michael.martinez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Richard Castronova Jr</td>
+                                <td>District Sales Manager</td>
+                                <td>(862) 228-1196</td>
+                                <td>rick.castronova@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Fred Santana</td>
+                                <td>Senior District Sales Manager - NYC</td>
+                                <td>(646) 872-8242</td>
+                                <td>fred.santana@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Cristhian J Ponce</td>
+                                <td>Area Sales Manager</td>
+                                <td>(915) 383-7084</td>
+                                <td>cristhian.ponce@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Francisco Valencia</td>
+                                <td>Area Sales Manager</td>
+                                <td>(347) 320-4152</td>
+                                <td>francisco.valencia@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Ivonne Benavides</td>
+                                <td>Area Sales Manager</td>
+                                <td>(917) 567-0060</td>
+                                <td>ivonne.benavides@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>John Anchundia</td>
+                                <td>Area Sales Manager</td>
+                                <td>(718) 825-7636</td>
+                                <td>john.anchundia@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Jose Lara</td>
+                                <td>Area Sales Manager</td>
+                                <td>(917) 324-0341</td>
+                                <td>jose.lara@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Juan Gonzalez</td>
+                                <td>Area Sales Manager</td>
+                                <td>(718) 864-6753</td>
+                                <td>juan.gonzalez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Leonardo Hernandez</td>
+                                <td>Area Sales Manager</td>
+                                <td>(929) 355-0093</td>
+                                <td>leonardo.hernandez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Vito Ciaccia</td>
+                                <td>Area Sales Manager</td>
+                                <td>(718) 905-8867</td>
+                                <td>vito.ciaccia@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Jorge Martinez</td>
+                                <td>District Sales Manager - Westchester & Connecticut</td>
+                                <td>(917) 519-6035</td>
+                                <td>jorge.martinez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Alexander Larsson</td>
+                                <td>Area Sales Manager</td>
+                                <td>(732) 551-6689</td>
+                                <td>Alexander.larsson@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Dicter Carranza</td>
+                                <td>WFM Specialist</td>
+                                <td>(646) 267-0684</td>
+                                <td>dicter.carranza@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Franklin Siguenza</td>
+                                <td>Area Sales Manager</td>
+                                <td>(475) 888-3218</td>
+                                <td>franklin.siguenza@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Jayleen Maceda</td>
+                                <td>Area Sales Manager</td>
+                                <td>(917) 214-7645</td>
+                                <td>jayleen.maceda@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Rolando Mancebo</td>
+                                <td>Area Sales Manager</td>
+                                <td>(929) 313-8402</td>
+                                <td>rolando.mancebo@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Sylke Chavez</td>
+                                <td>WFM Specialist</td>
+                                <td>(713) 857-3423</td>
+                                <td>sylke.chavez@rainforestdistribution.com</td>
+                            </tr>
+                            <tr>
+                                <td>Angel Anchundia</td>
+                                <td>District Sales Manager - Long Island & WFM NYC</td>
+                                <td>(347) 334-3843</td>
+                                <td>angel.anchundia@rainforestdistribution.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 50 Class A Accounts Section -->
+        <div class="collapsible-section" id="top50AccountsSection">
+            <div class="collapsible-header" onclick="toggleSection('top50Accounts')">
+                <h2 class="collapsible-title">Rainforest Top 50 Class A Performing Accounts 🏆 <span style="font-size: 0.75rem; font-weight: normal;">(w/vertical scrollbar - click arrow to view)</span></h2>
+                <div class="arrow" id="arrowTop50Accounts"></div>
+            </div>
+            
+            <div class="collapsible-content" id="contentTop50Accounts">
+                <div class="table-container">
+                    <table class="contact-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>BP Code</th>
+                                <th>Store Name</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>Zip Code</th>
+                                <th>Warehouse</th>
+                                <th>Sales Employee</th>
+                                <th>Group Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows 1-50 from the original TSX file -->
+                            <tr><td>1</td><td>C11582</td><td>Thyme & Season</td><td>3040 Whitney Avenue</td><td>Hamden</td><td>6518</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>INFRA</td></tr>
+                            <tr><td>2</td><td>C11526</td><td>New Morning Country Store LLC</td><td>129 Main St N</td><td>Woodbury</td><td>6798</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>INFRA</td></tr>
+                            <tr><td>3</td><td>C11858</td><td>Edge of the Woods Market</td><td>379 Whalley Avenue</td><td>New Haven</td><td>6511</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>4</td><td>C19868</td><td>BANTAM MARKET</td><td>793 BANTAM RD</td><td>Bantam</td><td>6750</td><td>MA - EAS</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>5</td><td>C19862</td><td>ATTICUS MARKET</td><td>771 ORANGE ST</td><td>New Haven</td><td>6511</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>6</td><td>C14547</td><td>Essential Health</td><td>266 PROSPECT AVE</td><td>Hartford</td><td>6106</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>7</td><td>C10386</td><td>Good Nature Cafe Inc (15 Broadway)</td><td>15 Broadway</td><td>New Haven</td><td>6511</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>8</td><td>C12217</td><td>It's Only Natural Market</td><td>575 Main Street</td><td>Middletown</td><td>6457</td><td>MA - EAS</td><td>Alexander Larsson</td><td>INFRA</td></tr>
+                            <tr><td>9</td><td>C11335</td><td>Chamomille Natural Foods Inc</td><td>58 Newtown Rd</td><td>Danbury</td><td>6810</td><td>MA - EAS</td><td>Alexander Larsson</td><td>INFRA</td></tr>
+                            <tr><td>10</td><td>C19867</td><td>NORTHVILLE MARKET</td><td>301 LITCHFIELD RD</td><td>New Milford</td><td>6776</td><td>MA - EAS</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>11</td><td>C19248</td><td>COOKED</td><td>5 MAIN STREET</td><td>Centerbrook</td><td>6409</td><td>MA - EAS</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>12</td><td>C18856</td><td>STONE GARDENS FARM MARKET</td><td>40 HUNTINGTON STREET</td><td>Shelton</td><td>6484</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>13</td><td>C10387</td><td>Good Nature Cafe Inc (44 Whitney)</td><td>44 Whitney Ave</td><td>New Haven</td><td>6510</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>14</td><td>C16328</td><td>Whitneyville Food Center</td><td>1248 WHITNEY AVE</td><td>Hamden</td><td>6517</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>15</td><td>C16818</td><td>New Fairfield Food Center</td><td>1 Brush Hill Rd</td><td>New Fairfield</td><td>6812</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>16</td><td>C20547</td><td>P+M ORANGE STREET MARKET</td><td>721 ORANGE STREET</td><td>New Haven</td><td>6511</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>17</td><td>C21210</td><td>KEY FOOD #2678 - 425 Broad Street</td><td>425 Broad Street</td><td>Manchester</td><td>6040</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>18</td><td>C11659</td><td>109 Cheese and Wine (Kent)</td><td>6 Kent Green Blvd</td><td>Kent</td><td>6757</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>19</td><td>C16881</td><td>Tangiers International Market</td><td>550 FARMINGTON AVE</td><td>Hartford</td><td>6105</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>20</td><td>C11094</td><td>Four Seasons Market LLC</td><td>875 W Main St</td><td>Branford</td><td>6405</td><td>MA - EAS</td><td>Alexander Larsson</td><td>Indie_CT</td></tr>
+                            <tr><td>21</td><td>C20144</td><td>KEY FOOD #2486 - PARK ST</td><td>1250 Park Street</td><td>Hartford</td><td>6106</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>22</td><td>C20157</td><td>KEY FOOD #2524 - MAIN ST</td><td>954 Main Street</td><td>East Hartford</td><td>6108</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>23</td><td>C20222</td><td>KEY FOOD #2646 - GREENWICH AVE</td><td>482 Greenwich Avenue</td><td>New Haven</td><td>6519</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>24</td><td>C20223</td><td>KEY FOOD #2647 - FERRY ST</td><td>325 Ferry Street</td><td>New Haven</td><td>6513</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>25</td><td>C20225</td><td>BANANA FRESH MKT #2650 - FAIRFIELD AVE</td><td>286 Fairfield Avenue</td><td>Waterbury</td><td>6708</td><td>NJ - BAY</td><td>Alexander Larsson</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>26</td><td>C18725</td><td>Uncle Giuseppe's Marketplace - SHREWSBURY</td><td>990 shrewsbury ave</td><td>Eatontown</td><td>7724</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Reg_Uncle Giuseppes</td></tr>
+                            <tr><td>27</td><td>C22890</td><td>FOOD DISTRICT LLC</td><td>500 BOARDWALK</td><td>Atlantic City</td><td>8401</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>28</td><td>C12227</td><td>Ouri's Fruit - NJ</td><td>266 Norwood Avenue</td><td>Deal</td><td>7723</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>29</td><td>C19148</td><td>PANGAEA NATURALS</td><td>657 E BAY AVE</td><td>Manahawkin</td><td>8050</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>INFRA</td></tr>
+                            <tr><td>30</td><td>C18322</td><td>GREEN'S NATURAL FOODS - SHREWSBURY</td><td>490 Broad Street</td><td>Shrewsbury</td><td>7702</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Reg_Mrs Greens</td></tr>
+                            <tr><td>31</td><td>C20062</td><td>THE FOOD EMPORIUM #2152 - COUNTY RD 520</td><td>460 County Road 520</td><td>Marlboro</td><td>7746</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Reg_Key Food Global</td></tr>
+                            <tr><td>32</td><td>C19843</td><td>LIVOTI'S OF BRICK</td><td>1930 ROUTE 88</td><td>Brick</td><td>8724</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>33</td><td>C18321</td><td>GREEN'S NATURAL FOODS - OCEAN</td><td>1119 Highway 35</td><td>Ocean</td><td>7712</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Reg_Mrs Greens</td></tr>
+                            <tr><td>34</td><td>C52777</td><td>PATEL BROTHERS</td><td>3100 QUAKERBRIDGE ROAD</td><td>Trenton</td><td>8619</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>35</td><td>C16811</td><td>FERRUCCI'S TWO</td><td>527 PROSPECT AVE</td><td>Little Silver</td><td>7739</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>36</td><td>C12222</td><td>Whole Earth Center</td><td>360 Nassau Street</td><td>Princeton</td><td>8540</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>INFRA</td></tr>
+                            <tr><td>37</td><td>C10690</td><td>Natural Foods Gnrl Store (Toms River, NJ)</td><td>675 Batchelor Street</td><td>Toms River</td><td>8753</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>38</td><td>C17873</td><td>Burkes Market</td><td>536 main ave</td><td>Point Pleasant Beach</td><td>8742</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>39</td><td>C11973</td><td>The Local Market & Kitchen</td><td>604 Central Avenue</td><td>Ship Bottom</td><td>8008</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>40</td><td>C52583</td><td>Livoti's at Middletown</td><td>1151 RT-35</td><td>Middletown</td><td>7748</td><td>NJ - BAY</td><td>Alexandros Alexiou</td><td>Indie_NJ</td></tr>
+                            <tr><td>41</td><td>-</td><td>Park Slope Food Coop</td><td>782 Union St</td><td>Brooklyn</td><td>11215</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>NCG</td></tr>
+                            <tr><td>42</td><td>C13198</td><td>Citarella - East Hampton - 006 EH</td><td>2 Pantigo Rd</td><td>East Hampton</td><td>11937</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>43</td><td>C10933</td><td>Union Market - Court St</td><td>288 Court Street</td><td>Brooklyn</td><td>11231</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>44</td><td>C13200</td><td>Citarella - Southampton - 012 SH</td><td>20 Hampton Rd</td><td>Southampton</td><td>11968</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>45</td><td>C13197</td><td>Citarella - West Village - 008 VILL</td><td>424 6th Ave</td><td>New York</td><td>10011</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>46</td><td>C17968</td><td>Union Market - Crown Heights</td><td>1535 Bedford Ave</td><td>Brooklyn</td><td>11216</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>47</td><td>C13199</td><td>Citarella - Bridgehampton - 011 BH</td><td>2209 Montauk Hwy</td><td>Bridgehampton</td><td>11932</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>48</td><td>C10932</td><td>Union Market - 7th Ave</td><td>402-404 7th Ave</td><td>Brooklyn</td><td>11215</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>49</td><td>C13752</td><td>Union Market - Flatbush</td><td>342 Flatbush Ave</td><td>Brooklyn</td><td>11238</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>50</td><td>C13196</td><td>Citarella - Upper East Side - 002 East</td><td>1313 3rd Ave</td><td>New York</td><td>10021</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 50 Class AA Accounts Section -->
+        <div class="collapsible-section" id="top50AAAccountsSection">
+            <div class="collapsible-header" onclick="toggleSection('top50AAAccounts')">
+                <h2 class="collapsible-title">Rainforest Top 50 Class AA Performing Accounts 🥈 <span style="font-size: 0.75rem; font-weight: normal;">(w/vertical scrollbar - click arrow to view)</span></h2>
+                <div class="arrow" id="arrowTop50AAAccounts"></div>
+            </div>
+            
+            <div class="collapsible-content" id="contentTop50AAAccounts">
+                <div class="table-container">
+                    <table class="contact-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>BP Code</th>
+                                <th>Store Name</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Zip Code</th>
+                                <th>Warehouse</th>
+                                <th>Sales Employee</th>
+                                <th>Group Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows 1-50 from the original TSX file -->
+                            <tr><td>1</td><td>C13201</td><td>Citarella - Greenwich - 014 GRW CT</td><td>600 West Putnam Ave</td><td>Greenwich</td><td>Connecticut</td><td>6830</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>2</td><td>C18328</td><td>OASIS SNACKS LLC - SOMERSET</td><td>305 Churchill Ave</td><td>Somerset</td><td>New Jersey</td><td>8873</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Online / Home Delivery</td></tr>
+                            <tr><td>3</td><td>C21007</td><td>Eataly - Short Hills</td><td>1200 Morris Turnpike</td><td>Short Hills</td><td>New Jersey</td><td>7078</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>OnPremise_Eataly</td></tr>
+                            <tr><td>4</td><td>C10934</td><td>Union Market - Houston</td><td>240 E Houston</td><td>New York</td><td>New York</td><td>10002</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>5</td><td>C13195</td><td>Citarella - Upper West Side - 001 West</td><td>2135 Broadway</td><td>New York</td><td>New York</td><td>10023</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>6</td><td>C10935</td><td>Union Market - Union St</td><td>754-756 Union St</td><td>Brooklyn</td><td>New York</td><td>11215</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Union Mkt</td></tr>
+                            <tr><td>7</td><td>C20882</td><td>J.A.G. Beverage Co. & Fine Foods</td><td>280A Suburban Ave</td><td>Deer Park</td><td>New York</td><td>11729</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Sub-distributor</td></tr>
+                            <tr><td>8</td><td>C12168</td><td>Citarella Greenwich (Operating)</td><td>600 Food Center Drive</td><td>Bronx</td><td>New York</td><td>10474</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Reg_Citarella</td></tr>
+                            <tr><td>9</td><td>C17828</td><td>Fraiche Corp</td><td>30 Van Dam Street 1st FL</td><td>New York</td><td>New York</td><td>10013</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Sub-distributor</td></tr>
+                            <tr><td>10</td><td>C10263</td><td>Eataly NY LLC - Flatiron</td><td>2 West 24th Street</td><td>New York</td><td>New York</td><td>10010</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>OnPremise_Eataly</td></tr>
+                            <tr><td>11</td><td>C52674</td><td>SHARE THE HARVEST FARM</td><td>55 Long Lane</td><td>East Hampton</td><td>New York</td><td>11937</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Indie_LI</td></tr>
+                            <tr><td>12</td><td>C11078</td><td>Eataly NY Downtown</td><td>101 Liberty Street</td><td>New York</td><td>New York</td><td>10006</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>OnPremise_Eataly</td></tr>
+                            <tr><td>13</td><td>C21197</td><td>555 BEVERAGES</td><td>555 Country Club Road</td><td>Dallas</td><td>Pennsylvania</td><td>18612</td><td>NJ - BAY</td><td>Angel Anchundia</td><td>Indie_PA</td></tr>
+                            <tr><td>14</td><td>C22896</td><td>COOP FOOD STORE LEBANON</td><td>12 CENTERRA PKWY SUITE 75</td><td>Lebanon</td><td>New Hampshire</td><td>3766</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>15</td><td>C19434</td><td>COOP FOOD STORE HANOVER</td><td>45 SOUTH PARK STREET</td><td>Hanover</td><td>New Hampshire</td><td>3755</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>16</td><td>C19553</td><td>MONADNOCK FOOD COOP</td><td>34 CYPRESS STREET</td><td>Keene</td><td>New Hampshire</td><td>3431</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>17</td><td>C21072</td><td>NEWBURY DELI LLC</td><td>889 NH ROUTE 103</td><td>Newbury</td><td>New Hampshire</td><td>3255</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_NH</td></tr>
+                            <tr><td>18</td><td>C19423</td><td>WOODSTOCK FARMERS MARKET</td><td>979 WEST WOODSTOCK RD</td><td>Woodstock</td><td>Vermont</td><td>5091</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>19</td><td>C19496</td><td>CITY MARKET (SOUTH END)</td><td>207 FLYNN AVE</td><td>Burlington</td><td>Vermont</td><td>5401</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>20</td><td>C19435</td><td>HUNGER MOUNTAIN COOP</td><td>623 STONE CUTTERS WAY</td><td>Montpelier</td><td>Vermont</td><td>5602</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>21</td><td>C19427</td><td>MEHURONS SUPERMARKET</td><td>5121 MAIN STREET</td><td>Waitsfield</td><td>Vermont</td><td>5673</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>22</td><td>C19422</td><td>COMMODITIES NATURAL MKT Stowe</td><td>1650 MOUNTAIN ROAD</td><td>Stowe</td><td>Vermont</td><td>5672</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>23</td><td>C19548</td><td>CITY MARKET (ONION RVR COOP)</td><td>82 SOUTH WINOOSKI AVE</td><td>Burlington</td><td>Vermont</td><td>5401</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>24</td><td>C19548</td><td>MIDDLEBURY NATURAL FOOD COOP</td><td>#9 WASHINGTON ST</td><td>Middlebury</td><td>Vermont</td><td>5753</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>25</td><td>C19690</td><td>WOODSTOCK FARMERS MARKET WATERBURY</td><td>2802 WATERBURY-STOWE RD</td><td>Waterbury Center</td><td>Vermont</td><td>5677</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>26</td><td>C19440</td><td>CRAFTSBURY GENERAL STORE</td><td>118 SOUTH CRAFTSBURY ROAD</td><td>Craftsbury</td><td>Vermont</td><td>5826</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>INFRA</td></tr>
+                            <tr><td>27</td><td>C20969</td><td>BROWNSVILLE BUTCHER & PANTRY</td><td>871 ROUTE 44</td><td>Brownsville</td><td>Vermont</td><td>5037</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>28</td><td>C20774</td><td>Meadow Mart</td><td>284 Elm St</td><td>Montpelier</td><td>Vermont</td><td>5602</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>29</td><td>C19416</td><td>CHAPMAN'S GENERAL STORE</td><td>491 US 5 N</td><td>Fairlee</td><td>Vermont</td><td>5045</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>30</td><td>C19539</td><td>MAPLE CORNER COMMUNITY STORE</td><td>31 WEST COUNTY ROAD</td><td>Calais</td><td>Vermont</td><td>5648</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>31</td><td>C19665</td><td>UPPER VALLEY FOOD COOP</td><td>193 N MAIN ST</td><td>White River Junction</td><td>Vermont</td><td>5001</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>32</td><td>C20869</td><td>Jake's ONE Market</td><td>242 N Winooski Ave</td><td>Burlington</td><td>Vermont</td><td>5401</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>33</td><td>C19356</td><td>A.R. MARKET</td><td>159 NORTH MAIN STREET</td><td>Barre</td><td>Vermont</td><td>5641</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>34</td><td>C19610</td><td>RUTLAND AREA FOOD COOP</td><td>77 WALES STREET</td><td>Rutland</td><td>Vermont</td><td>5701</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>35</td><td>C20855</td><td>The Village Market</td><td>15 SOUTH MAIN ST</td><td>Wallingford</td><td>Vermont</td><td>5773</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>36</td><td>C19599</td><td>RED HEN BAKING COMPANY</td><td>961 B US ROUTE 2</td><td>Montpelier</td><td>Vermont</td><td>5602</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>37</td><td>C19379</td><td>ARBOR FARM MARKET</td><td>324 US ROUTE 2</td><td>South Hero</td><td>Vermont</td><td>5486</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>38</td><td>C21119</td><td>SHELBURNE MEAT & FISH MARKET</td><td>2989 SHELBURNE RD</td><td>Shelburne</td><td>Vermont</td><td>5482</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>39</td><td>C19559</td><td>MORRISVILLE FOOD COOPERATIVE</td><td>46 PLEASANT ST</td><td>Morrisville</td><td>Vermont</td><td>5661</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>40</td><td>C19596</td><td>Rail City Market</td><td>8 SOUTH MAIN ST</td><td>Saint Albans</td><td>Vermont</td><td>5478</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>41</td><td>C52504</td><td>HN WILLIAMS STORE INC</td><td>2732 RT 30</td><td>Dorset</td><td>Vermont</td><td>5251</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>42</td><td>C19652</td><td>THE ROOTS FARM MARKET, LLC</td><td>903 US-2</td><td>Montpelier</td><td>Vermont</td><td>5602</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>43</td><td>C19633</td><td>SPRINGFIELD FOOD COOP</td><td>6 MAIN STREET STE 1</td><td>Springfield</td><td>Vermont</td><td>5156</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>NCG</td></tr>
+                            <tr><td>44</td><td>C20339</td><td>OLD BRICK STORE</td><td>290 FERRY RD</td><td>Charlotte</td><td>Vermont</td><td>5445</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>45</td><td>C21176</td><td>SUGARBUSH MOUNTAIN RESORT INC</td><td>2367 SUGARBUSH ACCESS RD</td><td>Warren</td><td>Vermont</td><td>5674</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>46</td><td>C19449</td><td>DORSET UNION STORE</td><td>31 CHURCH ST</td><td>Dorset</td><td>Vermont</td><td>5251</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>47</td><td>C19534</td><td>MACH'S MARKET, LLC</td><td>18 SCHOOL STREET</td><td>Pawlet</td><td>Vermont</td><td>5761</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>48</td><td>C19698</td><td>EDELWEISS MOUNTAIN DELI</td><td>2251 MOUNTAIN ROAD</td><td>Stowe</td><td>Vermont</td><td>5672</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>49</td><td>C19469</td><td>Free Verse Farm LLC</td><td>3 NORTH COMMON</td><td>Chelsea</td><td>Vermont</td><td>5038</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                            <tr><td>50</td><td>C21206</td><td>Williston Meat & Fish Market</td><td>104 CORNERSTONE</td><td>Williston</td><td>Vermont</td><td>5495</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Indie_VT</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 50 Class AAA Accounts Section -->
+        <div class="collapsible-section" id="top50AAAAccountsSection">
+            <div class="collapsible-header" onclick="toggleSection('top50AAAAccounts')">
+                <h2 class="collapsible-title">Rainforest Top 50 Class AAA Performing Accounts 🥉 <span style="font-size: 0.75rem; font-weight: normal;">(w/vertical scrollbar - click arrow to view)</span></h2>
+                <div class="arrow" id="arrowTop50AAAAccounts"></div>
+            </div>
+            
+            <div class="collapsible-content" id="contentTop50AAAAccounts">
+                <div class="table-container">
+                    <table class="contact-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>BP Code</th>
+                                <th>Store Name</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Zip Code</th>
+                                <th>Warehouse</th>
+                                <th>Sales Employee 1</th>
+                                <th>Sales Employee 2</th>
+                                <th>Group Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows 1-50 from the original TSX file -->
+                            <tr><td>1</td><td>C21176</td><td>SUGARBUSH MOUNTAIN RESORT INC</td><td>2367 SUGARBUSH ACCESS RD</td><td>Warren</td><td>Vermont</td><td>5674</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>2</td><td>C19449</td><td>DORSET UNION STORE</td><td>31 CHURCH ST</td><td>Dorset</td><td>Vermont</td><td>5251</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>3</td><td>C19534</td><td>MACH'S MARKET, LLC</td><td>18 SCHOOL STREET</td><td>Pawlet</td><td>Vermont</td><td>5761</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>4</td><td>C19698</td><td>EDELWEISS MOUNTAIN DELI</td><td>2251 MOUNTAIN ROAD</td><td>Stowe</td><td>Vermont</td><td>5672</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>5</td><td>C19469</td><td>Free Verse Farm LLC (no Monday Delivery)</td><td>3 NORTH COMMON</td><td>Chelsea</td><td>Vermont</td><td>5038</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>6</td><td>C21206</td><td>Williston Meat & Fish Market</td><td>104 CORNERSTONE</td><td>Williston</td><td>Vermont</td><td>5495</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>7</td><td>C19468</td><td>FOX MARKET, LLC</td><td>3070 US 2</td><td>East Montpelier</td><td>Vermont</td><td>5651</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>8</td><td>C52537</td><td>SINGLETONS GENERAL STORE</td><td>356 MAIN ST</td><td>Proctorsville</td><td>Vermont</td><td>5153</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>9</td><td>C21151</td><td>F.H GILLINGHAM & SONS INCS</td><td>16 ELM ST</td><td>Woodstock</td><td>Vermont</td><td>5091</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>10</td><td>C20963</td><td>Cork Market</td><td>539 Moscow Road</td><td>Stowe</td><td>Vermont</td><td>5672</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>11</td><td>C19456</td><td>EAST WARREN COMMUNITY MARKET</td><td>42 ROXBURY MOUNTAIN RD</td><td>Warren</td><td>Vermont</td><td>5674</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>12</td><td>C20289</td><td>Bread and Puppet Theater, Inc</td><td>753 Heights Rd</td><td>Glover</td><td>Vermont</td><td>5839</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>13</td><td>C19461</td><td>FARMHOUSE MARKET, INC</td><td>136 ROUTE 100</td><td>Wilmington</td><td>Vermont</td><td>5363</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>14</td><td>C19594</td><td>PUTNEY GENERAL STORE</td><td>4 KIMBALL HILL RD</td><td>Putney</td><td>Vermont</td><td>5346</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>15</td><td>C19688</td><td>WOOD MEADOW MARKET</td><td>575 W. ENOSBURG RD</td><td>Enosburg Falls</td><td>Vermont</td><td>5450</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>16</td><td>C20491</td><td>WAYSIDE COUNTRY STORE</td><td>3307 VT ROUTE 313 W</td><td>Arlington</td><td>Vermont</td><td>5250</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>17</td><td>C20402</td><td>ReTribe</td><td>14 Maple Leaf Farm Rd</td><td>Underhill</td><td>Vermont</td><td>5489</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>18</td><td>C20304</td><td>Green Mountain Foods, Inc</td><td>194 MAIN ST STE 104</td><td>Newport</td><td>Vermont</td><td>5855</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>19</td><td>C20915</td><td>VERMONT COUNTRY DELI MARKET</td><td>450 WESTERN AVE</td><td>Brattleboro</td><td>Vermont</td><td>5301</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>20</td><td>C52446</td><td>Front Seat Coffee LLC</td><td>101 S Main St</td><td>Hardwick</td><td>Vermont</td><td>5843</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>21</td><td>C19458</td><td>FALLS GENERAL STORE</td><td>7 COX BROOK ROAD</td><td>Northfield Falls</td><td>Vermont</td><td>5664</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>22</td><td>C19669</td><td>VON TRAPP FARMSTEAD, LLC</td><td>251 COMMON ROAD</td><td>Waitsfield</td><td>Vermont</td><td>5673</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>23</td><td>C19620</td><td>PIERCES STORE</td><td>2658 NORTHAM RD</td><td>Cuttingsville</td><td>Vermont</td><td>5738</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>24</td><td>C19359</td><td>ADAMANT COOP STORE</td><td>1313 HAGGETT RD</td><td>Adamant</td><td>Vermont</td><td>5640</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>25</td><td>-</td><td>PLAINFIELD COOP</td><td>4723 US ROUTE 2</td><td>East Montpelier</td><td>Vermont</td><td>5651</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>26</td><td>C52662</td><td>5th Quarter Butcher + Provisions</td><td>89 Mad River Green</td><td>Waitsfield</td><td>Vermont</td><td>5673</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>27</td><td>C20444</td><td>Myer's Bagels</td><td>408 Shelburne Rd</td><td>Burlington</td><td>Vermont</td><td>5401</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>28</td><td>C20460</td><td>Tuckerbox</td><td>1 South Main St</td><td>White River Junction</td><td>Vermont</td><td>5001</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>29</td><td>C19885</td><td>The Basin Farm LLC</td><td>7 Square Bellows Falls</td><td>Bellows Falls</td><td>Vermont</td><td>5101</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>30</td><td>C20438</td><td>Sustainable Eats Food Truck</td><td>125 Willow Heights</td><td>Wallingford</td><td>Vermont</td><td>5773</td><td>MA - EAS</td><td>Bennett Weinberg</td><td>Timothy Boyenton</td><td>Indie_VT</td></tr>
+                            <tr><td>31</td><td>C21462</td><td>Atlanta Botanical Gardens</td><td>1345 Piedmont Avenue NE</td><td>Atlanta</td><td>Georgia</td><td>30309</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>32</td><td>C21579</td><td>Savi Provisions - ATL Airport</td><td>650 Atlanta South Pkwy</td><td>Atlanta</td><td>Georgia</td><td>30349</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Reg_Savi Provisions</td></tr>
+                            <tr><td>33</td><td>C21323</td><td>Oakhurst Market</td><td>650 East Lake Dr</td><td>Decatur</td><td>Georgia</td><td>30030</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>34</td><td>C21562</td><td>Grant Park Market</td><td>519 Memorial Dr.</td><td>Atlanta</td><td>Georgia</td><td>30312</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>INFRA</td></tr>
+                            <tr><td>35</td><td>C21445</td><td>Candler Park Market</td><td>1642 McLendon Ave NE</td><td>Atlanta</td><td>Georgia</td><td>30307</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>36</td><td>C21609</td><td>Grindhouse Killer Burgers - Memorial Drive</td><td>701 Memorial Drive</td><td>Atlanta</td><td>Georgia</td><td>30316</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>37</td><td>C21399</td><td>Oak Grove Market</td><td>2757 LaViSta Rd</td><td>Decatur</td><td>Georgia</td><td>30033</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>38</td><td>C21492</td><td>The General Store at Serenbe</td><td>10642 Serenbe Ln</td><td>Chattahoochee Hills</td><td>Georgia</td><td>30268</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>39</td><td>C21608</td><td>Fresh Harvest</td><td>735 Park N Blvd</td><td>Clarkston</td><td>Georgia</td><td>30021</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>40</td><td>C21449</td><td>Scottsdale Farms - Cafe</td><td>15639 Birmingham Highway</td><td>Milton</td><td>Georgia</td><td>30004</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>41</td><td>C21460</td><td>Savi Provisions - Brookhaven</td><td>1388 Dresden Dr</td><td>Atlanta</td><td>Georgia</td><td>30319</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Reg_Savi Provisions</td></tr>
+                            <tr><td>42</td><td>C21468</td><td>Piedmont Driving Club</td><td>1215 Piedmont Ave NE</td><td>Atlanta</td><td>Georgia</td><td>30309</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>43</td><td>-</td><td>Joy Company Market</td><td>56 Henry St</td><td>Braselton</td><td>Georgia</td><td>30517</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>44</td><td>C21405</td><td>Grindhouse Killer Burgers - Brookhaven</td><td>2565 Apple Valley Rd</td><td>Brookhaven</td><td>Georgia</td><td>30319</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>45</td><td>C21359</td><td>Grindhouse Killer Burgers - Decatur</td><td>433 North McDonough St</td><td>Decatur</td><td>Georgia</td><td>30030</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>46</td><td>C21322</td><td>Fox Theatre</td><td>660 Peachtree St NE</td><td>Atlanta</td><td>Georgia</td><td>30308</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Food Service</td></tr>
+                            <tr><td>47</td><td>C21382</td><td>Chiringa - Alpharetta</td><td>34 S Main St</td><td>Alpharetta</td><td>Georgia</td><td>30009</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>48</td><td>C21552</td><td>Lucy's Market</td><td>56 East Andrews Drive NW</td><td>Atlanta</td><td>Georgia</td><td>30305</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>49</td><td>C21403</td><td>Farmview Market & Cafe</td><td>2610 Eatonton Rd</td><td>Madison</td><td>Georgia</td><td>30650</td><td>GA - ALT</td><td>Beth Maisano</td><td>Jeffrey Kravitz</td><td>Indie_GA</td></tr>
+                            <tr><td>50</td><td>C21335</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management for collapsible sections
+        const sectionStates = {
+            orgChart: false,
+            contactInfo: false,
+            top50Accounts: false,
+            top50AAAccounts: false,
+            top50AAAAccounts: false
+        };
+
+        // Function to toggle a section
+        function toggleSection(sectionId) {
+            // Toggle the state
+            sectionStates[sectionId] = !sectionStates[sectionId];
+            
+            // Get DOM elements
+            const contentElement = document.getElementById(`content${capitalizeFirst(sectionId)}`);
+            const arrowElement = document.getElementById(`arrow${capitalizeFirst(sectionId)}`);
+            
+            // Toggle classes
+            if (sectionStates[sectionId]) {
+                contentElement.classList.add('open');
+                arrowElement.classList.add('open');
+                contentElement.style.maxHeight = contentElement.scrollHeight + 'px';
+            } else {
+                contentElement.classList.remove('open');
+                arrowElement.classList.remove('open');
+                contentElement.style.maxHeight = '0';
+            }
+        }
+
+        // Helper function to capitalize first letter
+        function capitalizeFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Initialize all sections as closed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close all sections by default
+            for (const sectionId in sectionStates) {
+                const contentElement = document.getElementById(`content${capitalizeFirst(sectionId)}`);
+                const arrowElement = document.getElementById(`arrow${capitalizeFirst(sectionId)}`);
+                
+                contentElement.classList.remove('open');
+                arrowElement.classList.remove('open');
+                contentElement.style.maxHeight = '0';
+            }
+        });
+    </script>
+</body>
+</html>
