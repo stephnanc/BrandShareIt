@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Share It - Premium Affiliate Marketing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-logo {
+            height: 32px;
+            width: 32px;
+            background: data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iIzQyODVmNCIvPgo8cGF0aCBkPSJNOC4yIDhIMTcuNFY5LjZIMTAuMlYxNC4ySDEyLjhDMTMuNSAxNC4yIDE0LjUgMTQuNiAxNS4zIDEzLjhDMTYuMSAxMyAxNi41IDEyIDE2LjUgMTEuMkMxNi41IDEwLjQgMTYuMSA5LjQgMTUuMyA4LjZDMTQuNSA3LjggMTMuNSA3LjQgMTIuOCA3LjRIOC4yVjhaTTEwLjIgMTIuNlYxMy44SDEyLjhDMTMuMiAxMy44IDEzLjYgMTMuNiAxMy44IDEzLjJDMTQuMiAxMi44IDE0IDEyLjQgMTMuNiAxMi42SDEwLjJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #4285f4;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .nav-link.active {
+            color: #4285f4;
+            font-weight: 600;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .hero-logo {
+            height: 80px;
+            width: 80px;
+            background: data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iIzQyODVmNCIvPgo8cGF0aCBkPSJNMjAuNSAyMEg0MlYyNEgyNS41VjM4SDMyQzMzLjggMzggMzYuMiAzOC44IDM4LjIgMzYuOEM0MC4yIDM0LjggNDEgMzIuNCA0MSAzMEM0MSAyNy42IDQwLjIgMjUuMiAzOC4yIDIzLjJDMzYuMiAyMS4yIDMzLjggMjAuNCAzMiAyMC40SDIwLjVWMjBaTTI1LjUgMzRWMzZIMzJDMzMuNCAzNiAzNC44IDM1LjYgMzUuNiAzNC44QzM2LjQgMzQgMzYgMzMuNCAzNS42IDM0SDI1LjVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-brand {
+            background: linear-gradient(to right, #1e3a8a, #1e40af, #1d4ed8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-share {
+            background: linear-gradient(to right, #1d4ed8, #7c3aed, #1e40af);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-tagline {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #6b7280;
+            letter-spacing: 0.05em;
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 3rem 0;
+        }
+
+        .products-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .category-btn:hover {
+            background: #e9ecef;
+            text-decoration: none;
+        }
+
+        .category-btn.active {
+            background: #4285f4;
+            color: white;
+            border-color: #4285f4;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+        }
+
+        .product-image span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Individual product images using CSS gradients that match your products */
+        .product-image.knives {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+        }
+
+        .product-image.copper {
+            background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+        }
+
+        .product-image.mixer {
+            background: linear-gradient(135deg, #708090 0%, #778899 100%);
+        }
+
+        .product-image.espresso {
+            background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+        }
+
+        .product-image.pizza {
+            background: linear-gradient(135deg, #FF6347 0%, #DC143C 100%);
+        }
+
+        .product-image.headphones {
+            background: linear-gradient(135deg, #191970 0%, #4169E1 100%);
+        }
+
+        .product-image.laptop {
+            background: linear-gradient(135deg, #2F4F4F 0%, #696969 100%);
+        }
+
+        .product-image.speaker {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        }
+
+        .product-image.tablet {
+            background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
+        }
+
+        .product-image.spices {
+            background: linear-gradient(135deg, #DAA520 0%, #FF8C00 100%);
+        }
+
+        .product-image.coffee {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        }
+
+        .product-image.bread {
+            background: linear-gradient(135deg, #D2B48C 0%, #F5DEB3 100%);
+        }
+
+        .product-image.chocolate {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+        }
+
+        .product-image.rug {
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        }
+
+        .product-image.lamp {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        .product-image.vase {
+            background: linear-gradient(135deg, #DEB887 0%, #F5DEB3 100%);
+        }
+
+        .product-image.tools {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+        }
+
+        .product-image.generator {
+            background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%);
+        }
+
+        .product-image.workbench {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        }
+
+        .product-image.compressor {
+            background: linear-gradient(135deg, #4682B4 0%, #5F9EA0 100%);
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 0.8rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .learn-more-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .learn-more-btn:hover {
+            background: #3367d6;
+        }
+
+        /* Hidden products */
+        .product-card.hidden {
+            display: none;
+        }
+
+        /* About Us Styles */
+        .about-section {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .about-image {
+            text-align: center;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .category-item {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .category-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Business Solutions Styles */
+        .business-section {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .business-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .business-hero {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .business-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+        }
+
+        .business-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .business-description {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .primary-btn {
+            background: #4285f4;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .primary-btn:hover {
+            background: #3367d6;
+            text-decoration: none;
+        }
+
+        .secondary-btn {
+            background: #f8f9fa;
+            color: #4285f4;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .secondary-btn:hover {
+            background: #e9ecef;
+            text-decoration: none;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .service-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .service-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 3rem 0 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: #4285f4;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #e9ecef;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-bottom p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #4285f4;
+            text-decoration: underline;
+        }
+
+        .affiliate-disclosure {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .disclosure-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .disclosure-text {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .about-grid,
+            .business-hero {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .category-grid,
+            .services-grid,
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .category-tabs {
+                gap: 0.5rem;
+            }
+            
+            .category-btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .category-grid,
+            .services-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo"></div>
+                <span class="nav-title">Brand Share It</span>
+            </div>
+            <ul class="nav-links">
+                <li><span class="nav-link active" onclick="showSection('home')">Home</span></li>
+                <li><span class="nav-link" onclick="showSection('about')">About Us</span></li>
+                <li><span class="nav-link" onclick="showSection('business')">Business Solutions</span></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <section id="home-section" class="content-section active">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-container">
+                <div class="hero-logo"></div>
+                <h1 class="hero-title">
+                    <span class="hero-brand">Brand</span> <span class="hero-share">Share It</span>
+                </h1>
+                <p class="hero-tagline">One Step Ahead Reaching for Tomorrow</p>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="products-section">
+            <div class="products-container">
+                <div class="section-header">
+                    <h2 class="section-title">Premium Product Collection</h2>
+                    <p class="section-subtitle">Discover our carefully curated selection of premium lifestyle products</p>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs">
+                    <button class="category-btn active" onclick="filterProducts('all')">All Products (20)</button>
+                    <button class="category-btn" onclick="filterProducts('kitchen')">Kitchen Essentials (5)</button>
+                    <button class="category-btn" onclick="filterProducts('tech')">Tech Gadgets (4)</button>
+                    <button class="category-btn" onclick="filterProducts('food')">Gourmet Foods (4)</button>
+                    <button class="category-btn" onclick="filterProducts('home')">Home & Living (3)</button>
+                    <button class="category-btn" onclick="filterProducts('handyman')">Handyman (4)</button>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="products-grid" id="products-grid">
+                    <!-- KITCHEN PRODUCTS (5) -->
+                    <div class="product-card" data-category="kitchen">
+                        <div class="product-image knives"><span>Kitchen Knives</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Japanese Steel Chef Set</h3>
+                            <p class="product-description">Handcrafted Japanese steel with lifetime sharpening</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.9 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="kitchen">
+                        <div class="product-image copper"><span>Copper Cookware</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Copper Core Cookware Set</h3>
+                            <p class="product-description">Professional-grade heat distribution technology</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="kitchen">
+                        <div class="product-image mixer"><span>Stand Mixer</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Artisan Stand Mixer Pro</h3>
+                            <p class="product-description">10-speed precision with ceramic bowl</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.7 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="kitchen">
+                        <div class="product-image espresso"><span>Espresso Machine</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Espresso Machine</h3>
+                            <p class="product-description">Professional-grade espresso with temperature control</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.9 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="kitchen">
+                        <div class="product-image pizza"><span>Pizza Oven</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Professional Pizza Oven</h3>
+                            <p class="product-description">Wood-fired outdoor pizza oven with temperature control</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <!-- TECH PRODUCTS (4) -->
+                    <div class="product-card" data-category="tech">
+                        <div class="product-image headphones"><span>Headphones</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Wireless Headphones</h3>
+                            <p class="product-description">Professional sound quality with active noise cancellation</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="tech">
+                        <div class="product-image laptop"><span>UltraBook</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">UltraBook Pro 15</h3>
+                            <p class="product-description">High-performance laptop with 16GB RAM and SSD storage</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.7 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="tech">
+                        <div class="product-image speaker"><span>Smart Speaker</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Smart Speaker</h3>
+                            <p class="product-description">Voice-controlled speaker with premium audio quality</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.6 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="tech">
+                        <div class="product-image tablet"><span>Tablet Pro</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Professional Tablet Pro</h3>
+                            <p class="product-description">High-resolution display with professional stylus support</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <!-- FOOD PRODUCTS (4) -->
+                    <div class="product-card" data-category="food">
+                        <div class="product-image spices"><span>Gourmet Spices</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Gourmet Spice Collection</h3>
+                            <p class="product-description">Premium spices from around the world</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="food">
+                        <div class="product-image coffee"><span>Coffee Beans</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Artisan Coffee Beans</h3>
+                            <p class="product-description">Small-batch roasted coffee from premium farms</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.9 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="food">
+                        <div class="product-image bread"><span>Artisan Bread</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Organic Bread Collection</h3>
+                            <p class="product-description">Handcrafted artisan breads with ancient grains</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.7 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="food">
+                        <div class="product-image chocolate"><span>Premium Chocolate</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Premium Chocolate Selection</h3>
+                            <p class="product-description">Single-origin chocolate from master chocolatiers</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.9 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <!-- HOME & LIVING PRODUCTS (3) -->
+                    <div class="product-card" data-category="home">
+                        <div class="product-image rug"><span>Moroccan Rug</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Moroccan Hand-Woven Rug</h3>
+                            <p class="product-description">Authentic hand-woven Moroccan rug with intricate patterns</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.9 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="home">
+                        <div class="product-image lamp"><span>Floor Lamp</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Mid-Century Floor Lamp</h3>
+                            <p class="product-description">Elegant mid-century modern floor lamp with warm lighting</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.7 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="home">
+                        <div class="product-image vase"><span>Ceramic Vases</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Artisan Ceramic Vase Collection</h3>
+                            <p class="product-description">Hand-crafted ceramic vases in various sizes and colors</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <!-- HANDYMAN PRODUCTS (4) -->
+                    <div class="product-card" data-category="handyman">
+                        <div class="product-image tools"><span>Tool Set</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Professional Tool Set</h3>
+                            <p class="product-description">Complete cordless tool collection for any project</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="handyman">
+                        <div class="product-image generator"><span>Generator</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Industrial Generator</h3>
+                            <p class="product-description">12KW professional-grade backup power solution</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.7 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="handyman">
+                        <div class="product-image workbench"><span>Workbench</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">Heavy-Duty Workbench</h3>
+                            <p class="product-description">Professional workspace with integrated storage</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="handyman">
+                        <div class="product-image compressor"><span>Air Compressor</span></div>
+                        <div class="product-info">
+                            <h3 class="product-title">High-Capacity Air Compressor</h3>
+                            <p class="product-description">Industrial-grade air compressor for professional use</p>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">4.8 stars</span>
+                            </div>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section id="about-section" class="content-section">
+        <div class="about-section">
+            <div class="about-container">
+                <div class="section-header">
+                    <h1 class="section-title">About <span style="background: linear-gradient(to right, #1e3a8a, #7c3aed); background-clip: text; -webkit-background-clip: text; color: transparent;">Brand Share It</span></h1>
+                    <p class="section-subtitle">Your trusted source for discovering the most essential products that elevate everyday living</p>
+                </div>
+
+                <div class="about-grid">
+                    <div>
+                        <h2 style="font-size: 2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1.5rem;">Our Mission</h2>
+                        <div class="about-text">
+                            <p style="margin-bottom: 1.5rem;">At Brand Share It, we curate only the topmost essential products across key lifestyle categories: premium kitchen gadgets, cutting-edge tech innovations, gourmet food products, home & living essentials, and handyman tools.</p>
+                            
+                            <p style="margin-bottom: 1.5rem;">Every product we feature has been carefully selected for its exceptional quality, innovative design, and ability to genuinely enhance your daily experience. We partner directly with trusted brands and manufacturers to bring you exclusive access to products that represent the pinnacle of their categories.</p>
+                            
+                            <p>Our affiliate partnerships allow us to offer these premium products at competitive prices while maintaining complete transparency about our recommendations. When you purchase through our links, you're not just getting a superior product – you're supporting our mission to discover and share the world's most essential lifestyle innovations.</p>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; margin: 0 auto;">📦</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.8rem; font-weight: 700; color: #1e3a8a; text-align: center; margin-bottom: 2rem;">Our Product Categories</h3>
+                <div class="category-grid">
+                    <div class="category-item">
+                        <div class="category-icon">🍳</div>
+                        <div class="category-name">Kitchen Essentials</div>
+                        <div class="category-desc">Professional-grade tools and innovative gadgets for culinary excellence</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">📱</div>
+                        <div class="category-name">Tech Innovation</div>
+                        <div class="category-desc">Cutting-edge devices and smart solutions for modern living</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🏠</div>
+                        <div class="category-name">Home & Living</div>
+                        <div class="category-desc">Premium home accessories and décor for sophisticated living</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">🔧</div>
+                        <div class="category-name">Handyman Tools</div>
+                        <div class="category-desc">Professional tools and equipment for projects and repairs</div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 2rem; border-radius: 12px; margin-top: 3rem;">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1rem;">Meet Stephen Nance</h3>
+                    <p class="about-text" style="margin-bottom: 1.5rem;">As the founder of Brand Share It, I've dedicated my career to identifying and curating products that truly make a meaningful difference in people's daily lives. My extensive background in product analysis, consumer behavior research, and trend forecasting allows me to spot breakthrough innovations long before they become mainstream market staples.</p>
+                    
+                    <p class="about-text">In addition to curating exceptional products, I also offer custom sales growth implementation and acceleration. As a Master Sales Growth Specialist, I help select businesses accelerate their growth through data-driven strategies and proven methodologies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BUSINESS SOLUTIONS SECTION -->
+    <section id="business-section" class="content-section">
+        <div class="business-section">
+            <div class="business-container">
+                <div class="business-hero">
+                    <div>
+                        <h1 class="business-title">Business Growth Solutions</h1>
+                        <h2 class="business-subtitle">Accelerate Your Business Growth</h2>
+                        <p class="business-description">As a Master Sales Growth Specialist, I help ambitious businesses achieve exponential growth through data-driven strategies and proven methodologies.</p>
+                        
+                        <div class="cta-buttons">
+                            <a href="#" class="primary-btn">Free Growth Readiness Assessment</a>
+                            <a href="https://claude.ai/public/artifacts/c2041193-1780-4071-a332-bed58c069da1" target="_blank" class="secondary-btn">📊 View KPIs We Track Together</a>
+                            <a href="https://claude.ai/public/artifacts/c268b2da-3a4a-4481-8b7b-769601c9df84" target="_blank" class="secondary-btn">⚡ View Case Study #1</a>
+                            <a href="https://brandshareinfo.com/sales-dashboard-demo" target="_blank" class="secondary-btn">⚡ View Case Study #2</a>
+                            <a href="https://claude.ai/public/artifacts/c86161ab-24f4-497a-adf8-82170f3e89d0" target="_blank" class="secondary-btn">⚡ View Case Study #3</a>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 300px; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; margin: 0 auto;">📈</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 2rem; font-weight: 700; color: #1e3a8a; text-align: center; margin-bottom: 2rem;">Comprehensive Growth Solutions</h3>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">📈</div>
+                        <div class="service-title">Sales Growth Amplification</div>
+                        <div class="service-desc">Implement proven sales methodologies and AI-powered lead qualification systems to increase conversion rates by 40-60%.</div>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">👑</div>
+                        <div class="service-title">Brand Power Enhancement</div>
+                        <div class="service-desc">Build authoritative brand presence through strategic positioning and thought leadership development.</div>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">📊</div>
+                        <div class="service-title">Data Analytics Solutions</div>
+                        <div class="service-desc">Leverage advanced analytics and AI insights to make data-driven decisions that accelerate growth.</div>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🔍</div>
+                        <div class="service-title">Market Intelligence</div>
+                        <div class="service-desc">Gain competitive advantage through comprehensive market analysis and opportunity identification.</div>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">📱</div>
+                        <div class="service-title">Social Media & Content</div>
+                        <div class="service-desc">Build engaged communities and drive conversions through strategic content and social media management.</div>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">✅</div>
+                        <div class="service-title">Growth Assessment</div>
+                        <div class="service-desc">Comprehensive business audit to identify growth opportunities and optimization potential.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Affiliate Disclosure -->
+            <div class="affiliate-disclosure">
+                <h4 class="disclosure-title">Affiliate Disclosure</h4>
+                <p class="disclosure-text">
+                    As an Amazon Associate and affiliate partner with other retailers, we earn from qualifying purchases. This means when you click on our product links and make a purchase, we may receive a small commission at no extra cost to you. We only recommend products we genuinely believe in and that provide real value to our readers. Our affiliate partnerships help support this website and allow us to continue providing high-quality product recommendations and content.
+                </p>
+            </div>
+
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Brand Share It</h4>
+                    <p style="color: #666; font-size: 0.9rem; line-height: 1.6;">
+                        Curating premium lifestyle products and delivering exceptional business growth solutions.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('home'); filterProducts('kitchen')">Kitchen Essentials</a></li>
+                        <li><a href="#" onclick="showSection('home'); filterProducts('tech')">Tech Gadgets</a></li>
+                        <li><a href="#" onclick="showSection('home'); filterProducts('home')">Travel Experiences</a></li>
+                        <li><a href="#" onclick="showSection('home'); filterProducts('food')">Gourmet Foods</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Business Services</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('business')">Sales Growth</a></li>
+                        <li><a href="#" onclick="showSection('business')">Brand Enhancement</a></li>
+                        <li><a href="#" onclick="showSection('business')">Data Analytics</a></li>
+                        <li><a href="#" onclick="showSection('business')">Market Intelligence</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('business')">Contact Us</a></li>
+                        <li><a href="#" onclick="showSection('home')">Newsletter</a></li>
+                        <li><a href="#" onclick="showSection('business')">Case Studies</a></li>
+                        <li><a href="#" onclick="showSection('home')">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Brand Share It. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showSection('about')">Legal Disclaimers</a>
+                    <a href="#" onclick="showSection('about')">Privacy Policy</a>
+                    <a href="#" onclick="showSection('about')">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+        }
+
+        // Product filtering functions
+        function filterProducts(category) {
+            // Make sure we're on the home section
+            showSection('home');
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Find the button for this category
+                const buttons = document.querySelectorAll('.category-btn');
+                buttons.forEach(btn => {
+                    if (btn.onclick && btn.onclick.toString().includes(category)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            // Get all product cards
+            const products = document.querySelectorAll('.product-card');
+
+            // Show/hide products based on category
+            products.forEach(product => {
+                if (category === 'all' || product.getAttribute('data-category') === category) {
+                    product.classList.remove('hidden');
+                } else {
+                    product.classList.add('hidden');
+                }
+            });
+        }
+
+        // Initialize with home section and all products shown
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home');
+            filterProducts('all');
+        });
+    </script>
+</body>
+</html>
