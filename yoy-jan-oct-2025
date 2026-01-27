@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Cart Sales UNFI Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8fafc;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        h1 {
+            position: relative;
+            z-index: 10;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subtitle {
+            position: relative;
+            z-index: 10;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .kpi-card {
+            text-align: center;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-change {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .kpi-change.positive {
+            color: #16a34a;
+        }
+
+        .kpi-change.negative {
+            color: #dc2626;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .location-name {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .amount {
+            font-weight: 600;
+            text-align: right;
+            color: #0f172a;
+        }
+
+        .change-cell {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .change-cell.positive {
+            color: #16a34a;
+        }
+
+        .change-cell.negative {
+            color: #dc2626;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="texture-overlay"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Blue Cart Sales UNFI</h1>
+                    <p class="subtitle">2025 versus 2024 | January 1st through October 31st</p>
+                </div>
+                <div style="position: relative; z-index: 10; text-align: center; font-size: 1.875rem; font-weight: 700; color: white;">
+                    SWOFFLE
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card kpi-card">
+                <div class="kpi-label">Total 2025 Sales</div>
+                <div class="kpi-value">$176,973</div>
+                <div class="kpi-change positive">↑ 54.3% vs 2024</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-label">Total 2024 Sales</div>
+                <div class="kpi-value">$114,674</div>
+                <div class="kpi-change" style="color: #64748b;">Baseline</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-label">Year-over-Year Growth</div>
+                <div class="kpi-value">$62,299</div>
+                <div class="kpi-change positive">+54.3%</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 1rem; color: #1e293b;">Sales by Location</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>2025 Sales</th>
+                            <th>2024 Sales</th>
+                            <th>Change ($)</th>
+                            <th>Change (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="location-name">Ridgefield</td>
+                            <td class="amount">$47,359</td>
+                            <td class="amount">$23,625</td>
+                            <td class="change-cell positive">+$23,734</td>
+                            <td class="change-cell positive">+100.4%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Moreno Valley</td>
+                            <td class="amount">$30,988</td>
+                            <td class="amount">$17,122</td>
+                            <td class="change-cell positive">+$13,866</td>
+                            <td class="change-cell positive">+80.9%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Rocklin</td>
+                            <td class="amount">$26,476</td>
+                            <td class="amount">$16,979</td>
+                            <td class="change-cell positive">+$9,497</td>
+                            <td class="change-cell positive">+55.9%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Carlisle</td>
+                            <td class="amount">$25,269</td>
+                            <td class="amount">$10,498</td>
+                            <td class="change-cell positive">+$14,771</td>
+                            <td class="change-cell positive">+140.7%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Greenwood</td>
+                            <td class="amount">$16,733</td>
+                            <td class="amount">$14,292</td>
+                            <td class="change-cell positive">+$2,441</td>
+                            <td class="change-cell positive">+17.1%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Aurora</td>
+                            <td class="amount">$13,298</td>
+                            <td class="amount">$10,401</td>
+                            <td class="change-cell positive">+$2,897</td>
+                            <td class="change-cell positive">+27.9%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Racine</td>
+                            <td class="amount">$5,220</td>
+                            <td class="amount">$9,986</td>
+                            <td class="change-cell negative">-$4,766</td>
+                            <td class="change-cell negative">-47.7%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Twin Cities</td>
+                            <td class="amount">$5,040</td>
+                            <td class="amount">$3,423</td>
+                            <td class="change-cell positive">+$1,617</td>
+                            <td class="change-cell positive">+47.2%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Sarasota</td>
+                            <td class="amount">$3,286</td>
+                            <td class="amount">$5,004</td>
+                            <td class="change-cell negative">-$1,718</td>
+                            <td class="change-cell negative">-34.3%</td>
+                        </tr>
+                        <tr>
+                            <td class="location-name">Atlanta</td>
+                            <td class="amount">$3,204</td>
+                            <td class="amount">$3,344</td>
+                            <td class="change-cell negative">-$140</td>
+                            <td class="change-cell negative">-4.2%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Locations with Growth</div>
+                <div class="summary-value">7 of 10</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Best Performer</div>
+                <div class="summary-value">Carlisle</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Average Growth Rate</div>
+                <div class="summary-value">+54.3%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        const comparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Ridgefield', 'Carlisle', 'Moreno Valley', 'Rocklin', 'Greenwood', 'Aurora', 'Twin Cities', 'Sarasota', 'Atlanta', 'Racine'],
+                datasets: [
+                    {
+                        label: '2025 Sales',
+                        data: [47359, 25269, 30988, 26476, 16733, 13298, 5040, 3286, 3204, 5220],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: '2024 Sales',
+                        data: [23625, 10498, 17122, 16979, 14292, 10401, 3423, 5004, 3344, 9986],
+                        backgroundColor: '#cbd5e1',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 13,
+                                weight: 600
+                            },
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            },
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: '#f1f5f9'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12,
+                                weight: 500
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
