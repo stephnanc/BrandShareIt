@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTD 2025 Sales Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .dashboard-header {
+            background: linear-gradient(to bottom right, #0ea5e9, #2563eb, #06b6d4);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-content {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .dashboard-title {
+            color: white;
+            text-align: left;
+            font-size: 2.966em;
+            font-weight: 600;
+            line-height: 1.4;
+            margin: 0;
+        }
+        .header-subtitle {
+            color: white;
+            font-size: 0.9em;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            opacity: 0.95;
+            line-height: 2.2;
+        }
+        .header-right {
+            text-align: right;
+            padding-left: 40px;
+        }
+        .brand-name {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .brand-tagline {
+            color: white;
+            font-size: 0.85em;
+            font-weight: 400;
+            opacity: 0.9;
+            font-style: italic;
+        }
+        .dashboard-stats {
+            color: white;
+            text-align: right;
+            padding-left: 40px;
+        }
+        .stats-title {
+            font-size: 1.5em;
+            font-weight: 400;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .stats-number {
+            font-size: 3.5em;
+            font-weight: 700;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        .container {
+            background: white;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #chartContainer {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background-color: #f7fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 1.1em;
+        }
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:hover {
+            background-color: #f7fafc;
+        }
+        .account-name {
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 1em;
+        }
+        .percentage {
+            color: #10b981;
+            font-weight: 600;
+            text-align: right;
+            font-size: 1.1em;
+        }
+        .total-row .account-name {
+            color: #6366f1;
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+        .total-row .percentage {
+            color: #6366f1;
+            font-weight: 700;
+            font-size: 1.15em;
+        }
+        .total-row {
+            background-color: #f8f9ff;
+        }
+        .arrow {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+        .arrow.expanded {
+            transform: rotate(90deg);
+        }
+        .clickable-row {
+            cursor: pointer;
+        }
+        .clickable-row:hover {
+            background-color: #f0f4f8;
+        }
+        .detail-row {
+            display: none;
+            background-color: #f7fafc;
+        }
+        .detail-row.show {
+            display: table-row;
+        }
+        .detail-content {
+            padding: 12px 16px 12px 40px;
+            font-size: 0.95em;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            color: #4a5568;
+        }
+        .detail-label {
+            font-weight: 500;
+        }
+        .detail-value {
+            color: #2d3748;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="dashboard-title">Swoffle - B2B Sales Dashboard</h1>
+                    <p class="header-subtitle"><span style="font-size: 1.898em;">Year-Over-Year, January 1st–September 30th, 2025 vs 2024</span><br>Prepared by Stephen Nance</p>
+                </div>
+                <div class="header-right">
+                    <div class="dashboard-stats">
+                        <div class="stats-title">YTD Sales Increase</div>
+                        <div class="stats-number">55.07%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="chartContainer">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Name</th>
+                        <th style="text-align: right;">YoY Growth %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="total-row clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>TOTAL YTD SALES</td>
+                        <td class="percentage">55.07%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$477,574.65</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$307,977.28</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Minimus Distribution</td>
+                        <td class="percentage">986.96%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$38,080.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$3,503.36</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Paramount Foods</td>
+                        <td class="percentage">511.20%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$15,328.80</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$2,508.00</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Rainforest Distribution</td>
+                        <td class="percentage">285.15%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$51,920.48</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$13,480.64</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>UNFI West</td>
+                        <td class="percentage">128.47%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$106,218.51</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$46,491.92</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>The Paper Store</td>
+                        <td class="percentage">124.42%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$4,287.36</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$1,910.40</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Northeast Specialty Foods</td>
+                        <td class="percentage">71.14%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$6,398.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$3,738.40</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>UNFI East / Carlisle</td>
+                        <td class="percentage">29.88%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$51,725.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$39,824.00</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Fortune Fish & Gourmet</td>
+                        <td class="percentage">23.88%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$18,586.40</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$15,003.84</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Frankferd Farms Foods, Inc.</td>
+                        <td class="percentage">13.41%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$1,630.72</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$1,437.84</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>The Farmer's Plate, Gourmet Food & Gift Distrib</td>
+                        <td class="percentage">13.07%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$3,371.20</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$2,981.60</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>Atlantic Beverage Distributors</td>
+                        <td class="percentage">2.53%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$17,153.44</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$16,729.76</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>INDEPENDENTS</td>
+                        <td class="percentage">1.79%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$44,869.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$44,080.00</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="clickable-row" onclick="toggleDetails(this)">
+                        <td class="account-name"><span class="arrow">▶</span>KeHe Distributors</td>
+                        <td class="percentage">0.16%</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td colspan="2">
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">2025 Sales:</span>
+                                    <span class="detail-value">$38,459.38</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">2024 Sales:</span>
+                                    <span class="detail-value">$38,398.45</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(row) {
+            const arrow = row.querySelector('.arrow');
+            const detailRow = row.nextElementSibling;
+            
+            arrow.classList.toggle('expanded');
+            detailRow.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>
