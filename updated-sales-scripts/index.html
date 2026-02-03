@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWOFFLE Sales Script Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            padding: 2rem;
+            margin: -20px -20px 2rem -20px;
+            border-radius: 0 0 0.75rem 0.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out 0.3s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-button {
+            padding: 15px 30px;
+            background: white;
+            border: 2px solid #3b82f6;
+            color: #333;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            background: #e0f2fe;
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+            border-color: #2563eb;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Existing Styles */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.8s ease-out forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.4s; }
+        .card:nth-child(3) { animation-delay: 0.6s; }
+        .card:nth-child(4) { animation-delay: 0.8s; }
+
+        .card h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .opening-hook {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .benefit-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefit-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 1.1em;
+            line-height: 1.5;
+            transition: transform 0.2s ease;
+        }
+
+        .benefit-list li:hover {
+            transform: translateX(10px);
+        }
+
+        .benefit-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .story-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .impact-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .impact-box h3 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .product-item {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 52%, #1d4ed8 90%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            animation: gradient 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #2a5298;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .pricing-info {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <h1>Swoffle Sales Script Dashboard</h1>
+            <p class="subtitle">Transform Your Snack Offering with America's #1 Organic Stroopwafel</p>
+            <p style="font-size: 0.9em; color: white; margin-top: 10px; opacity: 0.95; position: relative; z-index: 1;">Click any tab below to view scripting details</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 80px; margin-top: 10px; font-size: 1.5em; color: white; position: relative; z-index: 1;">
+                <span style="transform: rotate(45deg); display: inline-block;">↓</span>
+                <span>↓</span>
+                <span style="transform: rotate(-45deg); display: inline-block;">↓</span>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="showTab('direct-sales')">Swoffle Script<br><span style="font-size: 0.85em;">Direct Sales</span></button>
+            <button class="tab-button" onclick="showTab('market-basket')">Script Market Basket<br><span style="font-size: 0.85em;">UNFI Indirect Sales</span></button>
+            <button class="tab-button" onclick="showTab('unfi-sales')">UNFI East/West<br><span style="font-size: 0.85em;">Indirect Sales</span></button>
+        </div>
+
+        <!-- Tab 1: Script Direct Sales -->
+        <div id="direct-sales" class="tab-content active">
+            <div class="opening-hook">
+                <strong>🎯 Opening Hook:</strong><br>
+                "I'm calling you today about a fabulous snack that's not just delicious, but also organic and gluten-free and gives back to the community with every purchase. That's exactly what Swoffle delivers - America's first best-selling organic stroopwafel that's transforming the better-for-you snack category."
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <h2><span class="icon">🌟</span> The Swoffle Story</h2>
+                    <div class="story-section">
+                        <p><strong>The Swoffle Legacy:</strong> Founded in 2015 by a father-daughter team in Concord, MA, Swoffle blends Family Roots, Dutch Inspiration, Mindful Ingredients, and Giving Back To Those In Need.</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Inspired by the classic caramel-filled Dutch stroopwafel - a beloved 200-year-old tradition - we've redefined it as a premium organic and gluten-free indulgence designed to elevate everyday moments."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "Picture this: Your customer places a Swoffle on their morning coffee or tea, and within seconds, the warmth transforms the caramel center into a lusciously soft, gooey delight. It's not just a snack - it's an experience."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "SWOFFLE Stroopwafel waffle cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
+                    </p>
+                    <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                        <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
+                    <ul class="benefit-list">
+                        <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
+                        <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
+                        <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
+                        <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
+                        <li>NO artificial ingredients or sweeteners</li>
+                        <li>Lower sugar vs traditional stroopwafels</li>
+                        <li>Simple, clean-label ingredients you can pronounce</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">🎁</span> Product Portfolio - New 12-Pack Format</h2>
+                    <div class="product-grid">
+                        <div class="product-item">
+                            <h4>🍮 Caramel</h4>
+                            <p>Classic organic favorite</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍦 French Vanilla</h4>
+                            <p>Smooth & creamy</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫🍮 Chocolate Caramel</h4>
+                            <p>Newest flavor innovation</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫 Dark Chocolate Dipped</h4>
+                            <p>Chocolate-dipped indulgence</p>
+                            <strong>$3.29 MSRP</strong>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; text-align: center;">
+                        <strong>12 individually wrapped</strong> per case for freshness & convenience
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">❤️</span> Social Impact</h2>
+                    <div class="impact-box">
+                        <h3>1.168 Million Meals</h3>
+                        <p>Provided to those in need since 2017</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Every display case you stock doesn't just satisfy your customers - it feeds families in need. Through our partnership with Feeding America since 2017, Swoffle is a certified Buy-One-Give-One company, making every purchase count twice."
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
+                <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
+                <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
+                    <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Case Extends Valuable Shelf Space</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
+                        <p><strong>✨ Standardized Checkout Size Box, 12 Pack</strong></p>
+                    </div>
+                    <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
+                        <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-pack format maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">📍</span> Placement Strategy</h2>
+                <div style="background: #fff8e1; padding: 25px; border-radius: 15px; border-left: 5px solid #ff9800;">
+                    <h3 style="color: #f57c00; margin-bottom: 15px; font-size: 1.5em;">Dual Placement Opportunity</h3>
+                    <p style="font-size: 1.15em; line-height: 1.6; margin-bottom: 20px;">
+                        <strong>We are asking that all opportunities include BOTH traditional cookie aisle placement (as a pack change) AND checkout placement as new points of store placement.</strong>
+                    </p>
+                    <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #1976d2; margin-bottom: 10px; font-size: 1.3em;">🎁 UNFI March Promotion</h4>
+                        <p style="font-size: 1.1em; line-height: 1.5;"><strong>A 15% off invoice promotion begins in March, which will support the launch.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">💰</span> The Business Case</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                        <div><strong>Format:</strong> 12 units per case | 8 cases per master</div>
+                        <div><strong>Shelf Life:</strong> 9 months</div>
+                        <div><strong>Wholesale:</strong> $1.43 (Caramel/Vanilla) | $2.26 (Chocolate varieties)</div>
+                        <div><strong>Margin:</strong> 38-47% at suggested retail</div>
+                        <div><strong>Min Order:</strong> 4 Case Trays</div>
+                        <div><strong>Pallet:</strong> 120 cases | 20 tier | 6 high</div>
+                    </div>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: #2e7d32; margin-bottom: 10px;">🚀 Why Swoffle Sells:</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
+                        <li style="margin-bottom: 12px;">✨ Almost 50% smaller case extends valuable shelf space</li>
+                        <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
+                        <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
+                        <li style="margin-bottom: 12px;">✨ Year-round appeal with seasonal spikes</li>
+                        <li>✨ Built-in customer loyalty through quality & mission</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Delight Your Customers?</h2>
+                <p style="font-size: 1.3em; margin-bottom: 25px;">
+                    Let's get Swoffle on your shelves and start making a difference - one delicious waffle cookie at a time!
+                </p>
+                <a href="#" class="cta-button" onclick="alert('Sample request initiated! We\'ll send you our bestselling flavors to try.')">
+                    Would you like us to send you some samples to try, so you can see how delicious Swoffle stroopwafel cookies are?
+                </a>
+                <p style="margin-top: 20px; font-size: 1.1em;">
+                    "We're confident once you taste Swoffle, you'll understand why we're America's #1 gluten-free stroopwafel waffle cookie!"
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab 2: Market Basket-UNFI Indirect Sales -->
+        <div id="market-basket" class="tab-content">
+            <div class="opening-hook">
+                <strong>🎯 Opening Hook:</strong><br>
+                "Hi, I'm calling today to reconnect with you about SWOFFLE - our organic and gluten-free stroopwafel waffle cookies. I wanted to personally reach out because I know we experienced some distribution challenges during the warehouse transition from Dayville UNFI to UNFI Carlisle, which may have caused some out-of-stock situations. I'm calling to see if you've had a chance to restock SWOFFLE, and if not, I'd love to help you bring them back in by coordinating with your UNFI rep. Your customers have been asking for them, and we want to make sure you have them on your shelves."
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <h2><span class="icon">🌟</span> The Swoffle Story</h2>
+                    <div class="story-section">
+                        <p><strong>The Swoffle Legacy:</strong> Founded in 2015 by a father-daughter team in Concord, MA, Swoffle blends Family Roots, Dutch Inspiration, Mindful Ingredients, and Giving Back To Those In Need.</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Inspired by the classic caramel-filled Dutch stroopwafel - a beloved 200-year-old tradition - we've redefined it as a premium organic and gluten-free indulgence designed to elevate everyday moments."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "Picture this: Your customer places a Swoffle on their morning coffee or tea, and within seconds, the warmth transforms the caramel center into a lusciously soft, gooey delight. It's not just a snack - it's an experience."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "SWOFFLE Stroopwafel waffle cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
+                    </p>
+                    <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                        <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
+                    <ul class="benefit-list">
+                        <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
+                        <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
+                        <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
+                        <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
+                        <li>NO artificial ingredients or sweeteners</li>
+                        <li>Lower sugar vs traditional stroopwafels</li>
+                        <li>Simple, clean-label ingredients you can pronounce</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">🎁</span> Product Portfolio - New 12-Pack Format</h2>
+                    <div class="product-grid">
+                        <div class="product-item">
+                            <h4>🍮 Caramel</h4>
+                            <p>Classic organic favorite</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍦 French Vanilla</h4>
+                            <p>Smooth & creamy</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫🍮 Chocolate Caramel</h4>
+                            <p>Newest flavor innovation</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫 Dark Chocolate Dipped</h4>
+                            <p>Chocolate-dipped indulgence</p>
+                            <strong>$3.29 MSRP</strong>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; text-align: center;">
+                        <strong>12 individually wrapped</strong> per case for freshness & convenience
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">❤️</span> Social Impact</h2>
+                    <div class="impact-box">
+                        <h3>1.168 Million Meals</h3>
+                        <p>Provided to those in need since 2017</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Every display case you stock doesn't just satisfy your customers - it feeds families in need. Through our partnership with Feeding America since 2017, Swoffle is a certified Buy-One-Give-One company, making every purchase count twice."
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
+                <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
+                <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
+                    <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Case Extends Valuable Shelf Space</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
+                        <p><strong>✨ Standardized Checkout Size Box, 12 Pack</strong></p>
+                    </div>
+                    <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
+                        <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-pack format maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">📍</span> Placement Strategy</h2>
+                <div style="background: #fff8e1; padding: 25px; border-radius: 15px; border-left: 5px solid #ff9800;">
+                    <h3 style="color: #f57c00; margin-bottom: 15px; font-size: 1.5em;">Dual Placement Opportunity</h3>
+                    <p style="font-size: 1.15em; line-height: 1.6; margin-bottom: 20px;">
+                        <strong>We are asking that all opportunities include BOTH traditional cookie aisle placement (as a pack change) AND checkout placement as new points of store placement.</strong>
+                    </p>
+                    <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #1976d2; margin-bottom: 10px; font-size: 1.3em;">🎁 UNFI March Promotion</h4>
+                        <p style="font-size: 1.1em; line-height: 1.5;"><strong>A 15% off invoice promotion begins in March, which will support the launch.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">💰</span> The Business Case</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                        <div><strong>Format:</strong> 12 units per case | 8 cases per master</div>
+                        <div><strong>Shelf Life:</strong> 9 months</div>
+                        <div><strong>Min Order:</strong> 1 Case Tray</div>
+                        <div><strong>Pallet:</strong> 120 cases | 20 tier | 6 high</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI East Items:</strong> Caramel #326646-7 | Vanilla #326659-0 | Dark Choc #326660-8</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI West Items:</strong> Caramel #30845 | Vanilla #30842 | Dark Choc #30867</div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
+                        <strong>Market Basket-UNFI East DC:</strong> Carlisle (MA/RI/NH/CT/ME)
+                    </p>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: #2e7d32; margin-bottom: 15px;">🚀 Why Swoffle Sells:</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
+                        <li style="margin-bottom: 12px;">✨ Almost 50% smaller case extends valuable shelf space</li>
+                        <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
+                        <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
+                        <li style="margin-bottom: 12px;">✨ Year-round appeal with seasonal spikes</li>
+                        <li>✨ Built-in customer loyalty through quality & mission</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Delight Your Customers?</h2>
+                <p style="font-size: 1.3em; margin-bottom: 25px;">
+                    Let's get Swoffle on your shelves and start making a difference - one delicious waffle cookie at a time!
+                </p>
+                <div style="background: white; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 800px;">
+                    <p style="font-size: 1.1em; color: #333; margin: 0;">
+                        "We're confident once you taste Swoffle, you'll understand why we're America's #1 gluten-free stroopwafel waffle cookie!"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: UNFI Sales -->
+        <div id="unfi-sales" class="tab-content">
+            <div class="opening-hook">
+                <strong>🎯 Opening Hook:</strong><br>
+                "I'm calling you today about a fabulous snack that's not just delicious, but also organic and gluten-free and gives back to the community with every purchase. That's exactly what Swoffle delivers - America's first best-selling organic stroopwafel that's transforming the better-for-you snack category. And here's exciting news - for a limited time, we're offering a 10% discount when you order three or more trays. You could qualify simply by ordering one tray each of our Caramel, French Vanilla, and Dark Chocolate Dipped flavors! Would you like me to place a turnover order for you today for one tray of each flavor?"
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <h2><span class="icon">🌟</span> The Swoffle Story</h2>
+                    <div class="story-section">
+                        <p><strong>The Swoffle Legacy:</strong> Founded in 2015 by a father-daughter team in Concord, MA, Swoffle blends Family Roots, Dutch Inspiration, Mindful Ingredients, and Giving Back To Those In Need.</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Inspired by the classic caramel-filled Dutch stroopwafel - a beloved 200-year-old tradition - we've redefined it as a premium organic and gluten-free indulgence designed to elevate everyday moments."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "Picture this: Your customer places a Swoffle on their morning coffee or tea, and within seconds, the warmth transforms the caramel center into a lusciously soft, gooey delight. It's not just a snack - it's an experience."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "SWOFFLE Stroopwafel waffle cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
+                    </p>
+                    <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                        <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
+                    <ul class="benefit-list">
+                        <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
+                        <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
+                        <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
+                        <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
+                        <li>NO artificial ingredients or sweeteners</li>
+                        <li>Lower sugar vs traditional stroopwafels</li>
+                        <li>Simple, clean-label ingredients you can pronounce</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">🎁</span> Product Portfolio - New 12-Pack Format</h2>
+                    <div class="product-grid">
+                        <div class="product-item">
+                            <h4>🍮 Caramel</h4>
+                            <p>Classic organic favorite</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍦 French Vanilla</h4>
+                            <p>Smooth & creamy</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫🍮 Chocolate Caramel</h4>
+                            <p>Newest flavor innovation</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍫 Dark Chocolate Dipped</h4>
+                            <p>Chocolate-dipped indulgence</p>
+                            <strong>$3.29 MSRP</strong>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; text-align: center;">
+                        <strong>12 individually wrapped</strong> per case for freshness & convenience
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">❤️</span> Social Impact</h2>
+                    <div class="impact-box">
+                        <h3>1.168 Million Meals</h3>
+                        <p>Provided to those in need since 2017</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Every display case you stock doesn't just satisfy your customers - it feeds families in need. Through our partnership with Feeding America since 2017, Swoffle is a certified Buy-One-Give-One company, making every purchase count twice."
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
+                <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
+                <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
+                    <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Case Extends Valuable Shelf Space</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
+                        <p><strong>✨ Standardized Checkout Size Box, 12 Pack</strong></p>
+                    </div>
+                    <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
+                        <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-pack format maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">📍</span> Placement Strategy</h2>
+                <div style="background: #fff8e1; padding: 25px; border-radius: 15px; border-left: 5px solid #ff9800;">
+                    <h3 style="color: #f57c00; margin-bottom: 15px; font-size: 1.5em;">Dual Placement Opportunity</h3>
+                    <p style="font-size: 1.15em; line-height: 1.6; margin-bottom: 20px;">
+                        <strong>We are asking that all opportunities include BOTH traditional cookie aisle placement (as a pack change) AND checkout placement as new points of store placement.</strong>
+                    </p>
+                    <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #1976d2; margin-bottom: 10px; font-size: 1.3em;">🎁 UNFI March Promotion</h4>
+                        <p style="font-size: 1.1em; line-height: 1.5;"><strong>A 15% off invoice promotion begins in March, which will support the launch.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">💰</span> The Business Case</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                        <div><strong>Format:</strong> 12 units per case | 8 cases per master</div>
+                        <div><strong>Shelf Life:</strong> 9 months</div>
+                        <div><strong>Min Order:</strong> 1 Case Tray</div>
+                        <div><strong>Pallet:</strong> 120 cases | 20 tier | 6 high</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI East Items:</strong> Caramel #326646-7 | Vanilla #326659-0 | Dark Choc #326660-8</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI West Items:</strong> Caramel #30845 | Vanilla #30842 | Dark Choc #30867</div>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.85em; color: #666; text-align: center;">
+                        <p style="margin-bottom: 5px;"><strong>UNFI East DCs:</strong> Carlisle (MA/RI/NH/CT/ME/NY), Racine (WI/IL), Twin Cities (MN), Greenwood (MI/IN/OH)</p>
+                        <p><strong>UNFI West DCs:</strong> Aurora, CA (CO, NM), Ridgefield WA (Pacific NW), Rocklin CA (N. CA), Moreno Valley CA (S. CA/AZ/NV)</p>
+                    </div>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: #2e7d32; margin-bottom: 15px;">🚀 Why Swoffle Sells:</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
+                        <li style="margin-bottom: 12px;">✨ Almost 50% smaller case extends valuable shelf space</li>
+                        <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
+                        <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
+                        <li style="margin-bottom: 12px;">✨ Year-round appeal with seasonal spikes</li>
+                        <li>✨ Built-in customer loyalty through quality & mission</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Delight Your Customers?</h2>
+                <p style="font-size: 1.3em; margin-bottom: 25px;">
+                    Let's get Swoffle on your shelves and start making a difference - one delicious waffle cookie at a time!
+                </p>
+                <div style="background: white; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 800px;">
+                    <p style="font-size: 1.1em; color: #333; margin: 0;">
+                        "We're confident once you taste Swoffle, you'll understand why we're America's #1 gluten-free stroopwafel waffle cookie!"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const allTabs = document.querySelectorAll('.tab-content');
+            allTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.tab-button');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
