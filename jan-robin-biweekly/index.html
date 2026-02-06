@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle Dashboard - Feb 1-15, 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; padding: 2rem; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee); border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; overflow: hidden; }
+        .texture-overlay { position: absolute; inset: 0; opacity: 0.1; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .header-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .header-left h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.25rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .header-left p { font-size: 1.125rem; opacity: 0.95; margin-bottom: 0.125rem; }
+        .header-left p.small-text { font-size: 0.5625rem; opacity: 0.9; }
+        .header-right { display: flex; flex-direction: column; gap: 0.5rem; text-align: right; }
+        .stat-box { padding: 0.5rem 0.75rem; min-width: 120px; }
+        .stat-label { font-size: 0.75rem; opacity: 0.9; margin-bottom: 0.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.125rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.05); } }
+        .empty-state { text-align: center; padding: 3rem 2rem; color: #94a3b8; }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state-text { font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .empty-state-subtext { font-size: 0.875rem; }
+        .tabs-container { background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; }
+        .tab { flex: 1; padding: 1rem 1.5rem; background: white; border: none; font-size: 1rem; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.3s ease; border-bottom: 3px solid transparent; }
+        .tab:hover { background: #f8fafc; color: #3b82f6; }
+        .tab.active { background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee); color: white; border-bottom: 3px solid #2563eb; }
+        .tab-content { padding: 2rem; display: none; }
+        .tab-content.active { display: block; }
+        .card { background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; overflow: hidden; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: linear-gradient(to right, #f8fafc, #f1f5f9); cursor: pointer; transition: background 0.2s; }
+        .card-header:hover { background: linear-gradient(to right, #f1f5f9, #e2e8f0); }
+        .card-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+        .card-arrow { transition: transform 0.3s ease; color: #3b82f6; font-size: 1.5rem; font-weight: bold; }
+        .card-arrow.collapsed { transform: rotate(-90deg); }
+        .card-content { padding: 1.5rem; display: none; }
+        .card-content.expanded { display: block; }
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table thead { background: #f8fafc; }
+        .orders-table th { padding: 0.75rem; text-align: center; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .orders-table td { padding: 1rem 0.75rem; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 0.875rem; text-align: center; }
+        .orders-table tbody tr:hover { background: #f8fafc; }
+        .orders-table tbody tr:last-child td { border-bottom: none; }
+        .order-details { line-height: 1.5; color: #475569; }
+        .order-total { font-weight: 600; color: #059669; font-size: 0.875rem; }
+        .order-summary { margin-top: 2rem; padding-top: 2rem; border-top: 3px solid #e2e8f0; }
+        .order-summary h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; text-align: center; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .summary-card { background: white; border: 2px solid #e2e8f0; border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .summary-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); }
+        .summary-card-title { font-size: 0.95rem; font-weight: 600; color: #475569; margin-bottom: 1rem; text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .summary-label { font-size: 0.875rem; color: #64748b; }
+        .summary-value { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+        .summary-value.sales { color: #059669; }
+        .grand-total-card { border: 3px solid #3b82f6; }
+        .grand-total-card .summary-card-title { color: #3b82f6; font-weight: 700; font-size: 1.1rem; }
+        .grand-total-card .summary-label { color: #3b82f6; font-weight: 700; }
+        .grand-total-card .summary-value { color: #3b82f6; font-weight: 700; font-size: 1rem; }
+        .no-track { font-size: 0.75rem; color: #94a3b8; font-style: italic; text-align: center; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Swoffle</h1>
+                    <p>Interactive Dashboard Summary Report</p>
+                    <p>February 1st-15th, 2026</p>
+                    <p class="small-text">Prepared by Stephen Nance</p>
+                </div>
+                <div class="header-right">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value" id="totalSales">$0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(0)">Direct Orders</button>
+                <button class="tab" onclick="switchTab(1)">Admin Reporting</button>
+                <button class="tab" onclick="switchTab(2)">Distributor Prospects</button>
+                <button class="tab" onclick="switchTab(3)">New Business Development</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-0">
+                <!-- Distributor Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Distributor Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="distributor-orders">
+                                <tr>
+                                    <td>Feb 2, 2026</td>
+                                    <td>Boston Bean Company</td>
+                                    <td>Woburn, MA</td>
+                                    <td>
+                                        <div class="order-details">
+                                            48 French Vanilla 16-Pack Cases<br>
+                                            72 Caramel 16-Pack Cases
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$2,016.00</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Feb 2, 2026</td>
+                                    <td>Snacktree International</td>
+                                    <td>Newark, NJ</td>
+                                    <td>
+                                        <div class="order-details">
+                                            48 Caramel 12-Pack Cases<br>
+                                            16 Dark Chocolate Dipped 12-Pack Cases<br>
+                                            48 French Vanilla 12-Pack Cases
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$1,534.08</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Feb 3, 2026</td>
+                                    <td>Northeast Specialty Foods</td>
+                                    <td>Samford, ME</td>
+                                    <td>
+                                        <div class="order-details">
+                                            16 Chocolate Caramel 12-Pack Cases<br>
+                                            24 Caramel 12-Pack Cases<br>
+                                            8 Dark Chocolate Dip 12-Pack Cases<br>
+                                            8 French Vanilla 12-Pack Cases
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$767.04</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Independent Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Independent Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="independent-orders">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">🏪</div>
+                                            <div class="empty-state-text">No orders recorded yet</div>
+                                            <div class="empty-state-subtext">Independent direct orders will appear here</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- HALA Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">HALA Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hala-direct-orders">
+                                <tr>
+                                    <td>Feb 2, 2026</td>
+                                    <td>Columbia Health Foods</td>
+                                    <td>Columbia, TN</td>
+                                    <td>
+                                        <div class="order-details">
+                                            2 Dark Chocolate Dipped 12-packs<br>
+                                            2 Chocolate Caramel 12-packs<br>
+                                            2 Caramel 16-packs
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$114.18</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- FAIRE Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">FAIRE Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faire-orders">
+                                <tr>
+                                    <td>Feb 3, 2026</td>
+                                    <td>Buckley's Market and Cafe</td>
+                                    <td>Hollis, NH</td>
+                                    <td>
+                                        <div class="order-details">
+                                            3 Chocolate Caramel 12-packs<br>
+                                            3 French Vanilla 12-packs<br>
+                                            3 Caramel 12-packs
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$128.52</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Feb 3, 2026</td>
+                                    <td>Jesse's Coffee Boutique and Gift Shop</td>
+                                    <td>New Castle, PA</td>
+                                    <td>
+                                        <div class="order-details">
+                                            2 Chocolate Caramel 12-pack cases<br>
+                                            2 French Vanilla 12-pack cases<br>
+                                            2 Caramel 12-pack cases
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$85.68</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hala Indirect Turnover Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Hala Indirect Turnover Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Cases</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hala-orders">
+                                <tr>
+                                    <td>Feb 3, 2026</td>
+                                    <td>NouVaux Market (KeHE)</td>
+                                    <td>-</td>
+                                    <td>
+                                        <div class="order-details">
+                                            2 Caramel 16-packs<br>
+                                            2 French Vanilla 16-packs
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">4</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Duo Sales Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Duo Sales Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="duo-sales-orders">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">🤝</div>
+                                            <div class="empty-state-text">No orders recorded yet</div>
+                                            <div class="empty-state-subtext">Duo Sales direct orders will appear here</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Valley Food Specialties Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Valley Food Specialties Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Location</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="valley-orders">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">🏔️</div>
+                                            <div class="empty-state-text">No orders recorded yet</div>
+                                            <div class="empty-state-subtext">Valley Food Specialties direct orders will appear here</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Good Food Services Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Good Food Services Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="goodfood-orders">
+                                <tr>
+                                    <td>Feb 2, 2026</td>
+                                    <td>Pasquesi Home and Gardens</td>
+                                    <td>Lake Bluff, IL</td>
+                                    <td>
+                                        <div class="order-details">
+                                            1 Caramel 8-pack - 4 count case<br>
+                                            1 Dark Chocolate Dipped 8-pack 4 count case<br>
+                                            1 French Vanilla 8-pack 4-count case<br>
+                                            2 Dark Chocolate Dipped 12-pack cases<br>
+                                            2 French Vanilla 12-pack cases<br>
+                                            2 Chocolate Caramel 12-pack cases<br>
+                                            2 Caramel 12-pack cases
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$271.53</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Feb 3, 2026</td>
+                                    <td>Gensler Garden</td>
+                                    <td>Loves Park, IL</td>
+                                    <td>
+                                        <div class="order-details">
+                                            1 Dark Chocolate Dipped 12-pack<br>
+                                            2 French Vanilla 12-packs<br>
+                                            2 Chocolate Caramel 12-packs<br>
+                                            2 Caramel 12-packs
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$117.05</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MABLE Online Marketplace Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">MABLE Online Marketplace Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mable-orders">
+                                <tr>
+                                    <td>Feb 2, 2026</td>
+                                    <td>Alltown Select</td>
+                                    <td>Westbrook, CT</td>
+                                    <td>
+                                        <div class="order-details">
+                                            1 French Vanilla 16-pack<br>
+                                            1 Caramel 16-pack
+                                        </div>
+                                    </td>
+                                    <td><span class="order-total">$38.08</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <div class="summary-card-title">Distributor Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-distributor-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-distributor-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Independent Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-independent-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-independent-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">HALA Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-hala-direct-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-hala-direct-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">FAIRE Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-faire-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-faire-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Hala Indirect Turnover Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-hala-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Cases:</span>
+                                <span class="summary-value sales" id="summary-hala-sales">0</span>
+                            </div>
+                            <div class="no-track">(Not tracked in order totals)</div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Duo Sales Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-duo-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-duo-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Valley Food Specialties Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-valley-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-valley-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Good Food Services Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-goodfood-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-goodfood-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">MABLE Online Marketplace Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-mable-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-mable-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card grand-total-card">
+                            <div class="summary-card-title">GRAND TOTAL</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Number of Orders:</span>
+                                <span class="summary-value" id="summary-grand-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Sales:</span>
+                                <span class="summary-value" id="summary-grand-sales">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-1">
+                <!-- UNFI Chocolate Caramel Authorization -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">UNFI-New Chocolate Caramel 12-Pack Authorization</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-weight: 600; color: #475569;">Buyer Contact:</span>
+                                <span style="color: #1e293b;">Jacqueline Crowell (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="eda7ae9f829a888181ad98838b84c38e8280">[email&#160;protected]</a>)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Latest Follow-up:</span>
+                                <span style="color: #1e293b;">February 3rd, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Original Request:</span>
+                                <span style="color: #1e293b;">January 28th, 2026</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-left: 4px solid #3b82f6; padding: 1.25rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.75rem;">Summary of Communication</h4>
+                            <p style="color: #475569; line-height: 1.6; margin-bottom: 0.75rem;">
+                                Stephen has sent multiple follow-up emails requesting authorization for the new Chocolate Caramel 12-pack across all current Swoffle-authorized UNFI distribution centers. This is the second follow-up attempt, building on the original January 28th request.
+                            </p>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Key Points Emphasized</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Reduced Footprint:</strong>
+                                        <span style="color: #475569;"> Transition from 16-pack to 12-pack format reduces in-store shelf footprint by 50%, making it easier to accommodate despite being a new SKU</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Cross-Merchandising Opportunity:</strong>
+                                        <span style="color: #475569;"> New 12-pack size opens additional distribution points at store level - ideal for both cookie aisle placement and checkout grab-and-go counters</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Line Pricing:</strong>
+                                        <span style="color: #475569;"> Chocolate Caramel is line priced with existing Caramel and French Vanilla 12-packs, creating seamless addition to current assortment</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Strong Performance:</strong>
+                                        <span style="color: #475569;"> Early results show consistent ordering and reordering where introduced, including online marketplaces</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Brand Momentum:</strong>
+                                        <span style="color: #475569;"> Swoffle is up 40% year-over-year, and this authorization is critical to sustaining momentum and meeting customer demand</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">⏳</span>
+                                <div>
+                                    <strong style="color: #92400e; display: block; margin-bottom: 0.25rem;">Status: Awaiting Response</strong>
+                                    <span style="color: #78350f; font-size: 0.875rem;">Stephen and John remain available for a meeting to discuss concerns or next steps with Jacqueline</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 0.8rem; color: #64748b; font-style: italic; text-align: center; padding-top: 0.75rem; border-top: 1px solid #e2e8f0;">
+                            Partnership emphasis: Long-standing relationship with UNFI valued; authorization would support shared success
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blue Cart Order Entry January 2026 -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Blue Cart Order Entry January 2026 1-1 to 1-31-2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: linear-gradient(to right, #dbeafe, #bfdbfe); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border-left: 4px solid #3b82f6;">
+                            <h4 style="font-size: 1.25rem; font-weight: 700; color: #1e40af; margin-bottom: 1rem;">January 2026 Performance Summary</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Total Revenue</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">$63,856.32</div>
+                                </div>
+                                <div style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Total Orders</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">97</div>
+                                </div>
+                                <div style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Period 2 Growth</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">+162%</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">vs Period 1</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem;">
+                                <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Period 1 (Jan 1-15)</h4>
+                                <div style="font-size: 0.875rem; color: #475569; line-height: 1.6;">
+                                    <strong>37 orders</strong><br>
+                                    <strong style="color: #059669;">$18,006.93</strong>
+                                </div>
+                            </div>
+                            <div style="background: #ecfdf5; padding: 1.25rem; border-radius: 0.5rem; border: 2px solid #059669;">
+                                <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem; border-bottom: 2px solid #d1fae5; padding-bottom: 0.5rem;">Period 2 (Jan 16-31) ⭐</h4>
+                                <div style="font-size: 0.875rem; color: #047857; line-height: 1.6;">
+                                    <strong>60 orders</strong> (+62%)<br>
+                                    <strong style="color: #059669;">$45,849.39</strong> (+155%)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Top Product Performance</h4>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="background: white; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 0.5rem; border-left: 4px solid #3b82f6;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong style="color: #1e293b;">12-Packs (NEW FORMAT)</strong>
+                                        <span style="font-weight: 700; color: #3b82f6;">2,043 units ⭐</span>
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">
+                                        Caramel: 800 | French Vanilla: 744 | Dark Choc Dipped: 264 | <strong>Chocolate Caramel: 235</strong>
+                                    </div>
+                                </div>
+                                <div style="background: white; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 0.5rem; border-left: 4px solid #64748b;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong style="color: #1e293b;">16/14-Packs Direct</strong>
+                                        <span style="font-weight: 700; color: #64748b;">1,113 units</span>
+                                    </div>
+                                </div>
+                                <div style="background: white; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 0.5rem; border-left: 4px solid #64748b;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong style="color: #1e293b;">8-Packs (4-Count)</strong>
+                                        <span style="font-weight: 700; color: #64748b;">387 units</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Channel Performance</h4>
+                            <div style="margin-bottom: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                                    <span style="color: #475569;"><strong>Distributor Direct</strong> (32 orders)</span>
+                                    <span style="font-weight: 700; color: #059669;">$55,450.64 <span style="font-size: 0.75rem; color: #64748b;">(87%)</span></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                                    <span style="color: #475569;">Independent Direct (10 orders)</span>
+                                    <span style="font-weight: 600; color: #475569;">$1,974.04</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                                    <span style="color: #475569;">Good Food Services (11 orders)</span>
+                                    <span style="font-weight: 600; color: #475569;">$1,786.57</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                                    <span style="color: #475569;">FAIRE Direct (14 orders)</span>
+                                    <span style="font-weight: 600; color: #475569;">$1,336.52</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                                    <span style="color: #475569;">Duo Sales (13 orders)</span>
+                                    <span style="font-weight: 600; color: #475569;">$1,331.28</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                                    <span style="color: #475569;"><strong>Hala Indirect Turnover</strong> (21 orders)</span>
+                                    <span style="font-weight: 700; color: #3b82f6;">85 trays</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem;">Key Insights & Highlights</h4>
+                            <div style="font-size: 0.875rem; color: #047857; line-height: 1.8;">
+                                ✓ <strong>12-Pack Launch Exceeded Expectations:</strong> 2,043 units sold, strong market acceptance of new 50% narrower format<br>
+                                ✓ <strong>Strong Momentum Building:</strong> Period 2 generated 162% more revenue than Period 1<br>
+                                ✓ <strong>New Chocolate Caramel Success:</strong> 235 units sold in first full month shows strong early adoption<br>
+                                ✓ <strong>UNFI Network Leading:</strong> Multiple DC reorders (Moreno Valley, Rocklin, Aurora, Ridgefield, Racine, Greenwood)<br>
+                                ✓ <strong>Geographic Expansion:</strong> Hala Indirect expanded to 21 retail locations across New England, Mid-Atlantic, Midwest<br>
+                                ✓ <strong>Major Orders:</strong> Rainforest Distribution ($6,792.96, $3,801.60), KeHE Northeast ($5,329.92), Fortune Fish ($4,122.72)
+                            </div>
+                        </div>
+
+                        <div style="font-size: 0.8rem; color: #64748b; font-style: italic; text-align: center; padding-top: 0.75rem; border-top: 1px solid #e2e8f0;">
+                            Report Prepared: February 5, 2026 | Reporting Period: January 1-31, 2026
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Swoffle Robin Garrison Jan-2026 Biweekly/Mo Report Details -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Swoffle / Robin Garrison Jan-2026 biweekly / mo report details</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: linear-gradient(to right, #f3e8ff, #e9d5ff); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border-left: 4px solid #9333ea;">
+                            <h4 style="font-size: 1.25rem; font-weight: 700; color: #6b21a8; margin-bottom: 1rem;">January 2026 Summary</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                                <div style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Month Total</div>
+                                    <div style="font-size: 1.25rem; font-weight: 700; color: #059669;">$49,427.81</div>
+                                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">46,639 units</div>
+                                </div>
+                                <div style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">YoY Growth</div>
+                                    <div style="font-size: 1.25rem; font-weight: 700; color: #dc2626;">+91%</div>
+                                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">vs Jan 2025: $25,878.26</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; border: 2px solid #64748b;">
+                                <h4 style="font-size: 0.95rem; font-weight: 600; color: #475569; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Bi-Weekly Period 1 (Jan 1-15)</h4>
+                                <div style="font-size: 0.875rem; color: #475569; line-height: 1.8;">
+                                    <strong>Units:</strong> 9,759<br>
+                                    <strong>Sales:</strong> <span style="color: #059669; font-weight: 700;">$10,456.74</span>
+                                </div>
+                            </div>
+                            <div style="background: #faf5ff; padding: 1.25rem; border-radius: 0.5rem; border: 2px solid #9333ea;">
+                                <h4 style="font-size: 0.95rem; font-weight: 600; color: #6b21a8; margin-bottom: 0.75rem; border-bottom: 2px solid #e9d5ff; padding-bottom: 0.5rem;">Bi-Weekly Period 2 (Jan 16-31)</h4>
+                                <div style="font-size: 0.875rem; color: #6b21a8; line-height: 1.8;">
+                                    <strong>Units:</strong> 36,880<br>
+                                    <strong>Sales:</strong> <span style="color: #059669; font-weight: 700;">$38,971.07</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem;">Performance Analysis</h4>
+                            <div style="font-size: 0.875rem; color: #047857; line-height: 1.8;">
+                                ✓ <strong>Strong Year-Over-Year Growth:</strong> 91% sales increase compared to January 2025 ($25,878.26)<br>
+                                ✓ <strong>Period 2 Dominance:</strong> Second bi-weekly period generated 79% of total monthly sales<br>
+                                ✓ <strong>Total Month Performance:</strong> 46,639 total units sold generating $49,427.81 in sales
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Product Performance by Bi-Weekly Period</h4>
+                            
+                            <div style="background: linear-gradient(to right, #ecfdf5, #d1fae5); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border-left: 4px solid #059669;">
+                                <h5 style="font-size: 0.95rem; font-weight: 700; color: #065f46; margin-bottom: 0.75rem;">Combined January 2026 Performance (Ranked by Sales)</h5>
+                                <div style="overflow-x: auto;">
+                                    <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 2px solid #059669;">
+                                                <th style="text-align: left; padding: 0.5rem; color: #065f46; font-weight: 700;">Rank</th>
+                                                <th style="text-align: left; padding: 0.5rem; color: #065f46; font-weight: 700;">Product</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #065f46; font-weight: 700;">Total Units</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #065f46; font-weight: 700;">Total Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #065f46; font-weight: 700;">% of Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #065f46; font-weight: 700;">Avg Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="color: #475569;">
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">-</td>
+                                                <td style="padding: 0.5rem;">Credits/Returns</td>
+                                                <td style="text-align: right; padding: 0.5rem;">17</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #dc2626;">-$241.75</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-0.49%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-$14.22</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5; background: #fef3c7;">
+                                                <td style="padding: 0.5rem; font-weight: 700;">🥇 1</td>
+                                                <td style="padding: 0.5rem; font-weight: 700;">Dark Chocolate Dipped 14-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">10,722</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700; color: #059669;">$10,131.16</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">20.50%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.94</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5; background: #fef9c3;">
+                                                <td style="padding: 0.5rem; font-weight: 700;">🥈 2</td>
+                                                <td style="padding: 0.5rem; font-weight: 700;">Caramel 16-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">9,184</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700; color: #059669;">$9,874.24</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">19.98%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.08</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5; background: #fffbeb;">
+                                                <td style="padding: 0.5rem; font-weight: 700;">🥉 3</td>
+                                                <td style="padding: 0.5rem; font-weight: 700;">Dark Chocolate Dipped 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">5,508</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700; color: #059669;">$5,833.56</td>
+                                                <td style="text-align: right; padding: 0.5rem; font-weight: 700;">11.80%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.06</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">4</td>
+                                                <td style="padding: 0.5rem;">Vanilla 16-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">5,104</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$5,547.68</td>
+                                                <td style="text-align: right; padding: 0.5rem;">11.22%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.09</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">5</td>
+                                                <td style="padding: 0.5rem;">NEW Chocolate Caramel - 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">3,324</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$5,032.32</td>
+                                                <td style="text-align: right; padding: 0.5rem;">10.18%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.51</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">6</td>
+                                                <td style="padding: 0.5rem;">NEW Original Caramel - 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">4,440</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$4,707.60</td>
+                                                <td style="text-align: right; padding: 0.5rem;">9.52%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.06</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">7</td>
+                                                <td style="padding: 0.5rem;">NEW French Vanilla 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">3,124</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$3,923.96</td>
+                                                <td style="text-align: right; padding: 0.5rem;">7.94%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.26</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">8</td>
+                                                <td style="padding: 0.5rem;">Vanilla 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,784</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$2,463.84</td>
+                                                <td style="text-align: right; padding: 0.5rem;">4.98%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.89</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #d1fae5;">
+                                                <td style="padding: 0.5rem;">9</td>
+                                                <td style="padding: 0.5rem;">Caramel 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,432</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$2,155.20</td>
+                                                <td style="text-align: right; padding: 0.5rem;">4.36%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.89</td>
+                                            </tr>
+                                            <tr style="background: #065f46; color: white; font-weight: 700;">
+                                                <td style="padding: 0.5rem;" colspan="2">JANUARY 2026 TOTAL</td>
+                                                <td style="text-align: right; padding: 0.5rem;">46,639</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$49,427.81</td>
+                                                <td style="text-align: right; padding: 0.5rem;">100%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 0.375rem; font-size: 0.75rem; color: #065f46;">
+                                    <strong>Key Insights:</strong> Top 3 products (Dark Chocolate Dipped 14-pack, Caramel 16-pack, Dark Chocolate Dipped 4-Pack) represent 52.28% of total monthly sales. Dark Chocolate Dipped 14-pack and Caramel 16-pack combined account for over 40% of revenue.
+                                </div>
+                            </div>
+
+                            <div style="background: #faf5ff; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 3px solid #9333ea;">
+                                <h5 style="font-size: 0.875rem; font-weight: 600; color: #6b21a8; margin-bottom: 0.75rem;">Period 2: Jan 15-31, 2026</h5>
+                                <div style="overflow-x: auto;">
+                                    <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 2px solid #e9d5ff;">
+                                                <th style="text-align: left; padding: 0.5rem; color: #6b21a8;">Product</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #6b21a8;">Units</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #6b21a8;">Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #6b21a8;">% of Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #6b21a8;">Avg Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="color: #475569;">
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">Credits/Returns</td>
+                                                <td style="text-align: right; padding: 0.5rem;">12</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #dc2626;">-$154.45</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-0.40%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-$12.87</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>Caramel 16-pack</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>7,520</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$8,029.76</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>20.60%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.07</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">Vanilla 16-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">4,240</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$4,579.68</td>
+                                                <td style="text-align: right; padding: 0.5rem;">11.75%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.08</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>Dark Chocolate Dipped 14-pack</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>9,952</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$8,742.08</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>22.43%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.88</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">Caramel 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,368</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$2,098.88</td>
+                                                <td style="text-align: right; padding: 0.5rem;">5.39%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.89</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">Vanilla 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">32</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$69.60</td>
+                                                <td style="text-align: right; padding: 0.5rem;">0.18%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$2.18</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>Dark Chocolate Dipped 4-Pack</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>5,508</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$5,833.56</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>14.97%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.06</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">NEW Original Caramel - 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,520</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$2,691.60</td>
+                                                <td style="text-align: right; padding: 0.5rem;">6.91%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.07</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">NEW French Vanilla 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,436</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$3,159.00</td>
+                                                <td style="text-align: right; padding: 0.5rem;">8.11%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.30</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                                <td style="padding: 0.5rem;">NEW Chocolate Caramel - 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">2,292</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$3,921.36</td>
+                                                <td style="text-align: right; padding: 0.5rem;">10.06%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.71</td>
+                                            </tr>
+                                            <tr style="background: #ecfdf5; font-weight: 600;">
+                                                <td style="padding: 0.5rem;">Period 2 Total</td>
+                                                <td style="text-align: right; padding: 0.5rem;">36,880</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$38,971.07</td>
+                                                <td style="text-align: right; padding: 0.5rem;">100%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 0.375rem; font-size: 0.75rem; color: #6b21a8;">
+                                    <strong>Top Performers:</strong> Dark Chocolate Dipped 14-pack (22.43% of sales, 9,952 units), Caramel 16-pack (20.60% of sales, 7,520 units), Dark Chocolate Dipped 4-Pack (14.97% of sales, 5,508 units)
+                                </div>
+                            </div>
+
+                            <div style="background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border-left: 3px solid #64748b;">
+                                <h5 style="font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.75rem;">Period 1: Jan 1-14, 2026</h5>
+                                <div style="overflow-x: auto;">
+                                    <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 2px solid #e0f2fe;">
+                                                <th style="text-align: left; padding: 0.5rem; color: #475569;">Product</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #475569;">Units</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #475569;">Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #475569;">% of Sales</th>
+                                                <th style="text-align: right; padding: 0.5rem; color: #475569;">Avg Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="color: #475569;">
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">Credits/Returns</td>
+                                                <td style="text-align: right; padding: 0.5rem;">5</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #dc2626;">-$87.30</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-0.01%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-$17.46</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>Caramel 16-pack</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>1,664</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$1,844.48</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>18%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.11</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">Vanilla 16-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">864</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$968.00</td>
+                                                <td style="text-align: right; padding: 0.5rem;">9%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.12</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">Dark Chocolate Dipped 14-pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">770</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1,389.08</td>
+                                                <td style="text-align: right; padding: 0.5rem;">13%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.80</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">Caramel 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">64</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$56.32</td>
+                                                <td style="text-align: right; padding: 0.5rem;">1%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.88</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>Vanilla 4-Pack</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>2,752</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$2,394.24</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>23%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$0.87</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">Dark Chocolate Dipped 4-Pack</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff; background: #fefce8;">
+                                                <td style="padding: 0.5rem;"><strong>NEW Original Caramel - 12 pk</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>1,920</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>$2,016.00</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;"><strong>19%</strong></td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.05</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">NEW French Vanilla 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">688</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$764.96</td>
+                                                <td style="text-align: right; padding: 0.5rem;">7%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.11</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #f0f9ff;">
+                                                <td style="padding: 0.5rem;">NEW Chocolate Caramel - 12 pk</td>
+                                                <td style="text-align: right; padding: 0.5rem;">1,032</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1,110.96</td>
+                                                <td style="text-align: right; padding: 0.5rem;">11%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">$1.08</td>
+                                            </tr>
+                                            <tr style="background: #ecfdf5; font-weight: 600;">
+                                                <td style="padding: 0.5rem;">Period 1 Total</td>
+                                                <td style="text-align: right; padding: 0.5rem;">9,759</td>
+                                                <td style="text-align: right; padding: 0.5rem; color: #059669;">$10,456.74</td>
+                                                <td style="text-align: right; padding: 0.5rem;">100%</td>
+                                                <td style="text-align: right; padding: 0.5rem;">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 0.375rem; font-size: 0.75rem; color: #475569;">
+                                    <strong>Top Performers:</strong> Vanilla 4-Pack (23% of sales, 2,752 units), NEW Original Caramel - 12 pk (19% of sales, 1,920 units), Caramel 16-pack (18% of sales, 1,664 units)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-2">
+                <p style="padding: 2rem; text-align: center; color: #64748b;">Distributor prospects content preserved from previous dashboard</p>
+            </div>
+            
+            <div class="tab-content" id="tab-3">
+                <!-- Whole Foods Corporate - New 12-Packs Follow-up -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Whole Foods Corporate - New 12-Packs Follow-up</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-weight: 600; color: #475569;">Contact:</span>
+                                <span style="color: #1e293b;">Lynda (Whole Foods Corporate)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Latest Follow-up:</span>
+                                <span style="color: #1e293b;">February 3rd, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Previous Outreach:</span>
+                                <span style="color: #1e293b;">January 22nd, 2026 (follow-up to December 2nd, 2025)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Distribution Partner:</span>
+                                <span style="color: #1e293b;">Rainforest Distribution</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-left: 4px solid #3b82f6; padding: 1.25rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.75rem;">Summary of Communication</h4>
+                            <p style="color: #475569; line-height: 1.6; margin-bottom: 0.75rem;">
+                                Stephen has maintained consistent follow-up with Whole Foods Corporate regarding SWOFFLE's transition to new 12-pack formats and proposed line additions. This is the second follow-up attempt (February 3rd) building on the January 22nd email, which itself followed up on the original December 2nd submission.
+                            </p>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Original Submission (December 2nd)</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">WFM Pack Change Form:</strong>
+                                        <span style="color: #475569;"> Excel documentation covering Caramel and French Vanilla transitions from 16-pack to 12-pack formats</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">PowerPoint Presentation:</strong>
+                                        <span style="color: #475569;"> Pack change slides showcasing new Chocolate Caramel 12-pack and 4-count individually wrapped items</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Ingredient Summaries:</strong>
+                                        <span style="color: #475569;"> Updated documentation showing current versus new formulations for all products</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Proposed Line Additions</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Chocolate Caramel 12-pack:</strong>
+                                        <span style="color: #475569;"> Strong addition aligned with current line pricing structure</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Chocolate Caramel 4-count:</strong>
+                                        <span style="color: #475569;"> Individually wrapped format for additional merchandising opportunities</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Dark Chocolate Dipped 12-pack:</strong>
+                                        <span style="color: #475569;"> Strong candidate for incremental variety expansion</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem;">Regional Expansion Opportunity</h4>
+                            <div style="color: #1e40af; font-size: 0.875rem; line-height: 1.6;">
+                                <strong>Current UNFI Geographies:</strong> Northwest, Northern California, Southern California, Colorado<br>
+                                <strong>Current Rainforest Distribution:</strong> Southeast, Florida<br>
+                                <strong>Proposed:</strong> Expansion into additional regions leveraging strong existing UNFI performance
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem;">Additional Follow-up: Checkout Placement Opportunity (February 3rd)</h4>
+                            <p style="color: #047857; font-size: 0.875rem; line-height: 1.6; margin-bottom: 0.75rem;">
+                                Stephen sent an additional follow-up email highlighting the checkout placement opportunity with the new 12-pack format - a key advantage that creates incremental sales beyond the cookie aisle.
+                            </p>
+                            <div style="margin-top: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #065f46;">50% Smaller Footprint:</strong>
+                                        <span style="color: #047857; font-size: 0.875rem;"> New tray is nearly 50% smaller than previous 16-pack, built to fit standard checkout rack dimensions</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #065f46;">Checkout-Ready Format:</strong>
+                                        <span style="color: #047857; font-size: 0.875rem;"> Natural fit for high-velocity impulse zones, fits existing front-end fixtures</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #065f46;">Operational Efficiency:</strong>
+                                        <span style="color: #047857; font-size: 0.875rem;"> Smaller case pack enables faster turns and easier stocking</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #059669; font-weight: bold;">✓</span>
+                                    <div>
+                                        <strong style="color: #065f46;">Improved Performance:</strong>
+                                        <span style="color: #047857; font-size: 0.875rem;"> Higher velocity per linear inch versus previous format, drives incremental sales</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">💼</span>
+                                <div>
+                                    <strong style="color: #92400e; display: block; margin-bottom: 0.25rem;">In-Person Presentation Offered</strong>
+                                    <span style="color: #78350f; font-size: 0.875rem;">Stephen and CEO John are prepared to fly to Austin for detailed presentation covering transition plan and UNFI geography performance review</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">⏳</span>
+                                <div>
+                                    <strong style="color: #92400e; display: block; margin-bottom: 0.25rem;">Status: Awaiting Response</strong>
+                                    <span style="color: #78350f; font-size: 0.875rem;">Multiple follow-ups completed; team remains flexible on timing and ready to provide any additional documentation needed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 0.8rem; color: #64748b; font-style: italic; text-align: center; padding-top: 0.75rem; border-top: 1px solid #e2e8f0;">
+                            Goal: Seamless transition ensuring Whole Foods team has all necessary documentation and support for confident decision-making
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mom's Organic Market - 24 Stores -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Mom's Organic Market - 24 Stores - Erin Sens</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-weight: 600; color: #475569;">Buyer Contact:</span>
+                                <span style="color: #1e293b;">Erin Sens (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c392e3532722f39322f1c3133312f332e3b3d32353f313d2e373928723f3331">[email&#160;protected]</a>)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Store Count:</span>
+                                <span style="color: #1e293b;">24 Stores</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Latest Update:</span>
+                                <span style="color: #1e293b;">February 3rd, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Initial Contact:</span>
+                                <span style="color: #1e293b;">December 9th, 2025</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Distribution Partner:</span>
+                                <span style="color: #1e293b;">KeHE</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-left: 4px solid #059669; padding: 1.25rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.75rem;">Summary of Communication</h4>
+                            <p style="color: #475569; line-height: 1.6; margin-bottom: 0.75rem;">
+                                Stephen initiated contact with Mom's Organic Market in December 2025 to communicate SWOFFLE's transition to new 12-pack formats through KeHE. After sending samples to the Rockville merchandising team, Erin confirmed receipt and shared positive news: Swoffle is being moved from the gluten-free category into the cookies category as Mom's dissolves their gluten-free sets. The new Chocolate Caramel 12-pack will be considered during their upcoming cookie category review.
+                            </p>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Communication Timeline</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Dec 9, 2025:</strong>
+                                        <span style="color: #475569;"> Stephen notified Erin and Stephanie of pack transition, shared details on new 12-pack formats and new Chocolate Caramel SKU</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Dec 22, 2025:</strong>
+                                        <span style="color: #475569;"> Erin requested samples for merchandising team; Stephen confirmed shipping to Rockville office address</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Jan 20, 2026:</strong>
+                                        <span style="color: #475569;"> Stephen followed up on sample receipt, informed that KeHE placed first order on new 12-packs, recommended Chocolate Caramel addition</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Feb 3, 2026:</strong>
+                                        <span style="color: #475569;"> Erin confirmed samples received and passed to merchandising; announced category move from gluten-free to cookies; will consider Chocolate Caramel in upcoming cookie review</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Feb 3, 2026:</strong>
+                                        <span style="color: #475569;"> Stephen thanked Erin, requested timing for cookie category review to ensure proper support</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">✅</span>
+                                <div>
+                                    <strong style="color: #065f46; display: block; margin-bottom: 0.25rem;">Positive Development: Category Change</strong>
+                                    <span style="color: #047857; font-size: 0.875rem;">Swoffle is moving from gluten-free category into cookies as Mom's Organic dissolves gluten-free sets store-wide. This positions Swoffle within the mainstream cookie set for better visibility and sales potential.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">📋</span>
+                                <div>
+                                    <strong style="color: #92400e; display: block; margin-bottom: 0.25rem;">Status: Awaiting Cookie Category Review Timing</strong>
+                                    <span style="color: #78350f; font-size: 0.875rem;">Chocolate Caramel 12-pack is under consideration for the upcoming cookie category review. Stephen has requested the timing to ensure proper support.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1rem; border-radius: 0.5rem;">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Key Highlights</h4>
+                            <div style="font-size: 0.875rem; color: #475569; line-height: 1.6;">
+                                • KeHE officially placed first order on new 12-packs (available in warehouse within a week of Jan 20)<br>
+                                • New format provides maximum usable shelf space and improved merchandising efficiency<br>
+                                • Minimized case size benefits store-level velocity<br>
+                                • Dark Chocolate Dipped continues to be highly recommended for ongoing placement
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Valley Specialty Foods Brokerage - Mark Tytla Phone Conversation -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Valley Specialty Foods Brokerage - Mark Tytla Phone Conversation 2-3-2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.75rem;">
+                                <span style="font-weight: 600; color: #475569;">Broker Contact:</span>
+                                <span style="color: #1e293b;">Mark Tytla & Nadia (Valley Specialty Foods Brokerage)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Date:</span>
+                                <span style="color: #1e293b;">February 3rd, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Documents Shared:</span>
+                                <span style="color: #1e293b;">Updated distributor pricing sheets, spec sheets, PowerPoint presentation</span>
+                            </div>
+                        </div>
+
+                        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem;">Opportunity #1: Korean Green Grocer Distributor (Greens - Long Island)</h4>
+                            <div style="font-size: 0.875rem; color: #1e40af; line-height: 1.6;">
+                                <strong>Contact Source:</strong> Mark's contact Craig<br>
+                                <strong>Service Area:</strong> Upscale Manhattan locations (Upper West Side), stores with coffee sections & premium grab-and-go<br>
+                                <strong>Pricing Request:</strong> $0.99 delivered + 5% broker commission (requires John's approval, EDLP to eliminate surprise costs)<br>
+                                <strong>Minimum Order:</strong> 6 master cases (mix/match 4 flavors in 12-packs)<br>
+                                <strong>Expected Opening:</strong> 20 masters<br>
+                                <strong>Logistics:</strong> Delivered from Quakertown, PA; 5-10 business day lead time<br>
+                                <strong>Pallet Config:</strong> 20 masters/layer, 6 high = 120 masters/pallet (8 trays/master, 160 trays/layer)
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem;">Opportunity #2: Stew Leonard's</h4>
+                            <div style="font-size: 0.875rem; color: #047857; line-height: 1.6;">
+                                <strong>Contact Made:</strong> Mark reached owner<br>
+                                <strong>Store Profile:</strong> Only ~1,800 SKUs (vs. 40,000-60,000 typical), carefully curated unique products<br>
+                                <strong>Strategic Fit:</strong> Strong alignment with SWOFFLE's buy-one-give-one program and John's philanthropic approach<br>
+                                <strong>Action:</strong> Stephen sending updated PowerPoint highlighting giving program<br>
+                                <strong>Note:</strong> Store is walking distance from Mark's home
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #92400e; margin-bottom: 0.75rem;">Opportunity #3: Wild Fork Foods (68 Stores)</h4>
+                            <div style="font-size: 0.875rem; color: #78350f; line-height: 1.6;">
+                                <strong>Concept:</strong> Flash-frozen meats (traditional & exotic), grab-and-go snack section at entrance<br>
+                                <strong>Locations:</strong> 68 stores; HQ in Miami, DC in Paterson, NJ<br>
+                                <strong>Contact Progress:</strong> Mark spoke with store manager, received regional sales manager contact in Maine<br>
+                                <strong>Pricing:</strong> Distributor pricing (they distribute to all 68 stores)<br>
+                                <strong>Volume:</strong> High-volume operation with 3x weekly deliveries
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem;">Follow-Up Items</h4>
+                            <div style="font-size: 0.875rem; color: #475569; line-height: 1.6;">
+                                <strong>Mother Earth Storehouse:</strong> Awaiting response after 2 months; were ready to order but went silent (likely busy with trade shows)<br>
+                                <strong>Epicure Candy/Jerry:</strong> Confusion - Jerry received samples, called John directly instead of Mark. Stephen will clarify with John that this is Mark's account (Mark & Jerry have 30+ year relationship)
+                            </div>
+                        </div>
+
+                        <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.25rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">⚠️</span>
+                                <div>
+                                    <strong style="color: #991b1b; display: block; margin-bottom: 0.25rem;">Action Required: John's Approval</strong>
+                                    <span style="color: #b91c1c; font-size: 0.875rem;">Korean Green Grocer distributor pricing ($0.99 delivered + 5% broker commission) requires John's approval before proceeding</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost Plus World Market - Matt Lucas -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Cost Plus World Market 280 Store Chain - Matt Lucas Buyer</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.75rem;">
+                                <span style="font-weight: 600; color: #475569;">Buyer Contact:</span>
+                                <span style="color: #1e293b;">Matt Lucas (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="99f4f8ededb7f5ecfaf8ead9eef6ebf5fdf4f8ebf2fcedb7faf6f4">[email&#160;protected]</a>)</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Store Count:</span>
+                                <span style="color: #1e293b;">282 Stores</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Latest Follow-up:</span>
+                                <span style="color: #1e293b;">February 3rd, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Initial Outreach:</span>
+                                <span style="color: #1e293b;">January 20th, 2026</span>
+                                
+                                <span style="font-weight: 600; color: #475569;">Documents Shared:</span>
+                                <span style="color: #1e293b;">2026 SWOFFLE sales deck and sales sheet</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-left: 4px solid #3b82f6; padding: 1.25rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 0.75rem;">Summary of Communication</h4>
+                            <p style="color: #475569; line-height: 1.6; margin-bottom: 0.75rem;">
+                                Stephen introduced SWOFFLE's newly refreshed 12-pack individually wrapped stroopwafel waffle cookies on January 20th, emphasizing merchandising flexibility and strategic fit with Cost Plus World Market's in-store coffee sampling program. On February 3rd, Stephen followed up to position Swoffle as a complementary organic, gluten-free alternative to existing stroopwafel offerings (Daelman's), highlighting an "apples-to-oranges" differentiation that drives incremental trial and broadens category reach.
+                            </p>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">Key Differentiation vs. Daelman's</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Positioning:</strong>
+                                        <span style="color: #475569;"> Daelman's covers traditional stroopwafel experience; Swoffle offers contrasting organic, certified gluten-free option with clean, premium ingredients</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Market Impact:</strong>
+                                        <span style="color: #475569;"> Apples-to-oranges comparison drives incremental trial and broadens category reach rather than competing directly</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Strategic Value:</strong>
+                                        <span style="color: #475569;"> Adds meaningfully different option to current set that shoppers can't currently find on shelf</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.25rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">12-Pack Format Key Benefits</h4>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Merchandising Flexibility:</strong>
+                                        <span style="color: #475569;"> Nearly 50% narrower packaging for stronger shelf presence and placement options</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Placement Opportunities:</strong>
+                                        <span style="color: #475569;"> Ideal for checkout, impulse, coffee bar, and grab-and-go zones</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Healthier Profile:</strong>
+                                        <span style="color: #475569;"> 20% less sugar than traditional stroopwafels (8g vs 10g)</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <span style="color: #3b82f6; font-weight: bold;">•</span>
+                                    <div>
+                                        <strong style="color: #1e293b;">Premium Credentials:</strong>
+                                        <span style="color: #475569;"> USDA Organic and Certified Gluten Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #ecfdf5; border-left: 4px solid #059669; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #065f46; margin-bottom: 0.75rem;">Swoffle Gives Back Program</h4>
+                            <div style="font-size: 0.875rem; color: #047857; line-height: 1.6;">
+                                <strong>Model:</strong> Buy One Give One - every box provides meals to families in need<br>
+                                <strong>Partner:</strong> Feeding America ensures efficient distribution<br>
+                                <strong>Impact:</strong> 1.168 million meals donated since 2017<br>
+                                <strong>Value:</strong> Meaningful, measurable community impact tied to every sale
+                            </div>
+                        </div>
+
+                        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">☕</span>
+                                <div>
+                                    <strong style="color: #1e40af; display: block; margin-bottom: 0.25rem;">Strategic Placement Suggestion: Coffee Sampling Tables</strong>
+                                    <span style="color: #1e40af; font-size: 0.875rem;">Compact trays would be strong fit near in-store coffee sampling tables. Stroopwafels pair naturally with coffee, and individually wrapped format creates easy trial moment that lifts impulse sales.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 0.25rem;">
+                            <div style="display: flex; gap: 0.5rem; align-items: start;">
+                                <span style="font-size: 1.25rem;">📦</span>
+                                <div>
+                                    <strong style="color: #92400e; display: block; margin-bottom: 0.25rem;">Status: Awaiting Sample Request</strong>
+                                    <span style="color: #78350f; font-size: 0.875rem;">Stephen offered to send samples in both emails; awaiting Matt's response with shipping address</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function formatCurrency(amount) {
+            return '$' + parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab')[tabIndex].classList.add('active');
+            document.getElementById('tab-' + tabIndex).classList.add('active');
+        }
+
+        function toggleCard(header) {
+            const arrow = header.querySelector('.card-arrow');
+            const content = header.nextElementSibling;
+            arrow.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        }
+
+        function updateDashboardTotals() {
+            let totalSales = 0;
+            let totalOrders = 0;
+
+            // Calculate from Distributor Direct Orders
+            const distributorRows = document.querySelectorAll('#distributor-orders tr');
+            let distributorSales = 0;
+            let distributorOrders = 0;
+            distributorRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        distributorSales += amount;
+                        distributorOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-distributor-orders').textContent = distributorOrders;
+            document.getElementById('summary-distributor-sales').textContent = formatCurrency(distributorSales);
+            totalSales += distributorSales;
+            totalOrders += distributorOrders;
+
+            // Calculate from Independent Orders
+            const independentRows = document.querySelectorAll('#independent-orders tr');
+            let independentSales = 0;
+            let independentOrders = 0;
+            independentRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        independentSales += amount;
+                        independentOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-independent-orders').textContent = independentOrders;
+            document.getElementById('summary-independent-sales').textContent = formatCurrency(independentSales);
+            totalSales += independentSales;
+            totalOrders += independentOrders;
+
+            // Calculate from HALA Direct Orders
+            const halaDirectRows = document.querySelectorAll('#hala-direct-orders tr');
+            let halaDirectSales = 0;
+            let halaDirectOrders = 0;
+            halaDirectRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        halaDirectSales += amount;
+                        halaDirectOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-hala-direct-orders').textContent = halaDirectOrders;
+            document.getElementById('summary-hala-direct-sales').textContent = formatCurrency(halaDirectSales);
+            totalSales += halaDirectSales;
+            totalOrders += halaDirectOrders;
+
+            // Calculate from FAIRE Orders
+            const faireRows = document.querySelectorAll('#faire-orders tr');
+            let faireSales = 0;
+            let faireOrders = 0;
+            faireRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        faireSales += amount;
+                        faireOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-faire-orders').textContent = faireOrders;
+            document.getElementById('summary-faire-sales').textContent = formatCurrency(faireSales);
+            totalSales += faireSales;
+            totalOrders += faireOrders;
+
+            // Calculate from Hala Indirect Turnover Orders (cases only, not added to total sales)
+            const halaRows = document.querySelectorAll('#hala-orders tr');
+            let halaCases = 0;
+            let halaOrders = 0;
+            halaRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const cases = parseInt(orderTotal.textContent);
+                    if (!isNaN(cases)) {
+                        halaCases += cases;
+                        halaOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-hala-orders').textContent = halaOrders;
+            document.getElementById('summary-hala-sales').textContent = halaCases;
+
+            // Calculate from Duo Sales Orders
+            const duoRows = document.querySelectorAll('#duo-sales-orders tr');
+            let duoSales = 0;
+            let duoOrders = 0;
+            duoRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        duoSales += amount;
+                        duoOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-duo-orders').textContent = duoOrders;
+            document.getElementById('summary-duo-sales').textContent = formatCurrency(duoSales);
+            totalSales += duoSales;
+            totalOrders += duoOrders;
+
+            // Calculate from Valley Food Specialties Orders
+            const valleyRows = document.querySelectorAll('#valley-orders tr');
+            let valleySales = 0;
+            let valleyOrders = 0;
+            valleyRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        valleySales += amount;
+                        valleyOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-valley-orders').textContent = valleyOrders;
+            document.getElementById('summary-valley-sales').textContent = formatCurrency(valleySales);
+            totalSales += valleySales;
+            totalOrders += valleyOrders;
+
+            // Calculate from Good Food Services Orders
+            const goodfoodRows = document.querySelectorAll('#goodfood-orders tr');
+            let goodfoodSales = 0;
+            let goodfoodOrders = 0;
+            goodfoodRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        goodfoodSales += amount;
+                        goodfoodOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-goodfood-orders').textContent = goodfoodOrders;
+            document.getElementById('summary-goodfood-sales').textContent = formatCurrency(goodfoodSales);
+            totalSales += goodfoodSales;
+            totalOrders += goodfoodOrders;
+
+            // Calculate from MABLE Online Marketplace Orders
+            const mableRows = document.querySelectorAll('#mable-orders tr');
+            let mableSales = 0;
+            let mableOrders = 0;
+            mableRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        mableSales += amount;
+                        mableOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-mable-orders').textContent = mableOrders;
+            document.getElementById('summary-mable-sales').textContent = formatCurrency(mableSales);
+            totalSales += mableSales;
+            totalOrders += mableOrders;
+
+            // Update grand totals
+            document.getElementById('summary-grand-orders').textContent = totalOrders;
+            document.getElementById('summary-grand-sales').textContent = formatCurrency(totalSales);
+            document.getElementById('totalSales').textContent = formatCurrency(totalSales);
+            document.getElementById('totalOrders').textContent = totalOrders;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboardTotals();
+        });
+    </script>
+</body>
+</html>
