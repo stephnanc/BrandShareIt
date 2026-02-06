@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle / Robin Garrison Jan-2026 Bi-weekly / Mo Report Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: white;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .summary-header {
+            background: linear-gradient(to right, #f3e8ff, #e9d5ff);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #9333ea;
+        }
+
+        .summary-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #6b21a8;
+            margin-bottom: 1rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .summary-subtext {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .period-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .period-box {
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+        }
+
+        .period-1 {
+            background: #f1f5f9;
+            border-color: #64748b;
+        }
+
+        .period-2 {
+            background: #faf5ff;
+            border-color: #9333ea;
+        }
+
+        .period-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+        }
+
+        .period-1 .period-title {
+            color: #475569;
+            border-bottom-color: #e2e8f0;
+        }
+
+        .period-2 .period-title {
+            color: #6b21a8;
+            border-bottom-color: #e9d5ff;
+        }
+
+        .period-data {
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
+
+        .period-1 .period-data {
+            color: #475569;
+        }
+
+        .period-2 .period-data {
+            color: #6b21a8;
+        }
+
+        .analysis-box {
+            background: #ecfdf5;
+            border-left: 4px solid #059669;
+            padding: 1.25rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 0.75rem;
+        }
+
+        .analysis-content {
+            font-size: 0.875rem;
+            color: #047857;
+            line-height: 1.8;
+        }
+
+        .table-section {
+            background: #f1f5f9;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table-container {
+            background: linear-gradient(to right, #ecfdf5, #d1fae5);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #059669;
+        }
+
+        .table-container h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 0.75rem;
+        }
+
+        .period-table-container {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid;
+        }
+
+        .period-2-table {
+            background: #faf5ff;
+            border-left-color: #9333ea;
+        }
+
+        .period-1-table {
+            background: #f0f9ff;
+            border-left-color: #64748b;
+        }
+
+        .period-table-container h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .period-2-table h3 {
+            color: #6b21a8;
+        }
+
+        .period-1-table h3 {
+            color: #475569;
+        }
+
+        table {
+            width: 100%;
+            font-size: 0.8rem;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.5rem;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 0.5rem;
+            color: #475569;
+        }
+
+        .combined-table thead tr {
+            border-bottom: 2px solid #059669;
+        }
+
+        .combined-table th {
+            color: #065f46;
+        }
+
+        .combined-table tbody tr {
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        .period-2-table thead tr {
+            border-bottom: 2px solid #e9d5ff;
+        }
+
+        .period-2-table th {
+            color: #6b21a8;
+        }
+
+        .period-2-table tbody tr {
+            border-bottom: 1px solid #f3e8ff;
+        }
+
+        .period-1-table thead tr {
+            border-bottom: 2px solid #e0f2fe;
+        }
+
+        .period-1-table th {
+            color: #475569;
+        }
+
+        .period-1-table tbody tr {
+            border-bottom: 1px solid #f0f9ff;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .highlight-row {
+            background: #fefce8;
+        }
+
+        .gold-row {
+            background: #fef3c7;
+        }
+
+        .silver-row {
+            background: #fef9c3;
+        }
+
+        .bronze-row {
+            background: #fffbeb;
+        }
+
+        .total-row {
+            background: #065f46;
+            color: white;
+            font-weight: 700;
+        }
+
+        .period-total-row {
+            background: #ecfdf5;
+            font-weight: 600;
+        }
+
+        .negative-value {
+            color: #dc2626;
+        }
+
+        .positive-value {
+            color: #059669;
+        }
+
+        .insight-box {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+        }
+
+        .combined-table .insight-box {
+            color: #065f46;
+        }
+
+        .period-2-table .insight-box {
+            color: #6b21a8;
+        }
+
+        .period-1-table .insight-box {
+            color: #475569;
+        }
+
+        .yoy-badge {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #dc2626;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <h1>Swoffle / Robin Garrison Jan-2026 Bi-weekly / Mo Report Details</h1>
+                <p>Comprehensive Sales and Product Performance Analysis</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="summary-header">
+                <h2>January 2026 Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <div class="summary-label">Month Total</div>
+                        <div class="summary-value">$49,427.81</div>
+                        <div class="summary-subtext">46,639 units</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-label">YoY Growth</div>
+                        <div class="summary-value yoy-badge">+91%</div>
+                        <div class="summary-subtext">vs Jan 2025: $25,878.26</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="period-grid">
+                <div class="period-box period-1">
+                    <h4 class="period-title">Bi-Weekly Period 1 (Jan 1-15)</h4>
+                    <div class="period-data">
+                        <strong>Units:</strong> 9,759<br>
+                        <strong>Sales:</strong> <span style="color: #059669; font-weight: 700;">$10,456.74</span>
+                    </div>
+                </div>
+                <div class="period-box period-2">
+                    <h4 class="period-title">Bi-Weekly Period 2 (Jan 16-31)</h4>
+                    <div class="period-data">
+                        <strong>Units:</strong> 36,880<br>
+                        <strong>Sales:</strong> <span style="color: #059669; font-weight: 700;">$38,971.07</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-box">
+                <h4 class="analysis-title">Performance Analysis</h4>
+                <div class="analysis-content">
+                    ✓ <strong>Strong Year-Over-Year Growth:</strong> 91% sales increase compared to January 2025 ($25,878.26)<br>
+                    ✓ <strong>Period 2 Dominance:</strong> Second bi-weekly period generated 79% of total monthly sales<br>
+                    ✓ <strong>Total Month Performance:</strong> 46,639 total units sold generating $49,427.81 in sales
+                </div>
+            </div>
+
+            <div class="table-section">
+                <h2 class="section-title">Product Performance by Bi-Weekly Period</h2>
+                
+                <div class="table-container">
+                    <h3>Combined January 2026 Performance (Ranked by Sales)</h3>
+                    <table class="combined-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th class="text-right">Total Units</th>
+                                <th class="text-right">Total Sales</th>
+                                <th class="text-right">% of Sales</th>
+                                <th class="text-right">Avg Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>-</td>
+                                <td>Credits/Returns</td>
+                                <td class="text-right">17</td>
+                                <td class="text-right negative-value">-$241.75</td>
+                                <td class="text-right">-0.49%</td>
+                                <td class="text-right">-$14.22</td>
+                            </tr>
+                            <tr class="gold-row">
+                                <td style="font-weight: 700;">🥇 1</td>
+                                <td style="font-weight: 700;">Dark Chocolate Dipped 14-pack</td>
+                                <td class="text-right" style="font-weight: 700;">10,722</td>
+                                <td class="text-right positive-value" style="font-weight: 700;">$10,131.16</td>
+                                <td class="text-right" style="font-weight: 700;">20.50%</td>
+                                <td class="text-right">$0.94</td>
+                            </tr>
+                            <tr class="silver-row">
+                                <td style="font-weight: 700;">🥈 2</td>
+                                <td style="font-weight: 700;">Caramel 16-pack</td>
+                                <td class="text-right" style="font-weight: 700;">9,184</td>
+                                <td class="text-right positive-value" style="font-weight: 700;">$9,874.24</td>
+                                <td class="text-right" style="font-weight: 700;">19.98%</td>
+                                <td class="text-right">$1.08</td>
+                            </tr>
+                            <tr class="bronze-row">
+                                <td style="font-weight: 700;">🥉 3</td>
+                                <td style="font-weight: 700;">Dark Chocolate Dipped 4-Pack</td>
+                                <td class="text-right" style="font-weight: 700;">5,508</td>
+                                <td class="text-right positive-value" style="font-weight: 700;">$5,833.56</td>
+                                <td class="text-right" style="font-weight: 700;">11.80%</td>
+                                <td class="text-right">$1.06</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Vanilla 16-pack</td>
+                                <td class="text-right">5,104</td>
+                                <td class="text-right positive-value">$5,547.68</td>
+                                <td class="text-right">11.22%</td>
+                                <td class="text-right">$1.09</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>NEW Chocolate Caramel - 12 pk</td>
+                                <td class="text-right">3,324</td>
+                                <td class="text-right positive-value">$5,032.32</td>
+                                <td class="text-right">10.18%</td>
+                                <td class="text-right">$1.51</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>NEW Original Caramel - 12 pk</td>
+                                <td class="text-right">4,440</td>
+                                <td class="text-right positive-value">$4,707.60</td>
+                                <td class="text-right">9.52%</td>
+                                <td class="text-right">$1.06</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>NEW French Vanilla 12 pk</td>
+                                <td class="text-right">3,124</td>
+                                <td class="text-right positive-value">$3,923.96</td>
+                                <td class="text-right">7.94%</td>
+                                <td class="text-right">$1.26</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Vanilla 4-Pack</td>
+                                <td class="text-right">2,784</td>
+                                <td class="text-right positive-value">$2,463.84</td>
+                                <td class="text-right">4.98%</td>
+                                <td class="text-right">$0.89</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Caramel 4-Pack</td>
+                                <td class="text-right">2,432</td>
+                                <td class="text-right positive-value">$2,155.20</td>
+                                <td class="text-right">4.36%</td>
+                                <td class="text-right">$0.89</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2">JANUARY 2026 TOTAL</td>
+                                <td class="text-right">46,639</td>
+                                <td class="text-right">$49,427.81</td>
+                                <td class="text-right">100%</td>
+                                <td class="text-right">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-box">
+                        <strong>Key Insights:</strong> Top 3 products (Dark Chocolate Dipped 14-pack, Caramel 16-pack, Dark Chocolate Dipped 4-Pack) represent 52.28% of total monthly sales. Dark Chocolate Dipped 14-pack and Caramel 16-pack combined account for over 40% of revenue.
+                    </div>
+                </div>
+
+                <div class="period-table-container period-2-table">
+                    <h3>Period 2: Jan 15-31, 2026</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-right">Units</th>
+                                <th class="text-right">Sales</th>
+                                <th class="text-right">% of Sales</th>
+                                <th class="text-right">Avg Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Credits/Returns</td>
+                                <td class="text-right">12</td>
+                                <td class="text-right negative-value">-$154.45</td>
+                                <td class="text-right">-0.40%</td>
+                                <td class="text-right">-$12.87</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Caramel 16-pack</strong></td>
+                                <td class="text-right"><strong>7,520</strong></td>
+                                <td class="text-right"><strong>$8,029.76</strong></td>
+                                <td class="text-right"><strong>20.60%</strong></td>
+                                <td class="text-right">$1.07</td>
+                            </tr>
+                            <tr>
+                                <td>Vanilla 16-pack</td>
+                                <td class="text-right">4,240</td>
+                                <td class="text-right">$4,579.68</td>
+                                <td class="text-right">11.75%</td>
+                                <td class="text-right">$1.08</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Dark Chocolate Dipped 14-pack</strong></td>
+                                <td class="text-right"><strong>9,952</strong></td>
+                                <td class="text-right"><strong>$8,742.08</strong></td>
+                                <td class="text-right"><strong>22.43%</strong></td>
+                                <td class="text-right">$0.88</td>
+                            </tr>
+                            <tr>
+                                <td>Caramel 4-Pack</td>
+                                <td class="text-right">2,368</td>
+                                <td class="text-right">$2,098.88</td>
+                                <td class="text-right">5.39%</td>
+                                <td class="text-right">$0.89</td>
+                            </tr>
+                            <tr>
+                                <td>Vanilla 4-Pack</td>
+                                <td class="text-right">32</td>
+                                <td class="text-right">$69.60</td>
+                                <td class="text-right">0.18%</td>
+                                <td class="text-right">$2.18</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Dark Chocolate Dipped 4-Pack</strong></td>
+                                <td class="text-right"><strong>5,508</strong></td>
+                                <td class="text-right"><strong>$5,833.56</strong></td>
+                                <td class="text-right"><strong>14.97%</strong></td>
+                                <td class="text-right">$1.06</td>
+                            </tr>
+                            <tr>
+                                <td>NEW Original Caramel - 12 pk</td>
+                                <td class="text-right">2,520</td>
+                                <td class="text-right">$2,691.60</td>
+                                <td class="text-right">6.91%</td>
+                                <td class="text-right">$1.07</td>
+                            </tr>
+                            <tr>
+                                <td>NEW French Vanilla 12 pk</td>
+                                <td class="text-right">2,436</td>
+                                <td class="text-right">$3,159.00</td>
+                                <td class="text-right">8.11%</td>
+                                <td class="text-right">$1.30</td>
+                            </tr>
+                            <tr>
+                                <td>NEW Chocolate Caramel - 12 pk</td>
+                                <td class="text-right">2,292</td>
+                                <td class="text-right">$3,921.36</td>
+                                <td class="text-right">10.06%</td>
+                                <td class="text-right">$1.71</td>
+                            </tr>
+                            <tr class="period-total-row">
+                                <td>Period 2 Total</td>
+                                <td class="text-right">36,880</td>
+                                <td class="text-right positive-value">$38,971.07</td>
+                                <td class="text-right">100%</td>
+                                <td class="text-right">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-box">
+                        <strong>Top Performers:</strong> Dark Chocolate Dipped 14-pack (22.43% of sales, 9,952 units), Caramel 16-pack (20.60% of sales, 7,520 units), Dark Chocolate Dipped 4-Pack (14.97% of sales, 5,508 units)
+                    </div>
+                </div>
+
+                <div class="period-table-container period-1-table">
+                    <h3>Period 1: Jan 1-14, 2026</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-right">Units</th>
+                                <th class="text-right">Sales</th>
+                                <th class="text-right">% of Sales</th>
+                                <th class="text-right">Avg Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Credits/Returns</td>
+                                <td class="text-right">5</td>
+                                <td class="text-right negative-value">-$87.30</td>
+                                <td class="text-right">-0.01%</td>
+                                <td class="text-right">-$17.46</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Caramel 16-pack</strong></td>
+                                <td class="text-right"><strong>1,664</strong></td>
+                                <td class="text-right"><strong>$1,844.48</strong></td>
+                                <td class="text-right"><strong>18%</strong></td>
+                                <td class="text-right">$1.11</td>
+                            </tr>
+                            <tr>
+                                <td>Vanilla 16-pack</td>
+                                <td class="text-right">864</td>
+                                <td class="text-right">$968.00</td>
+                                <td class="text-right">9%</td>
+                                <td class="text-right">$1.12</td>
+                            </tr>
+                            <tr>
+                                <td>Dark Chocolate Dipped 14-pack</td>
+                                <td class="text-right">770</td>
+                                <td class="text-right">$1,389.08</td>
+                                <td class="text-right">13%</td>
+                                <td class="text-right">$1.80</td>
+                            </tr>
+                            <tr>
+                                <td>Caramel 4-Pack</td>
+                                <td class="text-right">64</td>
+                                <td class="text-right">$56.32</td>
+                                <td class="text-right">1%</td>
+                                <td class="text-right">$0.88</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Vanilla 4-Pack</strong></td>
+                                <td class="text-right"><strong>2,752</strong></td>
+                                <td class="text-right"><strong>$2,394.24</strong></td>
+                                <td class="text-right"><strong>23%</strong></td>
+                                <td class="text-right">$0.87</td>
+                            </tr>
+                            <tr>
+                                <td>Dark Chocolate Dipped 4-Pack</td>
+                                <td class="text-right">-</td>
+                                <td class="text-right">-</td>
+                                <td class="text-right">-</td>
+                                <td class="text-right">-</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>NEW Original Caramel - 12 pk</strong></td>
+                                <td class="text-right"><strong>1,920</strong></td>
+                                <td class="text-right"><strong>$2,016.00</strong></td>
+                                <td class="text-right"><strong>19%</strong></td>
+                                <td class="text-right">$1.05</td>
+                            </tr>
+                            <tr>
+                                <td>NEW French Vanilla 12 pk</td>
+                                <td class="text-right">688</td>
+                                <td class="text-right">$764.96</td>
+                                <td class="text-right">7%</td>
+                                <td class="text-right">$1.11</td>
+                            </tr>
+                            <tr>
+                                <td>NEW Chocolate Caramel - 12 pk</td>
+                                <td class="text-right">1,032</td>
+                                <td class="text-right">$1,110.96</td>
+                                <td class="text-right">11%</td>
+                                <td class="text-right">$1.08</td>
+                            </tr>
+                            <tr class="period-total-row">
+                                <td>Period 1 Total</td>
+                                <td class="text-right">9,759</td>
+                                <td class="text-right positive-value">$10,456.74</td>
+                                <td class="text-right">100%</td>
+                                <td class="text-right">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-box">
+                        <strong>Top Performers:</strong> Vanilla 4-Pack (23% of sales, 2,752 units), NEW Original Caramel - 12 pk (19% of sales, 1,920 units), Caramel 16-pack (18% of sales, 1,664 units)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
