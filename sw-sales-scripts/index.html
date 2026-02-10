@@ -343,6 +343,7 @@
         <div class="tab-navigation">
             <button class="tab-button active" onclick="showTab('direct-sales')">Swoffle Script<br><span style="font-size: 0.85em;">Direct Sales</span></button>
             <button class="tab-button" onclick="showTab('market-basket')">Script Market Basket<br><span style="font-size: 0.85em;">UNFI Indirect Sales</span></button>
+            <button class="tab-button" onclick="showTab('big-y')">Big Y<br><span style="font-size: 0.85em;">UNFI Indirect Sales</span></button>
             <button class="tab-button" onclick="showTab('roche-whole-foods')">Roche Bros/Whole Foods<br><span style="font-size: 0.85em;">Indirect Sales</span></button>
             <button class="tab-button" onclick="showTab('unfi-sales')">UNFI East/West<br><span style="font-size: 0.85em;">Indirect Sales</span></button>
         </div>
@@ -525,7 +526,7 @@
 
                 <div class="card">
                     <h2><span class="icon">🎁</span> Product Portfolio - New Tray Format - 12 Units per Tray</h2>
-                    <div class="product-grid">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
                         <div class="product-item">
                             <h4>🍮 Caramel</h4>
                             <p>Classic organic favorite</p>
@@ -534,11 +535,6 @@
                         <div class="product-item">
                             <h4>🍦 French Vanilla</h4>
                             <p>Smooth & creamy</p>
-                            <strong>$2.29 MSRP</strong>
-                        </div>
-                        <div class="product-item">
-                            <h4>🍫🍮 Chocolate Caramel</h4>
-                            <p>Newest flavor innovation</p>
                             <strong>$2.29 MSRP</strong>
                         </div>
                         <div class="product-item">
@@ -631,7 +627,145 @@
             </div>
         </div>
 
-        <!-- Tab 3: Roche Brothers/Whole Foods -->
+        <!-- Tab 3: Big Y UNFI Indirect Sales -->
+        <div id="big-y" class="tab-content">
+            <div class="opening-hook">
+                <strong>🎯 Opening Hook:</strong><br>
+                "Hi, I'm calling to connect with you about SWOFFLE - America's best-selling organic and gluten-free stroopwafel waffle cookie. I wanted to personally reach out to make sure you're carrying our products, and to advise you that for March, we're offering a 15% off invoice that's available through your UNFI rep. If you're currently carrying Swoffle, this is a great time to bring in some extra trays. And if for any reason you're not carrying it yet, this would be the perfect opportunity to bring it in with the 15% off invoice."
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <h2><span class="icon">🌟</span> The Swoffle Story</h2>
+                    <div class="story-section">
+                        <p><strong>The Swoffle Legacy:</strong> Founded in 2015 by a father-daughter team in Concord, MA, Swoffle blends Family Roots, Dutch Inspiration, Mindful Ingredients, and Giving Back To Those In Need.</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Inspired by the classic caramel-filled Dutch stroopwafel - a beloved 200-year-old tradition - we've redefined it as a premium organic and gluten-free indulgence designed to elevate everyday moments."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "Picture this: Your customer places a Swoffle on their morning coffee or tea, and within seconds, the warmth transforms the caramel center into a lusciously soft, gooey delight. It's not just a snack - it's an experience."
+                    </p>
+                    <p style="margin-top: 15px; font-style: italic;">
+                        "SWOFFLE Stroopwafel waffle cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
+                    </p>
+                    <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                        <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
+                    <ul class="benefit-list">
+                        <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
+                        <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
+                        <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
+                        <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
+                        <li>NO artificial ingredients or sweeteners</li>
+                        <li>Lower sugar vs traditional stroopwafels</li>
+                        <li>Simple, clean-label ingredients you can pronounce</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">🎁</span> Product Portfolio - New Tray Format - 12 Units per Tray</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+                        <div class="product-item">
+                            <h4>🍮 Caramel</h4>
+                            <p>Classic organic favorite</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                        <div class="product-item">
+                            <h4>🍦 French Vanilla</h4>
+                            <p>Smooth & creamy</p>
+                            <strong>$2.29 MSRP</strong>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; text-align: center;">
+                        <strong>12 Individually Wrapped Units per Tray for Freshness and Convenience</strong>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">❤️</span> Social Impact</h2>
+                    <div class="impact-box">
+                        <h3>1.168 Million Meals</h3>
+                        <p>Provided to those in need since 2017</p>
+                    </div>
+                    <p style="margin-top: 15px;">
+                        "Every display tray you stock doesn't just satisfy your customers - it feeds families in need. Through our partnership with Feeding America since 2017, Swoffle is a certified Buy-One-Give-One company, making every purchase count twice."
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
+                <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
+                <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
+                    <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Tray Extends Valuable Shelf Space</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
+                        <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
+                        <p><strong>✨ Standardized Checkout Size Tray, 12 Units</strong></p>
+                    </div>
+                    <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
+                        <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-unit tray maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">📍</span> Placement Strategy</h2>
+                <div style="background: #fff8e1; padding: 25px; border-radius: 15px; border-left: 5px solid #ff9800;">
+                    <h3 style="color: #f57c00; margin-bottom: 15px; font-size: 1.5em;">Dual Placement Opportunity</h3>
+                    <p style="font-size: 1.15em; line-height: 1.6; margin-bottom: 20px;">
+                        <strong>We are asking that all opportunities include BOTH traditional cookie aisle placement (as a pack change) AND checkout placement as new points of store placement.</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span class="icon">💰</span> The Business Case</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                        <div><strong>Format:</strong> 12 units per display tray</div>
+                        <div><strong>Shelf Life:</strong> 9 months</div>
+                        <div><strong>Min Order:</strong> 6 display trays</div>
+                        <div><strong>Pallet:</strong> 120 trays | 20 tier | 6 high</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI East Items:</strong> Caramel #326646-7 | Vanilla #326659-0</div>
+                        <div style="grid-column: 1 / -1;"><strong>UNFI West Items:</strong> Caramel #30845 | Vanilla #30842</div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
+                        <strong>Big Y-UNFI East DC:</strong> Carlisle (MA/RI/NH/CT/ME)
+                    </p>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: #2e7d32; margin-bottom: 15px;">🚀 Why Swoffle Sells:</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
+                        <li style="margin-bottom: 12px;">✨ Almost 50% smaller tray extends valuable shelf space</li>
+                        <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
+                        <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
+                        <li style="margin-bottom: 12px;">✨ A reliable everyday seller with broad, cross-category relevance</li>
+                        <li>✨ 10-year-old company with wide acceptance and built-in customer loyalty</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Delight Your Customers?</h2>
+                <p style="font-size: 1.3em; margin-bottom: 25px;">
+                    Let's get Swoffle on your shelves and start making a difference - one delicious waffle cookie at a time!
+                </p>
+                <div style="background: white; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 800px;">
+                    <p style="font-size: 1.1em; color: #333; margin: 0;">
+                        "We're confident once you taste Swoffle, you'll understand why we're America's favorite gluten-free stroopwafel waffle cookie!"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Roche Brothers/Whole Foods -->
         <div id="roche-whole-foods" class="tab-content">
             <div style="text-align: center; font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 15px;">
                 Available through Rainforest Distribution
@@ -783,7 +917,7 @@
             </div>
         </div>
 
-        <!-- Tab 4: UNFI Sales -->
+        <!-- Tab 5: UNFI Sales -->
         <div id="unfi-sales" class="tab-content">
             <div class="opening-hook">
                 <strong>🎯 Opening Hook:</strong><br>
