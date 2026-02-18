@@ -304,6 +304,7 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('b2b-yoy-sales')">B2B YOY Sales</button>
                 <button class="tab" onclick="switchTab('other-reports')">Assets</button>
+                <button class="tab" onclick="switchTab('key-correspondence')">Key Correspondence</button>
                 <button class="tab" onclick="switchTab('bi-weekly-reports')">Bi-Weekly Reports</button>
                 <button class="tab" onclick="switchTab('customer-followups')">Customer Prospect Lists</button>
                 <button class="tab" onclick="switchTab('b2b-agreements')">Key Distributor Partner Info</button>
@@ -311,6 +312,24 @@
 
             <div id="b2b-yoy-sales" class="tab-content active">
                 <div class="dashboard-grid">
+            <!-- Card: Robins Bi-Weekly Sales Dashboard Feb 1-14 -->
+            <div class="card">
+                <div class="card-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Robins Bi-Weekly Sales Dashboard 2-1-26 to 2-14-26 YOY 2026 VS 2025</h2>
+                    <a href="https://info.brandshareit.com/robin-biweekly-first-two-wks" target="_blank" class="card-link">
+                        View Dashboard
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
             <!-- Card: Robins Sales Dashboard January 2026 -->
             <div class="card">
                 <div class="card-icon">
@@ -585,7 +604,28 @@
 
             <div id="other-reports" class="tab-content">
                 <div class="dashboard-grid">
-                    <!-- Card 1: KeHE Promotional Program -->
+                    <!-- Card 1: Swoffle Updated 4-packs Pricing Model -->
+                    <div class="card">
+                        <div class="card-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title">Swoffle Updated 4-packs Pricing Model 2-12-26</h2>
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: #4b5563; margin: 1rem 0;">
+                                Swoffle 4-packs pricing analysis: dead net cost to wholesale cost to distributor cost to price to retail.
+                            </p>
+                            <a href="https://docs.google.com/spreadsheets/d/1lT6whjgI_ZHVvTjKWyWnyMET3WZqaGVc/edit?gid=1437649712#gid=1437649712" target="_blank" class="card-link">
+                                Click to view Swoffle Updated 4-packs Pricing Model 2-12-26
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: KeHE Promotional Program -->
                     <div class="card">
                         <div class="card-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -641,8 +681,8 @@
                             </svg>
                         </div>
                         <div class="card-content">
-                            <h2 class="card-title">Sales Script for Sales Reps - updated 2-6-2026</h2>
-                            <a href="https://info.brandshareit.com/swfl-sales-script" target="_blank" class="card-link">
+                            <h2 class="card-title">Sales Script for Sales Reps - updated 2-9-2026</h2>
+                            <a href="https://info.brandshareit.com/sw-sales-scripts" target="_blank" class="card-link">
                                 Click to View Sales Scripts
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -810,6 +850,177 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
                             </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="key-correspondence" class="tab-content">
+                <style>
+                    .collapsible-card {
+                        background: white;
+                        border-radius: 0.75rem;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                        transition: all 0.3s ease;
+                        margin-bottom: 1.5rem;
+                        overflow: hidden;
+                    }
+                    
+                    .collapsible-card:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                    }
+                    
+                    .collapsible-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 2rem;
+                        cursor: pointer;
+                        background: #ffffff;
+                        transition: background 0.2s ease;
+                    }
+                    
+                    .collapsible-header:hover {
+                        background: #f8f9fa;
+                    }
+                    
+                    .collapsible-title-section {
+                        display: flex;
+                        align-items: center;
+                        gap: 1.5rem;
+                        flex: 1;
+                    }
+                    
+                    .collapsible-icon {
+                        width: 60px;
+                        height: 60px;
+                        background: linear-gradient(135deg, #38bdf8, #3b82f6);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        flex-shrink: 0;
+                    }
+                    
+                    .collapsible-icon svg {
+                        width: 32px;
+                        height: 32px;
+                        color: white;
+                    }
+                    
+                    .collapsible-title {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        color: #1e293b;
+                        line-height: 1.4;
+                    }
+                    
+                    .collapsible-arrow {
+                        color: #9ca3af;
+                        font-size: 1.5rem;
+                        transition: transform 0.3s ease;
+                        font-weight: 300;
+                        flex-shrink: 0;
+                    }
+                    
+                    .collapsible-arrow.expanded {
+                        transform: rotate(90deg);
+                    }
+                    
+                    .collapsible-content {
+                        display: none;
+                        padding: 0 2rem 2rem 2rem;
+                        background: #ffffff;
+                    }
+                    
+                    .collapsible-content.show {
+                        display: block;
+                    }
+                    
+                    .collapsible-links {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 0.5rem;
+                        margin-top: 1.5rem;
+                    }
+                    
+                    .collapse-hint {
+                        font-size: 0.75rem;
+                        color: #9ca3af;
+                        font-style: italic;
+                        margin-left: 0.5rem;
+                    }
+                </style>
+                
+                <div class="dashboard-grid">
+                    <!-- Card 1: Blue Cart Account List - HALA -->
+                    <div class="collapsible-card">
+                        <div class="collapsible-header" onclick="toggleCorrespondence(this)">
+                            <div class="collapsible-title-section">
+                                <div class="collapsible-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="collapsible-title">Blue Cart Account List - HALA 2-11-2026</h2>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="collapse-hint">click arrow to collapse</span>
+                                <span class="collapsible-arrow">›</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: #4b5563; margin: 0;">
+                                <strong>Date:</strong> 2-11-26<br>
+                                <strong>To:</strong> Hala<br><br>
+                                <strong>Summary:</strong> Complete list of all Blue Cart accounts assigned under Hala's name, pulled directly from the Blue Cart system. This centralized list provides easy access to all assigned accounts to streamline follow-up activities and account management.
+                            </p>
+                            <div class="collapsible-links">
+                                <a href="https://brandshareinfo.com/swoffle-blue-cart-hala-list" target="_blank" class="card-link">
+                                    Click to View Accounts
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Market Basket-Big Y-Roche Brothers Accounts -->
+                    <div class="collapsible-card">
+                        <div class="collapsible-header" onclick="toggleCorrespondence(this)">
+                            <div class="collapsible-title-section">
+                                <div class="collapsible-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="collapsible-title">Market Basket, Big Y, Accounts, Active/Inactive, Roche Brothers, Location List</h2>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="collapse-hint">click arrow to collapse</span>
+                                <span class="collapsible-arrow">›</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: #4b5563; margin: 0;">
+                                <strong>Date:</strong> 2-11-26<br>
+                                <strong>Summary:</strong> Comprehensive account analysis for Market Basket, Big Y, and Roche Brothers locations, broken into active and inactive accounts through UNFI distribution.<br><br>
+                                <strong>Market Basket:</strong> 31 active stores with 52-week sales data | 37 inactive stores with manager contacts and phone numbers for outreach<br><br>
+                                <strong>Big Y:</strong> 32 active stores with 52-week sales data | 36 inactive stores with manager contacts and phone numbers for outreach<br><br>
+                                <strong>Roche Brothers:</strong> Store listings included<br><br>
+                                These lists provide Duncan with targeted call lists for store-level outreach to expand distribution.
+                            </p>
+                            <div class="collapsible-links">
+                                <a href="https://docs.google.com/spreadsheets/d/16vyH-yryW_T6egR_Aryk51UOB8uaysacAPxNGxxQXxY/edit?gid=897111869#gid=897111869" target="_blank" class="card-link">
+                                    Click to view Market Basket Big Y Roche Brothers list
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1170,6 +1381,15 @@
 
             // Add active class to clicked tab
             event.target.classList.add('active');
+        }
+        
+        function toggleCorrespondence(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.collapsible-arrow');
+            
+            // Toggle the content
+            content.classList.toggle('show');
+            arrow.classList.toggle('expanded');
         }
     </script>
 </body>
