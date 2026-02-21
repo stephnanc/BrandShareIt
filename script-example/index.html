@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Good Nature Cookies Sales Script - Direct Sales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+            padding: 2rem;
+            margin: -20px -20px 2rem -20px;
+            border-radius: 0 0 0.75rem 0.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .texture-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out 0.3s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.8s ease-out forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.4s; }
+        .card:nth-child(3) { animation-delay: 0.6s; }
+        .card:nth-child(4) { animation-delay: 0.8s; }
+
+        .card h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .opening-hook {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .benefit-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefit-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 1.1em;
+            line-height: 1.5;
+            transition: transform 0.2s ease;
+        }
+
+        .benefit-list li:hover {
+            transform: translateX(10px);
+        }
+
+        .benefit-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .story-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .impact-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .impact-box h3 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .product-item {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 52%, #1d4ed8 90%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            animation: gradient 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #2a5298;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
+                <div style="text-align: left;">
+                    <h1 style="margin-bottom: 10px;">Good Nature Cookies</h1>
+                    <p style="font-size: 1.3em; opacity: 0.9;">Sales Script Example</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 1.4em; font-weight: bold; margin-bottom: 5px;">Brand Share It Sales Partners</p>
+                    <p style="font-size: 1em; opacity: 0.9;">One Step Ahead, Reaching for Tomorrow</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="opening-hook">
+            <strong>🎯 Opening Hook:</strong><br>
+            "I'm calling you today about a fabulous snack that's not just delicious, but also organic and gluten-free and gives back to the community with every purchase. Good Nature Cookies are transforming the better-for-you snack category. Picture this. You have a sweet craving, but you want something healthy. Good Nature's Cookies provides that with healthier ingredients. I'm also excited to bring you new, convenient 12-unit display trays that take up very little space on the shelf and will give you faster turns."
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2><span class="icon">🌟</span> The Good Nature Cookies Story</h2>
+                <div class="story-section">
+                    <p><strong>The Good Nature Cookies Legacy:</strong> Founded in 2018 by a father-daughter team in Tampa, FL, Good Nature Cookies blends Family Roots, Mindful Ingredients, and Giving Back To Those In Need.</p>
+                </div>
+                <p style="margin-top: 15px; font-style: italic;">
+                    "Good Nature Cookies delivers what today's health-conscious consumers are looking for - a delicious treat they can feel good about. Each cookie is crafted with USDA organic ingredients, certified gluten-free, and made with better-for-you components that don't compromise on taste. Your customers no longer have to choose between indulgence and wellness."
+                </p>
+                <p style="margin-top: 15px; font-style: italic;">
+                    "Good Nature Cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
+                </p>
+                <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                    <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
+                <ul class="benefit-list">
+                    <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
+                    <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
+                    <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
+                    <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
+                    <li>NO artificial ingredients or sweeteners</li>
+                    <li>Lower sugar vs traditional cookies</li>
+                    <li>Simple, clean-label ingredients you can pronounce</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2><span class="icon">🎁</span> Product Portfolio - New Tray Format - 12 Units per Tray</h2>
+                <div class="product-grid">
+                    <div class="product-item">
+                        <h4>🍫 Dark Chocolate Chip</h4>
+                        <p>Classic organic favorite</p>
+                        <strong>$2.99 MSRP</strong>
+                    </div>
+                    <div class="product-item">
+                        <h4>🌿 Creamy Vanilla Hemp</h4>
+                        <p>Smooth & creamy</p>
+                        <strong>$2.99 MSRP</strong>
+                    </div>
+                    <div class="product-item">
+                        <h4>🥜 Peanut Butter Flax</h4>
+                        <p>Newest flavor innovation</p>
+                        <strong>$2.99 MSRP</strong>
+                    </div>
+                    <div class="product-item">
+                        <h4>🫐 Blueberry Chia</h4>
+                        <p>Superfood indulgence</p>
+                        <strong>$2.99 MSRP</strong>
+                    </div>
+                </div>
+                <p style="margin-top: 15px; text-align: center;">
+                    <strong>12 Individually Wrapped Units per Tray for Freshness and Convenience</strong>
+                </p>
+            </div>
+
+            <div class="card">
+                <h2><span class="icon">❤️</span> Social Impact</h2>
+                <div class="impact-box">
+                    <h3>Over 2 Million Meals</h3>
+                    <p>Provided to those in need since 2020</p>
+                </div>
+                <p style="margin-top: 15px;">
+                    "Every display tray you stock doesn't just satisfy your customers - it feeds families in need through community partnerships since 2020."
+                </p>
+            </div>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
+            <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
+            <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
+                <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
+                    <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Tray Extends Valuable Shelf Space</strong></p>
+                    <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
+                    <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
+                    <p><strong>✨ 12 Units per Tray</strong></p>
+                </div>
+                <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
+                    <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-unit tray maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">💰</span> The Business Case</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                    <div><strong>Format:</strong> 12 units per display tray</div>
+                    <div><strong>Shelf Life:</strong> 9 months</div>
+                    <div><strong>Wholesale:</strong> $1.87 per unit</div>
+                    <div><strong>Margin:</strong> 38% at suggested retail</div>
+                    <div><strong>Min Order:</strong> 6 display trays</div>
+                    <div><strong>Pallet:</strong> 120 trays | 20 tier | 6 high</div>
+                </div>
+            </div>
+            
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <h3 style="color: #2e7d32; margin-bottom: 10px;">🚀 Why Good Nature Cookies Sells:</h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
+                    <li style="margin-bottom: 12px;">✨ Almost 50% smaller tray extends valuable shelf space</li>
+                    <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
+                    <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
+                    <li style="margin-bottom: 12px;">✨ A reliable everyday seller with broad, cross-category relevance</li>
+                    <li>✨ 7-year-old company with wide acceptance and built-in customer loyalty</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Delight Your Customers?</h2>
+            <p style="font-size: 1.3em; margin-bottom: 25px;">
+                Let's get Good Nature Cookies on your shelves and start making a difference - one delicious cookie at a time!
+            </p>
+            <a href="#" class="cta-button" onclick="alert('Sample request initiated! We\'ll send you our bestselling flavors to try.')">
+                Would you like us to send you some samples to try, so you can see how delicious Good Nature Cookies are?
+            </a>
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                "Good Nature Cookies - where organic, gluten-free ingredients meet delicious taste, all while giving back to communities in need!"
+            </p>
+        </div>
+    </div>
+</body>
+</html>
