@@ -10,6 +10,7 @@
     th, td { border: 1px solid #444; padding: 6px 8px; font-size: 13px; }
     th { background-color: #f0f0f0; }
     .right { text-align: right; }
+    .bold { font-weight: bold; background-color: #e8e8e8; }
   </style>
 </head>
 <body>
@@ -18,30 +19,12 @@
 
   <!-- Summary section -->
   <table>
-    <tr>
-      <th>Item</th>
-      <th>Details</th>
-    </tr>
-    <tr>
-      <td># of hours</td>
-      <td>32 hours × $35 = $1,120</td>
-    </tr>
-    <tr>
-      <td># of phone calls</td>
-      <td>209</td>
-    </tr>
-    <tr>
-      <td># of emails</td>
-      <td>57</td>
-    </tr>
-    <tr>
-      <td># of samples</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Payment note</td>
-      <td>Schedule payment for Hala today.</td>
-    </tr>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td># of hours</td><td>32 hours × $35 = $1,120</td></tr>
+    <tr><td># of phone calls</td><td>209</td></tr>
+    <tr><td># of emails</td><td>57</td></tr>
+    <tr><td># of samples</td><td>0</td></tr>
+    <tr><td>Payment note</td><td>Schedule payment for Hala today.</td></tr>
   </table>
 
   <!-- Hala Direct Orders -->
@@ -53,41 +36,59 @@
       <th>City, State</th>
       <th>Order Details</th>
       <th class="right">Total Order</th>
+      <th class="right">Total Trays</th>
     </tr>
+
     <tr>
       <td>02/20/2026</td>
       <td>Boarman's Meat Market</td>
       <td>Highland, MD</td>
-      <td>2 Caramel 12-unit trays, 1 French Vanilla 12-unit tray, 2 Chocolate Caramel 12-unit trays, 1 Dark Chocolate Dipped 12-unit tray</td>
+      <td>2 Caramel, 1 French Vanilla, 2 Chocolate Caramel, 1 Dark Chocolate Dipped</td>
       <td class="right">$112.82</td>
+      <td class="right">6</td>
     </tr>
+
     <tr>
       <td>02/23/2026</td>
       <td>Three Rivers Market</td>
       <td>Knoxville, TN</td>
-      <td>2 Dark Chocolate Dipped 12-unit trays, 2 French Vanilla 12-unit trays, 2 Caramel 12-unit trays</td>
+      <td>2 Dark Chocolate Dipped, 2 French Vanilla, 2 Caramel</td>
       <td class="right">$122.88</td>
+      <td class="right">6</td>
     </tr>
+
     <tr>
       <td>02/23/2026</td>
       <td>DeLucci's Market</td>
       <td>Redwood City, CA</td>
-      <td>2 Caramel 12-unit trays, 1 French Vanilla 12-unit tray, 2 Dark Chocolate Dipped 12-unit trays, 1 Chocolate Caramel 12-unit tray</td>
+      <td>2 Caramel, 1 French Vanilla, 2 Dark Chocolate Dipped, 1 Chocolate Caramel</td>
       <td class="right">$95.88</td>
+      <td class="right">6</td>
     </tr>
+
     <tr>
       <td>02/26/2026</td>
       <td>Rowayton Market</td>
       <td>Norwalk, CT</td>
-      <td>1 Dark Chocolate Dipped 12-unit tray, 1 French Vanilla 12-unit tray, 2 Chocolate Caramel 12-unit trays, 1 Caramel 12-unit tray</td>
+      <td>1 Dark Chocolate Dipped, 1 French Vanilla, 2 Chocolate Caramel, 1 Caramel</td>
       <td class="right">$112.92</td>
+      <td class="right">5</td>
     </tr>
+
     <tr>
       <td>02/26/2026</td>
       <td>Belue Farms</td>
       <td>Boiling Springs, SC</td>
-      <td>2 Dark Chocolate Dipped 12-unit trays, 3 French Vanilla 12-unit trays, 1 Chocolate Caramel 12-unit tray, 3 Caramel 12-unit trays</td>
+      <td>2 Dark Chocolate Dipped, 3 French Vanilla, 1 Chocolate Caramel, 3 Caramel</td>
       <td class="right">$174.36</td>
+      <td class="right">9</td>
+    </tr>
+
+    <!-- Totals Row -->
+    <tr class="bold">
+      <td colspan="4">TOTALS</td>
+      <td class="right">$618.86</td>
+      <td class="right">32</td>
     </tr>
   </table>
 
@@ -101,75 +102,22 @@
       <th>Order Details</th>
       <th class="right">Total Cases</th>
     </tr>
-    <tr>
-      <td>02/19/2026</td>
-      <td>Martindale's Market (KeHE account)</td>
-      <td>Springfield, PA</td>
-      <td>4 Caramel 12-unit trays, 6 Dark Chocolate Dipped 12-unit trays, 2 French Vanilla 12-unit trays</td>
-      <td class="right">12</td>
-    </tr>
-    <tr>
-      <td>02/20/2026</td>
-      <td>Frey's Better Foods</td>
-      <td>Hellertown, PA</td>
-      <td>1 Caramel 12-unit tray, 1 Dark Chocolate Dipped 12-unit tray, 1 French Vanilla 12-unit tray</td>
-      <td class="right">3</td>
-    </tr>
-    <tr>
-      <td>02/20/2026</td>
-      <td>Luckys Market</td>
-      <td>Boulder, CO</td>
-      <td>2 Dark Chocolate Dipped 14-pack trays, 2 French Vanilla 16-pack trays, 2 Caramel 16-pack trays</td>
-      <td class="right">6</td>
-    </tr>
-    <tr>
-      <td>02/20/2026</td>
-      <td>Lunardi's Markets (Meridian Avenue)</td>
-      <td>San Jose, CA</td>
-      <td>1 Caramel 16-pack tray, 1 French Vanilla 16-pack tray</td>
-      <td class="right">2</td>
-    </tr>
-    <tr>
-      <td>02/20/2026</td>
-      <td>Plum Market</td>
-      <td>Bloomfield Township, MI</td>
-      <td>1 Caramel 16-pack tray, 1 Dark Chocolate Dipped 14-pack tray</td>
-      <td class="right">2</td>
-    </tr>
-    <tr>
-      <td>02/20/2026</td>
-      <td>Wild Rivers Market</td>
-      <td>Crescent City, CA</td>
-      <td>2 Dark Chocolate Dipped 14-unit trays</td>
-      <td class="right">2</td>
-    </tr>
-    <tr>
-      <td>02/23/2026</td>
-      <td>Broulim's Supermarket</td>
-      <td>Driggs, ID</td>
-      <td>1 Caramel 16-unit tray, 1 French Vanilla 16-unit tray, 1 Dark Chocolate Dipped 12-unit tray</td>
-      <td class="right">3</td>
-    </tr>
-    <tr>
-      <td>02/23/2026</td>
-      <td>Little House Green Grocery (KeHE)</td>
-      <td>Richmond, VA</td>
-      <td>1 Caramel 16-pack, 1 French Vanilla 16-pack, 1 Dark Chocolate Dipped 14-pack</td>
-      <td class="right">3</td>
-    </tr>
-    <tr>
-      <td>02/26/2026</td>
-      <td>Gunnison Vitamin &amp; Health</td>
-      <td>Gunnison, CO</td>
-      <td>1 Caramel 16-pack tray</td>
-      <td class="right">1</td>
-    </tr>
-    <tr>
-      <td>02/26/2026</td>
-      <td>Debra's Natural Gourmet</td>
-      <td>Vineland, MA</td>
-      <td>2 Caramel 16-pack trays, 2 French Vanilla 16-pack trays, 2 Dark Chocolate Dipped 16-pack trays</td>
-      <td class="right">6</td>
+
+    <tr><td>02/19/2026</td><td>Martindale's Market (KeHE)</td><td>Springfield, PA</td><td>4 Caramel, 6 Dark Chocolate Dipped, 2 French Vanilla</td><td class="right">12</td></tr>
+    <tr><td>02/20/2026</td><td>Frey's Better Foods</td><td>Hellertown, PA</td><td>1 Caramel, 1 Dark Chocolate Dipped, 1 French Vanilla</td><td class="right">3</td></tr>
+    <tr><td>02/20/2026</td><td>Luckys Market</td><td>Boulder, CO</td><td>2 Dark Chocolate Dipped 14-pack, 2 French Vanilla 16-pack, 2 Caramel 16-pack</td><td class="right">6</td></tr>
+    <tr><td>02/20/2026</td><td>Lunardi's Markets</td><td>San Jose, CA</td><td>1 Caramel 16-pack, 1 French Vanilla 16-pack</td><td class="right">2</td></tr>
+    <tr><td>02/20/2026</td><td>Plum Market</td><td>Bloomfield Township, MI</td><td>1 Caramel 16-pack, 1 Dark Chocolate Dipped 14-pack</td><td class="right">2</td></tr>
+    <tr><td>02/20/2026</td><td>Wild Rivers Market</td><td>Crescent City, CA</td><td>2 Dark Chocolate Dipped 14-unit</td><td class="right">2</td></tr>
+    <tr><td>02/23/2026</td><td>Broulim's Supermarket</td><td>Driggs, ID</td><td>1 Caramel 16-unit, 1 French Vanilla 16-unit, 1 Dark Chocolate Dipped 12-unit</td><td class="right">3</td></tr>
+    <tr><td>02/23/2026</td><td>Little House Green Grocery (KeHE)</td><td>Richmond, VA</td><td>1 Caramel 16-pack, 1 French Vanilla 16-pack, 1 Dark Chocolate Dipped 14-pack</td><td class="right">3</td></tr>
+    <tr><td>02/26/2026</td><td>Gunnison Vitamin & Health</td><td>Gunnison, CO</td><td>1 Caramel 16-pack</td><td class="right">1</td></tr>
+    <tr><td>02/26/2026</td><td>Debra's Natural Gourmet</td><td>Vineland, MA</td><td>2 Caramel 16-pack, 2 French Vanilla 16-pack, 2 Dark Chocolate Dipped 16-pack</td><td class="right">6</td></tr>
+
+    <!-- Totals Row -->
+    <tr class="bold">
+      <td colspan="4">TOTAL CASES</td>
+      <td class="right">40</td>
     </tr>
   </table>
 
