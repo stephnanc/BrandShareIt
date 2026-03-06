@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle Dashboard - Feb 16-28, 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; padding: 2rem; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee); border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; overflow: hidden; }
+        .texture-overlay { position: absolute; inset: 0; opacity: 0.1; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .header-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .header-left h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.25rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .header-left p { font-size: 1.125rem; opacity: 0.95; margin-bottom: 0.125rem; }
+        .header-left p.small-text { font-size: 0.5625rem; opacity: 0.9; }
+        .header-right { display: flex; flex-direction: column; gap: 0.5rem; text-align: right; }
+        .stat-box { padding: 0.5rem 0.75rem; min-width: 120px; }
+        .stat-label { font-size: 0.75rem; opacity: 0.9; margin-bottom: 0.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.125rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.05); } }
+        .empty-state { text-align: center; padding: 3rem 2rem; color: #94a3b8; }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state-text { font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .empty-state-subtext { font-size: 0.875rem; }
+        .tabs-container { background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; }
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; }
+        .tab { flex: 1; padding: 1rem 1.5rem; background: white; border: none; font-size: 1rem; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.3s ease; border-bottom: 3px solid transparent; }
+        .tab:hover { background: #f8fafc; color: #3b82f6; }
+        .tab.active { background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee); color: white; border-bottom: 3px solid #2563eb; }
+        .tab-content { padding: 2rem; display: none; }
+        .tab-content.active { display: block; }
+        .card { background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 1.5rem; overflow: hidden; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: linear-gradient(to right, #f8fafc, #f1f5f9); cursor: pointer; transition: background 0.2s; }
+        .card-header:hover { background: linear-gradient(to right, #f1f5f9, #e2e8f0); }
+        .card-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+        .card-arrow { transition: transform 0.3s ease; color: #3b82f6; font-size: 1.5rem; font-weight: bold; }
+        .card-arrow.collapsed { transform: rotate(-90deg); }
+        .card-content { padding: 1.5rem; display: none; }
+        .card-content.expanded { display: block; }
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table thead { background: #f8fafc; }
+        .orders-table th { padding: 0.75rem; text-align: center; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .orders-table td { padding: 1rem 0.75rem; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 0.875rem; text-align: center; }
+        .orders-table tbody tr:hover { background: #f8fafc; }
+        .orders-table tbody tr:last-child td { border-bottom: none; }
+        .order-details { line-height: 1.5; color: #475569; }
+        .order-total { font-weight: 600; color: #059669; font-size: 0.875rem; }
+        .order-summary { margin-top: 2rem; padding-top: 2rem; border-top: 3px solid #e2e8f0; }
+        .order-summary h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; text-align: center; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .summary-card { background: white; border: 2px solid #e2e8f0; border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .summary-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); }
+        .summary-card-title { font-size: 0.95rem; font-weight: 600; color: #475569; margin-bottom: 1rem; text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .summary-label { font-size: 0.875rem; color: #64748b; }
+        .summary-value { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+        .summary-value.sales { color: #059669; }
+        .grand-total-card { border: 3px solid #3b82f6; }
+        .grand-total-card .summary-card-title { color: #3b82f6; font-weight: 700; font-size: 1.1rem; }
+        .grand-total-card .summary-label { color: #3b82f6; font-weight: 700; }
+        .grand-total-card .summary-value { color: #3b82f6; font-weight: 700; font-size: 1rem; }
+        .no-track { font-size: 0.75rem; color: #94a3b8; font-style: italic; text-align: center; margin-top: 0.5rem; }
+
+        /* Prospect Card Styles — matches .card / .card-header / .card-content */
+        .prospect-card { background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; overflow: hidden; }
+        .prospect-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: linear-gradient(to right, #f8fafc, #f1f5f9); cursor: pointer; transition: background 0.2s; }
+        .prospect-card-header:hover { background: linear-gradient(to right, #f1f5f9, #e2e8f0); }
+        .prospect-card-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+        .prospect-card-content { padding: 1.5rem; display: none; }
+        .prospect-card-content.expanded { display: block; }
+        .prospect-section { margin-bottom: 1.5rem; }
+        .prospect-section:last-child { margin-bottom: 0; }
+        .prospect-section-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.75rem; }
+        .prospect-contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; }
+        .prospect-contact-item { background: #f8fafc; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 0.85rem; color: #1e293b; }
+        .prospect-contact-item strong { color: #475569; display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }
+        .prospect-body { font-size: 0.875rem; color: #334155; line-height: 1.7; }
+        .prospect-body p { margin-bottom: 0.6rem; }
+        .prospect-body ul { padding-left: 1.25rem; margin-bottom: 0.6rem; }
+        .prospect-body ul li { margin-bottom: 0.3rem; }
+        .prospect-tag { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; margin-right: 0.35rem; margin-bottom: 0.35rem; }
+        .prospect-tag.green { background: #dcfce7; color: #15803d; }
+        .prospect-tag.amber { background: #fef3c7; color: #b45309; }
+        .prospect-tag.purple { background: #f3e8ff; color: #7e22ce; }
+        .contact-log-entry { background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 0 0.375rem 0.375rem 0; padding: 0.75rem 1rem; margin-bottom: 0.75rem; font-size: 0.875rem; color: #334155; }
+        .contact-log-entry .log-date { font-weight: 700; color: #475569; font-size: 0.8rem; margin-bottom: 0.25rem; }
+        .contact-log-entry.today { border-left-color: #059669; background: #f0fdf4; }
+        .contact-log-entry.today .log-date { color: #059669; }
+        .next-steps-list { list-style: none; padding: 0; }
+        .next-steps-list li { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.4rem 0; font-size: 0.875rem; color: #334155; }
+        .next-steps-list li::before { content: '→'; color: #3b82f6; font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="texture-overlay"></div>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Swoffle</h1>
+                    <p>Interactive Dashboard Summary Report</p>
+                    <p>February 16th-28th, 2026</p>
+                    <p class="small-text">Prepared by Stephen Nance</p>
+                </div>
+                <div class="header-right">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value" id="totalSales">$0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(0)">Direct Orders</button>
+                <button class="tab" onclick="switchTab(1)">Admin Reporting</button>
+                <button class="tab" onclick="switchTab(2)">Distributor Prospects</button>
+                <button class="tab" onclick="switchTab(3)">New Business Development</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-0">
+                <!-- Distributor Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Distributor Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="distributor-orders">
+                                <tr>
+                                    <td>02/16/2026</td>
+                                    <td>Snacktree International</td>
+                                    <td>Newark, NJ</td>
+                                    <td class="order-details">
+                                        32 Chocolate Caramel 12-unit trays, 16 Caramel 12-unit trays, 16 Dark Chocolate Dip 12-unit trays, 16 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$1,130.88</td>
+                                </tr>
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>The Paper Store</td>
+                                    <td>Leominster, MA</td>
+                                    <td class="order-details">
+                                        32 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$403.20</td>
+                                </tr>
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>Rainforest Distribution Frederick DC</td>
+                                    <td>Frederick, MD</td>
+                                    <td class="order-details">
+                                        163 Caramel 8-pack 4 CT cases, 43 French Vanilla 8-pack 4 CT cases
+                                    </td>
+                                    <td class="order-total">$5,735.04</td>
+                                </tr>
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>Rainforest Distribution S. Easton DC</td>
+                                    <td>South Easton, MA</td>
+                                    <td class="order-details">
+                                        22 Caramel 8-pack 4 CT cases
+                                    </td>
+                                    <td class="order-total">$612.48</td>
+                                </tr>
+                                <tr>
+                                    <td>02/19/2026</td>
+                                    <td>UNFI Moreno Valley DC</td>
+                                    <td>Riverside, CA</td>
+                                    <td class="order-details">
+                                        24 Caramel 12-unit trays, 8 Dark Chocolate Dipped 12-unit trays
+                                    </td>
+                                    <td class="order-total">$464.64</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>Quality Foods Distributing</td>
+                                    <td>Bozeman, MT</td>
+                                    <td class="order-details">
+                                        88 Chocolate Caramel 12-unit trays, 48 Caramel 12-unit trays, 24 Dark Chocolate Dipped 12-unit trays, 72 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$2,641.44</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>KeHE Distributors</td>
+                                    <td>Northeast, MD</td>
+                                    <td class="order-details">
+                                        64 Caramel 12-unit trays, 64 Dark Chocolate Dipped 12-unit trays
+                                    </td>
+                                    <td class="order-total">$2,104.32</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>KeHE Distributors - Lehigh Valley</td>
+                                    <td>Breinigsville, PA</td>
+                                    <td class="order-details">
+                                        88 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$1,108.80</td>
+                                </tr>
+                                <tr>
+                                    <td>02/24/2026</td>
+                                    <td>Atlantic Beverage Distributors</td>
+                                    <td>Holliston, MA</td>
+                                    <td class="order-details">
+                                        32 Caramel 12-unit trays, 32 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$806.40</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>UNFI Rocklin DC</td>
+                                    <td>Rocklin, CA</td>
+                                    <td class="order-details">
+                                        24 Dark Chocolate Dipped 12-unit trays, 72 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$1,393.92</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>UNFI Greenwood DC</td>
+                                    <td>Greenwood, IN</td>
+                                    <td class="order-details">
+                                        48 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$604.80</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>UNFI Racine DC</td>
+                                    <td>Sturtevant, WI</td>
+                                    <td class="order-details">
+                                        24 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$302.40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Independent Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Independent Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="independent-orders">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">🏪</div>
+                                            <div class="empty-state-text">No orders recorded yet</div>
+                                            <div class="empty-state-subtext">Independent direct orders will appear here</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hala Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Hala Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hala-direct-orders">
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Boarman's Meat Market</td>
+                                    <td>Highland, MD</td>
+                                    <td class="order-details">
+                                        2 Caramel 12-unit trays, 1 French Vanilla 12-unit tray, 2 Chocolate Caramel 12-unit trays, 1 Dark Chocolate Dipped 12-unit tray
+                                    </td>
+                                    <td class="order-total">$112.82</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>Three Rivers Market</td>
+                                    <td>Knoxville, TN</td>
+                                    <td class="order-details">
+                                        2 Dark Chocolate Dipped 12-unit trays, 2 French Vanilla 12-unit trays, 2 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$122.88</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>DeLucci's Market</td>
+                                    <td>Redwood City, CA</td>
+                                    <td class="order-details">
+                                        2 Caramel 12-unit trays, 1 French Vanilla 12-unit tray, 2 Dark Chocolate Dipped 12-unit trays, 1 Chocolate Caramel 12-unit tray
+                                    </td>
+                                    <td class="order-total">$95.88</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>Rowayton Market</td>
+                                    <td>Norwalk, CT</td>
+                                    <td class="order-details">
+                                        1 Dark Chocolate Dipped 12-unit tray, 1 French Vanilla 12-unit tray, 2 Chocolate Caramel 12-unit trays, 1 Caramel 12-unit tray
+                                    </td>
+                                    <td class="order-total">$112.92</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>Belue Farms</td>
+                                    <td>Boiling Springs, SC</td>
+                                    <td class="order-details">
+                                        2 Dark Chocolate Dipped 12-unit trays, 3 French Vanilla 12-unit trays, 1 Chocolate Caramel 12-unit tray, 3 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$174.36</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Faire Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Faire Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faire-orders">
+                                <tr>
+                                    <td>02/16/2026</td>
+                                    <td>Des Moines Marriott Downtown</td>
+                                    <td>Des Moines, IA</td>
+                                    <td class="order-details">
+                                        3 Caramel 12-unit trays, 3 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$85.68</td>
+                                </tr>
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>Hocking Hills Inn and Coffee Emporium</td>
+                                    <td>Logan, OH</td>
+                                    <td class="order-details">
+                                        5 Caramel 12-unit trays, 1 French Vanilla 12-unit tray
+                                    </td>
+                                    <td class="order-total">$85.68</td>
+                                </tr>
+                                <tr>
+                                    <td>02/19/2026</td>
+                                    <td>Food and Meat Co-op</td>
+                                    <td>Clearfield, UT</td>
+                                    <td class="order-details">
+                                        11 Chocolate Caramel 12-unit trays, 11 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$314.16</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Joey No Nuts Cafe</td>
+                                    <td>Hoboken, NJ</td>
+                                    <td class="order-details">
+                                        2 Chocolate Caramel 12-unit trays, 3 French Vanilla 16-pack trays, 3 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$128.52</td>
+                                </tr>
+                                <tr>
+                                    <td>02/24/2026</td>
+                                    <td>Woodsong Market</td>
+                                    <td>Boothbay Harbor, ME</td>
+                                    <td class="order-details">
+                                        2 Chocolate Caramel 12-unit trays, 2 French Vanilla 12-unit trays, 2 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$85.68</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hala Indirect Turnover Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Hala Indirect Turnover Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Cases</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hala-orders">
+                                <tr>
+                                    <td>02/19/2026</td>
+                                    <td>Martindale's Market (KeHE account)</td>
+                                    <td>Springfield, PA</td>
+                                    <td class="order-details">
+                                        4 Caramel 12-unit trays, 6 Dark Chocolate Dipped 12-unit trays, 2 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">12</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Frey's Better Foods</td>
+                                    <td>Hellertown, PA</td>
+                                    <td class="order-details">
+                                        1 Caramel 12-unit tray, 1 Dark Chocolate Dipped 12-unit tray, 1 French Vanilla 12-unit tray
+                                    </td>
+                                    <td class="order-total">3</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Luckys Market</td>
+                                    <td>Boulder, CO</td>
+                                    <td class="order-details">
+                                        2 Dark Chocolate Dipped 14-pack trays, 2 French Vanilla 16-pack trays, 2 Caramel 16-pack trays
+                                    </td>
+                                    <td class="order-total">6</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Lunardi's Markets (Meridian Avenue)</td>
+                                    <td>San Jose, CA</td>
+                                    <td class="order-details">
+                                        1 Caramel 16-pack tray, 1 French Vanilla 16-pack tray
+                                    </td>
+                                    <td class="order-total">2</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Plum Market</td>
+                                    <td>Bloomfield Township, MI</td>
+                                    <td class="order-details">
+                                        1 Caramel 16-pack tray, 1 Dark Chocolate Dipped 14-pack tray
+                                    </td>
+                                    <td class="order-total">2</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Wild Rivers Market</td>
+                                    <td>Crescent City, CA</td>
+                                    <td class="order-details">
+                                        2 Dark Chocolate Dipped 14-unit trays
+                                    </td>
+                                    <td class="order-total">2</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>Broulim's Supermarket</td>
+                                    <td>Driggs, ID</td>
+                                    <td class="order-details">
+                                        1 Caramel 16-unit tray, 1 French Vanilla 16-unit tray, 1 Dark Chocolate Dipped 12-unit tray
+                                    </td>
+                                    <td class="order-total">3</td>
+                                </tr>
+                                <tr>
+                                    <td>02/23/2026</td>
+                                    <td>Little House Green Grocery (KeHE)</td>
+                                    <td>Richmond, VA</td>
+                                    <td class="order-details">
+                                        1 Caramel 16-pack, 1 French Vanilla 16-pack, 1 Dark Chocolate Dipped 14-pack
+                                    </td>
+                                    <td class="order-total">3</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>Gunnison Vitamin & Health</td>
+                                    <td>Gunnison, CO</td>
+                                    <td class="order-details">
+                                        1 Caramel 16-pack tray
+                                    </td>
+                                    <td class="order-total">1</td>
+                                </tr>
+                                <tr>
+                                    <td>02/26/2026</td>
+                                    <td>Debra's Natural Gourmet</td>
+                                    <td>Vineland, MA</td>
+                                    <td class="order-details">
+                                        2 Caramel 16-pack trays, 2 French Vanilla 16-pack trays, 2 Dark Chocolate Dipped 16-pack trays
+                                    </td>
+                                    <td class="order-total">6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Duo Sales Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Duo Sales Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="duo-sales-orders">
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>Bread Garden Market</td>
+                                    <td>Iowa City, IA</td>
+                                    <td class="order-details">
+                                        1 Dark Chocolate Dipped 12-unit tray, 1 French Vanilla 12-unit tray, 2 Chocolate Caramel 12-unit trays, 2 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$112.92</td>
+                                </tr>
+                                <tr>
+                                    <td>02/18/2026</td>
+                                    <td>Hungry Jack's General Store</td>
+                                    <td>Wilson, WY</td>
+                                    <td class="order-details">
+                                        3 Dark Chocolate Dipped 12-unit trays, 3 Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$132.84</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Valley Food Specialties Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Valley Food Specialties Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Location</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="valley-orders">
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>K-Global Food Distributors</td>
+                                    <td>Roslyn, NY</td>
+                                    <td class="order-details">
+                                        48 Caramel 12-unit trays, 64 French Vanilla 12-unit trays, 48 Chocolate Caramel 12-unit trays
+                                    </td>
+                                    <td class="order-total">$1,920.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mable Direct Orders -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Mable Direct Orders</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>City, State</th>
+                                    <th>Order Details</th>
+                                    <th>Total Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mable-orders">
+                                <tr>
+                                    <td>02/17/2026</td>
+                                    <td>Sam's Super Highway Truck Stop</td>
+                                    <td>Van Horn, TX</td>
+                                    <td class="order-details">
+                                        1 French Vanilla 16-unit tray, 1 Caramel 16-unit tray
+                                    </td>
+                                    <td class="order-total">$33.32</td>
+                                </tr>
+                                <tr>
+                                    <td>02/18/2026</td>
+                                    <td>SPEED FUEL LLC</td>
+                                    <td>Long Beach, CA</td>
+                                    <td class="order-details">
+                                        1 French Vanilla 16-unit tray
+                                    </td>
+                                    <td class="order-total">$19.04</td>
+                                </tr>
+                                <tr>
+                                    <td>02/20/2026</td>
+                                    <td>Nutrition & Food Services</td>
+                                    <td>Worcester, MA</td>
+                                    <td class="order-details">
+                                        6 Caramel 12-unit trays, 6 Dark Chocolate Dipped 12-unit trays
+                                    </td>
+                                    <td class="order-total">$226.08</td>
+                                </tr>
+                                <tr>
+                                    <td>02/24/2026</td>
+                                    <td>Purely Pressed</td>
+                                    <td>Granger, IN</td>
+                                    <td class="order-details">
+                                        8 Caramel 12-unit trays, 8 Dark Chocolate Dipped 12-unit trays, 8 French Vanilla 12-unit trays
+                                    </td>
+                                    <td class="order-total">$415.68</td>
+                                </tr>
+                                <tr>
+                                    <td>02/24/2026</td>
+                                    <td>Ukiah Sinclair</td>
+                                    <td>Ukiah, CA</td>
+                                    <td class="order-details">
+                                        1 French Vanilla 12-unit tray
+                                    </td>
+                                    <td class="order-total">$14.28</td>
+                                </tr>
+                                <tr>
+                                    <td>02/25/2026</td>
+                                    <td>Alltown Select</td>
+                                    <td>Concord, NH</td>
+                                    <td class="order-details">
+                                        1 Caramel 12-unit tray, 1 French Vanilla 12-unit tray
+                                    </td>
+                                    <td class="order-total">$28.56</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <div class="summary-card-title">Distributor Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-distributor-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-distributor-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Independent Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-independent-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-independent-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Hala Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-hala-direct-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-hala-direct-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Faire Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-faire-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-faire-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Hala Indirect Turnover Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-hala-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Cases:</span>
+                                <span class="summary-value sales" id="summary-hala-sales">0</span>
+                            </div>
+                            <div class="no-track">(Not tracked in order totals)</div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Duo Sales Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-duo-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-duo-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Valley Food Specialties Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-valley-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-valley-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-card-title">Mable Direct Orders</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Number of Orders:</span>
+                                <span class="summary-value" id="summary-mable-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Combined Total:</span>
+                                <span class="summary-value sales" id="summary-mable-sales">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card grand-total-card">
+                            <div class="summary-card-title">GRAND TOTAL</div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Number of Orders:</span>
+                                <span class="summary-value" id="summary-grand-orders">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Total Sales:</span>
+                                <span class="summary-value" id="summary-grand-sales">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-1">
+                
+                <!-- Robin's Bi-Weekly Report Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Robin's Bi-Weekly Report — February 1-14 YoY Comparison</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Comparison Period -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Reporting Period</div>
+                            <div class="prospect-body">
+                                <p><strong>2025 Period:</strong> February 1, 2025 – February 14, 2025</p>
+                                <p><strong>2026 Period:</strong> February 1, 2026 – February 14, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Sales Comparison -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Year-Over-Year Sales Performance</div>
+                            <div class="summary-grid" style="margin-top: 1rem;">
+                                <div class="summary-card">
+                                    <div class="summary-card-title">2025 Sales (Feb 1-14)</div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Total Sales:</span>
+                                        <span class="summary-value sales">$14,203.92</span>
+                                    </div>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="summary-card-title">2026 Sales (Feb 1-14)</div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Total Sales:</span>
+                                        <span class="summary-value sales">$31,705.84</span>
+                                    </div>
+                                </div>
+
+                                <div class="summary-card grand-total-card">
+                                    <div class="summary-card-title">YEAR-OVER-YEAR GROWTH</div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Dollar Increase:</span>
+                                        <span class="summary-value">$17,501.92</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Percentage Increase:</span>
+                                        <span class="summary-value">123.2%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Performance Analysis</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">+123.2% Growth</span>
+                                    <span class="prospect-tag green">+$17,501.92</span>
+                                    <span class="prospect-tag purple">Strong Performance</span>
+                                </p>
+                                <p>The first two weeks of February 2026 demonstrated exceptional year-over-year growth, with sales more than doubling compared to the same period in 2025. This 123.2% increase reflects strong market momentum and successful execution of distribution and retail strategies.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- UNFI Vendor Forecast Report Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">UNFI Vendor Forecast Report — February 18, 2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Report Overview -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Report Summary</div>
+                            <div class="prospect-body">
+                                <p><strong>Vendor:</strong> SWOFFLE LLC (Vendor #77420 / L-863852 / P-863852)</p>
+                                <p><strong>Report Date:</strong> February 18, 2026</p>
+                                <p><strong>Total SKUs Tracked:</strong> 13 active product lines across 6 UNFI distribution centers</p>
+                                <p style="margin-top: 1rem;"><a href="https://1drv.ms/x/c/6025a8df181803ff/IQB0hwnnCutRTJQmYJ81FNcNAU5t9wqf_5Akgbd1pgtYmSU?e=TjGYud" target="_blank" style="color: #3b82f6; text-decoration: underline;">View Original UNFI Vendor Forecast Report</a></p>
+                            </div>
+                        </div>
+
+                        <!-- Product Key -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Product Key</div>
+                            <div class="prospect-body">
+                                <p><strong>16-Pack Stroopwafels (1.16 oz - 1.45 oz):</strong></p>
+                                <ul>
+                                    <li><strong>FRVN / FR VN:</strong> French Vanilla 16-pack tray cases (1.16 oz)</li>
+                                    <li><strong>CR / CML:</strong> Caramel 16-pack tray cases (1.16 oz)</li>
+                                    <li><strong>CH CR / DCH:</strong> Dark Chocolate Dipped 14-pack tray cases (1.45 oz)</li>
+                                </ul>
+                                <p><strong>4-Pack Stroopwafels (4.64 oz - 5.80 oz):</strong></p>
+                                <ul>
+                                    <li><strong>SWFL WFL DRCH DCH 4P:</strong> Dark Chocolate Dipped 4-pack (8/5.80 oz case)</li>
+                                    <li><strong>SWFL WFL DTCH CML 4P:</strong> Caramel 4-pack (8/4.64 oz case)</li>
+                                    <li><strong>SWFL WFL DRCH FVN 4P:</strong> French Vanilla 4-pack (8/4.64 oz case)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Distribution Centers Performance -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Distribution Centers Performance</div>
+                            <div class="prospect-body">
+                                <p><strong>CRL (Carlisle, PA):</strong></p>
+                                <ul>
+                                    <li>Caramel 16-pack tray cases: 32.26 weekly forecast, 46 on hand (10 days supply), 144 on order</li>
+                                    <li>French Vanilla 16-pack tray cases: 12.49 weekly forecast, 58 on hand (32.5 days supply), 24 on order</li>
+                                    <li>Dark Chocolate 14-pack tray cases: 9.82 weekly forecast, 19 on hand (13.5 days supply), 44 on order</li>
+                                </ul>
+
+                                <p><strong>GRW (Greenwood, IN):</strong></p>
+                                <ul>
+                                    <li>Caramel 16-pack tray cases: 11.69 weekly forecast, 23 on hand (13.8 days supply), 34 planned demands, 3 committed</li>
+                                    <li>French Vanilla 16-pack tray cases: 7.35 weekly forecast, 21 on hand (20 days supply), 34 planned demands</li>
+                                </ul>
+
+                                <p><strong>TWC (Twin Cities, MN):</strong></p>
+                                <ul>
+                                    <li>Caramel 16-pack tray cases: 4.73 weekly forecast, 26 on hand (38.5 days supply), 1 committed</li>
+                                </ul>
+
+                                <p><strong>RAC (Racine, WI):</strong></p>
+                                <ul>
+                                    <li>Caramel 16-pack tray cases: 5.20 weekly forecast, 11 on hand (14.8 days supply), 5 committed</li>
+                                </ul>
+
+                                <p><strong>MOR (Moreno Valley, CA):</strong></p>
+                                <ul>
+                                    <li>Dark Chocolate 4-pack: 0.63 weekly forecast, 13 on hand (144.4 days supply)</li>
+                                    <li>Caramel 4-pack: 1.13 weekly forecast, 18 on hand (111.5 days supply)</li>
+                                    <li>French Vanilla 4-pack: 1.35 weekly forecast, 12 on hand (62.2 days supply)</li>
+                                </ul>
+
+                                <p><strong>RID (Ridgefield, WA):</strong></p>
+                                <ul>
+                                    <li>Dark Chocolate 4-pack: 0.69 weekly forecast, 6 on hand (60.9 days supply), 1 committed</li>
+                                    <li>Caramel 4-pack: 4.87 weekly forecast, 40 on hand (57.5 days supply), 5 committed</li>
+                                    <li>French Vanilla 4-pack: 3.22 weekly forecast, 0 on hand (0 days supply), 24 on order (52.2 days), 1 committed</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Key Observations -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Observations</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">Strong Demand</span>
+                                    <span class="prospect-tag amber">Low Stock Alert</span>
+                                </p>
+                                <ul>
+                                    <li><strong>Highest Weekly Forecast:</strong> Caramel 16-pack tray cases at CRL DC (32.26/week)</li>
+                                    <li><strong>Stock Alert:</strong> French Vanilla 4-pack at RID DC shows 0 on hand with 24 units on order</li>
+                                    <li><strong>Overstocked Items:</strong> Dark Chocolate 4-pack at MOR DC (144.4 days supply)</li>
+                                    <li><strong>Active Product Status:</strong> All SKUs show "A" (Active) or "MO" (Move-Out) / "TO" status</li>
+                                    <li><strong>Strong East Coast Performance:</strong> CRL DC leading in volume with consistent replenishment</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- UNFI National PO Exceptions Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">UNFI National PO Exceptions — February 23, 2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Report Overview -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Report Summary</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag red">Urgent: Ridgefield</span>
+                                    <span class="prospect-tag amber">$3,100 Potential Loss</span>
+                                    <span class="prospect-tag amber">Action Required</span>
+                                </p>
+                                <p><strong>Report Date:</strong> February 23, 2026</p>
+                                <p><strong>Report Type:</strong> UNFI National PO Exceptions by DC</p>
+                                <p><strong>Distribution Centers Affected:</strong> Ridgefield WA, Rocklin CA, Moreno Valley CA</p>
+                                <p><strong>Total Potential Losses:</strong> Approximately $3,100</p>
+                                <p><strong>Reviewed By:</strong> Stephen Nance</p>
+                                <p><strong>Escalated To:</strong> Robin (Bi-Weekly Report, February 23, 2026)</p>
+                            </div>
+                        </div>
+
+                        <!-- Rocklin, CA Issues -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Rocklin, CA — Distribution Center</div>
+                            <div class="prospect-body">
+                                <p><strong>Issue #1 — Dark Chocolate Dipped 14-pack:</strong></p>
+                                <ul>
+                                    <li>PO Value: $378</li>
+                                    <li>Received: Nothing</li>
+                                    <li>Likely Cause: Recent out-of-stock situation</li>
+                                    <li>Status: Needs confirmation</li>
+                                </ul>
+
+                                <p><strong>Issue #2 — French Vanilla 12-pack:</strong></p>
+                                <ul>
+                                    <li>Order Status: Half shipped</li>
+                                    <li>Shortage: Approximately $302</li>
+                                </ul>
+
+                                <p><strong>Issue #3 — Caramel 12-pack:</strong></p>
+                                <ul>
+                                    <li>Over-received: 24 boxes</li>
+                                    <li>Status: Need to determine source of extra inventory</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Moreno Valley, CA Issues -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Moreno Valley, CA — Distribution Center</div>
+                            <div class="prospect-body">
+                                <p><strong>Issue — Dark Chocolate Dipped 14-pack:</strong></p>
+                                <ul>
+                                    <li>Shortage: 7 boxes short</li>
+                                    <li>Value: Approximately $67</li>
+                                    <li>Pattern: Consistent with ongoing issues on this SKU</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Ridgefield, WA Issues -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Ridgefield, WA — Distribution Center (PRIORITY)</div>
+                            <div class="prospect-body">
+                                <p style="padding: 1rem; background: #fee2e2; border-left: 4px solid #dc2626; border-radius: 0.375rem; margin-bottom: 1rem;">
+                                    <strong>🚨 URGENT — Immediate Attention Required</strong>
+                                </p>
+                                <p><strong>Critical Issue:</strong></p>
+                                <ul>
+                                    <li>Affected Orders: 6 order lines across 3 separate orders</li>
+                                    <li>Total Value: Approximately $2,300</li>
+                                    <li>Problem: Warehouse logged only 1 box received on nearly every line regardless of quantity ordered</li>
+                                    <li>Assessment: Appears to be data entry mistake or system glitch, not actual shortage</li>
+                                </ul>
+
+                                <p><strong>Next Steps Required:</strong></p>
+                                <ul>
+                                    <li>Immediate investigation into receiving system or data entry error</li>
+                                    <li>Verification of actual inventory received vs. system records</li>
+                                    <li>Coordination with UNFI Ridgefield warehouse to correct records</li>
+                                    <li>Priority resolution to avoid $2,300 loss from system error</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Financial Impact -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Financial Impact Summary</div>
+                            <div class="prospect-body">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
+                                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Distribution Center</th>
+                                            <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Issue</th>
+                                            <th style="padding: 0.75rem; text-align: right; font-weight: 600;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                                            <td style="padding: 0.75rem;">Rocklin, CA</td>
+                                            <td style="padding: 0.75rem;">Dark Choc Dipped not received</td>
+                                            <td style="padding: 0.75rem; text-align: right;">$378</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                                            <td style="padding: 0.75rem;">Rocklin, CA</td>
+                                            <td style="padding: 0.75rem;">French Vanilla short shipped</td>
+                                            <td style="padding: 0.75rem; text-align: right;">$302</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                                            <td style="padding: 0.75rem;">Moreno Valley, CA</td>
+                                            <td style="padding: 0.75rem;">Dark Choc Dipped shortage</td>
+                                            <td style="padding: 0.75rem; text-align: right;">$67</td>
+                                        </tr>
+                                        <tr style="border-bottom: 2px solid #e2e8f0; background: #fef3c7;">
+                                            <td style="padding: 0.75rem; font-weight: 600;">Ridgefield, WA</td>
+                                            <td style="padding: 0.75rem; font-weight: 600;">System error (6 lines, 3 orders)</td>
+                                            <td style="padding: 0.75rem; text-align: right; font-weight: 600;">$2,300</td>
+                                        </tr>
+                                        <tr style="background: #fee2e2; font-weight: 700;">
+                                            <td style="padding: 0.75rem;" colspan="2">TOTAL POTENTIAL LOSSES</td>
+                                            <td style="padding: 0.75rem; text-align: right;">$3,100</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Action Items & Recommendations</div>
+                            <div class="prospect-body">
+                                <p><strong>Immediate Actions (Priority Order):</strong></p>
+                                <ol style="padding-left: 1.5rem;">
+                                    <li style="margin-bottom: 0.5rem;"><strong>Ridgefield, WA (Urgent):</strong> Contact UNFI Ridgefield warehouse immediately to investigate receiving discrepancy. Verify actual inventory received vs. system records showing "1 box" on multiple order lines. Likely system glitch requiring immediate correction to avoid $2,300 loss.</li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>Rocklin, CA:</strong> Confirm Dark Chocolate Dipped 14-pack non-receipt was due to out-of-stock situation ($378). Investigate source of 24 extra Caramel 12-pack boxes. Address French Vanilla 12-pack shortage ($302).</li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>Moreno Valley, CA:</strong> Address ongoing Dark Chocolate Dipped 14-pack shortage pattern (7 boxes, $67).</li>
+                                    <li style="margin-bottom: 0.5rem;"><strong>Follow-up:</strong> Await direction from Robin on escalation and resolution approach for all three DCs.</li>
+                                </ol>
+
+                                <p style="margin-top: 1rem;"><strong>Status:</strong> Stephen available anytime for coordination and resolution efforts.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- UNFI Resources Changeover Details Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">UNFI Resources Changeover Details — Updated 2/23/2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Notice Overview -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Official Notice Summary</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">Effective Immediately</span>
+                                    <span class="prospect-tag amber">Platform Change</span>
+                                    <span class="prospect-tag">Action Required</span>
+                                </p>
+                                <p><strong>Notice Date:</strong> February 20, 2026</p>
+                                <p><strong>From:</strong> UNFI Supplier Support</p>
+                                <p><strong>Subject:</strong> Access Training Materials and Resources Through myUNFI Starting Now</p>
+                                <p><strong>Effective Date:</strong> Immediate</p>
+                            </div>
+                        </div>
+
+                        <!-- What's Changing -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">What's Changing</div>
+                            <div class="prospect-body">
+                                <p><strong>Platform Transition:</strong></p>
+                                <ul>
+                                    <li><strong>myUNFI</strong> is now the single destination for all training materials and resources</li>
+                                    <li><strong>Zen Desk has been discontinued</strong> and is no longer available</li>
+                                    <li>All training materials now available exclusively through myUNFI for more efficient and streamlined experience</li>
+                                </ul>
+
+                                <p><strong>Zen Desk Previously Included:</strong></p>
+                                <ul>
+                                    <li>Marketing materials (program information, rates, calendars, submission forms)</li>
+                                    <li>Supplier logistics</li>
+                                    <li>Operational policies and forms</li>
+                                    <li>Education and training</li>
+                                    <li>Navigation resources</li>
+                                </ul>
+
+                                <p><strong>Historical Content Access:</strong> If you need access to historical Zen Desk content, contact <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9deee8ededf1f4f8efeee8ededf2efe9dde8f3fbf4b3fef2f0">[email&#160;protected]</a></strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Benefits of myUNFI -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Benefits of myUNFI Platform</div>
+                            <div class="prospect-body">
+                                <ul>
+                                    <li>Centralized access to training and support tools</li>
+                                    <li>Faster navigation and improved search functionality</li>
+                                    <li>Seamless integration with other supplier resources</li>
+                                    <li>Single platform for all UNFI supplier operations</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Action Required -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Required Actions</div>
+                            <div class="prospect-body">
+                                <p style="padding: 1rem; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 0.375rem; margin-bottom: 1rem;">
+                                    <strong>⚠️ Immediate Action Required</strong>
+                                </p>
+                                
+                                <p><strong>1. Access Training Materials via myUNFI:</strong></p>
+                                <ul>
+                                    <li>Effective immediately, use myUNFI to access all training materials</li>
+                                    <li>Location: Training & Education section on myUNFI home page</li>
+                                </ul>
+
+                                <p><strong>2. Verify myUNFI Access:</strong></p>
+                                <ul>
+                                    <li>If you don't have a myUNFI login or need assistance, contact: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e78a9e9289818e949297978b8e8295a79289818ec984888a">[email&#160;protected]</a></strong></li>
+                                </ul>
+
+                                <p><strong>3. Update Contact Information:</strong></p>
+                                <ul>
+                                    <li>While in myUNFI platform, double-check that contact information is accurate and up to date</li>
+                                    <li>Ensures you receive important notifications going forward</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Key Contacts -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contacts & Resources</div>
+                            <div class="prospect-body">
+                                <p><strong>UNFI Contact Information:</strong></p>
+                                <ul>
+                                    <li><strong>General Questions:</strong> Contact your Supplier Relationship Manager</li>
+                                    <li><strong>myUNFI Login/Assistance:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bf6e2eef5fdf2e8eeebebf7f2fee9dbeef5fdf2b5f8f4f6">[email&#160;protected]</a></li>
+                                    <li><strong>Historical Zen Desk Content:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90e3e5e0e0fcf9f5e2e3e5e0e0ffe2e4d0e5fef6f9bef3fffd">[email&#160;protected]</a></li>
+                                    <li><strong>UNFI Main Office:</strong> 15 Park Row West Suite 302, Providence, RI 02903</li>
+                                    <li><strong>Phone:</strong> 401.528.8634</li>
+                                    <li><strong>Website:</strong> www.unfi.com</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Brand Sheets All Products Updated 2-27-26 Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Brand Sheets All Products Updated 2-27-26</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Pricing Sheet Links -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Brand and Pricing Sheets</div>
+                            <div class="prospect-body">
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQB_gxLcPqr_S4vFZx63-R2KAbaZHyI-YDcVL4tLEp1kfRI?e=61LUbK" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 12 Packs Wholesale Brand and Price Sheet</a></p>
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQAOcsRMi1agT78UefeyIuWrAVcqWJozzvpkHYAh1wgHKZ0?e=S2N5xL" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 12-pack Distributor Brand Price Sheet</a></p>
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQDw8g6NrsJDQZSP2Thm5-YFAftOfE2wuVmm4MoCMrvCu34?e=daQnqn" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 12-Pack Brand Sheet UNFI East</a></p>
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQCFzkHf0hwBRJnsRjmbRDQFAdi2TkLgtOHd8sbokYmNmZs?e=mzx7ZP" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 16-14 Pack Brand Sheet UNFI East</a></p>
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQDaaG8Cg6loS6fhR6ouXJ3XAVYgXX0JxYwNEQzcskKNWMc?e=CjfMWe" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 12-Pack Brand Sheet UNFI West</a></p>
+                                <p><a href="https://1drv.ms/p/c/6025a8df181803ff/IQCwHdPXfc8TSbQmmFAgLyLMAZxo-67Xjm70QCAeb5kretM?e=skUGAw" target="_blank" style="color: #3b82f6; text-decoration: underline;">Click to view Swoffle 12-pack KEHE Brand Sheet</a></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="tab-content" id="tab-2">
+
+                <!-- Marty's Local Prospect Card -->
+                <div class="prospect-card">
+                    <div class="prospect-card-header" onclick="toggleProspect(this)">
+                        <h3 class="prospect-card-title">Marty's Local Regional Distributor — MA, NH, VT, CT</h3>
+                        <span class="card-arrow collapsed" style="color:#3b82f6;">▼</span>
+                    </div>
+                    <div class="prospect-card-content">
+
+                        <!-- Key Contact -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contact</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Name</strong>
+                                    Robbie Knodel
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Title</strong>
+                                    Purchasing Manager
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone / Text</strong>
+                                    (413) 200-7233
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection#e8b38d85898184c8989a879c8d8b9c8d8cb5" style="color:#3b82f6;">[email protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Purchasing Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection#b7ecd2dad6dedb97c7c5d8c3d2d4c3d2d3ea" style="color:#3b82f6;">[email protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Owner</strong>
+                                    Nick Martinelli
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Log -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📞 February 17, 2026 — Today's Contact</div>
+                                Called in and spoke with the receptionist, Rob. Robbie Knodel (our main Zoom contact from early January) is still out of the office on PPO — his wife is having a child. Also left a message for Nick Martinelli, the owner. The receptionist confirmed she would pass the information along to the proper people and have someone get back to us.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📅 Early January 2026</div>
+                                Zoom meeting held with Robbie Knodel and Stephen (and John, CEO). Reviewed pricing, product line, distribution strategy, and partnership potential. Robbie raised questions on SRP, pick-up pricing, and current distributor footprint — all addressed during the call.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📅 December 12, 2025</div>
+                                Robbie reviewed SWOFFLE product information sheets. Zoom call subsequently scheduled with Stephen and John (CEO) for that Friday or early the following week.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📅 Early December 2025</div>
+                                Stephen followed up with Robbie as suggested after their initial introduction.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📅 October 2025</div>
+                                Nick Martinelli introduced Stephen to Robbie Knodel (Purchasing Manager) to begin the conversation about a potential distribution partnership.
+                            </div>
+                        </div>
+
+                        <!-- Distribution Opportunity -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Distribution Opportunity</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag">Central &amp; Western MA</span>
+                                    <span class="prospect-tag">New Hampshire</span>
+                                    <span class="prospect-tag">Vermont</span>
+                                    <span class="prospect-tag amber">Currently Sparse Coverage</span>
+                                </p>
+                                <p>Marty's Local would service SWOFFLE's existing accounts in these regions while simultaneously expanding into new accounts — areas where distribution is currently very thin. SWOFFLE's mission and values closely align with Marty's Local's commitment to building regional food systems and supporting local producers.</p>
+                            </div>
+                        </div>
+
+                        <!-- Product Highlights Presented -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Product Highlights Presented</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">USDA Organic</span>
+                                    <span class="prospect-tag green">Non-GMO</span>
+                                    <span class="prospect-tag green">Certified Gluten-Free</span>
+                                    <span class="prospect-tag purple">Buy-One-Give-One</span>
+                                </p>
+                                <p>Social Impact: Buy-one-give-one program contributing <strong>120,000+ meals annually.</strong></p>
+                                <p><strong>New 12-Pack Formats (50% narrower for efficient merchandising):</strong></p>
+                                <ul>
+                                    <li>Original Caramel — 16-pack transitioning to 12-pack</li>
+                                    <li>French Vanilla — 16-pack transitioning to 12-pack</li>
+                                    <li>Dark Chocolate Dipped — 14-pack transitioning to 12-pack</li>
+                                    <li><strong>NEW:</strong> Chocolate Caramel 12-pack</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Robbie's Questions -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Robbie's Questions (Addressed)</div>
+                            <div class="prospect-body">
+                                <ul>
+                                    <li><strong>SRP:</strong> To be discussed during call</li>
+                                    <li><strong>Pick-Up Pricing:</strong> Not available; delivered product pricing to be shared during discussion</li>
+                                    <li><strong>Current Distributors:</strong> Rainforest, UNFI, KeHE, Atlantic Beverage, Northeast Specialties</li>
+                                    <li><strong>Competitors in New England:</strong> Honey Stinger and Rip Van Wafels</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Samples & Shipping -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Samples &amp; Shipping</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Primary Address (USPS)</strong>
+                                    PO Box 276, South Deerfield, MA 01373
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Alternate Shipping Address</strong>
+                                    10 Greenfield Rd., South Deerfield, MA 01373
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li>Await callback from Robbie Knodel or a designee following today's message left with receptionist and Nick Martinelli</li>
+                                <li>Schedule Zoom call with Stephen and John (CEO) to review pricing, distribution strategy, and partnership details</li>
+                                <li>Confirm sample shipment to South Deerfield, MA upon reconnecting</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Blue Mountain Distributors Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Blue Mountain Distributors — Hendersonville, NC</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Company Overview -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Company Overview</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">Local Products</span>
+                                    <span class="prospect-tag green">Healthy &amp; Natural</span>
+                                    <span class="prospect-tag green">Specialty Foods</span>
+                                    <span class="prospect-tag amber">Perishables</span>
+                                </p>
+                                <p>Blue Mountain Distributors specializes in local, healthy, and natural specialty and perishable products. Family-owned and operated business founded in 2000 by Jeff Kocha out of a love for good food and supporting local communities in Asheville, NC. The team consists of approximately 30 employees and growing, with over 3,500 products in their portfolio.</p>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Information</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Founder</strong>
+                                    Jeff Kocha
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    828-687-7791
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c130e18190e0f3c1e10091911130912081d151218150f080e151e0908130e0f521f1311">[email&#160;protected]</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Warehouse Locations -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Warehouse Locations</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Billing Address</strong>
+                                    112 Merri Drive, Hendersonville, NC 28792
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>South Warehouse</strong>
+                                    500 UCCI Way, Spartanburg, SC 29303
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>East Warehouse</strong>
+                                    708 McWay Drive, High Point, NC 27263
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coverage Area -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Coverage Area</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag">South Carolina</span>
+                                    <span class="prospect-tag">Georgia</span>
+                                    <span class="prospect-tag">North Carolina</span>
+                                    <span class="prospect-tag">Tennessee</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Broker & Status -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Broker &amp; Status</div>
+                            <div class="prospect-body">
+                                <p><strong>Broker:</strong> Valley Specialty Foods (Mid-Atlantic broker) is handling this account.</p>
+                                <p><strong>Status as of February 17, 2026:</strong> Blue Mountain Distributors appears interested in carrying Swoffle.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Cohen Foods Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Cohen Foods — Granite City, IL</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Company Information -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Company Information</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Contact</strong>
+                                    Scott Cohen
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    618-452-3156
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Website</strong>
+                                    www.cohenfoods.com
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Location</strong>
+                                    Granite City, IL
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coverage Area & Customers -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Coverage Area & Customer Base</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag">St. Louis, MO</span>
+                                    <span class="prospect-tag">Surrounding Area</span>
+                                    <span class="prospect-tag purple">Regional Chains</span>
+                                    <span class="prospect-tag green">Independent Grocers</span>
+                                </p>
+                                <p><strong>Primary Market:</strong> St. Louis, Missouri and surrounding area</p>
+                                <p><strong>Customer Types:</strong></p>
+                                <ul>
+                                    <li>Regional grocery chains (including Dierbergs)</li>
+                                    <li>Local independent grocers</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Contact Log -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 19, 2026 — Scott's Response</div>
+                                Scott expressed appreciation for the Dierbergs update and excitement about gaining traction with the account. Positive and supportive response to ongoing collaboration.
+                            </div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 19, 2026 — Stephen's Dierbergs Update</div>
+                                Stephen provided Scott with comprehensive update on Dierbergs progress. Confirmed active communication with Chris Schuyler moving in positive direction. Samples have been requested by buyer. Confirmed pricing alignment from December ($1.17 for line-priced items, $1.88 for Dark Chocolate Dipped). Buyer aware of promotional support commitment. Potential placement opportunities: checkout areas and/or cookie aisle. Committed to circle back after samples received and follow-up completed.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📅 December 2025 — Initial Pricing Alignment</div>
+                                Stephen and Scott aligned on pricing structure: $1.17 for line-priced items (Caramel, French Vanilla, Chocolate Caramel) and $1.88 for Dark Chocolate Dipped.
+                            </div>
+                        </div>
+
+                        <!-- Dierbergs Collaboration -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Dierbergs Supermarkets Collaboration</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">Active Opportunity</span>
+                                    <span class="prospect-tag green">Samples Requested</span>
+                                    <span class="prospect-tag purple">22 Stores</span>
+                                </p>
+                                <p><strong>Status as of February 19, 2026:</strong> Scott Cohen and Stephen collaborating to secure Dierbergs Supermarkets account. Buyer engagement progressing positively with sample request received.</p>
+
+                                <p><strong>Confirmed Pricing:</strong></p>
+                                <ul>
+                                    <li>Line-priced items: $1.17 (Caramel, French Vanilla, Chocolate Caramel)</li>
+                                    <li>Dark Chocolate Dipped: $1.88</li>
+                                    <li>Promotional support: Available as needed</li>
+                                </ul>
+
+                                <p><strong>Placement Opportunities:</strong></p>
+                                <ul>
+                                    <li>Checkout areas (high impulse locations)</li>
+                                    <li>Cookie aisle (traditional placement)</li>
+                                </ul>
+
+                                <p><strong>Buyer Contact:</strong> Chris Schuyler, Dierbergs Supermarkets</p>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li>Monitor sample delivery to Dierbergs buyer (Chris Schuyler)</li>
+                                <li>Follow up with Chris Schuyler after sample receipt</li>
+                                <li>Update Scott Cohen on buyer feedback and placement decisions</li>
+                                <li>Coordinate distribution logistics with Cohen Foods upon Dierbergs approval</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- K-Global Food Inc. Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">K-Global Food Inc. — Roslyn, NY</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Company Information -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Company Information</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Contact</strong>
+                                    June Hyung Kim
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe949f9bbe959992919c9f929891919ad09d9193">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    516-344-5202
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Website</strong>
+                                    www.nancefoods.com
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Location</strong>
+                                    Roslyn, NY
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Success -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">New Account Success</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">Account Opened</span>
+                                    <span class="prospect-tag green">Deal Closed</span>
+                                    <span class="prospect-tag purple">Valley Food Specialties Partner</span>
+                                </p>
+                                <p><strong>Status:</strong> Successfully opened as new distributor account on February 17, 2026.</p>
+                                <p><strong>Partnership:</strong> Account developed through close collaboration between Stephen Nance and Valley Food Specialties. This represents a successful new distribution partnership facilitated by Valley's broker relationship.</p>
+                            </div>
+                        </div>
+
+                        <!-- Initial Order Details -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Purchase Order #59832 — Received February 17, 2026</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">PO Received</span>
+                                    <span class="prospect-tag purple">Valley Food Specialties</span>
+                                </p>
+                                
+                                <p><strong>PO Number:</strong> 59832 (us9ns(Jae2162026))</p>
+                                <p><strong>VFS Representative:</strong> Valley Food Specialties LLC</p>
+                                <p><strong>Date Submitted:</strong> February 17, 2026</p>
+                                
+                                <p><strong>Customer Details:</strong></p>
+                                <ul>
+                                    <li>K-Global Food Inc. (Customer ID: K015760)</li>
+                                    <li>Contact: June Hyung Kim</li>
+                                    <li>Address: 34 Lumber Rd, Suite #A, Roslyn, NY 11576</li>
+                                    <li>Email: jae@kglobalfood.com</li>
+                                    <li>Phone: 516-344-5202</li>
+                                    <li>Invoice Email: accounting@kglobalfood.com</li>
+                                </ul>
+
+                                <p><strong>Payment Terms:</strong> 30 net</p>
+
+                                <p><strong>Products Ordered:</strong></p>
+                                <ul>
+                                    <li><strong>48 cases</strong> — Original Caramel Swoffle (UPC: 863852000006) | 12/1lb @ $12.00/case = <strong>$576.00</strong></li>
+                                    <li><strong>64 cases</strong> — French Vanilla Swoffle (UPC: 863852000044) | 12/1lb @ $12.00/case = <strong>$768.00</strong></li>
+                                    <li><strong>48 cases</strong> — "New" Chocolate Caramel (UPC: 850009603074) | 12/1lb @ $12.00/case = <strong>$576.00</strong></li>
+                                </ul>
+                                
+                                <p><strong>Total Cases:</strong> 160 cases</p>
+                                <p><strong>Total Order Value:</strong> $1,920.00</p>
+                            </div>
+                        </div>
+
+                        <!-- Partnership Details -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Valley Food Specialties Collaboration</div>
+                            <div class="prospect-body">
+                                <p><strong>Broker/Partner:</strong> Valley Food Specialties</p>
+                                <p><strong>Account Development:</strong> Stephen Nance worked closely with Valley Food Specialties to identify, develop, and successfully close this new distribution opportunity. The partnership demonstrates Valley's effectiveness in opening new regional distributor accounts.</p>
+                                <p><strong>Account Opened:</strong> February 17, 2026</p>
+                                <p><strong>Initial Order Placement:</strong> Immediate — same day as account opening</p>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li>Fulfill initial order (PO #59832) — 160 cases total</li>
+                                <li>Establish regular communication cadence with June Hyung Kim</li>
+                                <li>Monitor initial sales performance and reorder patterns</li>
+                                <li>Coordinate with Valley Food Specialties on ongoing account support</li>
+                                <li>Explore opportunities for expanded SKU placement based on initial performance</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="tab-content" id="tab-3">
+
+                <!-- Acme-Safeway-Albertsons Promotion Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Acme-Safeway East-Albertsons — Promotion Calendar 2026</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Buyer Contact</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Name</strong>
+                                    Donald O'Brien
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    [email protected]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="prospect-body">
+                            <p><strong>Promotion #1</strong></p>
+                            <p>
+                                <span class="prospect-tag">April 26 – May 2, 2026</span>
+                                <span class="prospect-tag amber">Two-Week Promotion</span>
+                                <span class="prospect-tag purple">15% Scanback</span>
+                            </p>
+                            <p>Sunday, April 26th through Saturday, May 2nd</p>
+
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
+
+                            <p><strong>Promotion #2</strong></p>
+                            <p>
+                                <span class="prospect-tag">August 23 – September 5, 2026</span>
+                                <span class="prospect-tag amber">Two-Week Promotion</span>
+                                <span class="prospect-tag purple">15% Scanback</span>
+                            </p>
+                            <p>Sunday, August 23rd through Saturday, September 5th</p>
+
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
+
+                            <p><strong>Status as of February 17, 2026:</strong> Proposed and awaiting acceptance by Albertsons buyer.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publix-Lakeland FL Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Publix — Lakeland, FL (1,200 Stores)</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Buyer Contact</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Name</strong>
+                                    Jeff Orme
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Title</strong>
+                                    Cookie / Cracker Buyer
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    863-499-5451
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Fax</strong>
+                                    863-499-5401
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b0fad5d6d69effc2ddd5f0c0c5d2dcd9c89ed3dfdd">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Initial Contact</strong>
+                                    Stephanie Simpson (x58565)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 17, 2026 — Stephen's Response to Buyer Questions</div>
+                                Replied to Jeff Orme's information request with comprehensive details on current distribution, merchandising strategy, delivery capabilities, and marketing support. Attached distributor/retailer partnership overview PDF and Feeding America partnership documentation. Offered to send samples immediately upon receiving shipping address.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 February 17, 2026 — Jeff Orme's Questions</div>
+                                Jeff Orme (Cookie/Cracker Buyer) sent follow-up questions requesting information on current retail partners, merchandising placement, delivery methods, and annual marketing budget.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 February 13, 2026 — Internal Referral</div>
+                                Stephanie Simpson forwarded Stephen's initial outreach to Jeff Orme with instruction to follow up with supplier.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 February 12, 2026 — Initial Outreach</div>
+                                Stephen introduced Swoffle's new checkout-friendly 12-unit display trays to Stephanie Simpson. Highlighted USDA Organic, Gluten-Free, Kosher certifications, and Buy-1-Give-1 social impact program (1.168 million meals donated through Feeding America since 2017). Requested inclusion in next category review.
+                            </div>
+                        </div>
+
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Information Provided to Buyer</div>
+                            <div class="prospect-body">
+                                <p><strong>Current Retail Partners:</strong></p>
+                                <p>Provided distributor/retailer partnership overview PDF showing national footprint across multiple channels.</p>
+
+                                <p><strong>Merchandising Strategy:</strong></p>
+                                <ul>
+                                    <li>Primary placement: Cookie aisle</li>
+                                    <li>Secondary placement: Gluten-free section (retailer dependent)</li>
+                                    <li>2026 expansion focus: Checkout areas with new 12-pack format (50% narrower footprint)</li>
+                                </ul>
+
+                                <p><strong>Delivery Methods:</strong></p>
+                                <ul>
+                                    <li><strong>KeHE:</strong> Active in DC 27, looking to expand into additional markets</li>
+                                    <li><strong>Direct to Publix Warehouse:</strong> Available as alternative option</li>
+                                    <li><strong>UNFI:</strong> Currently in eight distribution centers</li>
+                                    <li><strong>Rainforest Distribution:</strong> Active along East Coast</li>
+                                </ul>
+
+                                <p><strong>Marketing Support:</strong></p>
+                                <p>Annual marketing budget: <strong>$150,000</strong></p>
+
+                                <p><strong>Social Impact:</strong></p>
+                                <p>Feeding America partnership documentation provided — Buy-1-Give-1 program contributing over 1.168 million meals since 2017.</p>
+                            </div>
+                        </div>
+
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li>Await Jeff Orme's response to information provided</li>
+                                <li>Send samples immediately upon receiving shipping address</li>
+                                <li>Answer any additional follow-up questions</li>
+                                <li>Request inclusion in next category review cycle</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- K-Global Food Inc. Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">K-Global Food Inc. — Roslyn, NY</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Company Information -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Company Information</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Company Name</strong>
+                                    K-Global Food Inc.
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Owner</strong>
+                                    June Hyung Kil
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    516-344-5202
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d44434b426d464a41424f4c414b424249034e4240">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Address</strong>
+                                    34 Lumber Rd Suite A, Roslyn, NY 11576
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Established</strong>
+                                    2024
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deal Structure -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Deal Structure</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">$1 Per Unit Delivered</span>
+                                    <span class="prospect-tag amber">No Promos</span>
+                                    <span class="prospect-tag amber">No Marketing Fees</span>
+                                </p>
+                                <p><strong>Pricing Agreement:</strong></p>
+                                <ul>
+                                    <li>Chocolate Caramel: $1.00 per unit delivered</li>
+                                    <li>Caramel: $1.00 per unit delivered</li>
+                                    <li>French Vanilla: $1.00 per unit delivered</li>
+                                </ul>
+                                <p><strong>Terms:</strong> This pricing is in lieu of any promotions throughout the year or other marketing fees and charges.</p>
+                            </div>
+                        </div>
+
+                        <!-- Order Status -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Order Status</div>
+                            <div class="prospect-body">
+                                <p><strong>Status as of February 17, 2026:</strong></p>
+                                <ul>
+                                    <li>Credit reference sheet has been sent over</li>
+                                    <li>Preparing to send order for <strong>20 master cases</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Ital Foods Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Ital Foods — San Francisco, CA</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Key Contacts -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contacts</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Owner</strong>
+                                    Richard Armanino
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Show Producer</strong>
+                                    Nanette Duffy
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    415-559-2857 (Nanette Duffy)
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ed84998c819e9d888e848c8199949e85829aad84998c818b8282899e84838ec38e8280">[email&#160;protected]</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Ital Foods Specialty Food Show</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">June 23, 2026</span>
+                                    <span class="prospect-tag amber">Response Due: Feb 27</span>
+                                </p>
+                                <p><strong>Show Date:</strong> Monday, June 23, 2026</p>
+                                <p><strong>Status as of February 18, 2026:</strong> Currently evaluating participation in the Ital Foods Specialty Food Show. Email invitation received from Nanette Duffy (Show Producer).</p>
+                                <p><strong>Decision Timeline:</strong> Must respond by February 27, 2026 (9 days remaining).</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Dierbergs Corporate Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Dierbergs Corporate — Chesterfield, MO (22 Stores)</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Key Contacts -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contacts</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Buyer</strong>
+                                    Chris Schuyler
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Distributor</strong>
+                                    Cohen Foods
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Distributor Contact</strong>
+                                    Scott Cohen
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Distributor Phone</strong>
+                                    618-452-3156
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Store Count</strong>
+                                    22 locations
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Log -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 18, 2026 — Product Update & Launch Readiness</div>
+                                Sent comprehensive product update highlighting new compact 12-unit display tray designed for cookie aisle, checkout, coffee bars, and grab-and-go placement. Emphasized clean ingredients (USDA Organic, Certified Gluten-Free, Kosher Dairy, free from dairy and nuts) and Buy-1-Give-1 social impact (1.168 million meals donated since 2017). Provided pricing structure and confirmed full readiness to meet Dierbergs requirements for fees, promotional programs, and scan-down programs. Attached sales collateral and offered samples. Requested inclusion in next category review.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 December 5, 2025 — 12-Pack Format Introduction</div>
+                                Follow-up highlighting transition to 12-pack format for improved shelf efficiency and shopper convenience. Recapped product benefits including health-conscious appeal, premium certifications, mission-driven impact (10,000+ meals donated monthly), and four-flavor variety. Confirmed pricing and Cohen Foods availability. Requested meeting to discuss launch opportunity.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 November 13, 2025 — Initial Introduction</div>
+                                Initial outreach introducing SWOFFLE as America's first organic, gluten-free stroopwafel. Highlighted packaging innovation (50% narrower case design), product enhancement (20% less sugar than traditional stroopwafels), Buy-1-Give-1 mission (10,000+ meals/month), and premium certifications. Presented four-flavor lineup with pricing through Cohen Foods. Emphasized commitment to meeting Dierbergs requirements and supporting successful launch.
+                            </div>
+                        </div>
+
+                        <!-- Product Offer -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Product Offer</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">USDA Organic</span>
+                                    <span class="prospect-tag green">Certified Gluten-Free</span>
+                                    <span class="prospect-tag green">Kosher Dairy</span>
+                                    <span class="prospect-tag purple">Buy-1-Give-1</span>
+                                </p>
+                                <p><strong>12-Unit Display Tray Format:</strong> Compact design for cookie aisle, checkout, coffee bars, and grab-and-go placement with efficient space utilization.</p>
+                                
+                                <p><strong>Flavors Available:</strong></p>
+                                <ul>
+                                    <li>Caramel</li>
+                                    <li>French Vanilla</li>
+                                    <li>Chocolate Caramel (NEW)</li>
+                                    <li>Dark Chocolate Dipped</li>
+                                </ul>
+
+                                <p><strong>Wholesale Pricing:</strong></p>
+                                <ul>
+                                    <li>Caramel: $1.17 per unit</li>
+                                    <li>French Vanilla: $1.17 per unit</li>
+                                    <li>Chocolate Caramel: $1.17 per unit</li>
+                                    <li>Dark Chocolate Dipped: $1.88 per unit</li>
+                                </ul>
+
+                                <p><strong>Supplier:</strong> Available through Cohen Foods (Scott Cohen, 618-452-3156)</p>
+
+                                <p><strong>Social Impact:</strong> 1.168 million meals donated through Feeding America partnership since 2017</p>
+                            </div>
+                        </div>
+
+                        <!-- Commitment -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Partnership Commitment</div>
+                            <div class="prospect-body">
+                                <p>Fully prepared to meet Dierbergs store requirements including:</p>
+                                <ul>
+                                    <li>Store fees and slotting</li>
+                                    <li>Promotional programs</li>
+                                    <li>Scan-down programs</li>
+                                    <li>Ongoing performance support</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li>Await response from Chris Schuyler to February 18th outreach</li>
+                                <li>Provide samples upon receiving shipping address</li>
+                                <li>Request inclusion in next category review</li>
+                                <li>Coordinate launch planning with Cohen Foods distributor</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Hannaford Supermarkets Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Hannaford Supermarkets — Scarborough, ME (190 Stores)</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Key Contacts -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contacts</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Analyst - Cookies & Front End Snacking</strong>
+                                    Colby Scribner
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b0824272932651828392229252e390b232a25252a2d24392f65282426">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Category Manager - Snacking</strong>
+                                    Rachael Gelowtski
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7f5c6c4cfc6c2cb89e0c2cbc8d0d3d4cccee7cfc6c9c9c6c1c8d5c389c4c8ca">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    617-480-2107 (Rachael)
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Assistant Category Manager</strong>
+                                    Moriah Lapointe (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d60425f444c4503614c5d42444359486d494841454c445748034e4240">[email&#160;protected]</a>)
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Store Count</strong>
+                                    190 locations
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Address</strong>
+                                    145 Pleasant Hill Road, Scarborough, ME 04074
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Log -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 19, 2026 — Positive Response & Next Steps</div>
+                                Colby Scribner (Analyst for Shelf Stable Cookies and Front End Snacking) responded with interest. Requested completion of innovation form to learn more about products. Suggested potential accelerated path through Hannaford's local program depending on Massachusetts operations. Asked for information on current retail partners and success stories. Rachael Gelowtski (Category Manager - Snacking) CC'd on response.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 February 12, 2026 — Internal Referral</div>
+                                Moriah Lapointe (Assistant Category Manager) forwarded Stephen's initial outreach to Rachael Gelowtski for review.
+                            </div>
+
+                            <div class="contact-log-entry">
+                                <div class="log-date">📧 February 12, 2026 — Initial Outreach to Hannaford</div>
+                                Stephen introduced Swoffle to Moriah Lapointe, emphasizing New England brand alignment and Hannaford's support of local companies. Highlighted Concord, MA headquarters, 1.168 million meals donated through Feeding America partnership since 2017, and new 12-pack display tray format with Chocolate Caramel flavor. Presented product benefits: 50% smaller case footprint enabling multi-flavor placement, checkout-standardized sizing for high-traffic areas, higher velocity potential with faster turns. Listed four flavors by sales velocity: Caramel (top seller), French Vanilla, Chocolate Caramel (NEW), Dark Chocolate Dipped. Emphasized USDA Organic, Certified Gluten-Free, and Kosher certifications. Requested to ship samples to Scarborough office.
+                            </div>
+                        </div>
+
+                        <!-- Opportunity Details -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Opportunity Details</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">Local Program Potential</span>
+                                    <span class="prospect-tag green">Fast-Track Opportunity</span>
+                                    <span class="prospect-tag purple">190 Stores</span>
+                                </p>
+                                <p><strong>Accelerated Path:</strong> Colby Scribner indicated potential for earlier placement through Hannaford's local program rather than waiting several months to a year for standard category review cycle. Opportunity depends on Massachusetts operation verification.</p>
+                                <p><strong>Placement Targets:</strong></p>
+                                <ul>
+                                    <li>Shelf Stable Cookies section</li>
+                                    <li>Front End Snacking (checkout/impulse)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Product Presentation -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Product Highlights Presented</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">USDA Organic</span>
+                                    <span class="prospect-tag green">Certified Gluten-Free</span>
+                                    <span class="prospect-tag green">Kosher</span>
+                                    <span class="prospect-tag purple">New England Brand</span>
+                                </p>
+                                <p><strong>Company Story:</strong> Father-daughter founded company based in Concord, Massachusetts. Over 1.168 million meals donated through Feeding America partnership since 2017.</p>
+                                
+                                <p><strong>New 12-Pack Display Tray Benefits:</strong></p>
+                                <ul>
+                                    <li>50% smaller case footprint — enables multi-flavor placement in same shelf space</li>
+                                    <li>Checkout-standardized sizing for high-traffic impulse areas</li>
+                                    <li>Higher velocity potential with faster turns and reduced backstock</li>
+                                </ul>
+
+                                <p><strong>Four Flavors (by sales velocity):</strong></p>
+                                <ol>
+                                    <li>Caramel (top seller)</li>
+                                    <li>French Vanilla</li>
+                                    <li>Chocolate Caramel (NEW)</li>
+                                    <li>Dark Chocolate Dipped</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Required Actions</div>
+                            <div class="prospect-body">
+                                <p><strong>Status as of February 19, 2026:</strong></p>
+                                <ul>
+                                    <li><strong>Innovation Form:</strong> Complete ADUSA Common New-Disc Innovation Form TEMPLATE.xlsx (attached by Colby Scribner)</li>
+                                    <li><strong>Massachusetts Operations Verification:</strong> Confirm Massachusetts-based operations for local program eligibility</li>
+                                    <li><strong>Retail Success Stories:</strong> Provide information on current retail partners and performance metrics</li>
+                                </ul>
+                                <p style="margin-top: 1rem;"><a href="https://1drv.ms/x/c/6025a8df181803ff/IQAgbNNz0GLJSpy4fGkvxJBtAYvHDGNmcQzdUZtpX329UoM?e=24Yp3s" target="_blank" style="color: #3b82f6; text-decoration: underline;">Swoffle Completed Hannaford Innovation Form Template</a></p>
+                            </div>
+                        </div>
+
+                        <!-- Internal Review - Hannaford Submission -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Internal Review - Hannaford Submission Details</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag amber">Needs Discussion</span>
+                                    <span class="prospect-tag amber">Margin Concern</span>
+                                </p>
+                                <p><strong>Stephen to John (CEO) - Submission for Review & Approval (Feb 19, 2026, 6:10 PM):</strong></p>
+                                
+                                <p><strong>SKUs Submitted (Combined Assortment):</strong></p>
+                                <ul>
+                                    <li>Caramel (UPC: 863852000006)</li>
+                                    <li>French Vanilla (UPC: 863852000044)</li>
+                                    <li>Chocolate Caramel (UPC: 850009603074)</li>
+                                </ul>
+
+                                <p><strong>Pricing Structure:</strong></p>
+                                <ul>
+                                    <li>List Unit Cost: $1.43</li>
+                                    <li>VIP/Everyday Allowance: $0.14/unit (Hannaford volume account incentive)</li>
+                                    <li>Net Unit Cost (VIP Everyday Low Price): $1.29</li>
+                                    <li>Everyday Suggested Retail: $1.99</li>
+                                    <li>Everyday Margin: 35.18%</li>
+                                </ul>
+
+                                <p><strong>Promotional Structure:</strong></p>
+                                <ul>
+                                    <li>Scan Billback Promotion: $0.19/unit</li>
+                                    <li>Promo Unit Cost: $1.10 (after scan funding applied to $1.29 VIP cost)</li>
+                                    <li>Suggested Promo Retail: $1.69</li>
+                                    <li>Promo Margin: 34.91%</li>
+                                    <li>Promo Schedule: Three 4-week events (12 total promo weeks, 40 weeks at everyday pricing)</li>
+                                </ul>
+
+                                <p><strong>Volume Assumptions (All Three SKUs Combined):</strong></p>
+                                <ul>
+                                    <li>Initial Placement: 75 stores (high impulse locations)</li>
+                                    <li>Base Velocity: 12 units/store/week (everyday pricing)</li>
+                                    <li>Promo Velocity: 20 units/store/week (promotional events)</li>
+                                    <li>Base Volume: 900 units/week (40 weeks)</li>
+                                    <li>Promo Volume: 1,500 units/week per event (3 events × 4 weeks)</li>
+                                    <li>Total Annual Units: 54,000</li>
+                                </ul>
+
+                                <p><strong>Annual Financial Summary (52-Week, All SKUs):</strong></p>
+                                <ul>
+                                    <li>Total COGs: $77,220</li>
+                                    <li>Total Sales: $102,060</li>
+                                    <li>Total Margin: $35,820</li>
+                                    <li>Total Vendor Funding: $10,980</li>
+                                    <li>Blended Margin Rate: 35.10%</li>
+                                    <li>Funding Rate: 14.22%</li>
+                                </ul>
+
+                                <p><strong>Strategic Rationale:</strong> VIP $0.14/unit everyday allowance represents deliberate decision to reward Hannaford's volume account status and position competitively from launch. Volume projections based on comparable chain accounts of similar size and are intentionally conservative.</p>
+
+                                <p style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 0.375rem;"><strong>⚠️ John's Response (Feb 19, 2026, 7:59 PM):</strong> Expressed concern that 35% margin may be too low. Requires 50% margin, not 35%. Requested meeting to discuss further before submission. <strong>Status: Meeting needed to align on pricing and margin strategy before proceeding with Hannaford submission.</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li><strong>PRIORITY:</strong> Schedule meeting with John to discuss margin requirements (targeting 50% vs. proposed 35%) and align on pricing strategy</li>
+                                <li>Revise Hannaford submission based on John's feedback and margin requirements</li>
+                                <li>Complete and return Hannaford innovation form to Colby Scribner (after internal alignment)</li>
+                                <li>Confirm Massachusetts operations and local program eligibility</li>
+                                <li>Provide current retail partner list and success metrics</li>
+                                <li>Ship samples to Colby Scribner in Scarborough, ME (145 Pleasant Hill Road, Scarborough, ME 04074)</li>
+                                <li>Explore fast-track opportunity through local program vs. standard category review timeline</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Grassroots-Devin Roane, New Seasons Markets Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Grassroots — Devin Roane, New Seasons Markets (22 Stores)</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Key Contact -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Key Contact</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Name</strong>
+                                    Devin Roane
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Title</strong>
+                                    Key Account Manager - PacNW
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Company</strong>
+                                    Grass Roots Marketing, LLC
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Phone</strong>
+                                    971-404-7839
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Email</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c38190a15123c1b0e111d0e17190815121b52121908">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Account</strong>
+                                    New Seasons Markets (22 stores)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Log -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Contact Log</div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 20, 2026 — Stephen's Response</div>
+                                Stephen confirmed receipt of New Seasons review details and committed to reviewing all requirements. Promised follow-up by end of day or midweek next week at latest. Confirmed samples will be shipped to arrive before March 10, 2026 deadline.
+                            </div>
+
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 February 20, 2026 — Devin's Initial Outreach</div>
+                                Devin introduced himself as PacNW Key Account Manager handling New Seasons account. Shared upcoming category review opportunity for Cookies & Crackers. Provided detailed submission requirements, retailer expectations, and deadlines. Requested response by February 27, 2026 on interest in presenting.
+                            </div>
+                        </div>
+
+                        <!-- Review Opportunity -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Category Review Details</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">Cookies & Crackers</span>
+                                    <span class="prospect-tag amber">March Meeting</span>
+                                    <span class="prospect-tag">22 Stores</span>
+                                </p>
+                                <p><strong>Category:</strong> Dry Grocery — Cookies and Crackers</p>
+                                <p><strong>Meeting Date:</strong> March 2026 (exact date TBD by New Seasons)</p>
+                                <p><strong>Decision Deadline:</strong> February 27, 2026</p>
+                                <p><strong>Sample Deadline:</strong> Arrive by March 10, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- New Seasons Requirements -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">New Seasons Requirements</div>
+                            <div class="prospect-body">
+                                <p><strong>90-Day Introduction Period:</strong></p>
+                                <ul>
+                                    <li>Minimum 25% of NSM cost as introduction allowance</li>
+                                    <li>12 free units per store, per SKU required</li>
+                                    <li>Full paid AD within first 90 days (mandatory)</li>
+                                    <li>Participation in Digital Marketing New Item Collection</li>
+                                </ul>
+
+                                <p><strong>New Item Collection Fee:</strong></p>
+                                <ul>
+                                    <li>$500 per SKU (in addition to 90-day intro)</li>
+                                    <li>Capped at $2,500 with no item maximum</li>
+                                    <li>2-month placement in New Item Collection</li>
+                                </ul>
+
+                                <p><strong>New Store Free Fill:</strong></p>
+                                <ul>
+                                    <li>100% MCB (Manufacturer Chargeback) via UNFI</li>
+                                    <li>12 units of product required per SKU</li>
+                                    <li>No direct shipments accepted</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Submission Requirements -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Submission Requirements</div>
+                            <div class="prospect-body">
+                                <p><strong>Documents Required:</strong></p>
+                                <ul>
+                                    <li>Complete New Item Presentation with Product Highlights</li>
+                                    <li>Pricing & Support details filled out</li>
+                                    <li>SKU ranking for all submitted items</li>
+                                    <li>Sales data or SPINS (if available) on second slide</li>
+                                </ul>
+
+                                <p><strong>Samples:</strong></p>
+                                <ul>
+                                    <li>Minimum 2 samples per SKU</li>
+                                    <li>Ship to: 5317 SE Thiessen Rd, Milwaukie, OR 97267</li>
+                                    <li>Attention: Devin Roane</li>
+                                    <li>Must arrive before March 10, 2026</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Internal Review - Escalation to John -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Internal Review - Escalation to John (CEO)</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag amber">Awaiting Response</span>
+                                    <span class="prospect-tag purple">Decision Required</span>
+                                </p>
+                                <p><strong>Date Sent:</strong> February 23, 2026</p>
+                                <p><strong>Status:</strong> Awaiting John's approval to proceed</p>
+                                
+                                <p><strong>Summary of Request:</strong></p>
+                                <p>Stephen escalated New Seasons opportunity to John requesting green light before February 27, 2026 decision deadline. Outlined all financial requirements including 90-day intro (25% off NSM cost, mandatory $1,320 paid ad, digital marketing participation), New Item Collection fee ($500/SKU capped at $2,500), and new store free fill (100% MCB via UNFI, 12 units/SKU). Acknowledged meaningful fees and promotional commitments require CEO sign-off before confirming participation with Devin Roane.</p>
+
+                                <p><strong>Key Points Highlighted to John:</strong></p>
+                                <ul>
+                                    <li>22 stores across Pacific Northwest (significant market opportunity)</li>
+                                    <li>Tight decision timeline: response needed by February 27, 2026</li>
+                                    <li>Full paid ad requirement: $1,320 within first 90 days (mandatory)</li>
+                                    <li>New Item Collection fee: $500/SKU, capped at $2,500</li>
+                                    <li>All commitments are meaningful and require executive approval</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Next Steps</div>
+                            <ul class="next-steps-list">
+                                <li><strong>PRIORITY:</strong> Await John's approval to proceed (sent February 23, 2026)</li>
+                                <li>Upon approval: Review all New Seasons requirements and attached documents</li>
+                                <li>Complete New Item Presentation with Product Highlights, Pricing & Support</li>
+                                <li>Provide SKU ranking for all submitted items</li>
+                                <li>Include sales data or SPINS if available</li>
+                                <li>Confirm participation to Devin by February 27, 2026 (deadline)</li>
+                                <li>Ship samples (minimum 2 per SKU) to arrive by March 10, 2026</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Air Goods Online Marketplace February 2026 Promotion Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Air Goods Online Marketplace — February 2026 Promotion</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Promotion Details -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Promotion Overview</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">5-Day Promotion</span>
+                                    <span class="prospect-tag green">20% Off</span>
+                                    <span class="prospect-tag amber">Additional 5% Air Goods</span>
+                                </p>
+                                <p><strong>Promotion Start Date:</strong> February 23, 2026</p>
+                                <p><strong>Duration:</strong> 5 days (February 23-27, 2026)</p>
+                                <p><strong>Setup By:</strong> Stephen Nance</p>
+                            </div>
+                        </div>
+
+                        <!-- Discount Structure -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Discount Structure</div>
+                            <div class="prospect-body">
+                                <p><strong>Swoffle Discount:</strong> 20% off (Stephen's promotion)</p>
+                                <p><strong>Air Goods Additional Discount:</strong> 5% off (Air Goods contribution)</p>
+                                <p><strong>Total Customer Savings:</strong> 25% combined discount</p>
+                                <p><strong>Cost Sharing:</strong> Air Goods' 5% discount comes off their side of the business, reducing their margin to support the promotional event.</p>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Notes -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Strategic Notes</div>
+                            <div class="prospect-body">
+                                <p>This five-day promotional event on the Air Goods online marketplace represents a collaborative approach to driving sales velocity. Stephen structured a 20% discount to create compelling value for online customers, while Air Goods demonstrates partnership commitment by contributing an additional 5% from their margin. The combined 25% savings creates a strong customer incentive during the promotional window.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Grassroots Sales Team Card -->
+                <div class="card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h3 class="card-title">Grassroots Sales Team — Northwest & SoCal</h3>
+                        <span class="card-arrow collapsed">▼</span>
+                    </div>
+                    <div class="card-content">
+
+                        <!-- Team Contacts -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Team Contacts</div>
+                            <div class="prospect-contact-grid">
+                                <div class="prospect-contact-item">
+                                    <strong>Rody Queis</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a08151e033a1d08171b08111f0e13141d54141f0e">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>David Victor</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e0a0f18070a2e091c030f1c050b1a07000940000b1a">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Erinn Williams</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="187d6a717676587f6a75796a737d6c71767f36767d6c">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Brent Norr</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2d0c0d7dcc6f2d5c0dfd3c0d9d7c6dbdcd59cdcd7c6">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Carson O'Brien</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90f3f1e2e3fffed0f7e2fdf1e2fbf5e4f9fef7befef5e4">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Cesar Cortes</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f3c3a2c3e2d1f382d323e2d343a2b36313871313a2b">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Elizabeth Spannuth</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="32575e5b48535057465a7255405f53405957465b5c551c5c5746">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Janice Moreland</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="452f242b2c26200522372824372e20312c2b226b2b2031">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Jerod Wilson</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d3b9b6a1bcb793b4a1beb2a1b8b6a7babdb4fdbdb6a7">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Jesse Syverson</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f8929d8b8b9db89f8a95998a939d8c91969fd6969d8c">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Kristen Ferris</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0abb2a9b3b4a5ae80a7b2ada1b2aba5b4a9aea7eeaea5b4">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Mariana Shirinian</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="254844574c444b446542574844574e40514c4b420b4b4051">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Maureen Eppler</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a3cec2d6d1c6c6cde3c4d1cec2d1c8c6d7cacdc48dcdc6d7">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Mike McCabe</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="91fcf8faf4d1f6e3fcf0e3faf4e5f8fff6bffff4e5">[email&#160;protected]</a>
+                                </div>
+                                <div class="prospect-contact-item">
+                                    <strong>Nicole Oueis</strong>
+                                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="afc1c6ccc0c3caefc8ddc2ceddc4cadbc6c1c881c1cadb">[email&#160;protected]</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- February 18, 2026 Launch Communication -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">February 18, 2026 — Product Launch Push</div>
+                            <div class="contact-log-entry today">
+                                <div class="log-date">📧 Launch Campaign Initiated</div>
+                                Stephen sent comprehensive launch communication to entire Grassroots team (Northwest & SoCal markets) requesting concentrated two-week push for new 12-pack placements through UNFI accounts. Primary focus: securing chain placements for new Chocolate Caramel SKU to trigger authorization in UNFI Ridgefield and Moreno Valley DCs. Included updated 12-pack PowerPoint sales deck and 1-page UNFI West brand sheet. Samples shipped to team via Lisa's requests — expected delivery end of week or early next week.
+                            </div>
+                        </div>
+
+                        <!-- New Chocolate Caramel 12-Pack Highlights -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">New Chocolate Caramel 12-Pack — Key Selling Points</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag purple">NEW Launch</span>
+                                    <span class="prospect-tag green">50% Smaller Display</span>
+                                    <span class="prospect-tag amber">Line Priced</span>
+                                    <span class="prospect-tag">UNFI Authorization Pending</span>
+                                </p>
+                                <p><strong>UPC:</strong> 850009603074</p>
+                                <p><strong>Key Benefits:</strong></p>
+                                <ul>
+                                    <li>Display tray almost 50% smaller footprint</li>
+                                    <li>Cross-merchandising opportunities: Cookie aisle, checkout, coffee bars</li>
+                                    <li>Line priced with Caramel and French Vanilla 12-pack SKUs</li>
+                                    <li>Same price point, less space — zero friction for buyers</li>
+                                    <li>Faster turns, better velocity</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- UNFI West Item Numbers -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">UNFI West Item Numbers & UPCs</div>
+                            <div class="prospect-body">
+                                <p><strong>Current UNFI West SKUs:</strong></p>
+                                <ul>
+                                    <li><strong>#1 Caramel 12pk (1.16 oz)</strong> – UNFI #30845 | UPC: 863852000006</li>
+                                    <li><strong>#2 French Vanilla 12pk (1.16 oz)</strong> – UNFI #30842 | UPC: 863852000044</li>
+                                    <li><strong>#3 Dark Chocolate Dipped 12pk (1.45 oz)</strong> – UNFI #30867 | UPC: 863852000075</li>
+                                    <li><strong>#4 (NEW) Chocolate Caramel 12pk (1.16 oz)</strong> – Pending | UPC: 850009603074</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Product Positioning & Benefits -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Product Positioning & Retail Benefits</div>
+                            <div class="prospect-body">
+                                <p><strong>Packaging Innovation:</strong></p>
+                                <ul>
+                                    <li>Nearly 50% smaller footprint enables multi-flavor placement</li>
+                                    <li>Standardized checkout-friendly display trays</li>
+                                    <li>Higher velocity due to smaller case packs</li>
+                                </ul>
+                                <p><strong>Placement Recommendations:</strong> Cookie aisle & checkout with checkout-standardized sizing</p>
+                                <p><strong>Logistics:</strong></p>
+                                <ul>
+                                    <li>Case pack: 12 individually wrapped Swoffles</li>
+                                    <li>Master case: 8 cases</li>
+                                    <li>Pallet layout: 120 cs | 20 tier | 6 high</li>
+                                    <li>Shelf life: 9 months</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Brand Story & Certifications -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Brand Story & Values</div>
+                            <div class="prospect-body">
+                                <p>
+                                    <span class="prospect-tag green">USDA Organic</span>
+                                    <span class="prospect-tag green">Certified Gluten-Free</span>
+                                    <span class="prospect-tag green">Kosher Dairy</span>
+                                    <span class="prospect-tag purple">Dairy & Nut Free</span>
+                                </p>
+                                <p>Founded in 2015 by father-daughter team in Concord, MA. Premium stroopwafels designed to elevate everyday moments with clean ingredients, retail growth focus, and community support.</p>
+                                <p><strong>Feeding America Partnership:</strong> 1,168,000 meals donated since 2017 | Currently contributing 120,000+ meals annually through Buy-One-Give-One program</p>
+                            </div>
+                        </div>
+
+                        <!-- Sales Support Provided -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Sales Support Provided</div>
+                            <div class="prospect-body">
+                                <ul>
+                                    <li>Updated 12-pack PowerPoint sales deck (7 pages)</li>
+                                    <li>1-page UNFI West brand sheet with item numbers and positioning</li>
+                                    <li>Samples shipped to all team members (delivery expected end of week)</li>
+                                    <li>Ongoing support: sell sheets, pricing backup, buyer pitches available on request</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Action Items -->
+                        <div class="prospect-section">
+                            <div class="prospect-section-title">Immediate Action Items</div>
+                            <ul class="next-steps-list">
+                                <li>Concentrate two-week push for 12-pack placements through UNFI accounts</li>
+                                <li>Priority focus: secure chain placements for NEW Chocolate Caramel SKU</li>
+                                <li>Chain commitments will trigger UNFI authorization in Ridgefield (Northwest) and Moreno Valley (SoCal) DCs</li>
+                                <li>Lead with velocity story: faster turns, less space, better performance</li>
+                                <li>Leverage samples arriving this week/early next week</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function formatCurrency(amount) {
+            return '$' + parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab')[tabIndex].classList.add('active');
+            document.getElementById('tab-' + tabIndex).classList.add('active');
+        }
+
+        function toggleCard(header) {
+            const arrow = header.querySelector('.card-arrow');
+            const content = header.nextElementSibling;
+            arrow.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        }
+
+        function toggleProspect(header) {
+            const arrow = header.querySelector('.card-arrow');
+            const content = header.nextElementSibling;
+            arrow.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        }
+
+        function updateDashboardTotals() {
+            let totalSales = 0;
+            let totalOrders = 0;
+
+            // Calculate from Distributor Direct Orders
+            const distributorRows = document.querySelectorAll('#distributor-orders tr');
+            let distributorSales = 0;
+            let distributorOrders = 0;
+            distributorRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        distributorSales += amount;
+                        distributorOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-distributor-orders').textContent = distributorOrders;
+            document.getElementById('summary-distributor-sales').textContent = formatCurrency(distributorSales);
+            totalSales += distributorSales;
+            totalOrders += distributorOrders;
+
+            // Calculate from Independent Orders
+            const independentRows = document.querySelectorAll('#independent-orders tr');
+            let independentSales = 0;
+            let independentOrders = 0;
+            independentRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        independentSales += amount;
+                        independentOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-independent-orders').textContent = independentOrders;
+            document.getElementById('summary-independent-sales').textContent = formatCurrency(independentSales);
+            totalSales += independentSales;
+            totalOrders += independentOrders;
+
+            // Calculate from HALA Direct Orders
+            const halaDirectRows = document.querySelectorAll('#hala-direct-orders tr');
+            let halaDirectSales = 0;
+            let halaDirectOrders = 0;
+            halaDirectRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        halaDirectSales += amount;
+                        halaDirectOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-hala-direct-orders').textContent = halaDirectOrders;
+            document.getElementById('summary-hala-direct-sales').textContent = formatCurrency(halaDirectSales);
+            totalSales += halaDirectSales;
+            totalOrders += halaDirectOrders;
+
+            // Calculate from FAIRE Orders
+            const faireRows = document.querySelectorAll('#faire-orders tr');
+            let faireSales = 0;
+            let faireOrders = 0;
+            faireRows.forEach(row => {
+                const orderTotal = row.querySelector('.order-total');
+                if (orderTotal) {
+                    const amount = parseFloat(orderTotal.textContent.replace('$', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        faireSales += amount;
+                        faireOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-faire-orders').textContent = faireOrders;
+            document.getElementById('summary-faire-sales').textContent = formatCurrency(faireSales);
+            totalSales += faireSales;
+            totalOrders += faireOrders;
+
+            // Calculate from Hala Indirect Turnover Orders (cases only, not added to total sales)
+            const halaRows = document.querySelectorAll('#hala-orders tr');
+            let halaCases = 0;
+            let halaOrders = 0;
+            halaRows.forEach(row => {
+                      const cases = row.querySelector('.order-total');
+                if (cases) {
+                    const caseCount = parseInt(cases.textContent);
+                    if (!isNaN(caseCount)) {
+                        halaCases += caseCount;
+                        halaOrders++;
+                    }
+                }
+            });
+            document.getElementById('summary-hala-orders').textContent = halaOrders;
+            document.getElementById('summary-hala-sales').textContent = halaCases;
+
+            // Update grand totals
+            document.getElementById('summary-grand-orders').textContent = totalOrders;
+            document.getElementById('summary-grand-sales').textContent = formatCurrency(totalSales);
+            document.getElementById('totalSales').textContent = formatCurrency(totalSales);
+            document.getElementById('totalOrders').textContent = totalOrders;
+        }
+
+        // Initialize on page load
+        updateDashboardTotals();
+    </script>
+</body>
+</html>
