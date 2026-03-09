@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update to Shipping &amp; Handling SOP - Small Parcel Shipments</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+    }
+
+    .page {
+      background: #fff;
+      max-width: 780px;
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      padding: 56px 64px;
+    }
+
+    /* Header */
+    .doc-date {
+      font-size: 0.92rem;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .doc-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #1a3a5c;
+      border-bottom: 3px solid #1a3a5c;
+      padding-bottom: 12px;
+      margin-bottom: 22px;
+      line-height: 1.3;
+    }
+
+    /* Salutation */
+    .salutation {
+      font-size: 0.97rem;
+      color: #333;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    /* Body paragraphs */
+    .body-text {
+      font-size: 0.97rem;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 28px;
+    }
+
+    /* Section heading */
+    .section-heading {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #1a3a5c;
+      margin-bottom: 18px;
+      border-left: 4px solid #1a7c3e;
+      padding-left: 12px;
+    }
+
+    /* Update blocks */
+    .update-block {
+      margin-bottom: 20px;
+    }
+
+    .update-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: inline-block;
+      padding: 3px 14px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .update-label.removed  { background: #c0392b; }
+    .update-label.added    { background: #1a7c3e; }
+    .update-label.amended  { background: #d68910; }
+
+    .update-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .update-list li {
+      font-size: 0.96rem;
+      line-height: 1.65;
+      color: #333;
+      padding: 8px 14px 8px 34px;
+      position: relative;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      background: #f9fafb;
+      border-left: 3px solid #dce3ea;
+    }
+
+    .update-list li::before {
+      content: '•';
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      font-size: 1rem;
+      color: #888;
+    }
+
+    .update-list.no-changes li {
+      color: #888;
+      font-style: italic;
+    }
+
+    /* Closing */
+    .closing-text {
+      font-size: 0.97rem;
+      line-height: 1.7;
+      color: #333;
+      margin-top: 30px;
+      padding-top: 22px;
+      border-top: 1px solid #e0e5ea;
+    }
+
+    @media (max-width: 600px) {
+      .page { padding: 32px 22px; }
+      .doc-title { font-size: 1.15rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <p class="doc-date">Feb. 20, 2026</p>
+    <h1 class="doc-title">Update to Shipping &amp; Handling SOP — Small Parcel Shipments</h1>
+
+    <p class="salutation">To UNFI Vendor Ship (VSP) partners –</p>
+
+    <p class="body-text">
+      We're writing to share an update to UNFI's Shipping &amp; Handling Standard Operating Procedure (SOP).
+      This update clarifies requirements for small parcel inbound shipments sent via UPS, FedEx, or other parcel carriers.
+    </p>
+
+    <p class="body-text">
+      UNFI's Shipping &amp; Handling Policies outline inbound performance expectations to ensure product arrives at our
+      distribution centers (DCs) on time and in the expected condition. These updates support our shared goal of improving
+      efficiency while reducing avoidable delays, discrepancies, or costs.
+    </p>
+
+    <h2 class="section-heading">Summary of Updates to Shipping: Small Package Shipments Section</h2>
+
+    <!-- Removed -->
+    <div class="update-block">
+      <span class="update-label removed">Removed</span>
+      <ul class="update-list no-changes">
+        <li>No changes</li>
+      </ul>
+    </div>
+
+    <!-- Added -->
+    <div class="update-block">
+      <span class="update-label added">Added</span>
+      <ul class="update-list">
+        <li>
+          Each box must contain a detailed packing list. This helps ensure accurate documentation if cartons are
+          delivered separately or if "Carton x of x" labels are missing or unclear.
+        </li>
+        <li>
+          The Purchase Order (PO) number must be entered in the reference field when creating the shipment.
+          This assists with research and validation if transit issues occur.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Amended -->
+    <div class="update-block">
+      <span class="update-label amended">Amended</span>
+      <ul class="update-list">
+        <li>
+          UNFI receives UPS and FedEx shipments in bulk, with deliveries from multiple suppliers in each drop.
+          UNFI signs only for the total number of boxes received at delivery and does not confirm receipt of
+          cartons from individual suppliers.
+        </li>
+        <li>
+          UNFI is unable to verify or count individual cartons or items within cartons for small parcel shipments.
+          As a result, this shipping method may increase your company's risk of product loss. UNFI is not
+          responsible for product shortages or losses associated with small parcel shipments.
+        </li>
+      </ul>
+    </div>
+
+    <p class="closing-text">
+      We appreciate your attention to these updates. Thank you for partnering with us to ensure a smoother,
+      more reliable inbound delivery process across UNFI's distribution network.
+    </p>
+
+  </div>
+</body>
+</html>
