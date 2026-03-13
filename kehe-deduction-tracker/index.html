@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KeHE Distributors — Deductions Worksheet | SWOFFLE LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f8fa;
+    --surface2: #eef0f3;
+    --border: #d4d8df;
+    --accent: #1d6fa4;
+    --accent-light: #e8f2f9;
+    --accent2: #1a7f37;
+    --red: #c0392b;
+    --red-light: #fdf0ef;
+    --text: #1a1d23;
+    --text-muted: #5a6070;
+    --text-dim: #9ba3b0;
+    --positive-bg: #f0fdf4;
+    --positive-hover: #dcfce7;
+    --negative-bg: #fdf5f5;
+    --negative-hover: #fde8e8;
+    --row-hover: #f0f4f8;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8f2f9;
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 20px 20px 0 20px;
+  }
+
+  /* ─── HEADER ─── */
+  .page-header {
+    background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin-bottom: 0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+  .kehe-badge {
+    display: inline-block;
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    margin-bottom: 6px;
+    width: fit-content;
+  }
+
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── SUMMARY STRIP ─── */
+  .summary-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .summary-card {
+    flex: 1;
+    padding: 14px 22px;
+    border-right: 1px solid var(--border);
+  }
+
+  .summary-card:last-child { border-right: none; }
+
+  .summary-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+
+  .summary-val {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .summary-val.red { color: var(--red); }
+  .summary-val.green { color: var(--accent2); }
+  .summary-val.blue { color: var(--accent); }
+  .summary-val.dark { color: var(--text); }
+
+  /* ─── CONTROLS ─── */
+  .controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 13px;
+    width: 240px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 11px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .filter-select:focus { border-color: var(--accent); }
+
+  .btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-reset:hover { background: var(--red); color: #fff; }
+
+  .row-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ─── TABLE ─── */
+  .table-wrapper {
+    overflow-x: auto;
+    padding-bottom: 40px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+    min-width: 1060px;
+  }
+
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th {
+    padding: 11px 13px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+  }
+
+  th:last-child { border-right: none; }
+  th:hover { color: var(--accent); background: var(--accent-light); }
+
+  th .sort-arrow { display: inline-block; margin-left: 4px; opacity: 0.35; font-size: 9px; }
+  th.sorted-asc .sort-arrow::after { content: ' ▲'; opacity: 1; }
+  th.sorted-desc .sort-arrow::after { content: ' ▼'; opacity: 1; }
+  th:not(.sorted-asc):not(.sorted-desc) .sort-arrow::after { content: ' ⇅'; }
+
+  /* filter row */
+  .filter-row th {
+    padding: 5px 7px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .filter-row th:hover { background: var(--surface2); color: var(--text-muted); }
+
+  .col-filter {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 7px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .col-filter:focus { border-color: var(--accent); }
+  .col-filter::placeholder { color: var(--text-dim); }
+
+  /* rows */
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    animation: fadeIn 0.18s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  tbody tr:hover { background: var(--row-hover); }
+  tr.type-positive { background: var(--positive-bg); }
+  tr.type-positive:hover { background: var(--positive-hover); }
+  tr.type-negative { background: var(--negative-bg); }
+  tr.type-negative:hover { background: var(--negative-hover); }
+
+  td {
+    padding: 9px 13px;
+    border-right: 1px solid #eef0f3;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  td:last-child { border-right: none; }
+
+  .amount-cell { text-align: right; font-weight: 500; }
+  .amount-cell.positive { color: var(--accent2); }
+  .amount-cell.negative { color: var(--red); }
+  .amount-cell.zero { color: var(--text-dim); }
+
+  .row-num { color: var(--text-dim); font-size: 10px; text-align: center; user-select: none; }
+
+  .inv-num { color: var(--text); font-size: 11px; }
+
+  .desc-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    border: 1px solid #b8d8ed;
+    border-radius: 3px;
+    font-size: 10px;
+    padding: 2px 7px;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+    font-family: var(--mono);
+  }
+
+  .type-badge {
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+
+  .type-badge.credit    { background: #dafbe1; color: #1a7f37; border: 1px solid #82cfaa; }
+  .type-badge.deduction { background: #fde8e8; color: #c0392b; border: 1px solid #f5a9a9; }
+
+  .notes-input {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 8px;
+    width: 210px;
+    outline: none;
+    transition: all 0.15s;
+  }
+
+  .notes-input:hover { border-color: var(--border); background: #fff; }
+  .notes-input:focus { border-color: var(--accent); background: #fff; }
+  .notes-input::placeholder { color: var(--text-dim); font-size: 11px; }
+
+  /* tfoot */
+  tfoot tr {
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+  }
+
+  tfoot td {
+    padding: 11px 13px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* export bar */
+  .export-bar {
+    padding: 11px 22px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="texture-overlay"></div>
+  <div class="header-content">
+    <div class="header-left">
+      <div class="kehe-badge">KeHE DISTRIBUTORS</div>
+      <div class="header-title">KeHE Remittance Deductions Worksheet</div>
+      <div class="header-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #23017256 &nbsp;·&nbsp; KeHE Distributors, LLC</div>
+    </div>
+    <div style="position:relative;z-index:1;text-align:right;">
+      <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.75);letter-spacing:0.5px;">Worksheet created by</div>
+      <div style="font-family:var(--mono);font-size:14px;font-weight:600;color:#ffffff;margin-top:3px;">Stephen Nance</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY STRIP -->
+<div class="summary-strip">
+  <div class="summary-card">
+    <div class="summary-label">Total Line Items</div>
+    <div class="summary-val dark" id="sum-count">22</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Credits / Payments</div>
+    <div class="summary-val green" id="sum-credits">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Deductions / Chargebacks</div>
+    <div class="summary-val red" id="sum-deductions">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Total Discounts Applied</div>
+    <div class="summary-val blue" id="sum-discounts">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Visible Rows</div>
+    <div class="summary-val dark" id="sum-visible">22</div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <input class="search-box" type="text" id="globalSearch" placeholder="🔍  Search all columns...">
+  <select class="filter-select" id="checkFilter">
+    <option value="">All Checks</option>
+    <option value="3243581">3243581 — 01/23/2026</option>
+    <option value="3230718">3230718 — 12/12/2025</option>
+  </select>
+  <select class="filter-select" id="typeFilter">
+    <option value="">All Types</option>
+    <option value="Credit">Credits</option>
+    <option value="Deduction">Deductions</option>
+  </select>
+  <button class="btn" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn" onclick="window.print()">⎙ Print</button>
+  <button class="btn-reset" onclick="resetAll()">✕ Reset Filters</button>
+  <span class="row-count" id="rowCount">22 rows</span>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrapper">
+  <table id="mainTable">
+    <thead>
+      <tr id="headerRow">
+        <th onclick="sortTable(0)" data-col="0"><span class="sort-arrow"></span>#</th>
+        <th onclick="sortTable(1)" data-col="1"><span class="sort-arrow"></span>Check Date</th>
+        <th onclick="sortTable(2)" data-col="2"><span class="sort-arrow"></span>Check #</th>
+        <th onclick="sortTable(3)" data-col="3"><span class="sort-arrow"></span>Invoice Date</th>
+        <th onclick="sortTable(4)" data-col="4"><span class="sort-arrow"></span>Invoice Number</th>
+        <th onclick="sortTable(5)" data-col="5"><span class="sort-arrow"></span>Description</th>
+        <th onclick="sortTable(6)" data-col="6"><span class="sort-arrow"></span>Type</th>
+        <th onclick="sortTable(7)" data-col="7"><span class="sort-arrow"></span>Gross Amount</th>
+        <th onclick="sortTable(8)" data-col="8"><span class="sort-arrow"></span>Discount</th>
+        <th onclick="sortTable(9)" data-col="9"><span class="sort-arrow"></span>Net Amount</th>
+        <th data-col="10">Notes</th>
+      </tr>
+      <tr class="filter-row">
+        <th></th>
+        <th><input class="col-filter" data-col="1" placeholder="Check date..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="2" placeholder="Check #..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="3" placeholder="Inv. date..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="4" placeholder="Invoice #..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="5" placeholder="Desc..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="6" placeholder="Type..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="7" placeholder="Gross..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="8" placeholder="Discount..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="9" placeholder="Net..." oninput="applyFilters()"></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="7" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">TOTAL PAID (Visible Rows)</td>
+        <td class="amount-cell" id="foot-gross" style="font-size:13px;"></td>
+        <td class="amount-cell" id="foot-discount" style="font-size:13px;"></td>
+        <td class="amount-cell" id="foot-net" style="font-size:13px;color:var(--accent);font-weight:600;"></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <span>KeHE Distributors, LLC · Checks 3243581 &amp; 3230718 · SWOFFLE LLC Vendor #23017256</span>
+  <span style="font-family:var(--mono); font-size:11px; color:var(--text-dim);">Worksheet created by Stephen Nance</span>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+// KeHE date format on stub: MMDDYY (no slashes) → converted to MM/DD/YY display
+const rawData = [
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/12/25", invoice:"HB2987915",           desc:"MidAtlantic2025.10",   gross:-1.14,    discount:0.00,  net:-1.14    },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/14/25", invoice:"0403336",              desc:"MCBB",                 gross:-83.01,   discount:0.00,  net:-83.01   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/15/25", invoice:"CS003486970",          desc:"6955407",              gross:-17.40,   discount:0.00,  net:-17.40   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/18/25", invoice:"A825424725",           desc:"61800257664",          gross:-435.00,  discount:0.00,  net:-435.00  },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/22/25", invoice:"AMPE02019589.1225.01", desc:"AMP2025P10",           gross:-38.20,   discount:0.00,  net:-38.20   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/22/25", invoice:"CS003502449",          desc:"599063",               gross:-11.97,   discount:0.00,  net:-11.97   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/28/25", invoice:"0404881",              desc:"MCBB",                 gross:-179.40,  discount:0.00,  net:-179.40  },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/29/25", invoice:"CS003517490",          desc:"4010170",              gross:-12.01,   discount:0.00,  net:-12.01   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/05/26", invoice:"CS003532672",          desc:"9553544",              gross:-6.03,    discount:0.00,  net:-6.03    },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/30/25", invoice:"7977",                 desc:"7977",                 gross:395.14,   discount:7.90,  net:387.24   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/08/26", invoice:"LUM16464227",          desc:"LUM2026.P05",          gross:-28.19,   discount:0.00,  net:-28.19   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"7985",                 desc:"7985",                 gross:3193.47,  discount:63.87, net:3129.60  },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"ARF11598227",          desc:"ARS25OCT-NOV-DEC",     gross:-42.88,   discount:0.00,  net:-42.88   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"CS003548016",          desc:"6276473",              gross:-14.27,   discount:0.00,  net:-14.27   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/13/26", invoice:"HB3035615",            desc:"MidAtlantic2025.11",   gross:-23.94,   discount:0.00,  net:-23.94   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/15/26", invoice:"7999IA",               desc:"7999IA",               gross:-197.56,  discount:-3.95, net:-193.61  },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/15/26", invoice:"7999",                 desc:"7999",                 gross:592.70,   discount:11.85, net:580.85   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/19/26", invoice:"CS003563501",          desc:"3808447",              gross:-13.34,   discount:0.00,  net:-13.34   },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/19/26", invoice:"LUM16014215",          desc:"LUM2026.P08",          gross:-2.81,    discount:0.00,  net:-2.81    },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/20/26", invoice:"LUM16486527",          desc:"LUM2026.P08",          gross:-23.67,   discount:0.00,  net:-23.67   },
+  // ─── CHECK 3230718 · 12/12/2025 ───────────────────────────────────────────
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/16/25", invoice:"400332",              desc:"MCBB",               gross:-398.06,  discount:0.00,  net:-398.06  },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/17/25", invoice:"CS003425822",         desc:"7773352",            gross:-16.71,   discount:0.00,  net:-16.71   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/20/25", invoice:"AMP15017256.1125.01", desc:"2025P09",            gross:-38.20,   discount:0.00,  net:-38.20   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/24/25", invoice:"CS003441306",         desc:"298839",             gross:-21.57,   discount:0.00,  net:-21.57   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/30/25", invoice:"401841",              desc:"MCBB",               gross:-484.26,  discount:0.00,  net:-484.26  },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/01/25", invoice:"CS003456296",         desc:"2959887",            gross:-12.64,   discount:0.00,  net:-12.64   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/01/25", invoice:"7939",                desc:"7939",               gross:3193.47,  discount:63.87, net:3129.60  },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/03/25", invoice:"HB2940415",           desc:"MidAtlantic2025.09", gross:-49.02,   discount:0.00,  net:-49.02   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/04/25", invoice:"PL10510527",          desc:"Dumbo150482",        gross:-52.80,   discount:0.00,  net:-52.80   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/03/25", invoice:"7938",                desc:"7938",               gross:395.14,   discount:7.90,  net:387.24   },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"12/08/25", invoice:"CS003471553",         desc:"4662621",            gross:-8.93,    discount:0.00,  net:-8.93    },
+];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function fmt(v) {
+  if (v === 0) return '$0.00';
+  const abs = Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (v < 0 ? '-$' : '$') + abs;
+}
+
+function fmtClass(v) {
+  if (v > 0) return 'positive';
+  if (v < 0) return 'negative';
+  return 'zero';
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+let sortCol = -1, sortDir = 1;
+const notes = {};
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  let sumCredits = 0, sumDeductions = 0, sumDiscounts = 0, sumGross = 0, sumNet = 0;
+
+  data.forEach((row, i) => {
+    const isCredit = row.net > 0;
+    const type = isCredit ? 'Credit' : 'Deduction';
+    const tr = document.createElement('tr');
+    tr.className = isCredit ? 'type-positive' : 'type-negative';
+    const noteKey = rawData.indexOf(row);
+    const savedNote = notes[noteKey] || '';
+
+    tr.innerHTML = `
+      <td class="row-num">${i + 1}</td>
+      <td style="font-size:11px;">${row.checkDate}</td>
+      <td style="font-size:11px;font-weight:500;">${row.checkNum}</td>
+      <td style="font-size:11px;">${row.date}</td>
+      <td class="inv-num">${row.invoice}</td>
+      <td>${row.desc ? `<span class="desc-badge">${row.desc}</span>` : '<span style="color:var(--text-dim);font-size:10px;">—</span>'}</td>
+      <td><span class="type-badge ${type.toLowerCase()}">${type}</span></td>
+      <td class="amount-cell ${fmtClass(row.gross)}">${fmt(row.gross)}</td>
+      <td class="amount-cell ${fmtClass(row.discount)}">${row.discount !== 0 ? fmt(row.discount) : '<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="amount-cell ${fmtClass(row.net)}">${fmt(row.net)}</td>
+      <td><input class="notes-input" placeholder="Add note..." value="${savedNote}" onchange="saveNote(${noteKey}, this.value)"></td>
+    `;
+    tbody.appendChild(tr);
+
+    if (row.net > 0) sumCredits += row.net;
+    else sumDeductions += row.net;
+    sumDiscounts += row.discount;
+    sumGross += row.gross;
+    sumNet += row.net;
+  });
+
+  document.getElementById('foot-gross').innerHTML = `<span class="${fmtClass(sumGross)}">${fmt(sumGross)}</span>`;
+  document.getElementById('foot-discount').innerHTML = `<span class="${fmtClass(sumDiscounts)}">${fmt(sumDiscounts)}</span>`;
+  document.getElementById('foot-net').textContent = fmt(sumNet);
+
+  document.getElementById('sum-credits').textContent = fmt(sumCredits);
+  document.getElementById('sum-deductions').textContent = fmt(sumDeductions);
+  document.getElementById('sum-discounts').textContent = fmt(sumDiscounts);
+  document.getElementById('sum-visible').textContent = data.length;
+  document.getElementById('rowCount').textContent = `${data.length} row${data.length !== 1 ? 's' : ''}`;
+}
+
+function saveNote(key, val) { notes[key] = val; }
+
+// ─── FILTER ───────────────────────────────────────────────────────────────────
+function getFilteredData() {
+  const global = document.getElementById('globalSearch').value.toLowerCase();
+  const typeF  = document.getElementById('typeFilter').value.toLowerCase();
+  const checkF = document.getElementById('checkFilter').value;
+  const colFilters = [...document.querySelectorAll('.col-filter')].map(el => ({
+    col: parseInt(el.dataset.col), val: el.value.toLowerCase()
+  }));
+
+  return rawData.filter(row => {
+    const isCredit = row.net > 0;
+    const type = isCredit ? 'credit' : 'deduction';
+    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.desc, type,
+                   fmt(row.gross), row.discount !== 0 ? fmt(row.discount) : '', fmt(row.net), ''];
+
+    if (checkF && row.checkNum !== checkF) return false;
+    if (typeF  && !type.includes(typeF))   return false;
+
+    if (global) {
+      if (!cells.join(' ').toLowerCase().includes(global)) return false;
+    }
+
+    for (const f of colFilters) {
+      if (f.val && !cells[f.col].toLowerCase().includes(f.val)) return false;
+    }
+
+    return true;
+  });
+}
+
+function applyFilters() {
+  let data = getFilteredData();
+  if (sortCol >= 0) data = sortData(data, sortCol, sortDir);
+  renderTable(data);
+}
+
+// ─── SORT ─────────────────────────────────────────────────────────────────────
+function sortData(data, col, dir) {
+  return [...data].sort((a, b) => {
+    const keys = [null, 'checkDate', 'checkNum', 'date', 'invoice', 'desc', null, 'gross', 'discount', 'net'];
+    if (col === 6) {
+      return dir * ((a.net > 0 ? 1 : 0) - (b.net > 0 ? 1 : 0));
+    }
+    const k = keys[col];
+    if (!k) return 0;
+    if (typeof a[k] === 'number') return dir * (a[k] - b[k]);
+    return dir * a[k].localeCompare(b[k]);
+  });
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  document.querySelectorAll('#headerRow th').forEach((th, i) => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (i === col) th.classList.add(sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+  });
+  applyFilters();
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAll() {
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('typeFilter').value = '';
+  document.getElementById('checkFilter').value = '';
+  document.querySelectorAll('.col-filter').forEach(el => el.value = '');
+  document.querySelectorAll('#headerRow th').forEach(th => th.classList.remove('sorted-asc','sorted-desc'));
+  sortCol = -1; sortDir = 1;
+  applyFilters();
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const data = getFilteredData();
+  const headers = ['#','Check Date','Check Number','Invoice Date','Invoice Number','Description','Type','Gross Amount','Discount','Net Amount','Notes'];
+  const rows = data.map((row, i) => {
+    const idx = rawData.indexOf(row);
+    const type = row.net > 0 ? 'Credit' : 'Deduction';
+    return [i+1, row.checkDate, row.checkNum, row.date, row.invoice, `"${row.desc}"`, type,
+            row.gross.toFixed(2), row.discount.toFixed(2), row.net.toFixed(2), `"${notes[idx] || ''}"`].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'KeHE_Deductions_MultiCheck.csv';
+  a.click();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById('sum-count').textContent = rawData.length;
+document.getElementById('typeFilter').addEventListener('change', applyFilters);
+document.getElementById('checkFilter').addEventListener('change', applyFilters);
+applyFilters();
+</script>
+</body>
+</html>
