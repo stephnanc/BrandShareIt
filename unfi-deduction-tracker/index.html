@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNFI West Deductions — Multi-Check Worksheet | SWOFFLE LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f4f6f8;
+    --surface2: #eaecef;
+    --border: #d0d7de;
+    --accent: #b45309;
+    --accent2: #1a7f37;
+    --red: #cf222e;
+    --text: #1f2328;
+    --text-muted: #57606a;
+    --text-dim: #9ba1a8;
+    --positive: #1a7f37;
+    --positive-bg: #dafbe1;
+    --negative: #cf222e;
+    --negative-bg: #fff0f0;
+    --neutral: #f6f8fa;
+    --header-bg: #f4f6f8;
+    --row-hover: #f0f4f8;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8f2f9;
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 20px 20px 0 20px;
+  }
+
+  /* ─── HEADER ─── */
+  .page-header {
+    background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin-bottom: 0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+  .unfi-badge {
+    display: inline-block;
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 0;
+    border: none;
+    margin-bottom: 6px;
+    width: fit-content;
+  }
+
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  }
+
+  .meta-value.negative {
+    color: var(--red);
+  }
+
+  /* ─── SUMMARY STRIP ─── */
+  .summary-strip {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .summary-card {
+    flex: 1;
+    padding: 14px 24px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .summary-card:last-child { border-right: none; }
+
+  .summary-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+
+  .summary-val {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .summary-val.red { color: var(--red); }
+  .summary-val.green { color: var(--accent2); }
+  .summary-val.gold { color: var(--accent); }
+  .summary-val.white { color: var(--text); }
+
+  /* ─── CONTROLS BAR ─── */
+  .controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 14px;
+    width: 260px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  .filter-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .filter-select:focus { border-color: var(--accent); }
+
+  .btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-reset:hover { background: var(--red); color: #fff; }
+
+  .row-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ─── TABLE WRAPPER ─── */
+  .table-wrapper {
+    overflow-x: auto;
+    padding: 0 0 40px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+    min-width: 1000px;
+  }
+
+  /* ─── THEAD ─── */
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  th:last-child { border-right: none; }
+
+  th:hover { color: var(--accent); background: var(--surface2); }
+
+  th .sort-arrow {
+    display: inline-block;
+    margin-left: 5px;
+    opacity: 0.3;
+    transition: opacity 0.1s;
+    font-size: 9px;
+  }
+
+  th.sorted-asc .sort-arrow::after { content: ' ▲'; opacity: 1; }
+  th.sorted-desc .sort-arrow::after { content: ' ▼'; opacity: 1; }
+  th:not(.sorted-asc):not(.sorted-desc) .sort-arrow::after { content: ' ⇅'; }
+
+  /* ─── FILTER ROW ─── */
+  .filter-row th {
+    padding: 6px 8px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .filter-row th:hover { background: var(--surface2); color: var(--text-muted); }
+
+  .col-filter {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .col-filter:focus { border-color: var(--accent); }
+  .col-filter::placeholder { color: var(--text-dim); }
+
+  /* ─── ROWS ─── */
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    animation: fadeIn 0.2s ease forwards;
+  }
+
+  tbody tr:hover { background: var(--row-hover); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  td {
+    padding: 10px 14px;
+    border-right: 1px solid #1f2937;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  td:last-child { border-right: none; }
+
+  /* row types */
+  tr.type-positive { background: #f0fdf4; }
+  tr.type-positive:hover { background: #dcfce7; }
+  tr.type-negative { background: #fff8f8; }
+  tr.type-negative:hover { background: #ffe4e4; }
+
+  /* amount styling */
+  .amount-cell {
+    text-align: right;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .amount-cell.positive { color: var(--accent2); }
+  .amount-cell.negative { color: var(--red); }
+  .amount-cell.zero { color: var(--text-dim); }
+
+  /* invoice number */
+  .inv-num {
+    color: var(--text);
+    font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+
+  /* description badge */
+  .desc-badge {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 10px;
+    padding: 2px 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* type badge */
+  .type-badge {
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .type-badge.credit { background: #dafbe1; color: #1a7f37; border: 1px solid #82cfaa; }
+  .type-badge.deduction { background: #fff0f0; color: #cf222e; border: 1px solid #f5a9a9; }
+
+  /* notes input */
+  .notes-input {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 8px;
+    width: 220px;
+    outline: none;
+    transition: all 0.15s;
+    resize: none;
+  }
+
+  .notes-input:hover { border-color: var(--border); background: var(--bg); }
+  .notes-input:focus { border-color: var(--accent); background: var(--bg); }
+  .notes-input::placeholder { color: var(--text-dim); font-size: 11px; }
+
+  /* row number */
+  .row-num {
+    color: var(--text-dim);
+    font-size: 10px;
+    text-align: center;
+    user-select: none;
+  }
+
+  /* ─── FOOTER ─── */
+  .table-footer {
+    padding: 16px 24px;
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    display: flex;
+    gap: 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .footer-item { color: var(--text-muted); }
+  .footer-item span { color: var(--text); font-weight: 600; margin-left: 6px; }
+  .footer-item span.red { color: var(--red); }
+  .footer-item span.green { color: var(--accent2); }
+  .footer-item span.gold { color: var(--accent); }
+
+  /* ─── EXPORT BAR ─── */
+  .export-bar {
+    padding: 12px 24px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .export-bar .btn { font-size: 11px; padding: 5px 12px; }
+
+  /* hidden */
+  .hidden { display: none !important; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="texture-overlay"></div>
+  <div class="header-content">
+    <div class="header-left">
+      <div class="unfi-badge">UNFI WEST</div>
+      <div class="header-title">UNFI Remittance Deductions Worksheet</div>
+      <div class="header-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #45964 &nbsp;·&nbsp; United Natural Foods West, Inc.</div>
+    </div>
+    <div style="position:relative;z-index:1;text-align:right;">
+      <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.75);letter-spacing:0.5px;">Worksheet created by</div>
+      <div style="font-family:var(--mono);font-size:14px;font-weight:600;color:#ffffff;margin-top:3px;">Stephen Nance</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY STRIP -->
+<div class="summary-strip">
+  <div class="summary-card">
+    <div class="summary-label">Total Line Items</div>
+    <div class="summary-val white" id="sum-count">38</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Credits / Payments</div>
+    <div class="summary-val green" id="sum-credits">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Deductions / Chargebacks</div>
+    <div class="summary-val red" id="sum-deductions">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Total Discounts Applied</div>
+    <div class="summary-val gold" id="sum-discounts">$0.00</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Visible Rows</div>
+    <div class="summary-val white" id="sum-visible">38</div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <input class="search-box" type="text" id="globalSearch" placeholder="🔍  Search all columns...">
+  <select class="filter-select" id="checkFilter">
+    <option value="">All Checks</option>
+    <option value="1705391">1705391 — 02/19/2026</option>
+    <option value="2043520">2043520 — 01/30/2026</option>
+    <option value="1698552">1698552 — 12/24/2025</option>
+  </select>
+  <select class="filter-select" id="typeFilter">
+    <option value="">All Types</option>
+    <option value="Credit">Credits</option>
+    <option value="Deduction">Deductions</option>
+  </select>
+  <button class="btn" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn" onclick="window.print()">⎙ Print</button>
+  <button class="btn-reset" onclick="resetAll()">✕ Reset Filters</button>
+  <span class="row-count" id="rowCount">38 rows</span>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrapper">
+  <table id="mainTable">
+    <thead>
+      <tr id="headerRow">
+        <th onclick="sortTable(0)" data-col="0"><span class="sort-arrow"></span>#</th>
+        <th onclick="sortTable(1)" data-col="1"><span class="sort-arrow"></span>Check Date</th>
+        <th onclick="sortTable(2)" data-col="2"><span class="sort-arrow"></span>Check #</th>
+        <th onclick="sortTable(3)" data-col="3"><span class="sort-arrow"></span>Invoice Date</th>
+        <th onclick="sortTable(4)" data-col="4"><span class="sort-arrow"></span>Invoice Number</th>
+        <th onclick="sortTable(5)" data-col="5"><span class="sort-arrow"></span>Description</th>
+        <th onclick="sortTable(6)" data-col="6"><span class="sort-arrow"></span>Type</th>
+        <th onclick="sortTable(7)" data-col="7"><span class="sort-arrow"></span>Gross Amount</th>
+        <th onclick="sortTable(8)" data-col="8"><span class="sort-arrow"></span>Discount Amount</th>
+        <th onclick="sortTable(9)" data-col="9"><span class="sort-arrow"></span>Net Amount</th>
+        <th data-col="10">Notes</th>
+      </tr>
+      <tr class="filter-row">
+        <th></th>
+        <th><input class="col-filter" data-col="1" placeholder="Check date..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="2" placeholder="Check #..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="3" placeholder="Inv. date..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="4" placeholder="Invoice #..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="5" placeholder="Desc..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="6" placeholder="Type..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="7" placeholder="Gross..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="8" placeholder="Discount..." oninput="applyFilters()"></th>
+        <th><input class="col-filter" data-col="9" placeholder="Net..." oninput="applyFilters()"></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+    <tfoot>
+      <tr style="background:var(--surface); border-top:2px solid var(--accent);">
+        <td colspan="7" style="padding:12px 14px; font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">TOTAL PAID (Visible Rows)</td>
+        <td class="amount-cell" id="foot-gross" style="padding:12px 14px; font-size:13px; font-weight:600;"></td>
+        <td class="amount-cell" id="foot-discount" style="padding:12px 14px; font-size:13px; font-weight:600;"></td>
+        <td class="amount-cell" id="foot-net" style="padding:12px 14px; font-size:13px; font-weight:600; color:var(--accent);"></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <span>UNFI West · Checks 1705391, 2043520 &amp; 1698552 · SWOFFLE LLC Vendor #45964</span>
+  <span style="font-family:var(--mono); font-size:11px; color:var(--text-dim);">Worksheet created by Stephen Nance</span>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const rawData = [
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/18/26", invoice:"0126BURMMCB45964Y", desc:"",    gross:-13.86,   discount:0.00,    net:-13.86    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/18/26", invoice:"0126BURMP45964Y",   desc:"",    gross:-575.00,  discount:0.00,    net:-575.00   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/23/26", invoice:"0126CURMMCB45964Y", desc:"",    gross:-740.29,  discount:0.00,    net:-740.29   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/23/26", invoice:"0126CURMP45964Y",   desc:"",    gross:-190.00,  discount:0.00,    net:-190.00   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/07/26", invoice:"0126URMMCB45964Y",  desc:"",    gross:-51.48,   discount:0.00,    net:-51.48    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/07/26", invoice:"0126URMP45964Y",    desc:"",    gross:-140.00,  discount:0.00,    net:-140.00   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/24/25", invoice:"03756776SCANSHARM", desc:"",    gross:-388.96,  discount:0.00,    net:-388.96   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/24/25", invoice:"03756777SCANSHARM", desc:"",    gross:-330.72,  discount:0.00,    net:-330.72   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/08/26", invoice:"03766940SCANBFARM", desc:"",    gross:-440.23,  discount:0.00,    net:-440.23   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"02/02/26", invoice:"065046664",          desc:"",    gross:-622.34,  discount:0.00,    net:-622.34   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/16/26", invoice:"342140922",          desc:"",    gross:3184.00,  discount:63.68,   net:3120.32   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/05/25", invoice:"1922SSA",            desc:"",    gross:-68.46,   discount:0.00,    net:-68.46    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"11/26/25", invoice:"7935SSA",            desc:"",    gross:-18.48,   discount:0.00,    net:-18.48    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"11/26/25", invoice:"7936SSA",            desc:"",    gross:-31.68,   discount:0.00,    net:-31.68    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/08/25", invoice:"7946SSA",            desc:"",    gross:-31.00,   discount:0.00,    net:-31.00    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/08/25", invoice:"7947SSA",            desc:"",    gross:-58.25,   discount:0.00,    net:-58.25    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/12/25", invoice:"7961SSA",            desc:"",    gross:-18.48,   discount:0.00,    net:-18.48    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/22/25", invoice:"7980",               desc:"",    gross:739.20,   discount:14.78,   net:724.42    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"+111",gross:2038.08,  discount:40.76,   net:1997.32   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"-888",gross:201.60,   discount:-4.03,   net:-197.57   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"-999",gross:201.60,   discount:4.03,    net:197.57    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"",    gross:2038.08,  discount:-40.76,  net:-1997.32  },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8028",               desc:"",    gross:1534.08,  discount:30.68,   net:1503.40   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"02/05/26", invoice:"8029",               desc:"",    gross:403.20,   discount:8.06,    net:395.14    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"02/10/26", invoice:"8062",               desc:"",    gross:2318.40,  discount:46.37,   net:2272.03   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"02/05/26", invoice:"8064",               desc:"",    gross:235.20,   discount:4.70,    net:230.50    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/25/25", invoice:"FSRHARFY26Q145964Y", desc:"",    gross:3378.56,  discount:67.57,   net:3310.99   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/04/26", invoice:"JIMBOSSBS684",        desc:"",    gross:-75.85,   discount:0.00,    net:-75.85    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/27/25", invoice:"MCB2025I227",         desc:"",    gross:-63.85,   discount:0.00,    net:-63.85    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/03/26", invoice:"MCB20260103",         desc:"",    gross:-68.20,   discount:0.00,    net:-68.20    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/10/26", invoice:"MCB20260110",         desc:"",    gross:-41.92,   discount:0.00,    net:-41.92    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/17/26", invoice:"MCB20260117",         desc:"",    gross:-46.97,   discount:0.00,    net:-46.97    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/24/26", invoice:"MCB20260124",         desc:"",    gross:-126.98,  discount:0.00,    net:-126.98   },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/31/26", invoice:"MCB20260131",         desc:"",    gross:-63.58,   discount:0.00,    net:-63.58    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"02/14/26", invoice:"MCB20260214",         desc:"",    gross:-74.62,   discount:0.00,    net:-74.62    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"12/26/25", invoice:"URMTO00191754HCM",    desc:"",    gross:-11.56,   discount:0.00,    net:-11.56    },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"WRDC0126045964",      desc:"",    gross:-4081.01, discount:0.00,    net:-4081.01  },
+  { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"(see stub)",          desc:"",    gross:-750.00,  discount:0.00,    net:-750.00   },
+  // ─── CHECK 2043520 · 01/30/2026 ───────────────────────────────────────────
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"12/12/25", invoice:"017506323PTYHEINEN",  desc:"",                   gross:-73.20,   discount:0.00,   net:-73.20   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/07/26", invoice:"017664363PTYHEINEN",  desc:"",                   gross:-71.80,   discount:0.00,   net:-71.80   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"11/03/25", invoice:"7876SSA",             desc:"",                   gross:-11.76,   discount:0.00,   net:-11.76   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"11/24/25", invoice:"792350A",             desc:"",                   gross:-10.08,   discount:0.00,   net:-10.08   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8007",                desc:"",                   gross:806.40,   discount:16.13,  net:790.27   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8008",                desc:"",                   gross:336.00,   discount:6.72,   net:329.28   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8009",                desc:"",                   gross:268.80,   discount:5.38,   net:263.42   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/03/26", invoice:"CMQ010326045964",     desc:"Quality Chargeb",    gross:-4.01,    discount:0.00,   net:-4.01    },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/26/26", invoice:"CMQ120625045964",     desc:"Quality Chargeb",    gross:-9.49,    discount:0.00,   net:-9.49    },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/26/26", invoice:"ERDC0126045964",      desc:"",                   gross:-750.00,  discount:0.00,   net:-750.00  },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/03/26", invoice:"WE010326045964",      desc:"MCB Chargeback",     gross:-22.41,   discount:0.00,   net:-22.41   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/10/26", invoice:"WE011026045964",      desc:"MCB Chargeback",     gross:-63.68,   discount:0.00,   net:-63.68   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"01/17/26", invoice:"WE011726045964",      desc:"MCB Chargeback",     gross:-28.28,   discount:0.00,   net:-28.28   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"11/29/25", invoice:"WE112925045964",      desc:"MCB Chargeback",     gross:-19.44,   discount:0.00,   net:-19.44   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"12/06/25", invoice:"WE120625045964",      desc:"MCB Chargeback",     gross:-42.32,   discount:0.00,   net:-42.32   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"12/13/25", invoice:"WE121325045964",      desc:"MCB Chargeback",     gross:-52.11,   discount:0.00,   net:-52.11   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"12/20/25", invoice:"WE122025045964",      desc:"MCB Chargeback",     gross:-48.31,   discount:0.00,   net:-48.31   },
+  { checkDate:"01/30/2026", checkNum:"2043520", date:"12/27/25", invoice:"WE122725045964",      desc:"MCB Chargeback",     gross:-15.95,   discount:0.00,   net:-15.95   },
+  // ─── CHECK 1698552 · 12/24/2025 ───────────────────────────────────────────
+  { checkDate:"12/24/2025", checkNum:"1698552", date:"12/09/25", invoice:"1125URMP45964YA",    desc:"",    gross:-190.00,  discount:0.00,   net:-190.00  },
+  { checkDate:"12/24/2025", checkNum:"1698552", date:"12/09/25", invoice:"1125URMP45964YB",    desc:"",    gross:-190.00,  discount:0.00,   net:-190.00  },
+  { checkDate:"12/24/2025", checkNum:"1698552", date:"12/12/25", invoice:"7961",               desc:"",    gross:739.20,   discount:14.78,  net:724.42   },
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function fmt(v) {
+  if (v === 0) return '$0.00';
+  const abs = Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (v < 0 ? '-$' : '$') + abs;
+}
+
+function fmtClass(v) {
+  if (v > 0) return 'positive';
+  if (v < 0) return 'negative';
+  return 'zero';
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+let sortCol = -1, sortDir = 1;
+const notes = {};
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  let sumCredits = 0, sumDeductions = 0, sumDiscounts = 0, sumGross = 0, sumNet = 0;
+
+  data.forEach((row, i) => {
+    const isCredit = row.net > 0;
+    const type = isCredit ? 'Credit' : 'Deduction';
+    const tr = document.createElement('tr');
+    tr.className = isCredit ? 'type-positive' : 'type-negative';
+    tr.dataset.idx = rawData.indexOf(row);
+
+    const noteKey = rawData.indexOf(row);
+    const savedNote = notes[noteKey] || '';
+
+    tr.innerHTML = `
+      <td class="row-num">${i + 1}</td>
+      <td style="font-family:var(--mono);font-size:11px;">${row.checkDate}</td>
+      <td style="font-family:var(--mono);font-size:11px;font-weight:500;">${row.checkNum}</td>
+      <td>${row.date}</td>
+      <td class="inv-num">${row.invoice}</td>
+      <td>${row.desc ? `<span class="desc-badge">${row.desc}</span>` : '<span style="color:var(--text-dim);font-size:10px;">—</span>'}</td>
+      <td><span class="type-badge ${type.toLowerCase()}">${type}</span></td>
+      <td class="amount-cell ${fmtClass(row.gross)}">${fmt(row.gross)}</td>
+      <td class="amount-cell ${fmtClass(row.discount)}">${row.discount !== 0 ? fmt(row.discount) : '<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="amount-cell ${fmtClass(row.net)}">${fmt(row.net)}</td>
+      <td><input class="notes-input" placeholder="Add note..." value="${savedNote}" onchange="saveNote(${noteKey}, this.value)"></td>
+    `;
+
+    tbody.appendChild(tr);
+
+    if (row.net > 0) sumCredits += row.net;
+    else sumDeductions += row.net;
+    sumDiscounts += row.discount;
+    sumGross += row.gross;
+    sumNet += row.net;
+  });
+
+  // footer
+  document.getElementById('foot-gross').innerHTML = `<span class="${fmtClass(sumGross)}">${fmt(sumGross)}</span>`;
+  document.getElementById('foot-discount').innerHTML = `<span class="${fmtClass(sumDiscounts)}">${fmt(sumDiscounts)}</span>`;
+  document.getElementById('foot-net').textContent = fmt(sumNet);
+  document.getElementById('foot-gross').className = `amount-cell ${fmtClass(sumGross)}`;
+
+  // summary strip
+  document.getElementById('sum-credits').textContent = fmt(sumCredits);
+  document.getElementById('sum-deductions').textContent = fmt(sumDeductions);
+  document.getElementById('sum-discounts').textContent = fmt(sumDiscounts);
+  document.getElementById('sum-visible').textContent = data.length;
+  document.getElementById('rowCount').textContent = `${data.length} row${data.length !== 1 ? 's' : ''}`;
+}
+
+function saveNote(key, val) { notes[key] = val; }
+
+// ─── FILTER + SORT ────────────────────────────────────────────────────────────
+function getFilteredData() {
+  const global = document.getElementById('globalSearch').value.toLowerCase();
+  const typeF = document.getElementById('typeFilter').value.toLowerCase();
+  const checkF = document.getElementById('checkFilter').value;
+  const colFilters = [...document.querySelectorAll('.col-filter')].map(el => ({
+    col: parseInt(el.dataset.col), val: el.value.toLowerCase()
+  }));
+
+  return rawData.filter(row => {
+    const isCredit = row.net > 0;
+    const type = isCredit ? 'credit' : 'deduction';
+    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.desc, type, fmt(row.gross), row.discount !== 0 ? fmt(row.discount) : '', fmt(row.net), ''];
+
+    if (checkF && row.checkNum !== checkF) return false;
+    if (typeF && !type.includes(typeF)) return false;
+
+    if (global) {
+      const all = cells.join(' ').toLowerCase();
+      if (!all.includes(global)) return false;
+    }
+
+    for (const f of colFilters) {
+      if (f.val && !cells[f.col].toLowerCase().includes(f.val)) return false;
+    }
+
+    return true;
+  });
+}
+
+function applyFilters() {
+  let data = getFilteredData();
+  if (sortCol >= 0) data = sortData(data, sortCol, sortDir);
+  renderTable(data);
+}
+
+// ─── SORT ────────────────────────────────────────────────────────────────────
+function sortData(data, col, dir) {
+  return [...data].sort((a, b) => {
+    const keys = [null, 'checkDate', 'checkNum', 'date', 'invoice', 'desc', null, 'gross', 'discount', 'net'];
+    if (col === 6) {
+      const av = a.net > 0 ? 1 : 0, bv = b.net > 0 ? 1 : 0;
+      return dir * (av - bv);
+    }
+    const k = keys[col];
+    if (!k) return 0;
+    if (typeof a[k] === 'number') return dir * (a[k] - b[k]);
+    return dir * a[k].localeCompare(b[k]);
+  });
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+
+  document.querySelectorAll('#headerRow th').forEach((th, i) => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (i === col) th.classList.add(sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+  });
+
+  applyFilters();
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAll() {
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('typeFilter').value = '';
+  document.getElementById('checkFilter').value = '';
+  document.querySelectorAll('.col-filter').forEach(el => el.value = '');
+  document.querySelectorAll('#headerRow th').forEach(th => th.classList.remove('sorted-asc','sorted-desc'));
+  sortCol = -1; sortDir = 1;
+  applyFilters();
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const data = getFilteredData();
+  const headers = ['#','Check Date','Check Number','Invoice Date','Invoice Number','Description','Type','Gross Amount','Discount Amount','Net Amount','Notes'];
+  const rows = data.map((row, i) => {
+    const idx = rawData.indexOf(row);
+    const type = row.net > 0 ? 'Credit' : 'Deduction';
+    return [i+1, row.checkDate, row.checkNum, row.date, row.invoice, row.desc, type, row.gross.toFixed(2), row.discount.toFixed(2), row.net.toFixed(2), (notes[idx] || '')].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'UNFI_Deductions_MultiCheck.csv'; a.click();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.getElementById('sum-count').textContent = rawData.length;
+document.getElementById('typeFilter').addEventListener('change', applyFilters);
+document.getElementById('checkFilter').addEventListener('change', applyFilters);
+applyFilters();
+</script>
+</body>
+</html>
