@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hala Sales Worksheet — March 1–15, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f1923;
+    --ink-soft: #3d4f5c;
+    --ink-muted: #7a8f9e;
+    --paper: #ffffff;
+    --paper-warm: #f8fafc;
+    --rule: #e2e8f0;
+    --accent: #c0392b;
+    --accent-soft: #fdecea;
+    --green: #166534;
+    --green-bg: #dcfce7;
+    --blue: #1e3a5f;
+    --blue-bg: #dbeafe;
+    --gold: #92400e;
+    --gold-bg: #fef3c7;
+  }
+
+  body {
+    font-family: 'Nunito Sans', 'Calibri', 'Trebuchet MS', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+    border-radius: 0.75rem;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-texture {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .header-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-eyebrow {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.3rem;
+  }
+
+  .header h1 {
+    font-family: 'Nunito', 'Calibri', sans-serif;
+    font-size: 2.1rem;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .header h1 span {
+    font-style: italic;
+    opacity: 0.9;
+  }
+
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .header-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: right;
+  }
+
+  .header-stat {
+    background: rgba(255,255,255,0.15);
+    border-radius: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    min-width: 130px;
+  }
+
+  .header-stat-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 0.1rem;
+  }
+
+  .header-stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Section */
+  .section {
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1.5px solid var(--ink);
+  }
+
+  .section-title {
+    font-family: 'Nunito', 'Calibri', sans-serif;
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+
+  .section-badge {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+  }
+
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  thead th {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: var(--paper-warm);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  thead th:last-child { text-align: right; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--paper-warm); }
+
+  tbody td {
+    padding: 0.6rem 0.75rem;
+    vertical-align: top;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .td-date {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    width: 100px;
+  }
+
+  .td-account { font-weight: 500; }
+
+  .td-location {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .td-details {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .td-cases {
+    text-align: right;
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .td-total {
+    text-align: right;
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+
+  .new-badge {
+    display: inline-block;
+    background: var(--green-bg);
+    color: var(--green);
+    font-size: 0.62rem;
+    font-weight: 600;
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.2rem;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+  }
+
+  /* Totals row */
+  .totals-row td {
+    background: transparent;
+    color: #166534 !important;
+    font-weight: 600;
+    border-bottom: 1px solid var(--rule);
+    border-top: 2px solid #e2e8f0;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .totals-row .td-label {
+    font-family: 'Nunito', 'Calibri', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: #166534 !important;
+  }
+
+  .totals-row .td-cases,
+  .totals-row .td-total {
+    color: #166534 !important;
+    font-size: 0.9rem;
+  }
+
+  /* Summary cards */
+  .summary-strip {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .summary-cell {
+    background: var(--paper);
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+
+  .summary-cell-label {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .summary-cell-value {
+    font-family: 'Nunito', 'Calibri', sans-serif;
+    font-size: 1.6rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .summary-cell-value.accent { color: var(--accent); }
+  .summary-cell-value.green { color: var(--green); }
+
+  .summary-cell-sub {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* Grand total */
+  .grand-total {
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    background: #f1f5f9;
+    color: var(--ink);
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border: 1px solid var(--rule);
+  }
+
+  .grand-total-label {
+    font-family: 'Nunito', 'Calibri', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--ink);
+  }
+
+  .grand-total-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .gt-stat { text-align: center; }
+
+  .gt-stat-value {
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+  }
+
+  .gt-stat-label {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .summary-cell-sub {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* Footer */
+  .footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    font-family: 'Nunito Sans', 'Calibri', sans-serif;
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media print {
+    body { padding: 1rem; background: white; }
+    .summary-strip, .grand-total { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-texture"></div>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="header-eyebrow">Swoffle LLC · Sales Rep Performance Report</div>
+      <h1>Hala <span>Sales Worksheet</span></h1>
+      <div class="header-meta">
+        <span>Period: March 1–15, 2026</span>
+        <span>Prepared by: Stephen Nance · Brand Share It Sales Partners</span>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="header-stat">
+        <div class="header-stat-label">Direct Revenue</div>
+        <div class="header-stat-value">$823.50</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-label">Total Cases</div>
+        <div class="header-stat-value">89</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-label">Total Orders</div>
+        <div class="header-stat-value">20</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary Strip -->
+<div class="summary-strip">
+  <div class="summary-cell">
+    <div class="summary-cell-label">Direct Orders</div>
+    <div class="summary-cell-value accent">7</div>
+    <div class="summary-cell-sub">orders written</div>
+  </div>
+  <div class="summary-cell">
+    <div class="summary-cell-label">Direct Cases</div>
+    <div class="summary-cell-value accent">40</div>
+    <div class="summary-cell-sub">tray cases</div>
+  </div>
+  <div class="summary-cell">
+    <div class="summary-cell-label">Direct Revenue</div>
+    <div class="summary-cell-value accent">$823</div>
+    <div class="summary-cell-sub">$823.50 total</div>
+  </div>
+  <div class="summary-cell">
+    <div class="summary-cell-label">Indirect Orders</div>
+    <div class="summary-cell-value green">13</div>
+    <div class="summary-cell-sub">turnover orders</div>
+  </div>
+  <div class="summary-cell">
+    <div class="summary-cell-label">Indirect Cases</div>
+    <div class="summary-cell-value green">49</div>
+    <div class="summary-cell-sub">tray cases</div>
+  </div>
+  <div class="summary-cell">
+    <div class="summary-cell-label">New at KeHE</div>
+    <div class="summary-cell-value green">8</div>
+    <div class="summary-cell-sub">new accounts</div>
+  </div>
+</div>
+
+<!-- Direct Orders Section -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Hala Direct Orders</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Account</th>
+        <th>Location</th>
+        <th>Order Details</th>
+        <th>Cases</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-date">Mar 11</td>
+        <td class="td-account">Grove City County Market</td>
+        <td class="td-location">Grove City, PA</td>
+        <td class="td-details">2 DCD · 1 FV · 2 CC · 1 Caramel 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$122.88</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 10</td>
+        <td class="td-account">KC Mart 09</td>
+        <td class="td-location">Rear, SC</td>
+        <td class="td-details">1 DCD · 1 FV · 1 CC · 1 Caramel 12-pk</td>
+        <td class="td-cases">4</td>
+        <td class="td-total">$78.60</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 8</td>
+        <td class="td-account">Foods of All Nations</td>
+        <td class="td-location">Charlottesville, VA</td>
+        <td class="td-details">1 DCD · 2 FV · 1 CC · 2 Caramel 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$112.92</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 8</td>
+        <td class="td-account">Gourmet Meat and Sausage</td>
+        <td class="td-location">Lakewood, CO</td>
+        <td class="td-details">2 DCD · 1 FV · 1 CC · 2 Caramel 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$122.88</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 4</td>
+        <td class="td-account">Health Habit</td>
+        <td class="td-location">Kinston, NC</td>
+        <td class="td-details">6 Dark Chocolate Dipped 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$162.72</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 4</td>
+        <td class="td-account">Good Health Market</td>
+        <td class="td-location">Sheridan, WY</td>
+        <td class="td-details">2 DCD · 2 FV · 2 Caramel 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$110.58</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 3</td>
+        <td class="td-account">Annie K's Main Street Market</td>
+        <td class="td-location">Blacksburg, VA</td>
+        <td class="td-details">1 DCD · 1 FV · 1 CC · 3 Caramel 12-pk</td>
+        <td class="td-cases">6</td>
+        <td class="td-total">$112.92</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr class="totals-row">
+        <td colspan="4" class="td-label">Direct Orders Total</td>
+        <td class="td-cases">40 cases</td>
+        <td class="td-total">$823.50</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- Indirect Orders Section -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Hala Indirect Turnover Orders</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Account</th>
+        <th>Location</th>
+        <th>Order Details</th>
+        <th>Cases</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-date">Mar 15</td>
+        <td class="td-account">Natural Foods Market</td>
+        <td class="td-location">Johnson City, TN <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">2 Caramel · 2 FV · 2 DCD 12-pk</td>
+        <td class="td-cases">6</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 15</td>
+        <td class="td-account">Food Matters Market</td>
+        <td class="td-location">Brevard, NC <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">2 Caramel · 2 FV · 2 DCD 12-pk</td>
+        <td class="td-cases">6</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 15</td>
+        <td class="td-account">Diane's Natural Foods</td>
+        <td class="td-location">St. Augustine, FL <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">2 Caramel · 2 FV · 2 DCD 12-pk</td>
+        <td class="td-cases">6</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 14</td>
+        <td class="td-account">Get Healthy Market</td>
+        <td class="td-location">Brooksville, FL <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">1 Caramel · 1 FV · 1 DCD 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 14</td>
+        <td class="td-account">Get Healthy Market</td>
+        <td class="td-location">Spring Hill, FL <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">1 Caramel · 1 FV · 1 DCD 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 14</td>
+        <td class="td-account">Viroqua Food Co-op</td>
+        <td class="td-location">Viroqua, WI</td>
+        <td class="td-details">2 Caramel 12-pk</td>
+        <td class="td-cases">2</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 13</td>
+        <td class="td-account">Deep Roots Market</td>
+        <td class="td-location">Greensboro, NC <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">1 Caramel · 1 DCD · 1 FV 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 12</td>
+        <td class="td-account">David's Natural Market</td>
+        <td class="td-location">Gambrills, MD <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">1 Caramel · 1 FV · 1 DCD 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 12</td>
+        <td class="td-account">Columbia Health Foods</td>
+        <td class="td-location">Columbia, TN <span class="new-badge">NEW AT KeHE</span></td>
+        <td class="td-details">1 Caramel · 1 FV · 1 DCD 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 5</td>
+        <td class="td-account">Village Market of Waterbury</td>
+        <td class="td-location">Waterbury, VT</td>
+        <td class="td-details">1 Caramel · 1 DCD · 1 FV 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 5</td>
+        <td class="td-account">Green Grocer</td>
+        <td class="td-location">Moorefield, NY</td>
+        <td class="td-details">1 Caramel · 1 FV 12-pk</td>
+        <td class="td-cases">2</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 3</td>
+        <td class="td-account">NouVaux Market</td>
+        <td class="td-location">Philadelphia, PA</td>
+        <td class="td-details">2 FV · 2 Caramel · 2 DCD 12-pk</td>
+        <td class="td-cases">6</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mar 2</td>
+        <td class="td-account">South Royalton Market</td>
+        <td class="td-location">South Royalton, VT</td>
+        <td class="td-details">1 Caramel · 1 DCD · 1 FV 12-pk</td>
+        <td class="td-cases">3</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr class="totals-row">
+        <td colspan="3" class="td-label">Indirect Orders Total</td>
+        <td class="td-cases" style="text-align:right;">13 orders</td>
+        <td class="td-cases">49 cases</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- Grand Total -->
+<div class="grand-total">
+  <div class="grand-total-label">Hala Combined Activity<br>March 1–15, 2026</div>
+  <div class="grand-total-stats">
+    <div class="gt-stat">
+      <span class="gt-stat-value">20</span>
+      <span class="gt-stat-label">Total Orders</span>
+    </div>
+    <div class="gt-stat">
+      <span class="gt-stat-value">89</span>
+      <span class="gt-stat-label">Total Cases</span>
+    </div>
+    <div class="gt-stat">
+      <span class="gt-stat-value">$823.50</span>
+      <span class="gt-stat-label">Direct Revenue</span>
+    </div>
+    <div class="gt-stat">
+      <span class="gt-stat-value">8</span>
+      <span class="gt-stat-label">New at KeHE</span>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <span>Swoffle LLC · Brand Share It Sales Partners</span>
+  <span>Confidential · Internal Use Only</span>
+  <span>Generated March 2026</span>
+</div>
+
+</body>
+</html>
