@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Swoffle Master Email Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', 'Calibri', sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    padding: 2rem;
+    color: #1e293b;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .header-title {
+    font-family: 'Lato', 'Calibri', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0;
+  }
+  .header-subtitle {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.85);
+    margin-top: 0.25rem;
+    font-weight: 300;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 0.6rem 0.85rem 0.6rem 2.4rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-family: 'Lato', 'Calibri', sans-serif;
+    font-size: 0.9rem;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #searchInput:focus { border-color: #3b82f6; }
+
+  .count-badge {
+    background: #3b82f6;
+    color: #fff;
+    font-family: 'Lato', 'Calibri', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 24px rgba(59,130,246,0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  thead {
+    background: #ffffff;
+    border-bottom: 2px solid #cbd5e1;
+  }
+  thead th {
+    padding: 0.85rem 1.1rem;
+    text-align: left;
+    font-family: 'Lato', 'Calibri', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  thead th:hover { background: #f8fafc; }
+  thead th .sort-icon { margin-left: 0.4rem; opacity: 0.4; font-size: 0.7rem; }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #eff6ff; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:nth-child(even):hover { background: #eff6ff; }
+
+  td {
+    padding: 0.75rem 1.1rem;
+    color: #334155;
+    vertical-align: middle;
+  }
+  td:first-child {
+    font-weight: 500;
+    color: #1e293b;
+  }
+  td a {
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  td a:hover { color: #1d4ed8; text-decoration: underline; }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    display: none;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="texture-overlay"></div>
+  <div class="header-content">
+    <div class="header-left">
+      <h1 class="header-title">Swoffle Master Email Dashboard</h1>
+      <p class="header-subtitle">Created by Stephen Nance &nbsp;·&nbsp; Updated March 16, 2026</p>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Filter by account, phone, or email…" oninput="filterTable()"/>
+  </div>
+  <div class="count-badge" id="countBadge"></div>
+</div>
+
+<div class="table-wrap">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Account <span class="sort-icon">⇅</span></th>
+        <th onclick="sortTable(1)">Phone <span class="sort-icon">⇅</span></th>
+        <th onclick="sortTable(2)">Email <span class="sort-icon">⇅</span></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+  </table>
+  <div class="no-results" id="noResults">No matching accounts found.</div>
+</div>
+
+<div class="footer">Swoffle LLC &nbsp;·&nbsp; Brand Share It Sales Partners &nbsp;·&nbsp; Confidential</div>
+
+<script>
+const data = [
+  ["Foods of All Nations", "434-296-6131", "cindy@foodsofallnations.com"],
+  ["Lebanon Coop Food", "(603) 643-4889", "duganp@lebannon@coop"],
+  ["Austin Organics", "(929) 499-3099", "karmagurung613@gmail.com"],
+  ["Gourmet Meat & Sausage", "(303) 985-0126", "brianray.gmss@gmail.com"],
+  ["Cartwrights Market", "541-500-1469", "grocerymed@cartwrightsmarket.com"],
+  ["Empire Foods", "908-979-0888", "mike@empirefoods.com"],
+  ["Lexington Co-op Markets Buffalo", "(716) 886-2667", "rachel.smith@lex.coop"],
+  ["Arcata Food Coop", "707-822-5947", "michaelcahill@arcata.coop"],
+  ["Ridgefield Organics", "203-894-8102", "ridgefieldorganics@gmail.com"],
+  ["Nature's Pantry PA", "814-861-5200", "naturespantry@gmail.com"],
+  ["Suncoast Coop San Diego", "619-500-9001", "CenterStore@suncoastmarket.coop"],
+  ["The Grainery", "810-235-4621", "alaxandrianarducci@gmail.com"],
+  ["Good Earth Market", "302-537-7100", "Melissa@goodearthmarket.com"],
+  ["Viroqua Food Co-op", "608-637-7511", "sally.collacino@viroquafood.coop"],
+  ["Garden Patch Market", "574-255-3151", "raycorum@hotmail.com"],
+  ["Annie Kay's Main St. Market", "540-552-6870", "manager@anniekays.com"],
+  ["Bee Healthy", "(307) 347-2766", "terri@beehealthy.com"],
+  ["Heath's Natural Foods", "(386) 423-5126", "heathsnsb@gmail.com"],
+  ["South Royalton Market", "(802) 763-2400", "grocery@soromarket.coop"],
+  ["Palmyra Natural Foods", "(717) 838-2501", "Jefpnf@hotmail.com"],
+  ["Nouveaux Market", "215-438-7600", "nouveauxmarket3@gmail.com"],
+  ["Nature's Temptations", "(203) 438-5443", "marianne@naturestemptations.com"],
+  ["Empire Foods (NJ)", "908-979-0888", "mikefiume@outlook.com"],
+  ["Chatham Real Food Coop", "518-392-3353", "realfood@chatham.coop"],
+  ["New Morning Market", "203-263-4868", "richard.park@newmorningmarket.com"],
+  ["Garden Patch Market IN", "574-255-3151", "raygpm@gmail.com"],
+  ["Thyme & Season", "203-407-8128", "grocery.thyme@gmail.com"],
+  ["CFNF Coffee Shop", "203-661-8300", "info@cfcfcofee.com"],
+  ["Organic Market", "203-227-9007", "organicmarketwestport@gmail.com"],
+  ["Good Foods Grocery", "804-320-6767", "johnb@goodfoodsgrocery.com"],
+  ["HealthHabit", "252-523-8222", "brandijackson13@yahoo.com"],
+  ["Sunshine House", "618-283-0888", "sunshinehouse.vandalia@gmail.com"],
+  ["Abundant Living", "423-614-7885", "abundantlivingorganic@gmail.com"],
+  ["Good Health Market", "307-674-5715", "kimberly.goodhealthmarket@gmail.com"],
+  ["Granite State Naturals", "(603) 224-9341", "robin@granitestatenaturals.com"],
+  ["Cambridge Naturals", "617-492-4452", "michael.s@cambridgenaturals.com"],
+  ["A Market NH", "(603) 668-2650", "E.clements@atmyamarket.com"],
+  ["Moorefield Green Grocer", "(518) 383-1613", "info@thegreengrocer.com"],
+  ["Village Market of Waterbury", "(802) 244-1804", "grocery.villagemarket@agne.com"],
+  ["The Daily Market", "617-288-6000", "hello@thedailymarket.boston"],
+  ["David's Natural Market", "(410) 987-1533", "davidnaturalmarket@gmail.com"],
+  ["Clements Marketplace Bristol", "(401) 396-2500", "taylor@clementsmarket.com"],
+  ["Royal River Natural Food", "(207) 865-0046", "doug@rrnf.com"],
+  ["Woodstock Farmers Market", "802-241-2400", "sarah.k@woodstocksfarmersmarket.com"],
+  ["Syracuse Cooperative Market", "(315) 472-1385", "dangroc23@syracuse.coop"],
+  ["Willey Farms", "302-378-8441", "pkeener@willeyfarmsde.com"],
+  ["Winters Market", "(530) 794-6119", "wintersmarket@gmail.com"],
+  ["Baesler's Market", "812-268-5218", "kaysi@baeslers.com"],
+  ["A Matter of Health", "(845) 627-3333", "pimah2@matterofhealth.com"],
+  ["KC Market 9", "404-668-9091", "kcmarket09@gmail.com"],
+  ["Pap's Market", "740-876-4110", "papscarryoutnewboston@gmail.com"],
+  ["Marquette Food Coop", "906-225-0671", "mpenney@marquettefood.coop"],
+  ["Healthy Choice Markets", "618-857-2366", "cvalenti@hcwc.com"],
+  ["19 Wine & Spirits", "864-569-5744", "19wineandspirits@gmail.com"],
+  ["Granby Liquor Store", "413-467-3456", "granbyliquors@gmail.com"],
+  ["Potash Market", "312-266-4200", "aligue@potashmarkets.com"],
+  ["Wild Roots Market", "831-335-7322", "rose@wildrootsmarket.com"],
+  ["Greens Natural NJ", "908-888-2256", "timgm@greensnatural.com"],
+  ["Valley Wines CT", "860-677-9021", "valleywinesct@gmail.com"],
+  ["Stoney Brook Farm", "540-668-9067", "orders@stoneybrookfarm.org"],
+  ["Love at Whole Foods", "386-677-5236", "lovewholefoods@yahoo.com"],
+  ["Columbia Health Foods", "931-388-1148", "columbiahealthfoods@gmail.com"],
+  ["Chamberlains Natural Foods", "407-228-1373", "eor@chamberlains.com"],
+  ["Food Matters", "828-885-3663", "gm@goodmattersmarket.com"],
+  ["Deep Roots Market", "336-292-9216", "promotions@deeprootsmarket.com"],
+  ["BerryBrook Farm", "704-334-6528", "berrybrookfarm@bellsouth.net"],
+  ["Bristol Health Food Store", "423-968-1241", "bristolhealthfood@gmail.com"],
+  ["Nature's Food Patch", "727-304-1010", "assistantmanager@naturesfoodpatch.com"],
+  ["Rolling Oats Tampa", "813-873-7428", "jonathan@rollinoats.com"],
+  ["The Health Basket", "352-735-1166", "emjay@healthbasketmtdora.com"],
+  ["Get Healthy Spring Hill FL", "352-688-9119", "getfitgethealthyholly@gmail.com"],
+  ["Grassroots Natural FL", "904-384-4474", "anna@thegrassrootsmarket.com"],
+  ["Diane's Natural Foods", "904-808-9978", "leanna.noel@dianesnaturalmarket.com"],
+  ["Natural Foods Market TN", "423-610-1000", "april@nfmonline.com"],
+  ["Bee Well Honey Farm", "864-898-5122", "adrien@beewellhoneyfarm.com"],
+  ["Loveys Natural Foods", "910-509-0331", "loveysmarket@bellsouth.net"],
+];
+
+let sortDir = [1, 1, 1];
+let currentSort = -1;
+
+function renderTable(rows) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r[0]}</td>
+      <td>${r[1] || '<span style="color:#cbd5e1">—</span>'}</td>
+      <td><a href="mailto:${r[2]}">${r[2]}</a></td>
+    </tr>
+  `).join('');
+  document.getElementById('countBadge').textContent = `${rows.length} Accounts`;
+  document.getElementById('noResults').style.display = rows.length === 0 ? 'block' : 'none';
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = data.filter(r => r.join(' ').toLowerCase().includes(q));
+  renderTable(filtered);
+}
+
+function sortTable(col) {
+  if (currentSort === col) sortDir[col] *= -1;
+  else sortDir[col] = 1;
+  currentSort = col;
+  data.sort((a, b) => a[col].localeCompare(b[col]) * sortDir[col]);
+  filterTable();
+}
+
+renderTable(data);
+</script>
+</body>
+</html>
