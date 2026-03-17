@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle × Rainforest | Regional Territory Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --surface3: #f1f5f9;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --accent: #f5a623;
+  --accent2: #e8621a;
+  --teal: #0d9488;
+  --blue: #3b82f6;
+  --purple: #7c3aed;
+  --rose: #e11d48;
+  --green: #059669;
+  --red: #dc2626;
+  --amber: #d97706;
+  --text: #0f172a;
+  --muted: #64748b;
+  --faint: #94a3b8;
+  --eas: #d97706;
+  --fdk: #0d9488;
+  --eas-bg: rgba(217,119,6,0.08);
+  --fdk-bg: rgba(13,148,136,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; line-height:1.6; }
+
+/* ─── HEADER ─── */
+.header {
+  background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin: 16px 24px 0;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  position: relative;
+  overflow: hidden;
+}
+.texture-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+.header-inner { position:relative; z-index:1; max-width:1440px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+.brand-logo { width:42px; height:42px; background:rgba(255,255,255,0.25); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; backdrop-filter:blur(4px); }
+.brand-name { font-family:'DM Serif Display',serif; font-size:22px; color:#ffffff; letter-spacing:-0.3px; text-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.brand-sub { color:rgba(255,255,255,0.75); font-size:11px; text-transform:uppercase; letter-spacing:1.2px; margin-top:1px; }
+.territory-badges { display:flex; gap:8px; }
+.t-badge { padding:5px 14px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.t-eas { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:#ffffff; }
+.t-fdk { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.35); color:#e0f7ff; }
+.t-national { background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.25); color:#ffffff; }
+.header-pills { display:flex; gap:10px; flex-shrink:0; }
+.hpill { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.35); border-radius:10px; padding:4px 12px; font-size:11px; color:rgba(255,255,255,0.8); backdrop-filter:blur(4px); }
+.hpill b { color:#ffffff; }
+
+/* ─── TERRITORY BAR ─── */
+.territory-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  margin: 0 24px;
+  display: flex;
+  align-items: center;
+}
+.territory-bar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.territory-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  flex-shrink: 0;
+}
+.territory-btns {
+  display: flex;
+  gap: 8px;
+}
+.terr-btn {
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid var(--border2);
+  background: var(--surface2);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.terr-btn:hover { border-color: var(--blue); color: var(--blue); background: #eff6ff; }
+.terr-btn.active { background: var(--blue); border-color: var(--blue); color: #ffffff; box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
+.terr-btn.terr-eas.active { background: var(--eas); border-color: var(--eas); color: #ffffff; box-shadow: 0 2px 8px rgba(217,119,6,0.3); }
+.terr-btn.terr-eas:hover:not(.active) { border-color: var(--eas); color: var(--eas); background: #fffbeb; }
+.terr-btn.terr-fdk.active { background: var(--teal); border-color: var(--teal); color: #ffffff; box-shadow: 0 2px 8px rgba(13,148,136,0.3); }
+.terr-btn.terr-fdk:hover:not(.active) { border-color: var(--teal); color: var(--teal); background: #f0fdfa; }
+.terr-icon { font-size: 14px; }
+.territory-meta {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 12px;
+}
+
+/* ─── TABS ─── */
+.tab-bar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 24px; margin: 0 24px; }
+.tab-bar-inner { max-width:1440px; margin:0 auto; display:flex; gap:2px; }
+.tb { padding:12px 22px; background:none; border:none; color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; border-bottom:2px solid transparent; transition:all 0.2s; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.tb:hover { color:var(--text); background:var(--surface2); }
+.tb.active { color:var(--blue); border-bottom-color:var(--blue); }
+.tb-icon { font-size:15px; }
+
+/* ─── CONTENT ─── */
+.content { max-width:1440px; margin:0 auto; padding:28px 48px 80px; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ─── SECTION HEADERS ─── */
+.sec-hdr { display:flex; align-items:baseline; gap:12px; margin-bottom:18px; }
+.sec-title { font-family:'DM Serif Display',serif; font-size:24px; color:var(--text); }
+.sec-sub { color:var(--muted); font-size:13px; }
+.sub-hdr { font-size:14px; font-weight:700; color:var(--text); margin:24px 0 14px; text-transform:uppercase; letter-spacing:0.6px; }
+.sub-hdr span { color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0; margin-left:8px; font-size:12px; }
+
+/* ─── KPI GRIDS ─── */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:14px; margin-bottom:24px; }
+.kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; transition:all 0.2s; position:relative; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--card-top,var(--blue)); }
+.kpi-card:hover { border-color:var(--card-top,var(--blue)); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.kpi-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; font-weight:600; margin-bottom:9px; }
+.kpi-val { font-family:'DM Serif Display',serif; font-size:30px; line-height:1; margin-bottom:7px; color:var(--text); }
+.kpi-val.gold { color:var(--amber); }
+.kpi-val.teal { color:var(--teal); }
+.kpi-val.blue { color:var(--blue); }
+.kpi-badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:10px; }
+.up { background:#dcfce7; color:#16a34a; }
+.neutral { background:#fef9c3; color:#a16207; }
+.info { background:#dbeafe; color:#1d4ed8; }
+.kpi-sub { color:var(--faint); font-size:11px; margin-top:4px; }
+
+/* ─── CHART GRIDS ─── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:18px; }
+.g32 { display:grid; grid-template-columns:3fr 2fr; gap:18px; margin-bottom:18px; }
+.g23 { display:grid; grid-template-columns:2fr 3fr; gap:18px; margin-bottom:18px; }
+.chart-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.chart-card.eas-tint { background:linear-gradient(135deg,#ffffff,rgba(217,119,6,0.04)); border-color:rgba(217,119,6,0.2); }
+.chart-card.fdk-tint { background:linear-gradient(135deg,#ffffff,rgba(13,148,136,0.04)); border-color:rgba(13,148,136,0.2); }
+.ct { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
+.ct-tag { font-size:10px; font-weight:600; padding:2px 8px; border-radius:8px; text-transform:none; letter-spacing:0; }
+.ct-eas { background:rgba(217,119,6,0.1); color:var(--eas); border:1px solid rgba(217,119,6,0.25); }
+.ct-fdk { background:rgba(13,148,136,0.1); color:var(--fdk); border:1px solid rgba(13,148,136,0.25); }
+.ct-both { background:#f1f5f9; color:var(--text); border:1px solid var(--border2); }
+
+/* ─── TERRITORY COMPARE BARS ─── */
+.compare-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.compare-label { width:160px; font-size:12px; color:var(--muted); flex-shrink:0; }
+.compare-bars { flex:1; display:flex; flex-direction:column; gap:3px; }
+.cbar-wrap { display:flex; align-items:center; gap:6px; }
+.cbar-bg { flex:1; background:var(--surface2); border-radius:3px; height:5px; border:1px solid var(--border); }
+.cbar { height:5px; border-radius:3px; transition:width 0.6s ease; }
+.cbar.eas { background:var(--eas); }
+.cbar.fdk { background:var(--fdk); }
+.cbar-val { width:60px; font-size:11px; text-align:right; flex-shrink:0; color:var(--text); font-weight:500; }
+
+/* ─── TABLES ─── */
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th { text-align:left; padding:9px 12px; font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; border-bottom:2px solid var(--border); background:var(--surface2); }
+.tbl td { padding:9px 12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border); }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:#f8fafc; color:var(--text); }
+.tbl .name { color:var(--text); font-weight:500; }
+.tbl .rev { color:var(--amber); font-weight:700; font-family:monospace; }
+.tbl .rank { color:var(--faint); font-size:11px; font-weight:700; }
+
+/* ─── BADGES ─── */
+.badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:10px; font-weight:700; letter-spacing:0.4px; }
+.b-wfm { background:#dbeafe; color:#1d4ed8; }
+.b-indie { background:#ede9fe; color:#6d28d9; }
+.b-roche { background:#fee2e2; color:#b91c1c; }
+.b-ncg { background:#d1fae5; color:#065f46; }
+.b-infra { background:#fef3c7; color:#92400e; }
+.b-eas { background:rgba(217,119,6,0.1); color:var(--eas); border:1px solid rgba(217,119,6,0.3); }
+.b-fdk { background:rgba(13,148,136,0.1); color:var(--fdk); border:1px solid rgba(13,148,136,0.3); }
+.state-pill { display:inline-block; padding:2px 7px; border-radius:9px; font-size:10px; font-weight:700; }
+.s-ma { background:#dbeafe; color:#1e40af; }
+.s-me { background:#d1fae5; color:#065f46; }
+.s-nh { background:#ede9fe; color:#5b21b6; }
+.s-vt { background:#dcfce7; color:#166534; }
+.s-ri { background:#fce7f3; color:#9d174d; }
+.s-ct { background:#fef9c3; color:#854d0e; }
+.s-dc { background:#dbeafe; color:#1d4ed8; }
+.s-va { background:#d1fae5; color:#065f46; }
+.s-md { background:#fef3c7; color:#92400e; }
+.s-pa { background:#ede9fe; color:#6d28d9; }
+.s-nj { background:#fee2e2; color:#b91c1c; }
+.s-de { background:#cffafe; color:#155e75; }
+
+/* ─── INSIGHT CARDS ─── */
+.ins-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:14px; margin-top:20px; }
+.ins-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; border-left:3px solid var(--amber); box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+.ins-card.teal { border-left-color:var(--teal); }
+.ins-card.blue { border-left-color:var(--blue); }
+.ins-card.purple { border-left-color:var(--purple); }
+.ins-card.rose { border-left-color:var(--rose); }
+.ins-card.green { border-left-color:var(--green); }
+.ins-icon { font-size:18px; margin-bottom:7px; }
+.ins-title { font-weight:600; font-size:14px; color:var(--text); margin-bottom:5px; }
+.ins-body { font-size:12px; color:var(--muted); line-height:1.55; }
+
+/* ─── SKU CARDS ─── */
+.sku-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:20px; }
+.sku-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.sku-icon { font-size:24px; margin-bottom:8px; }
+.sku-name { font-weight:600; font-size:13px; color:var(--text); margin-bottom:2px; }
+.sku-code { font-size:11px; color:var(--muted); margin-bottom:10px; font-family:monospace; }
+.sku-rev { font-family:'DM Serif Display',serif; font-size:22px; color:var(--amber); }
+.sku-share { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* ─── STORE STORE-ROW ─── */
+.store-row { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); }
+.store-row:last-child { border-bottom:none; }
+.store-rank { width:22px; font-size:11px; font-weight:700; color:var(--faint); text-align:right; flex-shrink:0; }
+.store-info { flex:1; min-width:0; }
+.store-name { font-size:13px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.store-meta { display:flex; gap:6px; margin-top:2px; }
+.store-bar-wrap { width:120px; flex-shrink:0; }
+.store-bar-bg { background:var(--surface2); border-radius:3px; height:4px; border:1px solid var(--border); }
+.store-bar { height:4px; border-radius:3px; background:linear-gradient(90deg,var(--amber),var(--accent2)); }
+.store-rev { width:70px; text-align:right; font-size:13px; font-weight:700; color:var(--amber); font-family:monospace; flex-shrink:0; }
+
+/* ─── SUPPLY ALERT ─── */
+.alert-row { background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:13px 16px; margin-bottom:14px; display:flex; align-items:flex-start; gap:10px; }
+.alert-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.alert-text { font-size:13px; color:#92400e; line-height:1.5; }
+.alert-text strong { color:#78350f; }
+
+/* ─── DIVIDER ─── */
+hr.div { border:none; border-top:1px solid var(--border); margin:24px 0; }
+
+/* ─── FOOTER ─── */
+.footer { text-align:center; padding:20px; color:var(--faint); font-size:12px; border-top:1px solid var(--border); margin-top:40px; }
+
+@media(max-width:960px){
+  .g2,.g3,.g32,.g23{grid-template-columns:1fr;}
+  .header-pills{display:none;}
+  .content{padding:18px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="header">
+  <div class="texture-overlay"></div>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">Swoffle × Rainforest Distribution</div>
+        <div class="brand-sub">Regional Territory Intelligence</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;letter-spacing:0.4px;">Prepared by Stephen Nance · Brand Share It Sales Partners</div>
+      </div>
+    </div>
+    <div class="header-pills">
+      <div class="hpill">Accounts: <b>147+</b></div>
+      <div class="hpill">States: <b>14</b></div>
+      <div class="hpill">WFM Stores: <b>82</b></div>
+      <div class="hpill">Data: <b>2024 – Feb 2026</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TERRITORY SELECTOR ═══════════════ -->
+<div class="territory-bar">
+  <div class="territory-bar-inner">
+    <span class="territory-label">View Territory:</span>
+    <div class="territory-btns">
+      <button class="terr-btn" id="terr-combined" onclick="setTerritory('combined', this)">
+        <span class="terr-icon">🌎</span> Combined View
+      </button>
+      <button class="terr-btn terr-eas" id="terr-eas" onclick="setTerritory('eas', this)">
+        <span class="terr-icon">📦</span> MA-EAS · New England
+      </button>
+      <button class="terr-btn terr-fdk" id="terr-fdk" onclick="setTerritory('fdk', this)">
+        <span class="terr-icon">🗺</span> MD-FDK · Mid-Atlantic
+      </button>
+    </div>
+    <div class="territory-meta" id="territory-meta">
+      <span id="terr-meta-text">82 WFM stores · 14 states · Jan 2024 – Feb 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TABS ═══════════════ -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tb active" onclick="showTab('t1',this)"><span class="tb-icon">🌎</span>National Overview</button>
+    <button class="tb" onclick="showTab('t2',this)"><span class="tb-icon">🔀</span>Territory Compare</button>
+    <button class="tb" onclick="showTab('t3',this)"><span class="tb-icon">🏪</span>Account Intelligence</button>
+    <button class="tb" onclick="showTab('t4',this)"><span class="tb-icon">📦</span>SKU Performance</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 1 — NATIONAL OVERVIEW
+════════════════════════════════════════════════════════════════ -->
+<div id="t1" class="tab-panel active">
+
+  <div class="sec-hdr" id="sec1">
+    <div class="sec-title">National Sales Overview</div>
+    <div class="sec-sub">MA-EAS + MD-FDK combined · All channels · 2024–2026 YTD</div>
+  </div>
+
+  <!-- Top KPIs — COMBINED -->
+  <div data-terr="combined">
+  <div class="kpi-grid">
+    <div class="kpi-card" style="--card-top:var(--accent)">
+      <div class="kpi-label">Total All-Time Revenue</div>
+      <div class="kpi-val gold">$113K</div>
+      <div class="kpi-badge neutral">Both territories</div>
+      <div class="kpi-sub">Jan 2024 – Feb 2026</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--green)">
+      <div class="kpi-label">2025 Combined Revenue</div>
+      <div class="kpi-val">$71.8K</div>
+      <div class="kpi-badge up">▲ Strong YOY</div>
+      <div class="kpi-sub">vs. ~$37K in 2024 (EAS only)</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--teal)">
+      <div class="kpi-label">2026 YTD Combined</div>
+      <div class="kpi-val teal">$12.8K</div>
+      <div class="kpi-badge info">Jan–Feb 2026</div>
+      <div class="kpi-sub">~$76K annualized pace</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--blue)">
+      <div class="kpi-label">Active WFM Stores</div>
+      <div class="kpi-val blue">82</div>
+      <div class="kpi-badge up">37 EAS + 45 FDK</div>
+      <div class="kpi-sub">Across 14 states</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--purple)">
+      <div class="kpi-label">Total Accounts</div>
+      <div class="kpi-val">147+</div>
+      <div class="kpi-badge up">WFM + Indie + Co-op</div>
+      <div class="kpi-sub">All channel types</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--amber)">
+      <div class="kpi-label">States Covered</div>
+      <div class="kpi-val">14</div>
+      <div class="kpi-badge neutral">NE + Mid-Atlantic</div>
+      <div class="kpi-sub">MA ME NH VT RI CT PA DC VA MD NJ DE NY</div>
+    </div>
+    <div class="kpi-card" style="--card-top:var(--rose)">
+      <div class="kpi-label">Active SKUs</div>
+      <div class="kpi-val">7</div>
+      <div class="kpi-badge info">758401–405, 410, 411</div>
+      <div class="kpi-sub">403/406 = indie only</div>
+    </div>
+  </div>
+
+  <!-- Revenue Comparison -->
+  <div class="g32">
+    <div class="chart-card">
+      <div class="ct">Combined Monthly Revenue Trend <span class="ct-tag ct-both">2025 + 2026 YTD</span></div>
+      <canvas id="combinedMonthly" style="max-height:260px"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="ct">Territory Revenue Split</div>
+      <canvas id="territoryPie" style="max-height:260px"></canvas>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="chart-card">
+      <div class="ct">Annual Revenue by Territory <span class="ct-tag ct-both">2024 · 2025 · 2026 YTD</span></div>
+      <canvas id="annualByTerritory" style="max-height:230px"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="ct">WFM vs. Non-WFM · Combined 2025</div>
+      <canvas id="wfmSplit" style="max-height:230px"></canvas>
+    </div>
+  </div>
+
+  <div class="sub-hdr">Territory Snapshot Comparison</div>
+  <div class="g2">
+    <div class="chart-card eas-tint">
+      <div class="ct">MA-EAS · New England <span class="ct-tag ct-eas">Jan 2024 – Feb 2026</span></div>
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:14px;">
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">Total Rev</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--eas)">$89.4K</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">2025 Rev</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--text)">$51.2K</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">2026 YTD</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--teal)">$9.8K</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">WFM Stores: <b style="color:var(--text)">37</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">Indie Accts: <b style="color:var(--text)">55+</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">States: <b style="color:var(--text)">MA ME NH VT RI CT</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">YOY 25 vs 24: <b style="color:var(--green)">+38%</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">Roche Bros: <b style="color:var(--text)">14 stores</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">NCG/INFRA: <b style="color:var(--text)">11 accts</b></div>
+      </div>
+    </div>
+    <div class="chart-card fdk-tint">
+      <div class="ct">MD-FDK · Mid-Atlantic <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div>
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:14px;">
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">Total Rev</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--fdk)">$23.6K</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">2025 Rev</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--text)">$20.6K</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+          <div style="font-size:11px;color:#64748b;margin-bottom:4px">2026 YTD</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--teal)">$3.0K</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">WFM Stores: <b style="color:var(--text)">45</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">Indie Accts: <b style="color:var(--text)">20+</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">States: <b style="color:var(--text)">PA DC VA MD NJ DE</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">Launched: <b style="color:var(--text)">Apr 2025</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">Avg Mo. Rev: <b style="color:var(--text)">$2.1K</b></div>
+        <div style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;color:var(--muted)">4ct Mix: <b style="color:var(--green)">72%</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ins-grid">
+    <div class="ins-card">
+      <div class="ins-icon">🚀</div>
+      <div class="ins-title">82 WFM Stores — Largest Footprint</div>
+      <div class="ins-body">With 37 stores in MA-EAS and 45 in MD-FDK, Swoffle now covers WFM's entire Northeast + Mid-Atlantic corridor. This represents one of the broadest single-distributor natural food WFM footprints in the region.</div>
+    </div>
+    <div class="ins-card teal">
+      <div class="ins-icon">📈</div>
+      <div class="ins-title">MD-FDK Approaching EAS Velocity</div>
+      <div class="ins-body">Despite launching 15 months after MA-EAS, MD-FDK has already reached ~$2.1K/month average and is on track to surpass MA-EAS monthly pace in 2026 given larger WFM store count. Watch Q2 2026 for crossover.</div>
+    </div>
+    <div class="ins-card blue">
+      <div class="ins-icon">📦</div>
+      <div class="ins-title">4ct Format Shift in Progress</div>
+      <div class="ins-body">MA-EAS is still 47% legacy 16pk; MD-FDK is already 72% 4ct. As 12pk (758404/405) replaces 16pk nationally and 4ct continues gaining, the combined SKU mix will likely reach 80%+ 4ct-and-under by end of 2026.</div>
+    </div>
+    <div class="ins-card green">
+      <div class="ins-icon">🗓</div>
+      <div class="ins-title">2026 on Track for Record Revenue</div>
+      <div class="ins-body">Jan-Feb 2026 combined pace of $12.8K for 2 months implies a ~$76K annualized run rate. If MA-EAS grows +25% and FDK grows +40% YOY, combined 2026 could reach $95–100K — a new milestone.</div>
+    </div>
+  </div>
+  </div><!-- end data-terr="combined" -->
+
+  <!-- EAS-ONLY OVERVIEW -->
+  <div data-terr="eas" style="display:none">
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--card-top:var(--eas)"><div class="kpi-label">Total Revenue (All-Time)</div><div class="kpi-val gold">$89.4K</div><div class="kpi-badge neutral">Jan 2024 – Feb 2026</div></div>
+      <div class="kpi-card" style="--card-top:var(--green)"><div class="kpi-label">2025 Revenue</div><div class="kpi-val">$51.2K</div><div class="kpi-badge up">▲ +38% YOY</div><div class="kpi-sub">vs. $37.2K in 2024</div></div>
+      <div class="kpi-card" style="--card-top:var(--teal)"><div class="kpi-label">2026 YTD</div><div class="kpi-val teal">$9.8K</div><div class="kpi-badge info">Jan–Feb 2026</div><div class="kpi-sub">~$59K annualized pace</div></div>
+      <div class="kpi-card" style="--card-top:var(--blue)"><div class="kpi-label">WFM Stores</div><div class="kpi-val blue">37</div><div class="kpi-badge up">MA, NH, CT, RI, ME</div></div>
+      <div class="kpi-card" style="--card-top:var(--purple)"><div class="kpi-label">Total Accounts</div><div class="kpi-val">82+</div><div class="kpi-badge up">WFM + Indie + Roche + NCG</div></div>
+      <div class="kpi-card" style="--card-top:var(--amber)"><div class="kpi-label">Roche Bros</div><div class="kpi-val">14</div><div class="kpi-badge up">▲ +532% YOY</div><div class="kpi-sub">Fastest growing channel</div></div>
+      <div class="kpi-card" style="--card-top:var(--rose)"><div class="kpi-label">States</div><div class="kpi-val">6</div><div class="kpi-badge info">MA ME NH VT RI CT</div></div>
+    </div>
+    <div class="g32">
+      <div class="chart-card eas-tint"><div class="ct">MA-EAS Monthly Revenue <span class="ct-tag ct-eas">2024 · 2025 · 2026</span></div><canvas id="easOnly_monthly" style="max-height:260px"></canvas></div>
+      <div class="chart-card eas-tint"><div class="ct">Channel Revenue Split · 2025</div><canvas id="easOnly_channel" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card eas-tint"><div class="ct">Revenue by State <span class="ct-tag ct-eas">2024 vs 2025</span></div><canvas id="easOnly_state" style="max-height:220px"></canvas></div>
+      <div class="chart-card eas-tint"><div class="ct">Annual Performance</div>
+        <table class="tbl"><thead><tr><th>Year</th><th>Revenue</th><th>Growth</th><th>Top Channel</th></tr></thead>
+        <tbody>
+          <tr><td class="name">2024</td><td class="rev">$37.2K</td><td>—</td><td><span class="badge b-wfm">WFM</span></td></tr>
+          <tr><td class="name">2025</td><td class="rev">$51.2K</td><td><span class="kpi-badge up">+38%</span></td><td><span class="badge b-wfm">WFM</span></td></tr>
+          <tr><td class="name">2026 YTD</td><td class="rev">$9.8K</td><td><span class="kpi-badge info">On pace</span></td><td><span class="badge b-wfm">WFM</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🌊</div><div class="ins-title">WFM Charles River — #1 Account</div><div class="ins-body">Boston's Charles River WFM is the highest-revenue single door across both territories. Orders 4–6 cases per restock weekly, consistently driving $8,200+ in all-time revenue.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">📈</div><div class="ins-title">Roche Bros — +532% Growth</div><div class="ins-body">The fastest-growing channel in MA-EAS jumped from 5 to 14+ stores mid-2025. Now carries Caramel, French Vanilla, and Dark Choc Dipped across the chain.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">🦞</div><div class="ins-title">Maine Indie Network — High Loyalty</div><div class="ins-body">14 independent Maine accounts show exceptional repeat rates. Belfast Co-op alone had 30+ order lines in 2025, ordering 2–3 cases per visit across 3 SKUs.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">⚠️</div><div class="ins-title">Yarzin Sella — Re-Engagement Needed</div><div class="ins-body">Cambridge corporate account placed bulk 8–40 case orders Jan–Feb 2025 (~$2,180) then went silent. Priority outreach for Q2 2026 re-activation.</div></div>
+    </div>
+  </div><!-- end data-terr="eas" -->
+
+  <!-- FDK-ONLY OVERVIEW -->
+  <div data-terr="fdk" style="display:none">
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--card-top:var(--fdk)"><div class="kpi-label">Total Revenue (All-Time)</div><div class="kpi-val" style="color:var(--teal)">$23.6K</div><div class="kpi-badge info">Apr 2025 – Feb 2026</div></div>
+      <div class="kpi-card" style="--card-top:var(--green)"><div class="kpi-label">2025 Revenue</div><div class="kpi-val">$20.6K</div><div class="kpi-badge up">First 9 months</div><div class="kpi-sub">~$2.1K/month avg</div></div>
+      <div class="kpi-card" style="--card-top:var(--teal)"><div class="kpi-label">2026 YTD</div><div class="kpi-val teal">$3.0K</div><div class="kpi-badge info">Jan–Feb 2026</div><div class="kpi-sub">~$18K annualized pace</div></div>
+      <div class="kpi-card" style="--card-top:var(--blue)"><div class="kpi-label">WFM Stores</div><div class="kpi-val blue">45</div><div class="kpi-badge up">Most in any territory</div></div>
+      <div class="kpi-card" style="--card-top:var(--purple)"><div class="kpi-label">Indie Accounts</div><div class="kpi-val">20+</div><div class="kpi-badge up">DC, VA, MD, PA</div></div>
+      <div class="kpi-card" style="--card-top:var(--amber)"><div class="kpi-label">4ct SKU Mix</div><div class="kpi-val">72%</div><div class="kpi-badge up">Highest of any territory</div></div>
+      <div class="kpi-card" style="--card-top:var(--rose)"><div class="kpi-label">States</div><div class="kpi-val">6</div><div class="kpi-badge info">PA DC VA MD NJ DE</div></div>
+    </div>
+    <div class="g32">
+      <div class="chart-card fdk-tint"><div class="ct">MD-FDK Monthly Revenue <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div><canvas id="fdkOnly_monthly" style="max-height:260px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">Revenue by State</div><canvas id="fdkOnly_state" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card fdk-tint"><div class="ct">Sub-Region Breakdown</div><canvas id="fdkOnly_region" style="max-height:220px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">Quarterly Summary</div>
+        <table class="tbl"><thead><tr><th>Period</th><th>Revenue</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Q2 2025 (Apr–Jun)</td><td class="rev">$6,400</td><td style="color:var(--teal)">Territory launch</td></tr>
+          <tr><td class="name">Q3 2025 (Jul–Sep)</td><td class="rev">$6,200</td><td style="color:var(--amber)">Summer peak</td></tr>
+          <tr><td class="name">Q4 2025 (Oct–Dec)</td><td class="rev">$6,000</td><td style="color:var(--blue)">Holiday + 12pk intro</td></tr>
+          <tr><td class="name">Q1 2026 YTD</td><td class="rev">$3,000</td><td style="color:var(--muted)">Jan–Feb only</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🏙️</div><div class="ins-title">DC Metro Dominates Revenue</div><div class="ins-body">WFM Foggy Bottom ($2,200+), P St ($1,300), Tenley ($900), South Capitol ($1,100) and Glover Park together represent ~25% of all FDK revenue. University and government district locations drive consistent weekday demand.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🆕</div><div class="ins-title">12pk SKUs Launched Feb 2026</div><div class="ins-body">758404/405 already in 15+ stores within weeks of Feb 2026 launch. GWU Foggy Bottom placed the first 2+2 multi-case 12pk order. Adoption is tracking faster than the 4ct launch did in 2025.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">🌿</div><div class="ins-title">Farm Stand Channel Emerging</div><div class="ins-body">Loudounberry (Leesburg), Braglio Farms (MD), Forrest Green Farm (VA), and Spring Valley Market (Winchester) represent a unique farm-stand indie vertical managed by Joni Mason with strong repeat cadence.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🔍</div><div class="ins-title">Dark Choc WFM Gap — Major Opportunity</div><div class="ins-body">758403 sells in indie DC/VA stores but has zero WFM placement in MD-FDK. With strong Whole Foods Mid-Atlantic Dark Choc momentum from the EAS territory, this is the #1 expansion pitch for 2026.</div></div>
+    </div>
+  </div><!-- end data-terr="fdk" -->
+
+
+</div><!-- end t1 -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 2 — TERRITORY COMPARE
+════════════════════════════════════════════════════════════════ -->
+<div id="t2" class="tab-panel">
+  <div class="sec-hdr" id="sec2">
+    <div class="sec-title">Territory Deep Dive</div>
+    <div class="sec-sub">MA-EAS vs. MD-FDK — side-by-side on every dimension</div>
+  </div>
+
+  <!-- COMBINED -->
+  <div data-terr="combined">
+    <div class="g2">
+      <div class="chart-card"><div class="ct">MA-EAS Monthly Revenue <span class="ct-tag ct-eas">2024 vs. 2025 vs. 2026</span></div><canvas id="easMonthly" style="max-height:240px"></canvas></div>
+      <div class="chart-card"><div class="ct">MD-FDK Monthly Revenue <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div><canvas id="fdkMonthly" style="max-height:240px"></canvas></div>
+    </div>
+    <div class="sub-hdr">Head-to-Head Metrics <span>2025 Full Year</span></div>
+    <div class="chart-card" style="margin-bottom:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:4px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--eas);margin-bottom:14px;display:flex;align-items:center;gap:8px;"><span>📦</span>MA-EAS · New England</div>
+          <div class="compare-row"><div class="compare-label">2025 Revenue</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:100%"></div></div><div class="cbar-val" style="color:var(--eas)">$51.2K</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">WFM Stores</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:82%"></div></div><div class="cbar-val">37</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">Total Accounts</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:100%"></div></div><div class="cbar-val">82+</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">Top Account Rev</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:100%"></div></div><div class="cbar-val">$8.2K</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">16pk Mix</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:72%"></div></div><div class="cbar-val">72%</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">4ct Mix</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:28%"></div></div><div class="cbar-val">28%</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">YOY Growth</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar eas" style="width:38%"></div></div><div class="cbar-val" style="color:var(--green)">+38%</div></div></div></div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--fdk);margin-bottom:14px;display:flex;align-items:center;gap:8px;"><span>🗺</span>MD-FDK · Mid-Atlantic</div>
+          <div class="compare-row"><div class="compare-label">2025 Revenue</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:40%"></div></div><div class="cbar-val" style="color:var(--fdk)">$20.6K</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">WFM Stores</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:100%"></div></div><div class="cbar-val">45</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">Total Accounts</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:79%"></div></div><div class="cbar-val">65+</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">Top Account Rev</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:27%"></div></div><div class="cbar-val">$2.2K</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">16pk Mix</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:28%"></div></div><div class="cbar-val">28%</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">4ct Mix</div><div class="compare-bars"><div class="cbar-wrap"><div class="cbar-bg"><div class="cbar fdk" style="width:72%"></div></div><div class="cbar-val">72%</div></div></div></div>
+          <div class="compare-row"><div class="compare-label">Launched</div><div class="compare-bars"><div style="font-size:12px;color:var(--fdk)">Apr 2025 · New Territory</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="chart-card eas-tint"><div class="ct">MA-EAS Revenue by Channel <span class="ct-tag ct-eas">2025</span></div><canvas id="easChannel" style="max-height:230px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">MD-FDK Revenue by State <span class="ct-tag ct-fdk">2025</span></div><canvas id="fdkState" style="max-height:230px"></canvas></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card eas-tint"><div class="ct">MA-EAS State Revenue <span class="ct-tag ct-eas">2024 vs 2025</span></div><canvas id="easState" style="max-height:220px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">MD-FDK Sub-Region Revenue <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div><canvas id="fdkRegion" style="max-height:220px"></canvas></div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🔄</div><div class="ins-title">Inverse SKU Mix — Natural Complement</div><div class="ins-body">MA-EAS is 72% 16pk, MD-FDK is 72% 4ct — opposite ends of the format transition curve. FDK's 4ct-first playbook can directly inform MA-EAS store resets in 2026.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🏆</div><div class="ins-title">EAS Has Deeper Per-Store Penetration</div><div class="ins-body">MA-EAS averages ~$1,383/store in 2025 vs. MD-FDK's ~$458/store (9 months only). At the same age, FDK's trend line is steeper — suggesting it will surpass EAS per-store numbers by 2027.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📊</div><div class="ins-title">FDK Revenue Per Store Growing Faster</div><div class="ins-body">Vienna VA (~$1,500) and Arlington VA (~$1,400) in FDK's first 9 months already rival mid-tier EAS performers. Foggy Bottom ($2,200+) already rivals EAS top stores in absolute 2025 revenue.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🌎</div><div class="ins-title">Geographic White Space Between Territories</div><div class="ins-body">A gap exists between southern CT (EAS) and northern DE/NJ (FDK). WFM stores in northern NJ and southern CT could be a bridge zone for 2026 expansion — currently unserved by either territory.</div></div>
+    </div>
+  </div>
+
+  <!-- EAS ONLY -->
+  <div data-terr="eas" style="display:none">
+    <div class="g2">
+      <div class="chart-card eas-tint"><div class="ct">Monthly Revenue Trend <span class="ct-tag ct-eas">2024 · 2025 · 2026 YTD</span></div><canvas id="t2_eas_monthly" style="max-height:260px"></canvas></div>
+      <div class="chart-card eas-tint"><div class="ct">Revenue by State <span class="ct-tag ct-eas">2024 vs 2025</span></div><canvas id="t2_eas_state" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="sub-hdr">Channel Breakdown <span>MA-EAS 2024 vs 2025</span></div>
+    <div class="chart-card" style="margin-bottom:18px"><canvas id="t2_eas_channel_bar" style="max-height:240px"></canvas></div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">📈</div><div class="ins-title">+38% YOY Revenue Growth</div><div class="ins-body">MA-EAS grew from $37.2K in 2024 to $51.2K in 2025. WFM (+60%), Roche Bros (+532%), and NCG Co-ops (+84%) all outperformed expectations.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🗺</div><div class="ins-title">MA Dominates But Neighbors Are Growing</div><div class="ins-body">Massachusetts drives ~58% of EAS revenue, but NH, ME, and VT are each growing 55%+ YOY. State diversification reduces single-market risk entering 2026.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">🏪</div><div class="ins-title">Roche Bros — The 2025 Story</div><div class="ins-body">Roche Bros went from $620 in 2024 to $3,920 in 2025, expanding from 5 to 14+ stores. Now the #3 channel and fastest-growing in the entire network.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🌊</div><div class="ins-title">Summer Seasonality Peak</div><div class="ins-body">Jun–Aug 2025 averaged $5,000/month — 60%+ above the Jan–Mar baseline. Seasonal tourist accounts and WFM vacation-corridor stores drive the annual spike.</div></div>
+    </div>
+  </div>
+
+  <!-- FDK ONLY -->
+  <div data-terr="fdk" style="display:none">
+    <div class="g2">
+      <div class="chart-card fdk-tint"><div class="ct">Monthly Revenue <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div><canvas id="t2_fdk_monthly" style="max-height:260px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">Revenue by Sub-Region</div><canvas id="t2_fdk_region" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card fdk-tint"><div class="ct">Revenue by State <span class="ct-tag ct-fdk">% of total</span></div><canvas id="t2_fdk_state" style="max-height:230px"></canvas></div>
+      <div class="chart-card fdk-tint">
+        <div class="ct">Quarterly Performance</div>
+        <table class="tbl"><thead><tr><th>Quarter</th><th>Revenue</th><th>Highlight</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Q2 2025 (Apr–Jun)</td><td class="rev">$6,400</td><td style="color:var(--teal)">Territory launch ramp</td></tr>
+          <tr><td class="name">Q3 2025 (Jul–Sep)</td><td class="rev">$6,200</td><td style="color:var(--amber)">Summer peak · bulk orders</td></tr>
+          <tr><td class="name">Q4 2025 (Oct–Dec)</td><td class="rev">$6,000</td><td style="color:var(--blue)">Holiday + 12pk intro</td></tr>
+          <tr><td class="name">Q1 2026 YTD (Jan–Feb)</td><td class="rev">$3,000</td><td style="color:var(--muted)">Full coverage achieved</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🏙️</div><div class="ins-title">DC Core = 25% of Territory Revenue</div><div class="ins-body">Four DC WFM stores alone generate ~$5,600+ — a quarter of all FDK revenue. Urban density and commuter traffic create near-daily restock cadence.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🌿</div><div class="ins-title">Northern Virginia Leads State Revenue</div><div class="ins-body">Virginia accounts for ~35% of FDK revenue, driven by suburban DC corridors: Vienna, Arlington, Ashburn, Old Town, Falls Church, and Reston.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📈</div><div class="ins-title">Steady Monthly Cadence</div><div class="ins-body">Despite a Dec 2025 supply gap, every affected store resumed in Jan–Feb 2026. Revenue held within 15% of summer peak through winter — unusually consistent for a new territory.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🔍</div><div class="ins-title">PA & NJ Underpenetrated</div><div class="ins-body">Pennsylvania has 15+ WFM stores but contributes only ~20% of revenue. NJ has just 3 active stores. Both have significant runway for deeper penetration in 2026.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 3 — ACCOUNT INTELLIGENCE
+════════════════════════════════════════════════════════════════ -->
+<div id="t3" class="tab-panel">
+  <div class="sec-hdr" id="sec3">
+    <div class="sec-title">Account Intelligence</div>
+    <div class="sec-sub">Top accounts across both territories · Channel breakdowns · Indie spotlights</div>
+  </div>
+
+  <!-- COMBINED -->
+  <div data-terr="combined">
+    <div class="alert-row">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text"><strong>Supply Events on Record:</strong> MA-EAS had Dec 2025 gaps on 758410 at 20+ stores (MFR ETA 1/15). MD-FDK had May 2025 LTOOS on 758402. Both territories show full reorder recovery in Jan/Feb 2026 — no permanent cancellations.</div>
+    </div>
+    <div class="sub-hdr">Combined Top 20 Accounts — All Territories, All-Time</div>
+    <div class="chart-card" style="margin-bottom:18px"><div id="topAcctsList"></div></div>
+    <div class="g2">
+      <div class="chart-card eas-tint">
+        <div class="ct">MA-EAS Channel Performance <span class="ct-tag ct-eas">2024 vs 2025</span></div>
+        <table class="tbl">
+          <thead><tr><th>Channel</th><th>2024</th><th>2025</th><th>YOY</th><th>Stores</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge b-wfm">WFM NA</span></td><td>$18,570</td><td class="rev">$29,790</td><td><span class="kpi-badge up">+60%</span></td><td>37</td></tr>
+            <tr><td><span class="badge b-indie">Indie MA</span></td><td>$4,280</td><td class="rev">$6,840</td><td><span class="kpi-badge up">+60%</span></td><td>20</td></tr>
+            <tr><td><span class="badge b-roche">Roche Bros</span></td><td>$620</td><td class="rev">$3,920</td><td><span class="kpi-badge up">+532%</span></td><td>14</td></tr>
+            <tr><td><span class="badge b-indie">Indie ME</span></td><td>$2,180</td><td class="rev">$3,420</td><td><span class="kpi-badge up">+57%</span></td><td>14</td></tr>
+            <tr><td><span class="badge b-ncg">NCG Co-ops</span></td><td>$980</td><td class="rev">$1,800</td><td><span class="kpi-badge up">+84%</span></td><td>4</td></tr>
+            <tr><td><span class="badge b-infra">INFRA</span></td><td>$780</td><td class="rev">$1,220</td><td><span class="kpi-badge up">+56%</span></td><td>7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card fdk-tint">
+        <div class="ct">MD-FDK Top 10 Stores <span class="ct-tag ct-fdk">Est. Revenue</span></div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Store</th><th>State</th><th>Est. Rev</th></tr></thead>
+          <tbody>
+            <tr><td class="rank">1</td><td class="name">WFM Foggy Bottom (GWU)</td><td><span class="state-pill s-dc">DC</span></td><td class="rev">$2,200</td></tr>
+            <tr><td class="rank">2</td><td class="name">WFM Vienna VA</td><td><span class="state-pill s-va">VA</span></td><td class="rev">$1,500</td></tr>
+            <tr><td class="rank">3</td><td class="name">WFM Arlington (Wilson)</td><td><span class="state-pill s-va">VA</span></td><td class="rev">$1,400</td></tr>
+            <tr><td class="rank">4</td><td class="name">WFM P St NW</td><td><span class="state-pill s-dc">DC</span></td><td class="rev">$1,300</td></tr>
+            <tr><td class="rank">5</td><td class="name">WFM Ashburn VA</td><td><span class="state-pill s-va">VA</span></td><td class="rev">$1,200</td></tr>
+            <tr><td class="rank">6</td><td class="name">WFM South Capitol DC</td><td><span class="state-pill s-dc">DC</span></td><td class="rev">$1,100</td></tr>
+            <tr><td class="rank">7</td><td class="name">WFM Old Town Alexandria</td><td><span class="state-pill s-va">VA</span></td><td class="rev">$1,000</td></tr>
+            <tr><td class="rank">8</td><td class="name">WFM Annapolis MD</td><td><span class="state-pill s-md">MD</span></td><td class="rev">$980</td></tr>
+            <tr><td class="rank">9</td><td class="name">WFM Cherry Hill NJ</td><td><span class="state-pill s-nj">NJ</span></td><td class="rev">$950</td></tr>
+            <tr><td class="rank">10</td><td class="name">WFM Tenley DC</td><td><span class="state-pill s-dc">DC</span></td><td class="rev">$900</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- EAS ONLY -->
+  <div data-terr="eas" style="display:none">
+    <div class="sub-hdr">MA-EAS Top 15 Accounts <span>All-Time Revenue</span></div>
+    <div class="chart-card" style="margin-bottom:18px"><div id="easAcctsList"></div></div>
+    <div class="g2">
+      <div class="chart-card eas-tint">
+        <div class="ct">Channel Performance <span class="ct-tag ct-eas">2024 vs 2025</span></div>
+        <table class="tbl">
+          <thead><tr><th>Channel</th><th>2024</th><th>2025</th><th>YOY</th><th>Stores</th><th>Avg Order</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge b-wfm">WFM NA</span></td><td>$18,570</td><td class="rev">$29,790</td><td><span class="kpi-badge up">+60%</span></td><td>37</td><td>$24.80</td></tr>
+            <tr><td><span class="badge b-indie">Indie MA</span></td><td>$4,280</td><td class="rev">$6,840</td><td><span class="kpi-badge up">+60%</span></td><td>20</td><td>$21.40</td></tr>
+            <tr><td><span class="badge b-roche">Roche Bros</span></td><td>$620</td><td class="rev">$3,920</td><td><span class="kpi-badge up">+532%</span></td><td>14</td><td>$21.60</td></tr>
+            <tr><td><span class="badge b-indie">Indie ME</span></td><td>$2,180</td><td class="rev">$3,420</td><td><span class="kpi-badge up">+57%</span></td><td>14</td><td>$22.10</td></tr>
+            <tr><td><span class="badge b-indie">Indie VT</span></td><td>$1,840</td><td class="rev">$2,920</td><td><span class="kpi-badge up">+59%</span></td><td>12</td><td>$21.90</td></tr>
+            <tr><td><span class="badge b-ncg">NCG Co-ops</span></td><td>$980</td><td class="rev">$1,800</td><td><span class="kpi-badge up">+84%</span></td><td>4</td><td>$26.40</td></tr>
+            <tr><td><span class="badge b-indie">Indie NH/RI/CT</span></td><td>$2,410</td><td class="rev">$3,820</td><td><span class="kpi-badge up">+58%</span></td><td>22</td><td>$22.30</td></tr>
+            <tr><td><span class="badge b-infra">INFRA</span></td><td>$780</td><td class="rev">$1,220</td><td><span class="kpi-badge up">+56%</span></td><td>7</td><td>$19.80</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card eas-tint"><div class="ct">Channel Revenue Chart <span class="ct-tag ct-eas">2025</span></div><canvas id="t3_eas_channel" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🌊</div><div class="ins-title">WFM Dominates at 58% of Revenue</div><div class="ins-body">WFM NA accounts for $29,790 — 58% of all 2025 MA-EAS revenue. Charles River, Newtonville, Portsmouth, Hadley, and Andover are the top 5 doors.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🦞</div><div class="ins-title">Maine Indie — High Loyalty, Low Churn</div><div class="ins-body">14 independent Maine accounts show exceptional repeat frequency. Belfast Co-op had 30+ order lines in 2025, ordering 2–3 cases per visit across 3 SKUs.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📈</div><div class="ins-title">Roche Bros — Best New Channel 2025</div><div class="ins-body">+532% YOY growth expanding from 5 to 14+ stores. Now the #3 revenue channel in MA-EAS, carrying all 3 main SKUs.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">⚠️</div><div class="ins-title">Yarzin Sella — Priority Re-Activation</div><div class="ins-body">Cambridge, MA corporate account — bulk 8–40 case orders Jan–Feb 2025 (~$2,180), then complete silence. A single call could recapture a top-10 account.</div></div>
+    </div>
+  </div>
+
+  <!-- FDK ONLY -->
+  <div data-terr="fdk" style="display:none">
+    <div class="alert-row">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text"><strong>Supply Note:</strong> Dec 2025 MFR ETA 1/15 on 758410 affected 20+ FDK stores. All resumed in Jan–Feb 2026 with no permanent cancellations.</div>
+    </div>
+    <div class="sub-hdr">MD-FDK Top 15 WFM Accounts <span>Est. Revenue Apr 2025 – Feb 2026</span></div>
+    <div class="chart-card" style="margin-bottom:18px"><div id="fdkAcctsList"></div></div>
+    <div class="g2">
+      <div class="chart-card fdk-tint">
+        <div class="ct">Indie Accounts <span class="ct-tag ct-fdk">Active Partners</span></div>
+        <table class="tbl">
+          <thead><tr><th>Account</th><th>Location</th><th>Rep</th><th>Orders</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Loudounberry LLC</td><td><span class="state-pill s-va">VA</span> Leesburg</td><td>Joni Mason</td><td>8</td></tr>
+            <tr><td class="name">Town Center Market</td><td><span class="state-pill s-md">MD</span> Riverdale</td><td>Eric Boutieller</td><td>6+</td></tr>
+            <tr><td class="name">Mimi's Convenience</td><td><span class="state-pill s-dc">DC</span> MacArthur</td><td>Inside Sales</td><td>5</td></tr>
+            <tr><td class="name">Cornercopia Market</td><td><span class="state-pill s-dc">DC</span> Capitol Hill</td><td>Eric Boutieller</td><td>3</td></tr>
+            <tr><td class="name">Little House Green Grocery</td><td><span class="state-pill s-va">VA</span> Richmond</td><td>Jacob Boutieller</td><td>3</td></tr>
+            <tr><td class="name">Devil's Den Convenience</td><td><span class="state-pill s-pa">PA</span> Carlisle</td><td>Joseph McAroy</td><td>3</td></tr>
+            <tr><td class="name">Braglio Farms</td><td><span class="state-pill s-md">MD</span> Randallstown</td><td>Joni Mason</td><td>2</td></tr>
+            <tr><td class="name">Forrest Green Farm</td><td><span class="state-pill s-va">VA</span> Louisa</td><td>Jacob Boutieller</td><td>2</td></tr>
+            <tr><td class="name">Urban Outfitters Dining</td><td><span class="state-pill s-pa">PA</span> Philadelphia</td><td>Joseph McAroy</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card fdk-tint"><div class="ct">WFM Revenue by State <span class="ct-tag ct-fdk">Distribution</span></div><canvas id="t3_fdk_state" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🏙️</div><div class="ins-title">DC Corridor — Highest Velocity Stores</div><div class="ins-body">WFM Foggy Bottom, P St, Tenley, South Capitol, H St, Glover Park, and Walter Reed together drive ~$7,500+ in combined revenue with weekly reorder cadence.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🌿</div><div class="ins-title">Farm Stand Channel is Unique to FDK</div><div class="ins-body">Loudounberry, Braglio Farms, Forrest Green Farm, Spring Valley Market, and Livi's Market form a farm-stand vertical managed by Joni Mason and Jacob Boutieller — no equivalent exists in MA-EAS.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📊</div><div class="ins-title">4 Territory Reps, Clear Account Ownership</div><div class="ins-body">Eric Boutieller (DC/MD indie), Joseph McAroy (PA/DE indie), Jacob Boutieller (Richmond/rural VA), Joni Mason (farm-stand/rural MD/VA). WFM managed through Inside Sales MA.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🔍</div><div class="ins-title">Reston Original (C12522) — Flag for Review</div><div class="ins-body">WFM Reston original placed only 5 orders Apr–May 2025 then went dark. The adjacent Reston Town Center (C52896) is active. Confirm store status — possible permanent closure or routing change.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 4 — SKU PERFORMANCE
+════════════════════════════════════════════════════════════════ -->
+<div id="t4" class="tab-panel">
+  <div class="sec-hdr" id="sec4">
+    <div class="sec-title">SKU Performance — Combined View</div>
+    <div class="sec-sub">All SKUs across both territories · Format transitions · Price evolution</div>
+  </div>
+
+  <!-- COMBINED -->
+  <div data-terr="combined">
+    <div class="sku-grid">
+      <div class="sku-card"><div class="sku-icon">🥞</div><div class="sku-name">Caramel OG 16pk</div><div class="sku-code">758401</div><div class="sku-rev">$43K+</div><div class="sku-share">~40% combined</div></div>
+      <div class="sku-card"><div class="sku-icon">🍦</div><div class="sku-name">French Vanilla 16pk</div><div class="sku-code">758402</div><div class="sku-rev">$24K+</div><div class="sku-share">~22% combined</div></div>
+      <div class="sku-card"><div class="sku-icon">🍫</div><div class="sku-name">Dark Choc 14pk</div><div class="sku-code">758403</div><div class="sku-rev">$9.5K</div><div class="sku-share">EAS dominant; FDK indie only</div></div>
+      <div class="sku-card"><div class="sku-icon">🎁</div><div class="sku-name">Caramel 4ct GF OG</div><div class="sku-code">758410</div><div class="sku-rev">$17K+</div><div class="sku-share">~17% combined; FDK #1</div></div>
+      <div class="sku-card"><div class="sku-icon">✨</div><div class="sku-name">Vanilla 4ct GF OG</div><div class="sku-code">758411</div><div class="sku-rev">$13K+</div><div class="sku-share">~12% combined</div></div>
+      <div class="sku-card"><div class="sku-icon">🆕</div><div class="sku-name">Caramel 12pk</div><div class="sku-code">758404</div><div class="sku-rev">~$1.2K</div><div class="sku-share">Launched Feb 2026</div></div>
+      <div class="sku-card"><div class="sku-icon">🆕</div><div class="sku-name">Vanilla 12pk</div><div class="sku-code">758405</div><div class="sku-rev">~$0.8K</div><div class="sku-share">Launched Feb 2026</div></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card"><div class="ct">Combined SKU Revenue Share <span class="ct-tag ct-both">All-Time</span></div><canvas id="combinedSkuShare" style="max-height:260px"></canvas></div>
+      <div class="chart-card"><div class="ct">SKU Mix: EAS vs. FDK <span class="ct-tag ct-both">2025 %</span></div><canvas id="skuTerritoryBar" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card"><div class="ct">4ct Multipack Growth Trajectory <span class="ct-tag ct-both">Both Territories</span></div><canvas id="fourCtGrowth" style="max-height:230px"></canvas></div>
+      <div class="chart-card"><div class="ct">12pk Rollout Velocity <span class="ct-tag ct-both">Feb 2026 Launch</span></div><canvas id="twelvePkRollout" style="max-height:230px"></canvas></div>
+    </div>
+    <div class="sub-hdr">Price Point Evolution — All SKUs</div>
+    <div class="chart-card" style="margin-bottom:18px">
+      <table class="tbl">
+        <thead><tr><th>SKU</th><th>Product</th><th>Q1 2024</th><th>H2 2024</th><th>Q1 2025</th><th>Q3–Q4 2025</th><th>Jan–Feb 2026</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:monospace;color:var(--amber)">758401</td><td class="name">Caramel OG 16pk</td><td>$17.13</td><td>$16.18</td><td>$19.03</td><td>$19.03–$20.60</td><td>$16.18–$19.03</td><td><span class="kpi-badge up">▲ +27%</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--amber)">758402</td><td class="name">French Vanilla OG 16pk</td><td>$17.13</td><td>$16.18</td><td>$19.03</td><td>$19.03–$20.60</td><td>$16.18–$19.03</td><td><span class="kpi-badge up">▲ +27%</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--muted)">758403</td><td class="name">Dark Choc Dipped 14pk</td><td>—</td><td>$22.14</td><td>$27.54</td><td>$27.54–$32.40</td><td>$27.54</td><td><span class="kpi-badge up">▲ +38%</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--teal)">758410</td><td class="name">Caramel 4ct GF OG</td><td>—</td><td>—</td><td>$28.51–$33.54</td><td>$28.51–$33.54</td><td>$28.51–$33.54</td><td><span class="kpi-badge neutral">Stable</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--teal)">758411</td><td class="name">Vanilla 4ct GF OG</td><td>—</td><td>—</td><td>$28.51–$33.54</td><td>$28.51–$33.54</td><td>$28.51–$33.54</td><td><span class="kpi-badge neutral">Stable</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--green)">758404</td><td class="name">Original Caramel 12pk <b style="color:var(--green);font-size:10px;margin-left:4px">NEW</b></td><td>—</td><td>—</td><td>—</td><td>—</td><td>$14.32–$19.03</td><td><span class="kpi-badge info">Launched</span></td></tr>
+          <tr><td style="font-family:monospace;color:var(--green)">758405</td><td class="name">French Vanilla 12pk <b style="color:var(--green);font-size:10px;margin-left:4px">NEW</b></td><td>—</td><td>—</td><td>—</td><td>—</td><td>$14.32–$19.03</td><td><span class="kpi-badge info">Launched</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🔮</div><div class="ins-title">Format Transition: 16pk → 12pk</div><div class="ins-body">758404/405 tagged as successors in the Rainforest system since Dec 2025. Expect 16pk to be fully sunset across both territories by end of 2026.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🍫</div><div class="ins-title">Dark Choc: EAS Multi-Channel vs. FDK Indie-Only</div><div class="ins-body">758403 runs through WFM, Roche Bros, and NCG in EAS — but only indie DC/VA in FDK. FDK WFM stores are a major untapped Dark Choc opportunity.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">🎯</div><div class="ins-title">4ct Crossover Coming in EAS</div><div class="ins-body">MA-EAS 4ct hit ~28% in 2025. Jan–Feb 2026 shows $5.1K 4ct vs $4.7K 16pk — near parity. The full crossover should happen in EAS by Q2–Q3 2026.</div></div>
+      <div class="ins-card green"><div class="ins-icon">💰</div><div class="ins-title">Revenue Per Case: 4ct Wins by 40–65%</div><div class="ins-body">At $28.51–$33.54/case, 4ct generates far more than 16pk at $16.18–$19.03. Growing 4ct share from current 40% to 60% combined will significantly lift per-case averages.</div></div>
+    </div>
+  </div>
+
+  <!-- EAS ONLY -->
+  <div data-terr="eas" style="display:none">
+    <div class="sku-grid">
+      <div class="sku-card"><div class="sku-icon">🥞</div><div class="sku-name">Caramel OG 16pk</div><div class="sku-code">758401</div><div class="sku-rev">$42.1K</div><div class="sku-share">47% of EAS revenue</div></div>
+      <div class="sku-card"><div class="sku-icon">🍦</div><div class="sku-name">French Vanilla 16pk</div><div class="sku-code">758402</div><div class="sku-rev">$22.8K</div><div class="sku-share">25% of EAS revenue</div></div>
+      <div class="sku-card"><div class="sku-icon">🍫</div><div class="sku-name">Dark Choc 14pk</div><div class="sku-code">758403</div><div class="sku-rev">$9.4K</div><div class="sku-share">11% · WFM + Roche + NCG</div></div>
+      <div class="sku-card"><div class="sku-icon">🎁</div><div class="sku-name">Caramel 4ct GF OG</div><div class="sku-code">758410</div><div class="sku-rev">$8.6K</div><div class="sku-share">10% · launched Oct 2025</div></div>
+      <div class="sku-card"><div class="sku-icon">✨</div><div class="sku-name">Vanilla 4ct GF OG</div><div class="sku-code">758411</div><div class="sku-rev">$6.5K</div><div class="sku-share">7% · launched Oct 2025</div></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card eas-tint"><div class="ct">SKU Revenue by Year <span class="ct-tag ct-eas">2024 · 2025 · 2026 YTD</span></div><canvas id="t4_eas_sku_year" style="max-height:260px"></canvas></div>
+      <div class="chart-card eas-tint"><div class="ct">2025 SKU Revenue Share</div><canvas id="t4_eas_sku_share" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="chart-card eas-tint" style="margin-bottom:18px">
+      <div class="ct">Caramel vs. French Vanilla Monthly Volume <span class="ct-tag ct-eas">2024–2025</span></div>
+      <canvas id="t4_eas_caramel_vanilla" style="max-height:220px"></canvas>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🥞</div><div class="ins-title">Caramel 16pk Still Leads at 47%</div><div class="ins-body">758401 is the volume workhorse of MA-EAS across all 9 channels. Its 2024→2025 revenue growth confirms strong sell-through despite transition tagging beginning Dec 2025.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🍫</div><div class="ins-title">Dark Choc Strongest Uniquely in EAS</div><div class="ins-body">758403 generates $9.4K — 11% of total EAS — across WFM, Roche Bros, and NCG co-ops. A significant differentiator vs. FDK where Dark Choc is indie-only.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📈</div><div class="ins-title">4ct Just Getting Started in EAS</div><div class="ins-body">758410/411 launched Oct 2025 and immediately hit ~$5.1K combined in 4–5 months. The 2026 EAS 4ct trajectory is steeper than FDK's launch curve — rapid penetration ahead.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">💰</div><div class="ins-title">Price Up +27% Since 2024 — Holding Strong</div><div class="ins-body">758401/402 went from $17.13 in Q1 2024 to $19.03 by Q1 2025 with no detectable demand drop. Reorder velocity actually accelerated in 2025 despite the higher price point.</div></div>
+    </div>
+  </div>
+
+  <!-- FDK ONLY -->
+  <div data-terr="fdk" style="display:none">
+    <div class="sku-grid">
+      <div class="sku-card"><div class="sku-icon">🎁</div><div class="sku-name">Caramel 4ct GF OG</div><div class="sku-code">758410</div><div class="sku-rev">~$9.4K</div><div class="sku-share">40% of FDK · #1 SKU</div></div>
+      <div class="sku-card"><div class="sku-icon">✨</div><div class="sku-name">Vanilla 4ct GF OG</div><div class="sku-code">758411</div><div class="sku-rev">~$7.5K</div><div class="sku-share">32% of FDK · #2 SKU</div></div>
+      <div class="sku-card"><div class="sku-icon">🥞</div><div class="sku-name">Caramel OG 16pk</div><div class="sku-code">758401</div><div class="sku-rev">~$3.5K</div><div class="sku-share">15% · transitioning</div></div>
+      <div class="sku-card"><div class="sku-icon">🍦</div><div class="sku-name">French Vanilla 16pk</div><div class="sku-code">758402</div><div class="sku-rev">~$2.4K</div><div class="sku-share">10% · transitioning</div></div>
+      <div class="sku-card"><div class="sku-icon">🆕</div><div class="sku-name">Caramel 12pk</div><div class="sku-code">758404</div><div class="sku-rev">~$0.7K</div><div class="sku-share">Feb 2026 · 15+ stores</div></div>
+      <div class="sku-card"><div class="sku-icon">🆕</div><div class="sku-name">Vanilla 12pk</div><div class="sku-code">758405</div><div class="sku-rev">~$0.5K</div><div class="sku-share">Feb 2026 · rapid adoption</div></div>
+      <div class="sku-card"><div class="sku-icon">🍫</div><div class="sku-name">Dark Choc 14pk</div><div class="sku-code">758403</div><div class="sku-rev">~$0.3K</div><div class="sku-share">Indie only · 3 accounts</div></div>
+    </div>
+    <div class="g2">
+      <div class="chart-card fdk-tint"><div class="ct">FDK SKU Revenue Mix <span class="ct-tag ct-fdk">All-Time %</span></div><canvas id="t4_fdk_sku_share" style="max-height:260px"></canvas></div>
+      <div class="chart-card fdk-tint"><div class="ct">4ct vs. 16pk vs. 12pk Trend <span class="ct-tag ct-fdk">Apr 2025 – Feb 2026</span></div><canvas id="t4_fdk_format_trend" style="max-height:260px"></canvas></div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-card"><div class="ins-icon">🎁</div><div class="ins-title">4ct is FDK's Foundation — 72% of Revenue</div><div class="ins-body">MD-FDK launched directly into the 4ct format and never looked back. 758410 and 758411 account for 72% of all territory revenue — the highest 4ct concentration in the network.</div></div>
+      <div class="ins-card teal"><div class="ins-icon">🆕</div><div class="ins-title">12pk Adoption Faster Than 4ct Was</div><div class="ins-body">758404/405 hit 15+ stores within 6 weeks of Feb 2026 launch. GWU Foggy Bottom placed the first multi-case 12pk order immediately — adoption tracking ahead of the 4ct launch curve.</div></div>
+      <div class="ins-card blue"><div class="ins-icon">📉</div><div class="ins-title">16pk Declining on Schedule</div><div class="ins-body">16pk share dropped from ~28% in Q2 2025 to an estimated 20% in Q1 2026. Transition tags "(T-758404/405)" are now system-wide, signaling formal succession.</div></div>
+      <div class="ins-card rose"><div class="ins-icon">🍫</div><div class="ins-title">Dark Choc WFM Opportunity — Zero Coverage</div><div class="ins-body">758403 only appears in 3 FDK indie accounts. No WFM store in the territory carries it. Immediate upsell opportunity for the next buyer review meeting.</div></div>
+    </div>
+  </div>
+</div><!-- end t4 -->
+
+<div class="footer">
+  Swoffle LLC × Rainforest Distribution · Combined National Territory Intelligence · MA-EAS + MD-FDK · Data: Jan 2024 – Feb 2026 · Brand Share It Sales Partners
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── TERRITORY SWITCHING ───────────────────────────────────────
+let activeTerr = 'combined';
+
+const terrMeta = {
+  combined: '82 WFM stores · 14 states · Jan 2024 – Feb 2026',
+  eas: '37 WFM stores · 55+ indie accounts · MA ME NH VT RI CT · Jan 2024 – Feb 2026',
+  fdk: '45 WFM stores · 20+ indie accounts · PA DC VA MD NJ DE · Apr 2025 – Feb 2026'
+};
+
+function setTerritory(terr, el) {
+  activeTerr = terr;
+  // Update button states
+  document.querySelectorAll('.terr-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  // Update meta text
+  document.getElementById('terr-meta-text').textContent = terrMeta[terr];
+  // Show/hide territory-specific content sections
+  document.querySelectorAll('[data-terr]').forEach(el => {
+    const show = el.dataset.terr === terr || el.dataset.terr === 'all';
+    el.style.display = show ? '' : 'none';
+  });
+  // Build territory-specific charts lazily on first reveal
+  if (terr === 'eas') { buildEasCharts(); buildEasTab2Charts(); buildEasTab3Charts(); buildEasTab4Charts(); }
+  if (terr === 'fdk') { buildFdkCharts(); buildFdkTab2Charts(); buildFdkTab3Charts(); buildFdkTab4Charts(); }
+  // Update section titles and subs
+  const titleMap = {
+    combined: { title: 'National Sales Overview', sub: 'MA-EAS + MD-FDK combined · All channels · 2024–2026 YTD' },
+    eas: { title: 'MA-EAS · New England Territory', sub: 'Massachusetts · Maine · New Hampshire · Vermont · Rhode Island · Connecticut · 2024–2026 YTD' },
+    fdk: { title: 'MD-FDK · Mid-Atlantic Territory', sub: 'Pennsylvania · DC · Virginia · Maryland · New Jersey · Delaware · Apr 2025–Feb 2026' }
+  };
+  const t2Map = {
+    combined: { title: 'Territory Deep Dive', sub: 'MA-EAS vs. MD-FDK — side-by-side on every dimension' },
+    eas: { title: 'MA-EAS Territory Analysis', sub: 'Channel breakdown · State performance · Growth drivers' },
+    fdk: { title: 'MD-FDK Territory Analysis', sub: 'Sub-region breakdown · State performance · Opportunity zones' }
+  };
+  const t3Map = {
+    combined: { title: 'Account Intelligence', sub: 'Top accounts across both territories · Channel breakdowns · Indie spotlights' },
+    eas: { title: 'MA-EAS Account Intelligence', sub: 'Top WFM stores · Indie accounts · NCG & Roche Bros · Channel rankings' },
+    fdk: { title: 'MD-FDK Account Intelligence', sub: 'DC Metro WFM · VA & MD stores · Indie DC/VA/MD · Rep territories' }
+  };
+  const t4Map = {
+    combined: { title: 'SKU Performance — Combined View', sub: 'All SKUs across both territories · Format transitions · Price evolution' },
+    eas: { title: 'MA-EAS SKU Performance', sub: '16pk dominant · 4ct growing · Dark Choc across all channels' },
+    fdk: { title: 'MD-FDK SKU Performance', sub: '4ct dominant at 72% · 12pk just launched · 16pk transitioning out' }
+  };
+  updateSecHdr('sec1', titleMap[terr]);
+  updateSecHdr('sec2', t2Map[terr]);
+  updateSecHdr('sec3', t3Map[terr]);
+  updateSecHdr('sec4', t4Map[terr]);
+}
+
+function updateSecHdr(id, data) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.querySelector('.sec-title').textContent = data.title;
+  el.querySelector('.sec-sub').textContent = data.sub;
+}
+
+// Initialize combined as active on load
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('terr-combined').classList.add('active');
+  // All data-terr elements: show combined, hide eas-only and fdk-only
+  document.querySelectorAll('[data-terr]').forEach(el => {
+    el.style.display = (el.dataset.terr === 'combined' || el.dataset.terr === 'all') ? '' : 'none';
+  });
+});
+
+// Color palette — light theme
+const C = {
+  eas: '#d97706', fdk: '#0d9488',
+  blue: '#3b82f6', purple: '#7c3aed', green: '#059669', red: '#dc2626',
+  amber: '#d97706', rose: '#e11d48', teal: '#0d9488',
+  caramel: '#b45309', vanilla: '#92400e', choc: '#44251a',
+  mp1: '#0d9488', mp2: '#0369a1',
+  muted: '#64748b', grid: '#e2e8f0', bg: '#ffffff'
+};
+
+const defOpts = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: C.muted, font: { size: 11 }, padding: 12, boxWidth: 14 } },
+    tooltip: { backgroundColor: '#1e293b', borderColor: '#334155', borderWidth: 1, titleColor:'#f1f5f9', bodyColor:'#cbd5e1' }
+  },
+  scales: {
+    x: { grid: { color: C.grid }, ticks: { color: C.muted } },
+    y: { grid: { color: C.grid }, ticks: { color: C.muted } }
+  }
+};
+
+// ── LAZY CHART REGISTRY — tracks which territory-specific charts have been built
+const _builtCharts = {};
+
+function buildEasCharts() {
+  if (_builtCharts.eas) return;
+  _builtCharts.eas = true;
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const rev2024 = [2800,2200,3200,3400,4200,4800,5200,4900,4200,3800,4000,4400];
+  const rev2025 = [2800,2400,3200,3600,4200,4800,5200,5000,4600,4200,4600,4800];
+
+  new Chart(document.getElementById('easOnly_monthly'), {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        { label: '2024', data: rev2024, borderColor: C.muted, backgroundColor: C.muted+'22', fill:true, tension:0.4, pointRadius:3, borderWidth:2 },
+        { label: '2025', data: rev2025, borderColor: C.eas, backgroundColor: C.eas+'22', fill:true, tension:0.4, pointRadius:3, borderWidth:2.5 },
+        { label: '2026 (Jan, Feb)', data: [5400,4400,null,null,null,null,null,null,null,null,null,null],
+          borderColor: C.teal, borderDash:[5,3], tension:0.4, pointRadius:5, borderWidth:2, pointBackgroundColor: C.teal }
+      ]
+    },
+    options: { ...defOpts, scales: { x: defOpts.scales.x, y: { ...defOpts.scales.y, ticks: { callback: v => '$'+(v/1000).toFixed(1)+'k' } } } }
+  });
+
+  new Chart(document.getElementById('easOnly_channel'), {
+    type: 'doughnut',
+    data: {
+      labels: ['WFM', 'Indie MA', 'Roche Bros', 'Indie ME', 'Indie VT', 'NCG', 'Indie NH/RI/CT', 'INFRA'],
+      datasets: [{
+        data: [29790, 6840, 3920, 3420, 2920, 1800, 3820, 1220],
+        backgroundColor: [C.blue+'cc','#7c3aedcc','#dc2626cc','#8b5cf6cc','#6d28d9cc',C.green+'cc','#ec4899cc',C.amber+'cc'],
+        borderColor: '#ffffff', borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { ...defOpts.plugins.legend, position: 'right' },
+        tooltip: { ...defOpts.plugins.tooltip, callbacks: { label: ctx => { const t=ctx.dataset.data.reduce((a,b)=>a+b,0); return ` $${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/t*100)}%)`; } } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('easOnly_state'), {
+    type: 'bar',
+    data: {
+      labels: ['MA','NH','ME','RI','CT','VT'],
+      datasets: [
+        { label: '2024', data: [18400,3200,2200,1600,1200,1840], backgroundColor: C.muted+'55', borderRadius:4 },
+        { label: '2025', data: [29800,4800,3400,2600,2200,2900], backgroundColor: C.eas+'bb', borderRadius:4 }
+      ]
+    },
+    options: { ...defOpts, scales: { x: defOpts.scales.x, y: { ...defOpts.scales.y, ticks: { callback: v => '$'+(v/1000).toFixed(0)+'k' } } } }
+  });
+}
+
+function buildFdkCharts() {
+  if (_builtCharts.fdk) return;
+  _builtCharts.fdk = true;
+
+  new Chart(document.getElementById('fdkOnly_monthly'), {
+    type: 'bar',
+    data: {
+      labels: ['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'],
+      datasets: [
+        {
+          label: '2025',
+          data: [1800,2400,2200,2100,2000,2100,1900,2000,2100,null,null],
+          backgroundColor: C.fdk+'99', borderColor: C.fdk, borderWidth: 1.5, borderRadius: 5
+        },
+        {
+          label: '2026 YTD',
+          data: [null,null,null,null,null,null,null,null,null,1600,1400],
+          backgroundColor: C.teal+'bb', borderColor: C.teal, borderWidth: 1.5, borderRadius: 5
+        }
+      ]
+    },
+    options: { ...defOpts, scales: { x: { ...defOpts.scales.x, stacked: true }, y: { ...defOpts.scales.y, stacked: true, ticks: { callback: v => '$'+(v/1000).toFixed(1)+'k' } } } }
+  });
+
+  new Chart(document.getElementById('fdkOnly_state'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Virginia','DC','Pennsylvania','Maryland','New Jersey','Delaware'],
+      datasets: [{
+        data: [35,25,20,15,4,1],
+        backgroundColor: [C.green+'cc',C.blue+'cc',C.purple+'cc',C.amber+'cc',C.red+'cc','#0891b2cc'],
+        borderColor: '#ffffff', borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { ...defOpts.plugins.legend, position: 'right' },
+        tooltip: { ...defOpts.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}%` } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('fdkOnly_region'), {
+    type: 'bar',
+    data: {
+      labels: ['DC Core','NoVA/Suburbs','MD Suburbs','Philly Metro','NJ Markets','Hampton Roads VA','Pittsburgh','Richmond VA'],
+      datasets: [{
+        label: 'Est. Revenue',
+        data: [5800,5200,3200,3000,1800,1100,900,750],
+        backgroundColor: C.fdk+'99', borderColor: C.fdk, borderWidth: 1.5, borderRadius: 5
+      }]
+    },
+    options: {
+      ...defOpts,
+      indexAxis: 'y',
+      plugins: { ...defOpts.plugins, legend: { display:false } },
+      scales: {
+        x: { ...defOpts.scales.x, ticks: { callback: v => '$'+(v/1000).toFixed(1)+'k' } },
+        y: { ...defOpts.scales.y, ticks: { font: { size:11 } } }
+      }
+    }
+  });
+}
+
+// ── COMBINED MONTHLY (2025 full year + 2026 YTD) ──────────────
+new Chart(document.getElementById('combinedMonthly'), {
+  type: 'bar',
+  data: {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan 26','Feb 26'],
+    datasets: [
+      {
+        label: 'MA-EAS',
+        data: [2800, 2400, 3200, 3600, 4200, 4800, 5200, 5000, 4600, 4200, 4600, 4800, 5400, 4400],
+        backgroundColor: C.eas + 'bb', borderRadius: 4
+      },
+      {
+        label: 'MD-FDK',
+        data: [0, 0, 0, 1800, 2400, 2200, 2100, 2000, 2100, 1900, 2000, 2100, 1600, 1400],
+        backgroundColor: C.fdk + 'bb', borderRadius: 4
+      }
+    ]
+  },
+  options: {
+    ...defOpts,
+    scales: {
+      x: { ...defOpts.scales.x, stacked: true },
+      y: { ...defOpts.scales.y, stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } }
+    }
+  }
+});
+
+// ── TERRITORY PIE ──────────────────────────────────────────────
+new Chart(document.getElementById('territoryPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['MA-EAS (New England)', 'MD-FDK (Mid-Atlantic)'],
+    datasets: [{
+      data: [89400, 23600],
+      backgroundColor: [C.eas, C.fdk],
+      borderColor: '#ffffff', borderWidth: 4,
+      hoverBorderColor: '#ffffff', hoverBorderWidth: 5
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { ...defOpts.plugins.legend, position: 'bottom' },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/113000*100)}%)` } }
+    }
+  }
+});
+
+// ── ANNUAL BY TERRITORY ────────────────────────────────────────
+new Chart(document.getElementById('annualByTerritory'), {
+  type: 'bar',
+  data: {
+    labels: ['2024', '2025', '2026 YTD'],
+    datasets: [
+      { label: 'MA-EAS', data: [37200, 51200, 9800], backgroundColor: C.eas + 'bb', borderRadius: 5 },
+      { label: 'MD-FDK', data: [0, 20600, 3000], backgroundColor: C.fdk + 'bb', borderRadius: 5 }
+    ]
+  },
+  options: {
+    ...defOpts,
+    scales: {
+      x: { ...defOpts.scales.x, stacked: true },
+      y: { ...defOpts.scales.y, stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } }
+    }
+  }
+});
+
+// ── WFM SPLIT ──────────────────────────────────────────────────
+new Chart(document.getElementById('wfmSplit'), {
+  type: 'doughnut',
+  data: {
+    labels: ['WFM (EAS)', 'Non-WFM (EAS)', 'WFM (FDK)', 'Non-WFM (FDK)'],
+    datasets: [{
+      data: [29790, 21410, 19340, 1260],
+      backgroundColor: [C.blue + 'cc', C.purple + 'cc', C.teal + 'cc', C.amber + 'cc'],
+      borderColor: C.bg, borderWidth: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { ...defOpts.plugins.legend, position: 'right' },
+      tooltip: { callbacks: { label: ctx => ` $${ctx.raw.toLocaleString()}` } }
+    }
+  }
+});
+// ── COMBINED TOP 20 ACCOUNTS ──────────────────────────────────
+const top20 = [
+  { rank:1,  name:'WFM Charles River (Boston, MA)',           badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:8240 },
+  { rank:2,  name:'WFM University Heights (Providence, RI)',  badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:6180 },
+  { rank:3,  name:'WFM Newtonville (Newton, MA)',             badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:5420 },
+  { rank:4,  name:'WFM Portsmouth NH',                        badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:4980 },
+  { rank:5,  name:'WFM Hadley (MA)',                          badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:4640 },
+  { rank:6,  name:'Newport Mansions (Newport, RI)',            badge:'b-indie', bTxt:'Indie', terr:'eas', rev:2640 },
+  { rank:7,  name:'WFM Foggy Bottom / GWU (DC)',              badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:2200 },
+  { rank:8,  name:'Belfast Community Co-op (ME)',             badge:'b-ncg',   bTxt:'NCG',   terr:'eas', rev:2480 },
+  { rank:9,  name:'WFM Andover (MA)',                         badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:2320 },
+  { rank:10, name:'WFM Bedford (MA)',                         badge:'b-wfm',   bTxt:'WFM',   terr:'eas', rev:2280 },
+  { rank:11, name:'Yarzin Sella (Cambridge, MA)',             badge:'b-indie', bTxt:'Indie', terr:'eas', rev:2180 },
+  { rank:12, name:'WFM Vienna VA',                            badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1500 },
+  { rank:13, name:'Leroux Kitchen (Portland, ME)',            badge:'b-indie', bTxt:'Indie', terr:'eas', rev:1960 },
+  { rank:14, name:'Roche Bros DTX #121 (Boston)',             badge:'b-roche', bTxt:'Roche', terr:'eas', rev:1840 },
+  { rank:15, name:'Boys in Berries (Sharon, MA)',             badge:'b-indie', bTxt:'Indie', terr:'eas', rev:1720 },
+  { rank:16, name:'WFM Arlington VA (Wilson Blvd)',           badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1400 },
+  { rank:17, name:'WFM P Street NW (DC)',                     badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1300 },
+  { rank:18, name:'WFM Ashburn VA',                           badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1200 },
+  { rank:19, name:'WFM South Capitol (DC)',                   badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1100 },
+  { rank:20, name:'WFM Old Town Alexandria VA',               badge:'b-wfm',   bTxt:'WFM',   terr:'fdk', rev:1000 },
+];
+(function() {
+  const el = document.getElementById('topAcctsList');
+  if (!el) return;
+  top20.forEach(a => {
+    const terrBadge = a.terr === 'eas' ? `<span class="badge b-eas">EAS</span>` : `<span class="badge b-fdk">FDK</span>`;
+    el.innerHTML += `<div class="store-row"><div class="store-rank">${a.rank}</div><div class="store-info"><div class="store-name">${a.name}</div><div class="store-meta"><span class="badge ${a.badge}">${a.bTxt}</span>${terrBadge}</div></div><div class="store-bar-wrap"><div class="store-bar-bg"><div class="store-bar" style="width:${Math.round(a.rev/8240*100)}%;background:${a.terr==='eas'?'linear-gradient(90deg,'+C.eas+',#e8621a)':'linear-gradient(90deg,'+C.fdk+','+C.blue+')'}"></div></div></div><div class="store-rev">$${a.rev.toLocaleString()}</div></div>`;
+  });
+})();
+
+// ── EAS ACCOUNT LIST (Tab 3 EAS) ──────────────────────────────
+const easAccounts = [
+  { rank:1,  name:"WFM Charles River (Boston, MA)",          badge:'b-wfm',   bTxt:'WFM',   rev:8240 },
+  { rank:2,  name:"WFM University Heights (Providence, RI)", badge:'b-wfm',   bTxt:'WFM',   rev:6180 },
+  { rank:3,  name:"WFM Newtonville (Newton, MA)",            badge:'b-wfm',   bTxt:'WFM',   rev:5420 },
+  { rank:4,  name:"WFM Portsmouth NH",                       badge:'b-wfm',   bTxt:'WFM',   rev:4980 },
+  { rank:5,  name:"WFM Hadley (MA)",                         badge:'b-wfm',   bTxt:'WFM',   rev:4640 },
+  { rank:6,  name:"Newport Mansions (Newport, RI)",          badge:'b-indie', bTxt:'Indie', rev:2640 },
+  { rank:7,  name:"Belfast Community Co-op (ME)",            badge:'b-ncg',   bTxt:'NCG',   rev:2480 },
+  { rank:8,  name:"WFM Andover (MA)",                        badge:'b-wfm',   bTxt:'WFM',   rev:2320 },
+  { rank:9,  name:"WFM Bedford (MA)",                        badge:'b-wfm',   bTxt:'WFM',   rev:2280 },
+  { rank:10, name:"Yarzin Sella (Cambridge, MA)",            badge:'b-indie', bTxt:'Indie', rev:2180 },
+  { rank:11, name:"Leroux Kitchen (Portland, ME)",           badge:'b-indie', bTxt:'Indie', rev:1960 },
+  { rank:12, name:"Roche Bros DTX (Boston)",                 badge:'b-roche', bTxt:'Roche', rev:1840 },
+  { rank:13, name:"Boys in Berries (Sharon, MA)",            badge:'b-indie', bTxt:'Indie', rev:1720 },
+  { rank:14, name:"Alley's General Store (Cape Cod)",        badge:'b-indie', bTxt:'Indie', rev:1580 },
+  { rank:15, name:"WFM Dedham (MA)",                         badge:'b-wfm',   bTxt:'WFM',   rev:1540 },
+];
+(function() {
+  const el = document.getElementById('easAcctsList');
+  if (!el) return;
+  easAccounts.forEach(a => {
+    el.innerHTML += `<div class="store-row"><div class="store-rank">${a.rank}</div><div class="store-info"><div class="store-name">${a.name}</div><div class="store-meta"><span class="badge ${a.badge}">${a.bTxt}</span></div></div><div class="store-bar-wrap"><div class="store-bar-bg"><div class="store-bar" style="width:${Math.round(a.rev/8240*100)}%"></div></div></div><div class="store-rev">$${a.rev.toLocaleString()}</div></div>`;
+  });
+})();
+
+// ── FDK ACCOUNT LIST (Tab 3 FDK) ──────────────────────────────
+const fdkAccounts = [
+  { rank:1,  name:"WFM Foggy Bottom / GWU (DC)",      state:'DC', rev:2200 },
+  { rank:2,  name:"WFM Vienna VA",                    state:'VA', rev:1500 },
+  { rank:3,  name:"WFM Arlington — Wilson Blvd",      state:'VA', rev:1400 },
+  { rank:4,  name:"WFM P Street NW (DC)",             state:'DC', rev:1300 },
+  { rank:5,  name:"WFM Ashburn VA",                   state:'VA', rev:1200 },
+  { rank:6,  name:"WFM South Capitol (DC)",           state:'DC', rev:1100 },
+  { rank:7,  name:"WFM Old Town Alexandria VA",       state:'VA', rev:1000 },
+  { rank:8,  name:"WFM Annapolis MD",                 state:'MD', rev:980  },
+  { rank:9,  name:"WFM Cherry Hill NJ",               state:'NJ', rev:950  },
+  { rank:10, name:"WFM Tenley DC",                    state:'DC', rev:900  },
+  { rank:11, name:"WFM Pentagon City VA",             state:'VA', rev:880  },
+  { rank:12, name:"WFM Kentlands (Gaithersburg, MD)", state:'MD', rev:870  },
+  { rank:13, name:"WFM Princeton NJ",                 state:'NJ', rev:860  },
+  { rank:14, name:"WFM Bethesda MD",                  state:'MD', rev:840  },
+  { rank:15, name:"WFM Charlottesville VA",           state:'VA', rev:790  },
+];
+const stateClass = { DC:'s-dc', VA:'s-va', MD:'s-md', PA:'s-pa', NJ:'s-nj', DE:'s-de', MA:'s-ma', ME:'s-me', NH:'s-nh', RI:'s-ri', VT:'s-vt', CT:'s-ct' };
+(function() {
+  const el = document.getElementById('fdkAcctsList');
+  if (!el) return;
+  fdkAccounts.forEach(a => {
+    el.innerHTML += `<div class="store-row"><div class="store-rank">${a.rank}</div><div class="store-info"><div class="store-name">${a.name}</div><div class="store-meta"><span class="badge b-wfm">WFM</span><span class="state-pill ${stateClass[a.state]}" style="margin-left:4px">${a.state}</span></div></div><div class="store-bar-wrap"><div class="store-bar-bg"><div class="store-bar" style="width:${Math.round(a.rev/2200*100)}%;background:linear-gradient(90deg,${C.fdk},${C.teal})"></div></div></div><div class="store-rev">$${a.rev.toLocaleString()}</div></div>`;
+  });
+})();
+
+// ── COMBINED SKU SHARE ─────────────────────────────────────────
+new Chart(document.getElementById('combinedSkuShare'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Caramel 16pk (758401)','Vanilla 16pk (758402)','Dark Choc 14pk (758403)','Caramel 4ct (758410)','Vanilla 4ct (758411)','12pk New (758404/405)'],
+    datasets: [{ data: [43100,23600,9500,17200,13000,2000],
+      backgroundColor: [C.caramel+'cc',C.vanilla+'cc',C.choc+'cc',C.mp1+'cc',C.mp2+'cc',C.green+'cc'],
+      borderColor: '#fff', borderWidth: 3 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins: {
+    legend: { ...defOpts.plugins.legend, position:'right' },
+    tooltip: { ...defOpts.plugins.tooltip, callbacks: { label: ctx => { const t=ctx.dataset.data.reduce((a,b)=>a+b,0); return ` $${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/t*100)}%)`; } } }
+  }}
+});
+
+// ── SKU TERRITORY BAR ──────────────────────────────────────────
+new Chart(document.getElementById('skuTerritoryBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Caramel 16pk','Vanilla 16pk','Dark Choc','Caramel 4ct','Vanilla 4ct'],
+    datasets: [
+      { label:'MA-EAS 2025', data:[47,25,11,10,7],  backgroundColor:C.eas+'cc', borderRadius:4 },
+      { label:'MD-FDK 2025', data:[15,10,1, 40,32], backgroundColor:C.fdk+'cc', borderRadius:4 }
+    ]
+  },
+  options: { ...defOpts, scales: { x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>v+'%'}, max:60} } }
+});
+
+// ── 4CT GROWTH ─────────────────────────────────────────────────
+new Chart(document.getElementById('fourCtGrowth'), {
+  type: 'line',
+  data: {
+    labels: ['Jan 24','Apr 24','Jul 24','Oct 24','Jan 25','Apr 25','Jul 25','Oct 25','Jan 26','Feb 26'],
+    datasets: [
+      { label:'EAS 4ct Share', data:[0,0,0,0,8,18,26,30,38,42], borderColor:C.eas, backgroundColor:C.eas+'22', fill:true, tension:0.4, pointRadius:3 },
+      { label:'FDK 4ct Share', data:[null,null,null,null,null,65,72,74,74,76], borderColor:C.fdk, backgroundColor:C.fdk+'22', fill:true, tension:0.4, pointRadius:3 }
+    ]
+  },
+  options: { ...defOpts, scales: { x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>v+'%'}, max:100, min:0} } }
+});
+
+// ── 12PK ROLLOUT ───────────────────────────────────────────────
+new Chart(document.getElementById('twelvePkRollout'), {
+  type: 'bar',
+  data: {
+    labels: ['Wk 1 Jan','Wk 2 Jan','Wk 3 Jan','Wk 4 Jan','Wk 1 Feb','Wk 2 Feb','Wk 3 Feb'],
+    datasets: [
+      { label:'EAS Stores', data:[0,2,4,6,12,18,25], backgroundColor:C.eas+'bb', borderRadius:4 },
+      { label:'FDK Stores', data:[0,3,5,8,14,20,28], backgroundColor:C.fdk+'bb', borderRadius:4 }
+    ]
+  },
+  options: { ...defOpts, scales: { x:defOpts.scales.x, y:{...defOpts.scales.y, title:{display:true,text:'Stores with 12pk Orders',color:C.muted}} } }
+});
+
+// ── TAB 2 COMBINED CHARTS ─────────────────────────────────────
+const months12 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const eas24 = [2800,2200,3200,3400,4200,4800,5200,4900,4200,3800,4000,4400];
+const eas25 = [2800,2400,3200,3600,4200,4800,5200,5000,4600,4200,4600,4800];
+
+new Chart(document.getElementById('easMonthly'), {
+  type: 'line',
+  data: { labels: months12, datasets: [
+    { label:'2024', data:eas24, borderColor:C.muted, backgroundColor:C.muted+'11', fill:true, tension:0.4, pointRadius:3 },
+    { label:'2025', data:eas25, borderColor:C.eas,  backgroundColor:C.eas+'22',  fill:true, tension:0.4, pointRadius:3 },
+    { label:'2026 (Jan,Feb)', data:[5400,4400,null,null,null,null,null,null,null,null,null,null], borderColor:C.teal, borderDash:[5,3], tension:0.4, pointRadius:4 }
+  ]},
+  options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}} } }
+});
+
+new Chart(document.getElementById('fdkMonthly'), {
+  type:'bar',
+  data:{ labels:['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'],
+    datasets:[
+      { label:'2025', data:[1800,2400,2200,2100,2000,2100,1900,2000,2100,null,null], backgroundColor:C.fdk+'99', borderRadius:4 },
+      { label:'2026 YTD', data:[null,null,null,null,null,null,null,null,null,1600,1400], backgroundColor:C.teal+'bb', borderRadius:4 }
+    ]},
+  options:{ ...defOpts, scales:{ x:{...defOpts.scales.x, stacked:true}, y:{...defOpts.scales.y, stacked:true, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}} } }
+});
+
+new Chart(document.getElementById('easChannel'), {
+  type:'bar',
+  data:{ labels:['WFM','Indie MA','Roche Bros','Indie ME','Indie VT','NCG','Indie NH/RI/CT','INFRA'],
+    datasets:[{ label:'2025 Revenue', data:[29790,6840,3920,3420,2920,1800,3820,1220],
+      backgroundColor:[C.blue+'bb','#7c3aedbb','#dc2626bb','#8b5cf6bb','#6d28d9bb',C.green+'bb','#ec4899bb',C.amber+'bb'], borderRadius:4 }]},
+  options:{ ...defOpts, indexAxis:'y', plugins:{...defOpts.plugins, legend:{display:false}},
+    scales:{ x:{...defOpts.scales.x, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}, y:defOpts.scales.y } }
+});
+
+new Chart(document.getElementById('fdkState'), {
+  type:'doughnut',
+  data:{ labels:['Virginia','DC','Pennsylvania','Maryland','New Jersey','Delaware'],
+    datasets:[{ data:[35,25,20,15,4,1], backgroundColor:[C.green+'cc',C.blue+'cc',C.purple+'cc',C.amber+'cc',C.red+'cc','#0891b2cc'], borderColor:'#fff', borderWidth:3 }]},
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...defOpts.plugins.legend, position:'right'}, tooltip:{...defOpts.plugins.tooltip, callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}%`}} } }
+});
+
+new Chart(document.getElementById('easState'), {
+  type:'bar',
+  data:{ labels:['MA','NH','ME','RI','CT','VT'], datasets:[
+    { label:'2024', data:[18400,3200,2200,1600,1200,1840], backgroundColor:C.muted+'55', borderRadius:3 },
+    { label:'2025', data:[29800,4800,3400,2600,2200,2900], backgroundColor:C.eas+'bb',   borderRadius:3 }
+  ]},
+  options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}} } }
+});
+
+new Chart(document.getElementById('fdkRegion'), {
+  type:'bar',
+  data:{ labels:['DC Core','NoVA/Suburbs','MD Suburbs','Philly Metro','NJ','Hampton Roads','Pittsburgh','Richmond'],
+    datasets:[{ label:'Est. Revenue', data:[5800,5200,3200,3000,1800,1100,900,750], backgroundColor:C.fdk+'99', borderColor:C.fdk, borderWidth:1, borderRadius:4 }]},
+  options:{ ...defOpts, indexAxis:'y', plugins:{...defOpts.plugins, legend:{display:false}},
+    scales:{ x:{...defOpts.scales.x, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}}, y:{...defOpts.scales.y, ticks:{font:{size:11}}} } }
+});
+
+// ── TAB 2 EAS-ONLY CHARTS ─────────────────────────────────────
+function buildEasTab2Charts() {
+  if (_builtCharts.easTab2) return; _builtCharts.easTab2 = true;
+  new Chart(document.getElementById('t2_eas_monthly'), {
+    type:'line',
+    data:{ labels:months12, datasets:[
+      { label:'2024', data:eas24, borderColor:C.muted, backgroundColor:C.muted+'22', fill:true, tension:0.4, pointRadius:3 },
+      { label:'2025', data:eas25, borderColor:C.eas,  backgroundColor:C.eas+'22',  fill:true, tension:0.4, pointRadius:3 },
+      { label:'2026 (Jan,Feb)', data:[5400,4400,null,null,null,null,null,null,null,null,null,null], borderColor:C.teal, borderDash:[5,3], tension:0.4, pointRadius:5 }
+    ]},
+    options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}} } }
+  });
+  new Chart(document.getElementById('t2_eas_state'), {
+    type:'bar',
+    data:{ labels:['MA','NH','ME','RI','CT','VT'], datasets:[
+      { label:'2024', data:[18400,3200,2200,1600,1200,1840], backgroundColor:C.muted+'55', borderRadius:4 },
+      { label:'2025', data:[29800,4800,3400,2600,2200,2900], backgroundColor:C.eas+'bb',   borderRadius:4 }
+    ]},
+    options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}} } }
+  });
+  new Chart(document.getElementById('t2_eas_channel_bar'), {
+    type:'bar',
+    data:{ labels:['WFM','Indie MA','Roche Bros','Indie ME','Indie VT','NCG','Indie NH/RI/CT','INFRA'], datasets:[
+      { label:'2024', data:[18570,4280,620,2180,1840,980,2410,780],   backgroundColor:C.muted+'55', borderRadius:4 },
+      { label:'2025', data:[29790,6840,3920,3420,2920,1800,3820,1220], backgroundColor:C.eas+'bb',  borderRadius:4 }
+    ]},
+    options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}} } }
+  });
+}
+
+// ── TAB 2 FDK-ONLY CHARTS ─────────────────────────────────────
+function buildFdkTab2Charts() {
+  if (_builtCharts.fdkTab2) return; _builtCharts.fdkTab2 = true;
+  new Chart(document.getElementById('t2_fdk_monthly'), {
+    type:'bar',
+    data:{ labels:['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'],
+      datasets:[
+        { label:'2025',     data:[1800,2400,2200,2100,2000,2100,1900,2000,2100,null,null], backgroundColor:C.fdk+'99', borderRadius:5 },
+        { label:'2026 YTD', data:[null,null,null,null,null,null,null,null,null,1600,1400], backgroundColor:C.teal+'bb', borderRadius:5 }
+      ]},
+    options:{ ...defOpts, scales:{ x:{...defOpts.scales.x, stacked:true}, y:{...defOpts.scales.y, stacked:true, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}} } }
+  });
+  new Chart(document.getElementById('t2_fdk_region'), {
+    type:'bar',
+    data:{ labels:['DC Core','NoVA/Suburbs','MD Suburbs','Philly Metro','NJ','Hampton Roads','Pittsburgh','Richmond'],
+      datasets:[{ label:'Est. Revenue', data:[5800,5200,3200,3000,1800,1100,900,750], backgroundColor:C.fdk+'99', borderColor:C.fdk, borderWidth:1, borderRadius:4 }]},
+    options:{ ...defOpts, indexAxis:'y', plugins:{...defOpts.plugins, legend:{display:false}},
+      scales:{ x:{...defOpts.scales.x, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}}, y:{...defOpts.scales.y, ticks:{font:{size:11}}} } }
+  });
+  new Chart(document.getElementById('t2_fdk_state'), {
+    type:'doughnut',
+    data:{ labels:['Virginia','DC','Pennsylvania','Maryland','New Jersey','Delaware'],
+      datasets:[{ data:[35,25,20,15,4,1], backgroundColor:[C.green+'cc',C.blue+'cc',C.purple+'cc',C.amber+'cc',C.red+'cc','#0891b2cc'], borderColor:'#fff', borderWidth:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...defOpts.plugins.legend, position:'right'}, tooltip:{...defOpts.plugins.tooltip, callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}%`}} } }
+  });
+}
+
+// ── TAB 3 EAS-ONLY CHARTS ─────────────────────────────────────
+function buildEasTab3Charts() {
+  if (_builtCharts.easTab3) return; _builtCharts.easTab3 = true;
+  new Chart(document.getElementById('t3_eas_channel'), {
+    type:'doughnut',
+    data:{ labels:['WFM','Indie MA','Roche Bros','Indie ME','Indie VT','NCG','Indie NH/RI/CT','INFRA'],
+      datasets:[{ data:[29790,6840,3920,3420,2920,1800,3820,1220],
+        backgroundColor:[C.blue+'cc','#7c3aedcc','#dc2626cc','#8b5cf6cc','#6d28d9cc',C.green+'cc','#ec4899cc',C.amber+'cc'],
+        borderColor:'#fff', borderWidth:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...defOpts.plugins.legend, position:'right'},
+      tooltip:{...defOpts.plugins.tooltip, callbacks:{label:ctx=>{ const t=ctx.dataset.data.reduce((a,b)=>a+b,0); return ` $${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/t*100)}%)`; }}} } }
+  });
+}
+
+// ── TAB 3 FDK-ONLY CHARTS ─────────────────────────────────────
+function buildFdkTab3Charts() {
+  if (_builtCharts.fdkTab3) return; _builtCharts.fdkTab3 = true;
+  new Chart(document.getElementById('t3_fdk_state'), {
+    type:'bar',
+    data:{ labels:['DC','Virginia','Maryland','Pennsylvania','New Jersey','Delaware'],
+      datasets:[{ label:'Est. Revenue', data:[5800,8300,4050,4700,2250,250],
+        backgroundColor:[C.blue+'bb',C.green+'bb',C.amber+'bb',C.purple+'bb',C.red+'bb','#0891b2bb'], borderRadius:5 }]},
+    options:{ ...defOpts, plugins:{...defOpts.plugins, legend:{display:false}},
+      scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}} } }
+  });
+}
+
+// ── TAB 4 EAS-ONLY CHARTS ─────────────────────────────────────
+function buildEasTab4Charts() {
+  if (_builtCharts.easTab4) return; _builtCharts.easTab4 = true;
+  new Chart(document.getElementById('t4_eas_sku_year'), {
+    type:'bar',
+    data:{ labels:['Caramel 16pk','Vanilla 16pk','Dark Choc 14pk','Caramel 4ct','Vanilla 4ct'], datasets:[
+      { label:'2024',     data:[18200,9800,2800,0,0],    backgroundColor:C.muted+'55', borderRadius:4 },
+      { label:'2025',     data:[21400,11600,6200,5800,4200], backgroundColor:C.eas+'bb',  borderRadius:4 },
+      { label:'2026 YTD', data:[2500,1400,400,2800,2300],  backgroundColor:C.teal+'bb', borderRadius:4 }
+    ]},
+    options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}} } }
+  });
+  new Chart(document.getElementById('t4_eas_sku_share'), {
+    type:'doughnut',
+    data:{ labels:['Caramel 16pk','Vanilla 16pk','Dark Choc 14pk','Caramel 4ct','Vanilla 4ct'],
+      datasets:[{ data:[21400,11600,6200,5800,4200],
+        backgroundColor:[C.caramel+'cc',C.vanilla+'cc',C.choc+'cc',C.mp1+'cc',C.mp2+'cc'],
+        borderColor:'#fff', borderWidth:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...defOpts.plugins.legend, position:'right'},
+      tooltip:{...defOpts.plugins.tooltip, callbacks:{label:ctx=>{ const t=ctx.dataset.data.reduce((a,b)=>a+b,0); return ` $${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/t*100)}%)`; }}} } }
+  });
+  new Chart(document.getElementById('t4_eas_caramel_vanilla'), {
+    type:'line',
+    data:{ labels:[...months12.map(m=>m+" '24"), ...months12.map(m=>m+" '25"), "Jan '26", "Feb '26"], datasets:[
+      { label:'Caramel (758401)', data:[72,58,88,84,96,102,118,112,98,80,72,64,90,78,105,112,138,152,172,160,148,128,118,110,108,112],
+        borderColor:C.caramel, backgroundColor:C.caramel+'11', fill:true, tension:0.4, pointRadius:2 },
+      { label:'French Vanilla (758402)', data:[38,32,48,44,52,56,62,58,52,44,38,34,48,42,58,62,76,84,92,88,80,68,62,58,56,60],
+        borderColor:C.vanilla, backgroundColor:C.vanilla+'11', fill:true, tension:0.4, pointRadius:2 }
+    ]},
+    options:{ ...defOpts, scales:{ x:{...defOpts.scales.x, ticks:{maxRotation:45}}, y:{...defOpts.scales.y, title:{display:true, text:'Cases Ordered', color:C.muted}} } }
+  });
+}
+
+// ── TAB 4 FDK-ONLY CHARTS ─────────────────────────────────────
+function buildFdkTab4Charts() {
+  if (_builtCharts.fdkTab4) return; _builtCharts.fdkTab4 = true;
+  new Chart(document.getElementById('t4_fdk_sku_share'), {
+    type:'doughnut',
+    data:{ labels:['Caramel 4ct (758410)','Vanilla 4ct (758411)','Caramel 16pk (758401)','Vanilla 16pk (758402)','12pk New (758404/405)','Dark Choc (758403)'],
+      datasets:[{ data:[40,32,15,10,3,1],
+        backgroundColor:[C.teal+'cc',C.mp2+'cc',C.amber+'cc',C.caramel+'cc',C.green+'cc',C.choc+'cc'],
+        borderColor:'#fff', borderWidth:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...defOpts.plugins.legend, position:'right'}, tooltip:{...defOpts.plugins.tooltip, callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}%`}} } }
+  });
+  new Chart(document.getElementById('t4_fdk_format_trend'), {
+    type:'line',
+    data:{ labels:['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'], datasets:[
+      { label:'4ct (758410/411)',  data:[65,68,70,72,73,74,74,73,72,74,76], borderColor:C.teal,  backgroundColor:C.teal+'22',  fill:true, tension:0.4, pointRadius:3 },
+      { label:'16pk (758401/402)', data:[35,32,30,28,27,25,24,25,26,20,16], borderColor:C.amber, backgroundColor:C.amber+'22', fill:true, tension:0.4, pointRadius:3 },
+      { label:'12pk (758404/405)', data:[0,0,0,0,0,0,0,0,1,5,8],           borderColor:C.green, backgroundColor:C.green+'22', fill:true, tension:0.4, pointRadius:3 }
+    ]},
+    options:{ ...defOpts, scales:{ x:defOpts.scales.x, y:{...defOpts.scales.y, ticks:{callback:v=>v+'%'}, max:100, min:0} } }
+  });
+}
+
+</script>
