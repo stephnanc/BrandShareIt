@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle LLC — Distributor Deductions Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f2f5;
+    --white: #ffffff;
+    --surface: #f7f8fa;
+    --surface2: #eaecef;
+    --border: #d0d7de;
+    --text: #1a1d23;
+    --text-muted: #57606a;
+    --text-dim: #9ba3b0;
+    --accent2: #1a7f37;
+    --red: #cf222e;
+    --positive-bg: #f0fdf4;
+    --positive-hover: #dcfce7;
+    --negative-bg: #fff8f8;
+    --negative-hover: #fde8e8;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 24px 24px 48px 24px;
+  }
+
+  /* ─── TAB NAV ─── */
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+    padding: 0 4px;
+  }
+
+  .tab-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 10px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    top: 1px;
+  }
+
+  .tab-btn:hover { background: var(--white); color: var(--text); }
+
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--text);
+    font-weight: 600;
+    border-color: var(--border);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  }
+
+  .tab-btn.active.unfi { border-top: 3px solid #1d6fa4; }
+  .tab-btn.active.kehe { border-top: 3px solid #2d9e6b; }
+
+  /* ─── PANEL ─── */
+  .tab-panel {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .tab-panel.active { display: block; }
+
+  /* ─── CARD HEADER ─── */
+  .card-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+  .dist-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .dist-label.unfi { color: #1d6fa4; }
+  .dist-label.kehe { color: #2d9e6b; }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .card-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
+  .created-by {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .created-name {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 3px;
+  }
+
+  /* ─── SUMMARY STRIP ─── */
+  .summary-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .summary-card {
+    flex: 1;
+    padding: 14px 20px;
+    border-right: 1px solid var(--border);
+  }
+
+  .summary-card:last-child { border-right: none; }
+
+  .summary-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+  }
+
+  .summary-val {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .summary-val.red { color: var(--red); }
+  .summary-val.green { color: var(--accent2); }
+  .summary-val.blue { color: #1d6fa4; }
+  .summary-val.dark { color: var(--text); }
+
+  /* ─── CONTROLS ─── */
+  .controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 13px;
+    width: 230px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-box:focus { border-color: #1d6fa4; }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 11px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: #1d6fa4; color: #1d6fa4; background: #e8f2f9; }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-reset:hover { background: var(--red); color: #fff; }
+
+  .row-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ─── TABLE ─── */
+  .table-wrapper { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+    min-width: 1060px;
+  }
+
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th {
+    padding: 11px 13px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+  }
+
+  th:last-child { border-right: none; }
+  th:hover { color: var(--text); background: var(--surface2); }
+
+  th .sort-arrow { display: inline-block; margin-left: 4px; opacity: 0.3; font-size: 9px; }
+  th.sorted-asc .sort-arrow::after { content: ' ▲'; opacity: 1; }
+  th.sorted-desc .sort-arrow::after { content: ' ▼'; opacity: 1; }
+  th:not(.sorted-asc):not(.sorted-desc) .sort-arrow::after { content: ' ⇅'; }
+
+  .filter-row th {
+    padding: 5px 7px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .filter-row th:hover { background: var(--surface2); color: var(--text-muted); }
+
+  .col-filter {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 7px;
+    outline: none;
+  }
+
+  .col-filter:focus { border-color: #1d6fa4; }
+  .col-filter::placeholder { color: var(--text-dim); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    animation: fadeIn 0.18s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  tbody tr:hover { background: #f0f4f8; }
+  tr.type-positive { background: var(--positive-bg); }
+  tr.type-positive:hover { background: var(--positive-hover); }
+  tr.type-negative { background: var(--negative-bg); }
+  tr.type-negative:hover { background: var(--negative-hover); }
+
+  td {
+    padding: 9px 13px;
+    border-right: 1px solid #eef0f3;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  td:last-child { border-right: none; }
+
+  .amount-cell { text-align: right; font-weight: 500; }
+  .amount-cell.positive { color: var(--accent2); }
+  .amount-cell.negative { color: var(--red); }
+  .amount-cell.zero { color: var(--text-dim); }
+
+  .row-num { color: var(--text-dim); font-size: 10px; text-align: center; user-select: none; }
+  .inv-num { color: var(--text); font-size: 11px; }
+
+  .desc-badge {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 10px;
+    padding: 2px 7px;
+    color: var(--text-muted);
+  }
+
+  .type-badge {
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .type-badge.credit    { background: #dafbe1; color: #1a7f37; border: 1px solid #82cfaa; }
+  .type-badge.deduction { background: #fde8e8; color: #cf222e; border: 1px solid #f5a9a9; }
+
+  .notes-input {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 8px;
+    width: 210px;
+    outline: none;
+    transition: all 0.15s;
+  }
+
+  .notes-input:hover { border-color: var(--border); background: var(--white); }
+  .notes-input:focus { border-color: #1d6fa4; background: var(--white); }
+  .notes-input::placeholder { color: var(--text-dim); font-size: 11px; }
+
+  tfoot tr { background: var(--surface); border-top: 2px solid var(--border); }
+  tfoot td { padding: 11px 13px; font-size: 12px; font-weight: 500; }
+
+  .export-bar {
+    padding: 11px 20px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn unfi active" onclick="switchTab('unfi')">UNFI East-West</button>
+  <button class="tab-btn kehe" onclick="switchTab('kehe')">KeHE Distributors</button>
+</div>
+
+<!-- ═══════════════════════════ UNFI PANEL ═══════════════════════════ -->
+<div class="tab-panel active" id="panel-unfi">
+
+  <div class="card-header">
+    <div class="header-left">
+      <div class="dist-label unfi">UNFI EAST-WEST</div>
+      <div class="card-title">UNFI Remittance Deductions Worksheet</div>
+      <div class="card-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #45964 &nbsp;·&nbsp; United Natural Foods East-West, Inc.</div>
+    </div>
+    <div class="header-right">
+      <div class="created-by">Worksheet created by</div>
+      <div class="created-name">Stephen Nance</div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-card"><div class="summary-label">Total Line Items</div><div class="summary-val dark" id="u-sum-count">0</div></div>
+    <div class="summary-card"><div class="summary-label">Credits / Payments</div><div class="summary-val green" id="u-sum-credits">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Deductions / Chargebacks</div><div class="summary-val red" id="u-sum-deductions">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Total Discounts Applied</div><div class="summary-val blue" id="u-sum-discounts">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Visible Rows</div><div class="summary-val dark" id="u-sum-visible">0</div></div>
+  </div>
+
+  <div class="controls-bar">
+    <input class="search-box" type="text" id="u-globalSearch" placeholder="🔍  Search all columns...">
+    <select class="filter-select" id="u-checkFilter">
+      <option value="">All Checks</option>
+      <option value="1705391">1705391 — 02/19/2026</option>
+      <option value="2043520">2043520 — 01/30/2026</option>
+      <option value="1698552">1698552 — 12/24/2025</option>
+      <option value="2050483">2050483 — 03/18/2026</option>
+    </select>
+    <select class="filter-select" id="u-typeFilter">
+      <option value="">All Types</option>
+      <option value="Credit">Credits</option>
+      <option value="Deduction">Deductions</option>
+    </select>
+    <button class="btn" onclick="exportCSV('unfi')">↓ Export CSV</button>
+    <button class="btn" onclick="window.print()">⎙ Print</button>
+    <button class="btn-reset" onclick="resetAll('unfi')">✕ Reset</button>
+    <span class="row-count" id="u-rowCount">0 rows</span>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr id="u-headerRow">
+          <th onclick="sortTable('unfi',0)" data-col="0"><span class="sort-arrow"></span>#</th>
+          <th onclick="sortTable('unfi',1)" data-col="1"><span class="sort-arrow"></span>Check Date</th>
+          <th onclick="sortTable('unfi',2)" data-col="2"><span class="sort-arrow"></span>Check #</th>
+          <th onclick="sortTable('unfi',3)" data-col="3"><span class="sort-arrow"></span>Invoice Date</th>
+          <th onclick="sortTable('unfi',4)" data-col="4"><span class="sort-arrow"></span>Invoice Number</th>
+          <th onclick="sortTable('unfi',5)" data-col="5"><span class="sort-arrow"></span>Description</th>
+          <th onclick="sortTable('unfi',6)" data-col="6"><span class="sort-arrow"></span>Type</th>
+          <th onclick="sortTable('unfi',7)" data-col="7"><span class="sort-arrow"></span>Gross Amount</th>
+          <th onclick="sortTable('unfi',8)" data-col="8"><span class="sort-arrow"></span>Discount</th>
+          <th onclick="sortTable('unfi',9)" data-col="9"><span class="sort-arrow"></span>Net Amount</th>
+          <th data-col="10">Notes</th>
+        </tr>
+        <tr class="filter-row">
+          <th></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="1" placeholder="Check date..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="2" placeholder="Check #..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="3" placeholder="Inv. date..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="4" placeholder="Invoice #..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="5" placeholder="Desc..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="6" placeholder="Type..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="7" placeholder="Gross..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="8" placeholder="Discount..." oninput="applyFilters('unfi')"></th>
+          <th><input class="col-filter" data-tab="unfi" data-col="9" placeholder="Net..." oninput="applyFilters('unfi')"></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="u-tableBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">TOTAL PAID (Visible Rows)</td>
+          <td class="amount-cell" id="u-foot-gross" style="font-size:13px;"></td>
+          <td class="amount-cell" id="u-foot-discount" style="font-size:13px;"></td>
+          <td class="amount-cell" id="u-foot-net" style="font-size:13px;font-weight:600;color:#1d6fa4;"></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="export-bar">
+    <span>UNFI East-West · Checks 1705391, 2043520, 1698552 &amp; 2050483 · SWOFFLE LLC Vendor #45964</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ KEHE PANEL ═══════════════════════════ -->
+<div class="tab-panel" id="panel-kehe">
+
+  <div class="card-header">
+    <div class="header-left">
+      <div class="dist-label kehe">KeHE DISTRIBUTORS</div>
+      <div class="card-title">KeHE Remittance Deductions Worksheet</div>
+      <div class="card-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #23017256 &nbsp;·&nbsp; KeHE Distributors, LLC</div>
+    </div>
+    <div class="header-right">
+      <div class="created-by">Worksheet created by</div>
+      <div class="created-name">Stephen Nance</div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-card"><div class="summary-label">Total Line Items</div><div class="summary-val dark" id="k-sum-count">0</div></div>
+    <div class="summary-card"><div class="summary-label">Credits / Payments</div><div class="summary-val green" id="k-sum-credits">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Deductions / Chargebacks</div><div class="summary-val red" id="k-sum-deductions">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Total Discounts Applied</div><div class="summary-val blue" id="k-sum-discounts">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Visible Rows</div><div class="summary-val dark" id="k-sum-visible">0</div></div>
+  </div>
+
+  <div class="controls-bar">
+    <input class="search-box" type="text" id="k-globalSearch" placeholder="🔍  Search all columns...">
+    <select class="filter-select" id="k-checkFilter">
+      <option value="">All Checks</option>
+      <option value="3243581">3243581 — 01/23/2026</option>
+      <option value="3230718">3230718 — 12/12/2025</option>
+    </select>
+    <select class="filter-select" id="k-typeFilter">
+      <option value="">All Types</option>
+      <option value="Credit">Credits</option>
+      <option value="Deduction">Deductions</option>
+    </select>
+    <button class="btn" onclick="exportCSV('kehe')">↓ Export CSV</button>
+    <button class="btn" onclick="window.print()">⎙ Print</button>
+    <button class="btn-reset" onclick="resetAll('kehe')">✕ Reset</button>
+    <span class="row-count" id="k-rowCount">0 rows</span>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr id="k-headerRow">
+          <th onclick="sortTable('kehe',0)" data-col="0"><span class="sort-arrow"></span>#</th>
+          <th onclick="sortTable('kehe',1)" data-col="1"><span class="sort-arrow"></span>Check Date</th>
+          <th onclick="sortTable('kehe',2)" data-col="2"><span class="sort-arrow"></span>Check #</th>
+          <th onclick="sortTable('kehe',3)" data-col="3"><span class="sort-arrow"></span>Invoice Date</th>
+          <th onclick="sortTable('kehe',4)" data-col="4"><span class="sort-arrow"></span>Invoice Number</th>
+          <th onclick="sortTable('kehe',5)" data-col="5"><span class="sort-arrow"></span>Description</th>
+          <th onclick="sortTable('kehe',6)" data-col="6"><span class="sort-arrow"></span>Type</th>
+          <th onclick="sortTable('kehe',7)" data-col="7"><span class="sort-arrow"></span>Gross Amount</th>
+          <th onclick="sortTable('kehe',8)" data-col="8"><span class="sort-arrow"></span>Discount</th>
+          <th onclick="sortTable('kehe',9)" data-col="9"><span class="sort-arrow"></span>Net Amount</th>
+          <th data-col="10">Notes</th>
+        </tr>
+        <tr class="filter-row">
+          <th></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="1" placeholder="Check date..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="2" placeholder="Check #..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="3" placeholder="Inv. date..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="4" placeholder="Invoice #..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="5" placeholder="Desc..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="6" placeholder="Type..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="7" placeholder="Gross..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="8" placeholder="Discount..." oninput="applyFilters('kehe')"></th>
+          <th><input class="col-filter" data-tab="kehe" data-col="9" placeholder="Net..." oninput="applyFilters('kehe')"></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="k-tableBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">TOTAL PAID (Visible Rows)</td>
+          <td class="amount-cell" id="k-foot-gross" style="font-size:13px;"></td>
+          <td class="amount-cell" id="k-foot-discount" style="font-size:13px;"></td>
+          <td class="amount-cell" id="k-foot-net" style="font-size:13px;font-weight:600;color:#2d9e6b;"></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="export-bar">
+    <span>KeHE Distributors, LLC · Checks 3243581 &amp; 3230718 · SWOFFLE LLC Vendor #23017256</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════════════════
+const DATA = {
+  unfi: [
+    // ─── CHECK 1705391 · 02/19/2026 ───
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/18/26", invoice:"0126BURMMCB45964Y", desc:"",    gross:-13.86,   discount:0.00,    net:-13.86,    note:"MCB Chargeback — West Region. BURMMCB = Burlington-area customer MCB. UNFI is billing back a manufacturer chargeback on behalf of a Burlington retail customer. Verify which store and whether promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/18/26", invoice:"0126BURMP45964Y",   desc:"",    gross:-575.00,  discount:0.00,    net:-575.00,   note:"URM Proposals — 3rd Party Billing West. BURMP = Burlington-area URM customer proposal. UNFI is passing through a promotional proposal charge on behalf of a URM member retailer. Verify whether this promotion was approved by Swoffle. HIGH DOLLAR — priority review."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/23/26", invoice:"0126CURMMCB45964Y", desc:"",    gross:-740.29,  discount:0.00,    net:-740.29,   note:"MCB Chargeback — West Region. CURMMCB = CUR-area customer MCB chargeback. HIGH DOLLAR — largest single deduction on this check. Verify which customer and whether promotion was authorized by Swoffle."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/23/26", invoice:"0126CURMP45964Y",   desc:"",    gross:-190.00,  discount:0.00,    net:-190.00,   note:"URM Proposals — 3rd Party Billing West. CURMP = CUR-area URM customer proposal. UNFI passes through promotional proposal charge on behalf of URM member retailer. Verify authorization."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/07/26", invoice:"0126URMMCB45964Y",  desc:"",    gross:-51.48,   discount:0.00,    net:-51.48,    note:"MCB Chargeback — West Region via URM. URMMCB = URM customer MCB. Manufacturer chargeback billed through URM cooperative. Verify which URM member store and whether the promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/07/26", invoice:"0126URMP45964Y",    desc:"",    gross:-140.00,  discount:0.00,    net:-140.00,   note:"URM Proposals — 3rd Party Billing West. URMP = URM member store promotional proposal. UNFI passes charge through to Swoffle on behalf of URM retailer. Verify promotion was approved."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/24/25", invoice:"03756776SCANSHARM", desc:"",    gross:-388.96,  discount:0.00,    net:-388.96,   note:"3rd Party Billing West — Harmons Scan (SCANSHARM). UNFI is passing through a scan promotion charge from Harmons grocery stores. Scan = retailer scanned product at a discounted price and UNFI is billing Swoffle back for the difference. Verify scan deal authorization."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/24/25", invoice:"03756777SCANSHARM", desc:"",    gross:-330.72,  discount:0.00,    net:-330.72,   note:"3rd Party Billing West — Harmons Scan (SCANSHARM). Second Harmons scan deduction on same check date. Two separate scan events or SKUs. Verify both scan deals were authorized by Swoffle."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/08/26", invoice:"03766940SCANBFARM", desc:"",    gross:-440.23,  discount:0.00,    net:-440.23,   note:"3rd Party Billing West — Bristol Farms Scan (SCANBFARM). UNFI passing through scan promotion charge from Bristol Farms. HIGH DOLLAR — verify this scan deal was authorized and amounts are correct."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"02/02/26", invoice:"065046664",          desc:"",    gross:-622.34,  discount:0.00,    net:-622.34,   note:"Numeric-only invoice — no match found in UNFI deduction key. HIGH DOLLAR at -$622.34. Source and category unknown. This is a priority dispute candidate — contact UNFI accounts payable immediately to identify what this charge represents."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/16/26", invoice:"342140922",          desc:"",    gross:3184.00,  discount:63.68,   net:3120.32,   note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $63.68 is UNFI's standard 2% early pay discount applied to the invoice total."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/05/25", invoice:"1922SSA",            desc:"",    gross:-68.46,   discount:0.00,    net:-68.46,    note:"SSA — Supplier Services Agreement. UNFI program that consolidates 15-20 previously separate fees (advertising, data, insights) into one ongoing rate. Tied to invoice 1922. Contractual and expected — verify rate matches your SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"11/26/25", invoice:"7935SSA",            desc:"",    gross:-18.48,   discount:0.00,    net:-18.48,    note:"SSA — Supplier Services Agreement tied to invoice 7935. Contractual ongoing fee. Verify rate matches SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"11/26/25", invoice:"7936SSA",            desc:"",    gross:-31.68,   discount:0.00,    net:-31.68,    note:"SSA — Supplier Services Agreement tied to invoice 7936. Contractual ongoing fee. Verify rate matches SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/08/25", invoice:"7946SSA",            desc:"",    gross:-31.00,   discount:0.00,    net:-31.00,    note:"SSA — Supplier Services Agreement tied to invoice 7946. Contractual ongoing fee. Verify rate matches SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/08/25", invoice:"7947SSA",            desc:"",    gross:-58.25,   discount:0.00,    net:-58.25,    note:"SSA — Supplier Services Agreement tied to invoice 7947. Contractual ongoing fee. Verify rate matches SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/12/25", invoice:"7961SSA",            desc:"",    gross:-18.48,   discount:0.00,    net:-18.48,    note:"SSA — Supplier Services Agreement tied to invoice 7961. Contractual ongoing fee. Verify rate matches SSA agreement on file."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/22/25", invoice:"7980",               desc:"",    gross:739.20,   discount:14.78,   net:724.42,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $14.78 is UNFI standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"+111",gross:2038.08,  discount:40.76,   net:1997.32,   note:"Standard product payment — UNFI remittance credit for Swoffle product sales. +111 suffix indicates a positive adjustment or additional line to invoice 8026. Discount of $40.76 is standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"-888",gross:201.60,   discount:-4.03,   net:-197.57,   note:"Quantity/Pricing Deduction on invoice 8026 (-888 suffix). The -888 suffix is not explicitly defined in the UNFI key — it follows the -111 pattern which is defined as a deduction when PO, receipt, and invoice quantities or pricing do not match. The negative discount of -$4.03 is unusual (a discount reversal). Contact UNFI to confirm exact trigger."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"-999",gross:201.60,   discount:4.03,    net:197.57,    note:"Quantity/Pricing Deduction on invoice 8026 (-999 suffix). The -999 suffix is not explicitly defined in the UNFI key — follows the -111 suffix pattern for PO/receipt/invoice mismatches. This entry is net positive ($197.57) suggesting it may be a partial reversal or offset of the -888 entry above. Contact UNFI to confirm exact trigger."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8026",               desc:"",    gross:2038.08,  discount:-40.76,  net:-1997.32,  note:"Deduction against invoice 8026 — this appears to be a full reversal of the original 8026 credit ($2,038.08 gross, same amount as the positive entry). The negative discount of -$40.76 mirrors the positive entry above. Likely an offset or duplicate correction. Verify with UNFI whether this is intentional."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"8028",               desc:"",    gross:1534.08,  discount:30.68,   net:1503.40,   note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $30.68 is standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"02/05/26", invoice:"8029",               desc:"",    gross:403.20,   discount:8.06,    net:395.14,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $8.06 is standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"02/10/26", invoice:"8062",               desc:"",    gross:2318.40,  discount:46.37,   net:2272.03,   note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $46.37 is standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"02/05/26", invoice:"8064",               desc:"",    gross:235.20,   discount:4.70,    net:230.50,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $4.70 is standard early pay discount."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/25/25", invoice:"FSRHARFY26Q145964Y", desc:"",    gross:3378.56,  discount:67.57,   net:3310.99,   note:"Standard product payment — UNFI remittance credit. FSR prefix suggests Fairshare program billing or Harmons quarterly payment (HARFY = Harmons FY). Discount of $67.57 is standard early pay discount. LARGEST CREDIT on this check."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/04/26", invoice:"JIMBOSSBS684",        desc:"",    gross:-75.85,   discount:0.00,    net:-75.85,    note:"3rd Party Billing West — Jimbo's Natural Markets (JIMBOS). UNFI passes through a promotional or slotting charge from Jimbo's on behalf of Swoffle. SBS = possibly shelf/scan billing suffix. Verify the promotion type and whether it was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/27/25", invoice:"MCB2025I227",         desc:"",    gross:-63.85,   discount:0.00,    net:-63.85,    note:"MCB Customer Specific — West Region. MCB(yyyymmdd) format with I suffix (likely internal adjustment). Dated December 2025. Short-term customer promotion chargeback — verify which customer and confirm promotion was authorized by Swoffle."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/03/26", invoice:"MCB20260103",         desc:"",    gross:-68.20,   discount:0.00,    net:-68.20,    note:"MCB Customer Specific — West Region. Dated 01/03/2026. Short-term customer promotion chargeback billed by UNFI on behalf of a specific retail customer. Verify which customer and confirm promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/10/26", invoice:"MCB20260110",         desc:"",    gross:-41.92,   discount:0.00,    net:-41.92,    note:"MCB Customer Specific — West Region. Dated 01/10/2026. Weekly recurring MCB pattern. Verify which customer and confirm promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/17/26", invoice:"MCB20260117",         desc:"",    gross:-46.97,   discount:0.00,    net:-46.97,    note:"MCB Customer Specific — West Region. Dated 01/17/2026. Weekly recurring MCB pattern. Verify which customer and confirm promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/24/26", invoice:"MCB20260124",         desc:"",    gross:-126.98,  discount:0.00,    net:-126.98,   note:"MCB Customer Specific — West Region. Dated 01/24/2026. Notably higher than surrounding weekly MCBs — possible multi-store or multi-SKU promotion. Verify which customer and confirm authorization."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/31/26", invoice:"MCB20260131",         desc:"",    gross:-63.58,   discount:0.00,    net:-63.58,    note:"MCB Customer Specific — West Region. Dated 01/31/2026. Weekly recurring MCB pattern. Verify which customer and confirm promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"02/14/26", invoice:"MCB20260214",         desc:"",    gross:-74.62,   discount:0.00,    net:-74.62,    note:"MCB Customer Specific — West Region. Dated 02/14/2026. Weekly recurring MCB pattern. Verify which customer and confirm promotion was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"12/26/25", invoice:"URMTO00191754HCM",    desc:"",    gross:-11.56,   discount:0.00,    net:-11.56,    note:"URM Turnovers — 3rd Party Billing West (URMTO+Invoice#HCM). HCM suffix = Home Care/Commissary pricing credit. UNFI bills pricing credits for discounts not applied on the initial invoice to URM turnover orders. Verify turnover order was authorized."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"WRDC0126045964",      desc:"",    gross:-4081.01, discount:0.00,    net:-4081.01,  note:"DISPUTED — Annual Advertising Program West (WRDC). Signed agreement dated 9/4/2025 (SMM: Sierra Connolly) sets West Region at Basic level — $525/quarter ($2,100/year). This single charge of $4,081.01 exceeds the entire annual contracted amount by $1,981.01 and is $3,556.01 over the expected quarterly rate of $525. Contact Sierra Connolly at UNFI immediately and reference signed agreement. Strong dispute candidate."   },
+    { checkDate:"02/19/2026", checkNum:"1705391", date:"01/26/26", invoice:"(see stub)",          desc:"",    gross:-750.00,  discount:0.00,    net:-750.00,   note:"Invoice number not captured — original stub required. -$750.00 is a round number which may indicate a flat-fee program charge (advertising, slotting, or show fee). See also ERDC0126045964 on Check 2043520 for a similar $750 East region charge. HIGH PRIORITY — retrieve full invoice number and identify charge type."   },
+    // ─── CHECK 2043520 · 01/30/2026 ───
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"12/12/25", invoice:"017506323PTYHEINEN",  desc:"",                gross:-73.20,   discount:0.00,   net:-73.20,    note:"3rd Party Billing East — Heinen's grocery (HEINEN suffix). PTY = program type prefix indicating a pass-through charge. UNFI collects this on behalf of Heinen's and passes it to Swoffle. Verify what program type (scan, ad, slotting) and whether it was authorized."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/07/26", invoice:"017664363PTYHEINEN",  desc:"",                gross:-71.80,   discount:0.00,   net:-71.80,    note:"3rd Party Billing East — Heinen's grocery (HEINEN suffix). Second Heinen's PTY charge — different invoice number suggests a separate billing event (different SKU or program period). Verify authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"11/03/25", invoice:"7876SSA",             desc:"",                gross:-11.76,   discount:0.00,   net:-11.76,    note:"SSA — Supplier Services Agreement tied to invoice 7876. Contractual ongoing fee consolidating multiple UNFI program charges. Verify rate matches your SSA agreement."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"11/24/25", invoice:"792350A",             desc:"",                gross:-10.08,   discount:0.00,   net:-10.08,    note:"Alphanumeric invoice with no exact key match. The A suffix may indicate an adjustment to invoice 79235. Small dollar amount — likely a minor adjustment or rounding correction. Verify with UNFI if needed."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8007",                desc:"",                gross:806.40,   discount:16.13,  net:790.27,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $16.13 is standard early pay discount."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8008",                desc:"",                gross:336.00,   discount:6.72,   net:329.28,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $6.72 is standard early pay discount."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/21/26", invoice:"8009",                desc:"",                gross:268.80,   discount:5.38,   net:263.42,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $5.38 is standard early pay discount."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/03/26", invoice:"CMQ010326045964",     desc:"Quality Chargeb", gross:-4.01,    discount:0.00,   net:-4.01,     note:"MCB Quality Chargeback (CMQ) — East Region. Generated from quality claims: damaged product, shelf-worn, recalls, or quality issues reported at store level. CMQ010326 = dated 01/03/2026. Small dollar — may be a single unit or partial case. Verify the underlying quality claim with UNFI."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/26/26", invoice:"CMQ120625045964",     desc:"Quality Chargeb", gross:-9.49,    discount:0.00,   net:-9.49,     note:"MCB Quality Chargeback (CMQ) — East Region. Dated 12/06/2025. Quality claim for damaged, shelf-worn, or recalled product. CMQ charges can potentially be disputed if the quality claim is not valid or properly documented. Request supporting documentation from UNFI."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/26/26", invoice:"ERDC0126045964",      desc:"",                gross:-750.00,  discount:0.00,   net:-750.00,   note:"DISPUTED — Annual Advertising Program East (ERDC). Signed agreement dated 9/4/2025 (SMM: Sierra Connolly) sets East Region at Basic level — $525/quarter ($2,100/year). This charge of $750.00 is $225 over the contracted quarterly rate of $525. May reflect a pro-rated first billing from the 12/1/2025 effective date, but still exceeds expected amount. Contact Sierra Connolly at UNFI to reconcile against signed agreement."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/03/26", invoice:"WE010326045964",      desc:"MCB Chargeback",  gross:-22.41,   discount:0.00,   net:-22.41,    note:"MCB Customer Specific — East Region (WE prefix). WE010326 = dated 01/03/2026. Weekly MCB chargeback for a customer-specific promotion. Could be Arranged deal, Case Stack, short-term Promo, or Turnover order. Verify which retail customer and confirm Swoffle authorized this deal."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/10/26", invoice:"WE011026045964",      desc:"MCB Chargeback",  gross:-63.68,   discount:0.00,   net:-63.68,    note:"MCB Customer Specific — East Region (WE prefix). WE011026 = dated 01/10/2026. Notably higher than surrounding weekly WE charges — possible multi-store or multi-SKU deal. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"01/17/26", invoice:"WE011726045964",      desc:"MCB Chargeback",  gross:-28.28,   discount:0.00,   net:-28.28,    note:"MCB Customer Specific — East Region (WE prefix). WE011726 = dated 01/17/2026. Weekly recurring MCB pattern. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"11/29/25", invoice:"WE112925045964",      desc:"MCB Chargeback",  gross:-19.44,   discount:0.00,   net:-19.44,    note:"MCB Customer Specific — East Region (WE prefix). WE112925 = dated 11/29/2025. Older date appearing on a January 2026 check — may indicate a delayed billing or backlog catch-up. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"12/06/25", invoice:"WE120625045964",      desc:"MCB Chargeback",  gross:-42.32,   discount:0.00,   net:-42.32,    note:"MCB Customer Specific — East Region (WE prefix). WE120625 = dated 12/06/2025. Appearing on January 2026 check — delayed billing. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"12/13/25", invoice:"WE121325045964",      desc:"MCB Chargeback",  gross:-52.11,   discount:0.00,   net:-52.11,    note:"MCB Customer Specific — East Region (WE prefix). WE121325 = dated 12/13/2025. Appearing on January 2026 check — delayed billing. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"12/20/25", invoice:"WE122025045964",      desc:"MCB Chargeback",  gross:-48.31,   discount:0.00,   net:-48.31,    note:"MCB Customer Specific — East Region (WE prefix). WE122025 = dated 12/20/2025. Appearing on January 2026 check — delayed billing. Verify which retail customer and confirm authorization."   },
+    { checkDate:"01/30/2026", checkNum:"2043520", date:"12/27/25", invoice:"WE122725045964",      desc:"MCB Chargeback",  gross:-15.95,   discount:0.00,   net:-15.95,    note:"MCB Customer Specific — East Region (WE prefix). WE122725 = dated 12/27/2025. Final weekly WE charge in the Dec 2025 series appearing on this check. Verify which retail customer and confirm authorization."   },
+    // ─── CHECK 1698552 · 12/24/2025 ───
+    { checkDate:"12/24/2025", checkNum:"1698552", date:"12/09/25", invoice:"1125URMP45964YA",    desc:"",    gross:-190.00,  discount:0.00,   net:-190.00,   note:"URM Proposals — 3rd Party Billing West (URMP). 1125 = November 2025 date code. YA suffix = likely first of two proposal billings (YA/YB pair). UNFI passes through a URM retailer promotional proposal charge to Swoffle. See also YB entry below. Verify both charges were authorized."  },
+    { checkDate:"12/24/2025", checkNum:"1698552", date:"12/09/25", invoice:"1125URMP45964YB",    desc:"",    gross:-190.00,  discount:0.00,   net:-190.00,   note:"URM Proposals — 3rd Party Billing West (URMP). YB suffix = second of two proposal billings (YA/YB pair). Identical amount to YA above ($190.00) — may represent two SKUs or two stores. Together these total $380 in URM proposal charges from November 2025. Verify both were authorized by Swoffle."  },
+    { checkDate:"12/24/2025", checkNum:"1698552", date:"12/12/25", invoice:"7961",               desc:"",    gross:739.20,   discount:14.78,  net:724.42,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $14.78 is standard early pay discount. This is the only credit on this check, offsetting the two URM proposal deductions above."   },
+    // ─── CHECK 2050483 · 03/18/2026 ───
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"07/29/25", invoice:"7704SSA",            desc:"",                gross:-10.46,   discount:0.00,   net:-10.46,    note:"SSA — Supplier Services Agreement tied to invoice 7704. Dated July 2025 — appearing on a March 2026 check indicates delayed or catch-up SSA billing. Contractual fee. Verify rate and whether this billing period aligns with your SSA agreement."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"08/21/25", invoice:"7744SSA",            desc:"",                gross:-1.68,    discount:0.00,   net:-1.68,     note:"SSA — Supplier Services Agreement tied to invoice 7744. Dated August 2025 — also a delayed billing appearing on March 2026 check. Very small amount ($1.68) likely reflects a minor SSA true-up or rounding adjustment."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"03/06/26", invoice:"8143",               desc:"",                gross:604.80,   discount:12.10,  net:592.70,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $12.10 is standard early pay discount. Note: invoice 8143 also has a -111 deduction line below — review both together."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"03/06/26", invoice:"8143",               desc:"-111",            gross:403.20,   discount:-8.06,  net:-395.14,   note:"Quantity/Pricing Deduction on invoice 8143 (-111 suffix). Per UNFI key, the -111 suffix is specifically defined as a deduction that occurs when the PO, the receipt, and the invoice do not match in quantity or pricing. The negative discount of -$8.06 is a discount reversal. This deduction is potentially disputable — request the original PO and receiving documents from UNFI to compare against your invoice."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"03/06/26", invoice:"8144",               desc:"",                gross:302.40,   discount:6.05,   net:296.35,    note:"Standard product payment — UNFI remittance credit for Swoffle product sales. Discount of $6.05 is standard early pay discount."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"03/07/26", invoice:"CMQ030726045964",    desc:"Quality Chargeb", gross:-2.81,    discount:0.00,   net:-2.81,     note:"MCB Quality Chargeback (CMQ) — dated 03/07/2026. Quality claim for damaged, shelf-worn, recalled, or quality-issue product. Small dollar amount ($2.81) — likely a single unit. CMQ charges can be disputed if the underlying quality claim is not valid. Request supporting documentation from UNFI."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"02/28/26", invoice:"WE022826045964",     desc:"MCB Chargeback",  gross:-84.83,   discount:0.00,   net:-84.83,    note:"MCB Customer Specific — East Region (WE prefix). WE022826 = dated 02/28/2026. Largest WE chargeback in this check. Could be Arranged deal, Case Stack, short-term Promo, or Turnover order. Verify which retail customer and confirm Swoffle authorized this deal."   },
+    { checkDate:"03/18/2026", checkNum:"2050483", date:"03/07/26", invoice:"WE030726045964",     desc:"MCB Chargeback",  gross:-31.31,   discount:0.00,   net:-31.31,    note:"MCB Customer Specific — East Region (WE prefix). WE030726 = dated 03/07/2026. Weekly MCB chargeback. Verify which retail customer and confirm Swoffle authorized this promotion."   },
+  ],
+  kehe: [
+    // ─── CHECK 3243581 · 01/23/2026 ───
+    // ─── CHECK 3243581 · 01/23/2026 ───
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/12/25", invoice:"HB2987915",           desc:"MidAtlantic2025.10",   gross:-1.14,    discount:0.00,  net:-1.14,    note:"HB = Hub Billing — MidAtlantic regional program charge, period 2025.10 (October 2025). DC: Breinigsville, PA. Very small dollar ($1.14) — likely a minor per-unit or true-up program fee. Part of a recurring monthly MidAtlantic pattern (Sep, Oct, Nov 2025 all appear across the two checks). Verify MidAtlantic program enrollment with KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/14/25", invoice:"0403336",              desc:"MCBB",                 gross:-83.01,   discount:0.00,  net:-83.01,   note:"MCBB — Manufacturer Chargeback Billback. DC: North East, MD. No PO number on file. Part of a recurring MCBB pattern — total MCBB charges across both KeHE checks are $1,061.72. Verify which specific promotion this covers. Potentially disputable if Swoffle did not authorize the underlying deal. Request MCBB detail report from KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/15/25", invoice:"CS003486970",          desc:"6955407",              gross:-17.40,   discount:0.00,  net:-17.40,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 6955407. No PO number on file. Claim type unknown — could be damaged product, short shipment, or pricing discrepancy. Request claim documentation from KeHE accounts payable citing invoice CS003486970 and claim 6955407."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/18/25", invoice:"A825424725",           desc:"61800257664",          gross:-435.00,  discount:0.00,  net:-435.00,  note:"HIGH DOLLAR — $435.00. DC: Portland, OR. This is the only Portland, OR deduction across all KeHE checks — all other charges originate from North East MD or Breinigsville PA. The Portland DC origin combined with the unusually high round dollar amount and no PO number strongly suggests this may be a West Coast store or program charge that warrants immediate verification. Contact KeHE and reference invoice A825424725 and claim 61800257664. PRIORITY DISPUTE CANDIDATE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/22/25", invoice:"AMPE02019589.1225.01", desc:"AMP2025P10",           gross:-38.20,   discount:0.00,  net:-38.20,   note:"AMP = KeHE Advertising & Marketing Program. DC: Breinigsville, PA. PO: AMP2025P10. Period 2025 P10 (October 2025). Consistent monthly billing — identical $38.20 rate appears on Check 3230718 (P09) and a prior check (P08 at $39.74). Contractual and expected if enrolled in AMP. Verify your AMP agreement rate matches $38.20/period."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/22/25", invoice:"CS003502449",          desc:"599063",               gross:-11.97,   discount:0.00,  net:-11.97,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 599063. No PO on file. Claim type unknown. Request documentation from KeHE accounts payable citing invoice CS003502449 and claim 599063."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/28/25", invoice:"0404881",              desc:"MCBB",                 gross:-179.40,  discount:0.00,  net:-179.40,  note:"MCBB — Manufacturer Chargeback Billback. DC: North East, MD. No PO number on file. Second MCBB on Check 3243581. Combined with the $83.01 MCBB on this same check, total MCBB on Check 3243581 alone is $262.41. Verify which promotion this covers. Potentially disputable if unauthorized. Request MCBB detail report from KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/29/25", invoice:"CS003517490",          desc:"4010170",              gross:-12.01,   discount:0.00,  net:-12.01,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 4010170. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003517490 and claim 4010170."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/05/26", invoice:"CS003532672",          desc:"9553544",              gross:-6.03,    discount:0.00,  net:-6.03,    note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 9553544. No PO on file. Small dollar ($6.03) — likely a minor claim such as a single damaged unit. Verify with KeHE if needed, citing invoice CS003532672 and claim 9553544."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"12/30/25", invoice:"7977",                 desc:"7977",                 gross:395.14,   discount:7.90,  net:387.24,   note:"Standard product payment — KeHE remittance credit. DC: Breinigsville, PA. PO: 03434335. Discount of $7.90 is KeHE standard early pay discount (~2%). Identical gross amount and discount to invoices 7938 (Check 3230718) and 7905 (prior check) — consistent smaller order pattern from Breinigsville DC."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/08/26", invoice:"LUM16464227",          desc:"LUM2026.P05",          gross:-28.19,   discount:0.00,  net:-28.19,   note:"LUM = KeHE Lump Sum billing. DC: North East, MD. Period 2026 P05. No PO on file. KeHE lump sum charges cover advertising, marketing, or retailer program fees in a consolidated charge. A prior LUM P04 charge of $19.53 appeared on the November 2025 check — confirming this is a recurring periodic billing. Verify LUM program details and rate with KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"7985",                 desc:"7985",                 gross:3193.47,  discount:63.87, net:3129.60,  note:"Standard product payment — KeHE remittance credit. DC: North East, MD. PO: 03449756. Discount of $63.87 is KeHE standard early pay discount. LARGEST CREDIT on this check. Identical net amount ($3,129.60) to invoices 7939 (Check 3230718) and 7893 (prior check) — confirms consistent large order pattern from North East MD DC."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"ARF11598227",          desc:"ARS25OCT-NOV-DEC",     gross:-42.88,   discount:0.00,  net:-42.88,   note:"ARF = KeHE Annual Reset Fee. DC: North East, MD. Covers Q4 2025 (Oct-Nov-Dec). No PO on file. Prior ARF charge (ARS JUL-AUG-SEP25) of $42.87 appeared on the October 2025 check — confirming this is a consistent quarterly billing at approximately $42.88/quarter. Contractual and expected if enrolled. Verify your ARS agreement rate with KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/12/26", invoice:"CS003548016",          desc:"6276473",              gross:-14.27,   discount:0.00,  net:-14.27,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 6276473. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003548016 and claim 6276473."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/13/26", invoice:"HB3035615",            desc:"MidAtlantic2025.11",   gross:-23.94,   discount:0.00,  net:-23.94,   note:"HB = Hub Billing — MidAtlantic regional program charge, period 2025.11 (November 2025). DC: Breinigsville, PA. Recurring monthly MidAtlantic HB pattern — Sep ($49.02), Oct ($1.14), Nov ($23.94) across the two checks. Rate varies significantly month to month, suggesting a variable per-unit or activity-based fee rather than a flat monthly rate. Verify calculation basis with KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/15/26", invoice:"7999IA",               desc:"7999IA",               gross:-197.56,  discount:-3.95, net:-193.61,  note:"Invoice Adjustment against invoice 7999. DC: Breinigsville, PA. PO: 03458500 — same PO as the 7999 product payment below, confirming this is a direct adjustment to that order. The IA suffix = Invoice Adjustment. Negative discount of -$3.95 is a discount reversal applied to the same order. Effective net received on the 7999 order is $580.85 minus $193.61 = $387.24. Verify the reason for the adjustment with KeHE — could be a pricing discrepancy, short shipment, or return."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/15/26", invoice:"7999",                 desc:"7999",                 gross:592.70,   discount:11.85, net:580.85,   note:"Standard product payment — KeHE remittance credit. DC: Breinigsville, PA. PO: 03458500. Discount of $11.85 is KeHE standard early pay discount. Note: the 7999IA entry above uses the same PO (03458500) confirming a $193.61 adjustment against this order. Effective net received is approximately $387.24 after the adjustment."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/19/26", invoice:"CS003563501",          desc:"3808447",              gross:-13.34,   discount:0.00,  net:-13.34,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 3808447. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003563501 and claim 3808447."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/19/26", invoice:"LUM16014215",          desc:"LUM2026.P08",          gross:-2.81,    discount:0.00,  net:-2.81,    note:"LUM = KeHE Lump Sum billing. DC: Breinigsville, PA. Period 2026 P08. Small dollar ($2.81). Note: a second P08 LUM charge of $23.67 from North East MD appears on the next line — same period, different DC. Combined P08 lump sum total is $26.48. Verify program details with KeHE."   },
+    { checkDate:"01/23/2026", checkNum:"3243581", date:"01/20/26", invoice:"LUM16486527",          desc:"LUM2026.P08",          gross:-23.67,   discount:0.00,  net:-23.67,   note:"LUM = KeHE Lump Sum billing. DC: North East, MD. Period 2026 P08. Second P08 LUM on this check — different DC (North East MD vs Breinigsville PA above) confirms these are two separate DC-level lump sum billings for the same program period. Combined P08 total: $26.48. Verify program details with KeHE. Note: an UNVOUCHERED WO entry also dated 01/20/2026 with PO 09840094 and $0 amount appears in the system — no financial impact but may indicate a pending transaction."   },
+    // ─── CHECK 3230718 · 12/12/2025 ───
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"11/16/25", invoice:"400332",              desc:"MCBB",               gross:-398.06,  discount:0.00,  net:-398.06,  note:"MCBB — Manufacturer Chargeback Billback. DC: North East, MD. No PO number on file. HIGH DOLLAR at -$398.06. This is the second largest MCBB charge across all KeHE checks. Total MCBB across both checks: $1,061.72 ($484.26 + $398.06 + $179.40 + $83.01 + $75.56 on prior check). MCBB is clearly a significant recurring deduction type for KeHE. Request a full MCBB promotion detail report from KeHE to identify all underlying deals."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"11/17/25", invoice:"CS003425822",         desc:"7773352",            gross:-16.71,   discount:0.00,  net:-16.71,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 7773352. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003425822 and claim 7773352."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"11/20/25", invoice:"AMP15017256.1125.01", desc:"2025P09",            gross:-38.20,   discount:0.00,  net:-38.20,   note:"AMP = KeHE Advertising & Marketing Program. DC: Breinigsville, PA. PO: 2025P09. Period September 2025. Identical $38.20 rate to Check 3243581 P10 charge — confirms consistent monthly AMP billing. The prior check showed P08 at $39.74 (slightly different, possibly pro-rated). Contractual if enrolled. Verify AMP agreement rate with KeHE."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"11/24/25", invoice:"CS003441306",         desc:"298839",             gross:-21.57,   discount:0.00,  net:-21.57,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 298839. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003441306 and claim 298839."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"11/30/25", invoice:"401841",              desc:"MCBB",               gross:-484.26,  discount:0.00,  net:-484.26,  note:"MCBB — Manufacturer Chargeback Billback. DC: North East, MD. No PO number on file. HIGHEST DOLLAR DEDUCTION across all KeHE checks at -$484.26. Per the ksolve export, a prior MCBB of $307.19 appeared on the November 2025 check and $75.56 on the October 2025 check — MCBB is a consistent and escalating pattern. Total MCBB across all tracked KeHE activity exceeds $1,300. HIGH PRIORITY — request full MCBB promotion detail report from KeHE immediately."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/01/25", invoice:"CS003456296",         desc:"2959887",            gross:-12.64,   discount:0.00,  net:-12.64,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 2959887. No PO on file. Request documentation from KeHE accounts payable citing invoice CS003456296 and claim 2959887."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/01/25", invoice:"7939",                desc:"7939",               gross:3193.47,  discount:63.87, net:3129.60,  note:"Standard product payment — KeHE remittance credit. DC: North East, MD. PO: 03394649. Discount of $63.87 is KeHE standard early pay discount. Identical net amount ($3,129.60) to invoices 7985 (Check 3243581) and 7893 (prior check) — confirms consistent large order pattern from North East MD DC."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/03/25", invoice:"HB2940415",           desc:"MidAtlantic2025.09", gross:-49.02,   discount:0.00,  net:-49.02,   note:"HB = Hub Billing — MidAtlantic regional program charge, period 2025.09 (September 2025). DC: Breinigsville, PA. The September charge ($49.02) is notably higher than October ($1.14) and November ($23.94). The variable rate across months suggests an activity-based or volume-based MidAtlantic program fee rather than a flat monthly rate. Verify the billing calculation basis with KeHE."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/04/25", invoice:"PL10510527",          desc:"Dumbo150482",        gross:-52.80,   discount:0.00,  net:-52.80,   note:"PL = Placement charge. DC: North East, MD. Dumbo150482 — KeHE mandatory Free Fill placement per KeHE policy. Free Fill is a required program where Swoffle provides free product to new or expanding retailer placements. This is a legitimate contractual obligation under KeHE's placement policy. Part of a recurring monthly Free Fill pattern: Souldberry585701 (10/23/25, $61.40), Village149953 (11/04/25, $90.04), Dumbo150482 (12/04/25, $52.80). Total Free Fill charges: $204.24."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/03/25", invoice:"7938",                desc:"7938",               gross:395.14,   discount:7.90,  net:387.24,   note:"Standard product payment — KeHE remittance credit. DC: Breinigsville, PA. PO: 03388662. Discount of $7.90 is KeHE standard early pay discount. Identical amount to invoices 7977 (Check 3243581) and 7905 (prior check) — consistent smaller order pattern from Breinigsville PA DC."   },
+    { checkDate:"12/12/2025", checkNum:"3230718", date:"12/08/25", invoice:"CS003471553",         desc:"4662621",            gross:-8.93,    discount:0.00,  net:-8.93,    note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 4662621. No PO on file. Small dollar ($8.93). Request documentation from KeHE accounts payable citing invoice CS003471553 and claim 4662621."   },
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+const state = {
+  unfi: { sortCol:-1, sortDir:1, notes:{} },
+  kehe: { sortCol:-1, sortDir:1, notes:{} }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+function fmt(v) {
+  if (v === 0) return '$0.00';
+  const abs = Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (v < 0 ? '-$' : '$') + abs;
+}
+function fmtClass(v) { return v > 0 ? 'positive' : v < 0 ? 'negative' : 'zero'; }
+const p = t => t === 'unfi' ? 'u' : 'k';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-btn.${tab}`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════════
+function renderTable(tab, data) {
+  const px = p(tab);
+  const tbody = document.getElementById(`${px}-tableBody`);
+  tbody.innerHTML = '';
+  let sumCredits=0, sumDeductions=0, sumDiscounts=0, sumGross=0, sumNet=0;
+
+  data.forEach((row, i) => {
+    const isCredit = row.net > 0;
+    const type = isCredit ? 'Credit' : 'Deduction';
+    const tr = document.createElement('tr');
+    tr.className = isCredit ? 'type-positive' : 'type-negative';
+    const noteKey = DATA[tab].indexOf(row);
+    const savedNote = state[tab].notes[noteKey] !== undefined ? state[tab].notes[noteKey] : (row.note || '');
+
+    tr.innerHTML = `
+      <td class="row-num">${i+1}</td>
+      <td style="font-size:11px;">${row.checkDate}</td>
+      <td style="font-size:11px;font-weight:500;">${row.checkNum}</td>
+      <td style="font-size:11px;">${row.date}</td>
+      <td class="inv-num">${row.invoice}</td>
+      <td>${row.desc ? `<span class="desc-badge">${row.desc}</span>` : '<span style="color:var(--text-dim);font-size:10px;">—</span>'}</td>
+      <td><span class="type-badge ${type.toLowerCase()}">${type}</span></td>
+      <td class="amount-cell ${fmtClass(row.gross)}">${fmt(row.gross)}</td>
+      <td class="amount-cell ${fmtClass(row.discount)}">${row.discount!==0 ? fmt(row.discount) : '<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="amount-cell ${fmtClass(row.net)}">${fmt(row.net)}</td>
+      <td><input class="notes-input" placeholder="Add note..." value="${savedNote}" onchange="saveNote('${tab}',${noteKey},this.value)"></td>
+    `;
+    tbody.appendChild(tr);
+
+    if (row.net > 0) sumCredits += row.net; else sumDeductions += row.net;
+    sumDiscounts += row.discount;
+    sumGross += row.gross;
+    sumNet += row.net;
+  });
+
+  document.getElementById(`${px}-foot-gross`).innerHTML = `<span class="${fmtClass(sumGross)}">${fmt(sumGross)}</span>`;
+  document.getElementById(`${px}-foot-discount`).innerHTML = `<span class="${fmtClass(sumDiscounts)}">${fmt(sumDiscounts)}</span>`;
+  document.getElementById(`${px}-foot-net`).textContent = fmt(sumNet);
+  document.getElementById(`${px}-sum-credits`).textContent = fmt(sumCredits);
+  document.getElementById(`${px}-sum-deductions`).textContent = fmt(sumDeductions);
+  document.getElementById(`${px}-sum-discounts`).textContent = fmt(sumDiscounts);
+  document.getElementById(`${px}-sum-visible`).textContent = data.length;
+  document.getElementById(`${px}-rowCount`).textContent = `${data.length} row${data.length!==1?'s':''}`;
+}
+
+function saveNote(tab, key, val) { state[tab].notes[key] = val; }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════════════════════════════════
+function getFilteredData(tab) {
+  const px = p(tab);
+  const global = document.getElementById(`${px}-globalSearch`).value.toLowerCase();
+  const typeF  = document.getElementById(`${px}-typeFilter`).value.toLowerCase();
+  const checkF = document.getElementById(`${px}-checkFilter`).value;
+  const colFilters = [...document.querySelectorAll(`.col-filter[data-tab="${tab}"]`)].map(el => ({
+    col: parseInt(el.dataset.col), val: el.value.toLowerCase()
+  }));
+
+  return DATA[tab].filter(row => {
+    const type = row.net > 0 ? 'credit' : 'deduction';
+    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.desc, type,
+                   fmt(row.gross), row.discount!==0 ? fmt(row.discount) : '', fmt(row.net), ''];
+    if (checkF && row.checkNum !== checkF) return false;
+    if (typeF  && !type.includes(typeF))   return false;
+    if (global && !cells.join(' ').toLowerCase().includes(global)) return false;
+    for (const f of colFilters) {
+      if (f.val && !cells[f.col].toLowerCase().includes(f.val)) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilters(tab) {
+  let data = getFilteredData(tab);
+  const s = state[tab];
+  if (s.sortCol >= 0) data = sortData(tab, data, s.sortCol, s.sortDir);
+  renderTable(tab, data);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SORT
+// ═══════════════════════════════════════════════════════════════════════════
+function sortData(tab, data, col, dir) {
+  const keys = [null,'checkDate','checkNum','date','invoice','desc',null,'gross','discount','net'];
+  return [...data].sort((a,b) => {
+    if (col===6) return dir * ((a.net>0?1:0)-(b.net>0?1:0));
+    const k = keys[col];
+    if (!k) return 0;
+    if (typeof a[k]==='number') return dir*(a[k]-b[k]);
+    return dir*a[k].localeCompare(b[k]);
+  });
+}
+
+function sortTable(tab, col) {
+  const s = state[tab];
+  if (s.sortCol===col) s.sortDir*=-1; else { s.sortCol=col; s.sortDir=1; }
+  const px = p(tab);
+  document.querySelectorAll(`#${px}-headerRow th`).forEach((th,i) => {
+    th.classList.remove('sorted-asc','sorted-desc');
+    if (i===col) th.classList.add(s.sortDir===1?'sorted-asc':'sorted-desc');
+  });
+  applyFilters(tab);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════════════════════════════════════════
+function resetAll(tab) {
+  const px = p(tab);
+  document.getElementById(`${px}-globalSearch`).value = '';
+  document.getElementById(`${px}-typeFilter`).value = '';
+  document.getElementById(`${px}-checkFilter`).value = '';
+  document.querySelectorAll(`.col-filter[data-tab="${tab}"]`).forEach(el => el.value='');
+  const s = state[tab]; s.sortCol=-1; s.sortDir=1;
+  document.querySelectorAll(`#${px}-headerRow th`).forEach(th => th.classList.remove('sorted-asc','sorted-desc'));
+  applyFilters(tab);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════════════════════════
+function exportCSV(tab) {
+  const data = getFilteredData(tab);
+  const headers = ['#','Check Date','Check Number','Invoice Date','Invoice Number','Description','Type','Gross Amount','Discount','Net Amount','Notes'];
+  const rows = data.map((row,i) => {
+    const idx = DATA[tab].indexOf(row);
+    const type = row.net>0?'Credit':'Deduction';
+    return [i+1,row.checkDate,row.checkNum,row.date,row.invoice,`"${row.desc}"`,type,
+            row.gross.toFixed(2),row.discount.toFixed(2),row.net.toFixed(2),
+            `"${state[tab].notes[idx]||''}"`].join(',');
+  });
+  const csv = [headers.join(','),...rows].join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${tab.toUpperCase()}_Deductions.csv`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+document.getElementById('u-sum-count').textContent = DATA.unfi.length;
+document.getElementById('k-sum-count').textContent = DATA.kehe.length;
+['unfi','kehe'].forEach(tab => {
+  const px = p(tab);
+  document.getElementById(`${px}-typeFilter`).addEventListener('change',()=>applyFilters(tab));
+  document.getElementById(`${px}-checkFilter`).addEventListener('change',()=>applyFilters(tab));
+  document.getElementById(`${px}-globalSearch`).addEventListener('input',()=>applyFilters(tab));
+  applyFilters(tab);
+});
+</script>
+</body>
+</html>
