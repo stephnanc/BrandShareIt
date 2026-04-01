@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SWOFFLE — Hala Sales Recap | March 16–31, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: #f0f4f8;
+    padding: 24px 16px;
+    color: #1e293b;
+  }
+  .report-wrapper { max-width: 960px; margin: 0 auto; }
+
+  /* Header card */
+  .report-header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px 28px 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .report-header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: 0.3px;
+  }
+  .report-header p {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* Section wrappers */
+  .section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+  }
+  thead th.right { text-align: right; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: #eff6ff; }
+  tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e9eef5;
+    vertical-align: top;
+  }
+  tbody td.right { text-align: right; font-variant-numeric: tabular-nums; }
+  .skus { color: #475569; font-size: 12px; line-height: 1.5; }
+  .location { color: #94a3b8; font-size: 12px; }
+  .new-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #2563eb;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    letter-spacing: 0.4px;
+    vertical-align: middle;
+  }
+
+  /* Totals row */
+  .totals-row td {
+    font-weight: 800;
+    color: #16a34a;
+    background: #f0fdf4 !important;
+    border-top: 2px solid #bbf7d0;
+    border-bottom: none;
+    font-size: 13px;
+  }
+  .totals-row td.right { color: #16a34a; }
+
+  /* Summary pills */
+  .summary-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .pill .pill-label { color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pill .pill-value { color: #1d4ed8; font-weight: 800; font-size: 17px; font-family: 'Nunito', sans-serif; }
+  .pill.green { background: #f0fdf4; border-color: #bbf7d0; }
+  .pill.green .pill-value { color: #16a34a; }
+</style>
+</head>
+<body>
+<div class="report-wrapper">
+
+  <!-- Header Card -->
+  <div class="report-header">
+    <h1>SWOFFLE — Hala Sales Recap</h1>
+    <p>Reporting Period: March 16 – 31, 2026 &nbsp;|&nbsp; All Channels</p>
+  </div>
+
+  <!-- DIRECT SALES -->
+  <div class="section">
+    <div class="section-title">Direct Sales</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>SKUs Ordered</th>
+          <th class="right">Cases</th>
+          <th class="right">Sale $</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>03/11/26</td>
+          <td><strong>Grove City County Market</strong><div class="location">Grove City, PA</div></td>
+          <td class="skus">2 Dark Chocolate Dipped 12-pk · 1 French Vanilla 12-pk · 2 Chocolate Caramel 12-pk · 1 Caramel 12-pk</td>
+          <td class="right">6</td>
+          <td class="right">$122.88</td>
+        </tr>
+        <tr>
+          <td>03/19/26</td>
+          <td><strong>Wholesale Nutrition</strong><div class="location">South Haven, MS</div></td>
+          <td class="skus">2 French Vanilla 12-pk · 2 Chocolate Caramel 12-pk · 2 Caramel 12-pk</td>
+          <td class="right">6</td>
+          <td class="right">$102.96</td>
+        </tr>
+        <tr>
+          <td>03/19/26</td>
+          <td><strong>Food for Health</strong><div class="location">New York, NY</div></td>
+          <td class="skus">2 Dark Chocolate Dipped 12-pk · 2 French Vanilla 12-pk · 2 Caramel 12-pk</td>
+          <td class="right">6</td>
+          <td class="right">$122.88</td>
+        </tr>
+        <tr>
+          <td>03/23/26</td>
+          <td><strong>Saxapahaw General Store</strong><div class="location">Graham, NC</div></td>
+          <td class="skus">2 Dark Chocolate Dipped 12-pk · 1 French Vanilla 12-pk · 1 Chocolate Caramel 12-pk</td>
+          <td class="right">4</td>
+          <td class="right">$122.88</td>
+        </tr>
+        <tr>
+          <td>03/26/26</td>
+          <td><strong>Second Nature Health Food</strong><div class="location">Kutztown, PA</div></td>
+          <td class="skus">3 Dark Chocolate Dipped 12-pk · 1 French Vanilla 12-pk · 2 Caramel 12-pk</td>
+          <td class="right">6</td>
+          <td class="right">$132.84</td>
+        </tr>
+        <tr>
+          <td>03/30/26</td>
+          <td><strong>Rowayton Market</strong><div class="location">Norwalk, CT</div></td>
+          <td class="skus">1 Dark Chocolate Dipped 12-pk · 1 French Vanilla 12-pk · 2 Chocolate Caramel 12-pk · 2 Caramel 12-pk</td>
+          <td class="right">6</td>
+          <td class="right">$112.92</td>
+        </tr>
+        <tr class="totals-row">
+          <td colspan="3"><strong>TOTALS — 6 Orders</strong></td>
+          <td class="right"><strong>34</strong></td>
+          <td class="right"><strong>$717.36</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="summary-row">
+      <div class="pill"><div class="pill-label">Total Orders</div><div class="pill-value">6</div></div>
+      <div class="pill"><div class="pill-label">Total Cases</div><div class="pill-value">34</div></div>
+      <div class="pill green"><div class="pill-label">Total Sales</div><div class="pill-value">$717.36</div></div>
+    </div>
+  </div>
+
+  <!-- INDIRECT SALES -->
+  <div class="section">
+    <div class="section-title">Indirect Sales</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>SKUs Ordered</th>
+          <th class="right">Cases</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>03/14/26</td>
+          <td><strong>Viroqua Food Co-op</strong><div class="location">Viroqua, WI</div></td>
+          <td class="skus">2 Caramel 12-pk</td>
+          <td class="right">2</td>
+        </tr>
+        <tr>
+          <td>03/24/26</td>
+          <td><strong>Willimantic Food Co-op</strong><div class="location">Willimantic, CT</div></td>
+          <td class="skus">1 Caramel 12-pk</td>
+          <td class="right">1</td>
+        </tr>
+        <tr class="totals-row">
+          <td colspan="3"><strong>TOTALS — 2 Orders</strong></td>
+          <td class="right"><strong>3</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="summary-row">
+      <div class="pill"><div class="pill-label">Total Orders</div><div class="pill-value">2</div></div>
+      <div class="pill"><div class="pill-label">Total Cases</div><div class="pill-value">3</div></div>
+    </div>
+  </div>
+
+  <!-- NEW AT KEHE -->
+  <div class="section">
+    <div class="section-title">New at KeHE Orders</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>SKUs Ordered</th>
+          <th class="right">Cases</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>03/12/26</td>
+          <td><strong>Columbia Health Foods</strong><span class="new-badge">NEW</span><div class="location">Columbia, TN</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/13/26</td>
+          <td><strong>Deep Roots Market</strong><span class="new-badge">NEW</span><div class="location">Greensboro, NC</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 Dark Chocolate Dipped 12-pk · 1 French Vanilla 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/15/26</td>
+          <td><strong>Natural Foods Market</strong><span class="new-badge">NEW</span><div class="location">Johnson City, TN</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/15/26</td>
+          <td><strong>Diane's Natural Foods</strong><span class="new-badge">NEW</span><div class="location">St. Augustine, FL</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/16/26</td>
+          <td><strong>Love Whole Foods</strong><span class="new-badge">NEW</span><div class="location">Ormond Beach, FL</div></td>
+          <td class="skus">6 Caramel 12-pk · 6 French Vanilla 12-pk · 6 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">18</td>
+        </tr>
+        <tr>
+          <td>03/16/26</td>
+          <td><strong>Love Whole Foods</strong><span class="new-badge">NEW</span><div class="location">Port Orange, FL</div></td>
+          <td class="skus">6 Caramel 12-pk · 6 French Vanilla 12-pk · 6 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">18</td>
+        </tr>
+        <tr>
+          <td>03/17/26</td>
+          <td><strong>Health Basket Market</strong><span class="new-badge">NEW</span><div class="location">Mount Dora, FL</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/18/26</td>
+          <td><strong>Rollin Oats</strong><span class="new-badge">NEW</span><div class="location">Tampa, FL</div></td>
+          <td class="skus">3 Caramel 12-pk · 3 French Vanilla 12-pk · 3 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">9</td>
+        </tr>
+        <tr>
+          <td>03/18/26</td>
+          <td><strong>Tidal Creek Coop</strong><span class="new-badge">NEW</span><div class="location">Wilmington, NC</div></td>
+          <td class="skus">2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">2</td>
+        </tr>
+        <tr>
+          <td>03/19/26</td>
+          <td><strong>M &amp; M Vitamins</strong><span class="new-badge">NEW</span><div class="location">Lake Mary, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/19/26</td>
+          <td><strong>Nature's Cupboard</strong><span class="new-badge">NEW</span><div class="location">Anderson, SC</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/20/26</td>
+          <td><strong>Garner's Natural Foods</strong><span class="new-badge">NEW</span><div class="location">Spartanburg, SC</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/20/26</td>
+          <td><strong>Judy's Natural Foods</strong><span class="new-badge">NEW</span><div class="location">Holiday, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/23/26</td>
+          <td><strong>Grassroots Natural Market</strong><span class="new-badge">NEW</span><div class="location">Jacksonville, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/24/26</td>
+          <td><strong>Health Wise Foods</strong><span class="new-badge">NEW</span><div class="location">Montgomery, AL</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/24/26</td>
+          <td><strong>Rosewood Market</strong><span class="new-badge">NEW</span><div class="location">Columbia, SC</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">2</td>
+        </tr>
+        <tr>
+          <td>03/25/26</td>
+          <td><strong>Abundant Living</strong><span class="new-badge">NEW</span><div class="location">Cleveland, TN</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/27/26</td>
+          <td><strong>Belue Farms Natural Market</strong><span class="new-badge">NEW</span><div class="location">Boiling Springs, SC</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/28/26</td>
+          <td><strong>Natural Foods Market</strong><span class="new-badge">NEW</span><div class="location">Johnson City, TN</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/28/26</td>
+          <td><strong>Get Healthy Market</strong><span class="new-badge">NEW</span><div class="location">Spring Hill, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/28/26</td>
+          <td><strong>Get Healthy Market</strong><span class="new-badge">NEW</span><div class="location">Brooksville, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr>
+          <td>03/28/26</td>
+          <td><strong>Food Matters Market</strong><span class="new-badge">NEW</span><div class="location">Brevard, NC</div></td>
+          <td class="skus">2 Caramel 12-pk · 2 French Vanilla 12-pk · 2 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">6</td>
+        </tr>
+        <tr>
+          <td>03/30/26</td>
+          <td><strong>Morton's Gourmet</strong><span class="new-badge">NEW</span><div class="location">Sarasota, FL</div></td>
+          <td class="skus">3 Caramel 12-pk · 3 French Vanilla 12-pk · 4 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">10</td>
+        </tr>
+        <tr>
+          <td>03/30/26</td>
+          <td><strong>Rutabagas Market</strong><span class="new-badge">NEW</span><div class="location">Inverness, FL</div></td>
+          <td class="skus">1 Caramel 12-pk · 1 French Vanilla 12-pk · 1 Dark Chocolate Dipped 12-pk</td>
+          <td class="right">3</td>
+        </tr>
+        <tr class="totals-row">
+          <td colspan="3"><strong>TOTALS — 24 Orders</strong></td>
+          <td class="right"><strong>147</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="summary-row">
+      <div class="pill"><div class="pill-label">Total Orders</div><div class="pill-value">24</div></div>
+      <div class="pill"><div class="pill-label">Total Cases</div><div class="pill-value">147</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
