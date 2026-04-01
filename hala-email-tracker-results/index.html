@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hala Telesales — Contact Tracking YTD</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: #f0f4f8;
+    padding: 24px 16px;
+    color: #1e293b;
+  }
+  .report-wrapper { max-width: 1100px; margin: 0 auto; }
+
+  /* Header card */
+  .report-header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px 28px 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .report-header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+  .report-header p {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* Summary pills */
+  .summary-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 8px 16px;
+  }
+  .pill .pill-label { color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pill .pill-value { color: #1d4ed8; font-weight: 800; font-size: 17px; font-family: 'Nunito', sans-serif; }
+  .pill.green { background: #f0fdf4; border-color: #bbf7d0; }
+  .pill.green .pill-value { color: #16a34a; }
+  .pill.amber { background: #fffbeb; border-color: #fde68a; }
+  .pill.amber .pill-value { color: #d97706; }
+
+  /* Section */
+  .section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  thead th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    text-align: left;
+    padding: 9px 11px;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+  }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: #eff6ff; }
+  tbody td {
+    padding: 7px 11px;
+    border-bottom: 1px solid #e9eef5;
+    vertical-align: middle;
+  }
+  .no-email td { color: #94a3b8; }
+  .no-email .acct { color: #64748b; font-weight: 600; }
+  .email-missing {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .date-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  a { color: #2563eb; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Totals row */
+  .totals-row td {
+    font-weight: 800;
+    color: #16a34a;
+    background: #f0fdf4 !important;
+    border-top: 2px solid #bbf7d0;
+    border-bottom: none;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="report-wrapper">
+
+  <!-- Header -->
+  <div class="report-header">
+    <h1>Hala Telesales — Contact Tracking</h1>
+    <p>SWOFFLE &nbsp;|&nbsp; Year to Date: February 27 – March 13, 2026 &nbsp;|&nbsp; All Outreach</p>
+    <div class="summary-row">
+      <div class="pill"><div class="pill-label">Total Contacts</div><div class="pill-value">93</div></div>
+      <div class="pill green"><div class="pill-label">Emails Collected</div><div class="pill-value">67</div></div>
+      <div class="pill amber"><div class="pill-label">Missing Email</div><div class="pill-value">26</div></div>
+    </div>
+  </div>
+
+  <!-- All Contacts Table -->
+  <div class="section">
+    <div class="section-title">All Contacts — Chronological</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Account</th>
+          <th>Contact</th>
+          <th>Phone</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 2/27 -->
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Foods of All Nations</td>
+          <td>Cindy</td>
+          <td>434-296-6131</td>
+          <td><a href="mailto:cindy@foodsofallnations.com">cindy@foodsofallnations.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Lebanon Coop Food</td>
+          <td>Dugan</td>
+          <td>(603) 643-4889</td>
+          <td><a href="mailto:duganp@lebannon@coop">duganp@lebannon.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Austin Organics</td>
+          <td>Karma</td>
+          <td>(929) 499-3099</td>
+          <td><a href="mailto:karmagurung613@gmail.com">karmagurung613@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Gourmet Meat &amp; Sausage</td>
+          <td>Brian (CO)</td>
+          <td>(303) 985-0126</td>
+          <td><a href="mailto:brianray.gmss@gmail.com">brianray.gmss@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Pete's Fruits &amp; Vegs</td>
+          <td>Ted</td>
+          <td>303-393-6247</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Cartwrights Market</td>
+          <td>Jordan</td>
+          <td>541-500-1469</td>
+          <td><a href="mailto:grocerymed@cartwrightsmarket.com">grocerymed@cartwrightsmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Empire Foods</td>
+          <td>Mike</td>
+          <td>908-979-0888</td>
+          <td><a href="mailto:mike@empirefoods.com">mike@empirefoods.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Lexington Co-op Markets Buffalo</td>
+          <td>Rachel</td>
+          <td>(716) 886-2667</td>
+          <td><a href="mailto:rachel.smith@lex.coop">rachel.smith@lex.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Arcata Food Coop</td>
+          <td>Mike</td>
+          <td></td>
+          <td><a href="mailto:michaelcahill@arcata.coop">michaelcahill@arcata.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Ridgefield Organics</td>
+          <td>Lily</td>
+          <td>203-894-8102</td>
+          <td><a href="mailto:ridgefieldorganics@gmail.com">ridgefieldorganics@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">2/27</span></td>
+          <td class="acct">Bethel Organics</td>
+          <td>Vinny</td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">2/27</span></td>
+          <td class="acct">Nature's Goods CT</td>
+          <td>Barbara</td>
+          <td>203-577-2000</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Nature's Pantry PA</td>
+          <td>Michele</td>
+          <td>814-861-5200</td>
+          <td><a href="mailto:naturespantry@gmail.com">naturespantry@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">2/27</span></td>
+          <td>Suncoast Coop (San Diego)</td>
+          <td>Mario</td>
+          <td>619-500-9001</td>
+          <td><a href="mailto:CenterStore@suncoastmarket.coop">CenterStore@suncoastmarket.coop</a></td>
+        </tr>
+
+        <!-- 3/1 -->
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Health Nuts (Direct — New York, NY)</td>
+          <td>Vera</td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>The Grainery</td>
+          <td>Alex (MI)</td>
+          <td></td>
+          <td><a href="mailto:alaxandrianarducci@gmail.com">alaxandrianarducci@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Potash Market</td>
+          <td>Ashley (IN)</td>
+          <td></td>
+          <td><a href="mailto:aligue@potashmarkets.com">aligue@potashmarkets.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Modica Market</td>
+          <td>Charles (FL)</td>
+          <td>850-231-1214</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Wild Roots Market</td>
+          <td>Rose (CA)</td>
+          <td></td>
+          <td><a href="mailto:rose@wildrootsmarket.com">rose@wildrootsmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Greens Natural</td>
+          <td>Tim (NJ)</td>
+          <td>908-888-2256</td>
+          <td><a href="mailto:timgm@greensnatural.com">timgm@greensnatural.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Greens Natural</td>
+          <td>Michael</td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Grove County Market</td>
+          <td>Eric (PA)</td>
+          <td>724-458-7544</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Green Natural</td>
+          <td>Davey</td>
+          <td>914-800-9146</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Valley Wines</td>
+          <td>Pete (CT)</td>
+          <td>860-677-9021</td>
+          <td><a href="mailto:valleywinesct@gmail.com">valleywinesct@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Bella's Market</td>
+          <td></td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Redmond Heritage Farm Store</td>
+          <td>Beth (UT)</td>
+          <td>385-351-2664</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/1</span></td>
+          <td class="acct">Dixie Nutrition</td>
+          <td>Meredith (UT)</td>
+          <td>435-673-3447</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Peoples Food Coop</td>
+          <td>Bradly (OR)</td>
+          <td>(503) 232-9051</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Stoney Brook Farm</td>
+          <td>Telem (VA)</td>
+          <td>540-668-9067</td>
+          <td><a href="mailto:orders@stoneybrookfarm.org">orders@stoneybrookfarm.org</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Love Whole Foods</td>
+          <td>Enea (FL)</td>
+          <td>386-677-5236</td>
+          <td><a href="mailto:lovewholefoods@yahoo.com">lovewholefoods@yahoo.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Garner's Natural Foods</td>
+          <td>Jon (SC)</td>
+          <td>864-585-1021</td>
+          <td><a href="mailto:garnersnaturalfoods@gmail.com">garnersnaturalfoods@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Columbia Health Foods</td>
+          <td>Misty</td>
+          <td>931-388-1148</td>
+          <td><a href="mailto:columbiahealthfoods@gmail.com">columbiahealthfoods@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Chamberlains Natural Foods</td>
+          <td>Rob (FL)</td>
+          <td>407-228-1373</td>
+          <td><a href="mailto:eor@chamberlains.com">eor@chamberlains.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Food Matters Market</td>
+          <td>Graham</td>
+          <td>828-885-3663</td>
+          <td><a href="mailto:gm@goodmattersmarket.com">gm@goodmattersmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Deep Roots Market</td>
+          <td>Deenard (NC)</td>
+          <td>336-292-9216</td>
+          <td><a href="mailto:promotions@deeprootsmarket.com">promotions@deeprootsmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>BerryBrook Farm</td>
+          <td></td>
+          <td>704-334-6528</td>
+          <td><a href="mailto:berrybrookfarm@bellsouth.net">berrybrookfarm@bellsouth.net</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Bristol Health Food Store</td>
+          <td>Becky</td>
+          <td>423-968-1241</td>
+          <td><a href="mailto:bristolhealthfood@gmail.com">bristolhealthfood@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Healthy Food Store</td>
+          <td>Jess</td>
+          <td>843-629-9204</td>
+          <td><a href="mailto:thehealthyfoodstore@gmail.com">thehealthyfoodstore@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Natural Foods Market</td>
+          <td>April</td>
+          <td></td>
+          <td><a href="mailto:JULIANA@NATURESPICKMARKET.COM">JULIANA@NATURESPICKMARKET.COM</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/1</span></td>
+          <td>Nature's Food Patch</td>
+          <td>Dina (FL)</td>
+          <td>727-304-1010</td>
+          <td><a href="mailto:assistantmanager@naturesfoodpatch.com">assistantmanager@naturesfoodpatch.com</a></td>
+        </tr>
+
+        <!-- 3/2 -->
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Good Earth Market</td>
+          <td>Melissa (DE)</td>
+          <td>302-537-7100</td>
+          <td><a href="mailto:Melissa@goodearthmarket.com">Melissa@goodearthmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Viroqua Food Co-op</td>
+          <td>Sally (WI)</td>
+          <td></td>
+          <td><a href="mailto:sally.collacino@viroquafood.coop">sally.collacino@viroquafood.coop</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/2</span></td>
+          <td class="acct">Garden Patch Market</td>
+          <td>Ray</td>
+          <td></td>
+          <td><a href="mailto:raycorum@hotmail.com">raycorum@hotmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/2</span></td>
+          <td class="acct">Willimantic Food</td>
+          <td>Matt</td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Annie Kay's Main St. Market</td>
+          <td>Stephanie (VA)</td>
+          <td></td>
+          <td><a href="mailto:manager@anniekays.com">manager@anniekays.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Cartwrights Market</td>
+          <td>Jordan (OR)</td>
+          <td>541-500-1469</td>
+          <td><a href="mailto:grocerymed@cartwrightsmarket.com">grocerymed@cartwrightsmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Bee Healthy</td>
+          <td>Terri (WY)</td>
+          <td>(307) 347-2766</td>
+          <td><a href="mailto:terri@beehealthy.com">terri@beehealthy.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/2</span></td>
+          <td class="acct">Colonial Village Market</td>
+          <td>Ryan (PA)</td>
+          <td>(610) 436-9514</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/2</span></td>
+          <td>Heath's Natural Foods</td>
+          <td>Samantha (FL)</td>
+          <td>(386) 423-5126</td>
+          <td><a href="mailto:heathsnsb@gmail.com">heathsnsb@gmail.com</a></td>
+        </tr>
+
+        <!-- 3/3 -->
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>South Royalton Market</td>
+          <td>Lennox (VA)</td>
+          <td>(802) 763-2400</td>
+          <td><a href="mailto:grocery@soromarket.coop">grocery@soromarket.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Palmyra Natural Foods</td>
+          <td>Jeff (PA)</td>
+          <td>(717) 838-2501</td>
+          <td><a href="mailto:Jefpnf@hotmail.com">Jefpnf@hotmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/3</span></td>
+          <td class="acct">Second Nature Health</td>
+          <td>Jenn</td>
+          <td></td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Nouveaux Market</td>
+          <td>Stella (PA)</td>
+          <td>215-438-7600</td>
+          <td><a href="mailto:nouveauxmarket3@gmail.com">nouveauxmarket3@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Nature's Temptations</td>
+          <td>Mariann (CT)</td>
+          <td>(203) 438-5443</td>
+          <td><a href="mailto:marianne@naturestemptations.com">marianne@naturestemptations.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Ridgefield Organics</td>
+          <td>Lily (CT)</td>
+          <td>(203) 894-8102</td>
+          <td><a href="mailto:ridgefieldorganics@gmail.com">ridgefieldorganics@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Empire Foods</td>
+          <td>Mike (NJ)</td>
+          <td>908-979-0888</td>
+          <td><a href="mailto:mikefiume@outlook.com">mikefiume@outlook.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Chatham Real Food Coop</td>
+          <td>Leandra (NY)</td>
+          <td>518-392-3353</td>
+          <td><a href="mailto:realfood@chatham.coop">realfood@chatham.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>New Morning Market</td>
+          <td>Andy (CT)</td>
+          <td>203-263-4868</td>
+          <td><a href="mailto:richard.park@newmorningmarket.com">richard.park@newmorningmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Garden Patch Market</td>
+          <td>Ray (IN)</td>
+          <td>574-255-3151</td>
+          <td><a href="mailto:raygpm@gmail.com">raygpm@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Thyme &amp; Season</td>
+          <td>Bryant (CT)</td>
+          <td>203-407-8128</td>
+          <td><a href="mailto:grocery.thyme@gmail.com">grocery.thyme@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>CFNF Coffee Shop</td>
+          <td>Lisa (CT)</td>
+          <td>203-661-8300</td>
+          <td><a href="mailto:info@cfcfcofee.com">info@cfcfcofee.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Organic Market</td>
+          <td>Yeraz (CT)</td>
+          <td>203-227-9007</td>
+          <td><a href="mailto:organicmarketwestport@gmail.com">organicmarketwestport@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/3</span></td>
+          <td class="acct">Harbor Point Organic</td>
+          <td>D (CT)</td>
+          <td>203-967-6200</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/3</span></td>
+          <td class="acct">Chamomile Natural Foods</td>
+          <td>Groc (CT)</td>
+          <td>203-792-8952</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Stoney Brook Farm</td>
+          <td>Telem (VA)</td>
+          <td>540-668-9067</td>
+          <td><a href="mailto:orders@stoneybrookfarm.org">orders@stoneybrookfarm.org</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>Good Foods Grocery</td>
+          <td>John (VA)</td>
+          <td>804-320-6767</td>
+          <td><a href="mailto:johnb@goodfoodsgrocery.com">johnb@goodfoodsgrocery.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/3</span></td>
+          <td class="acct">Kenny's Healthy Living</td>
+          <td>Kenny (VA)</td>
+          <td>434-315-0038</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/3</span></td>
+          <td>HealthHabit</td>
+          <td>Brandi (NC)</td>
+          <td>252-523-8222</td>
+          <td><a href="mailto:brandijackson13@yahoo.com">brandijackson13@yahoo.com</a></td>
+        </tr>
+
+        <!-- 3/4 -->
+        <tr>
+          <td><span class="date-badge">3/4</span></td>
+          <td>Sunshine House</td>
+          <td>Sheba (IL)</td>
+          <td>618-283-0888</td>
+          <td><a href="mailto:sunshinehouse.vandalia@gmail.com">sunshinehouse.vandalia@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/4</span></td>
+          <td>Abundant Living</td>
+          <td>Tonya (TN)</td>
+          <td>423-614-7885</td>
+          <td><a href="mailto:abundantlivingorganic@gmail.com">abundantlivingorganic@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/4</span></td>
+          <td>Good Health Market</td>
+          <td>Kimberly (WY)</td>
+          <td></td>
+          <td><a href="mailto:kimberly.goodhealthmarket@gmail.com">kimberly.goodhealthmarket@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/4</span></td>
+          <td class="acct">Natural Marketplace</td>
+          <td>Groc (NH)</td>
+          <td>(603) 893-2893</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/4</span></td>
+          <td>Granite State Naturals</td>
+          <td>Robin (NH)</td>
+          <td>(603) 224-9341</td>
+          <td><a href="mailto:robin@granitestatenaturals.com">robin@granitestatenaturals.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/4</span></td>
+          <td>Cambridge Naturals</td>
+          <td>Mike (MA)</td>
+          <td>617-492-4452</td>
+          <td><a href="mailto:michael.s@cambridgenaturals.com">michael.s@cambridgenaturals.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/4</span></td>
+          <td class="acct">The Local Grocer</td>
+          <td>Diane (NH)</td>
+          <td>(603) 356-6068</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+
+        <!-- 3/5 -->
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>A Market</td>
+          <td>Elizabeth (NH)</td>
+          <td>(603) 668-2650</td>
+          <td><a href="mailto:E.clements@atmyamarket.com">E.clements@atmyamarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>Moorefield Green Grocer</td>
+          <td>Tara (NY)</td>
+          <td>(518) 383-1613</td>
+          <td><a href="mailto:info@thegreengrocer.com">info@thegreengrocer.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>Village Market of Waterbury</td>
+          <td>Jill (VT)</td>
+          <td>(802) 244-1804</td>
+          <td><a href="mailto:grocery.villagemarket@agne.com">grocery.villagemarket@agne.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>The Daily Market</td>
+          <td>Victoria (MA)</td>
+          <td>617-288-6000</td>
+          <td><a href="mailto:hello@thedailymarket.boston">hello@thedailymarket.boston</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>David's Natural Market</td>
+          <td>Zach (MD)</td>
+          <td>(410) 987-1533</td>
+          <td><a href="mailto:davidnaturalmarket@gmail.com">davidnaturalmarket@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/5</span></td>
+          <td class="acct">Friends and Family Market</td>
+          <td>Matt (ME)</td>
+          <td>(207) 667-6708</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>Clements Marketplace Bristol</td>
+          <td>Taylor (RI)</td>
+          <td>(401) 396-2500</td>
+          <td><a href="mailto:taylor@clementsmarket.com">taylor@clementsmarket.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>Royal River Natural Food</td>
+          <td>Doug</td>
+          <td>(207) 865-0046</td>
+          <td><a href="mailto:doug@rrnf.com">doug@rrnf.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/5</span></td>
+          <td>Woodstock Farmers Market</td>
+          <td>Hanna (VT)</td>
+          <td>802-241-2400</td>
+          <td><a href="mailto:sarah.k@woodstocksfarmersmarket.com">sarah.k@woodstocksfarmersmarket.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/5</span></td>
+          <td class="acct">Wollaston's Marino</td>
+          <td>Bob</td>
+          <td>617-247-0011</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+
+        <!-- 3/6 -->
+        <tr>
+          <td><span class="date-badge">3/6</span></td>
+          <td>Syracuse Cooperative Market</td>
+          <td>Daniel (NY)</td>
+          <td>(315) 472-1385</td>
+          <td><a href="mailto:dangroc23@syracuse.coop">dangroc23@syracuse.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/6</span></td>
+          <td>Willey Farms</td>
+          <td>Prescilla (DE)</td>
+          <td>302-378-8441</td>
+          <td><a href="mailto:pkeener@willeyfarmsde.com">pkeener@willeyfarmsde.com</a></td>
+        </tr>
+
+        <!-- 3/9 -->
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Winters Market</td>
+          <td>Suman (CA)</td>
+          <td>(530) 794-6119</td>
+          <td><a href="mailto:wintersmarket@gmail.com">wintersmarket@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Baesler's Market</td>
+          <td>Kaysi</td>
+          <td>812-268-5218</td>
+          <td><a href="mailto:kaysi@baeslers.com">kaysi@baeslers.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>A Matter of Health</td>
+          <td>Pima (NY)</td>
+          <td>(845) 627-3333</td>
+          <td><a href="mailto:pimah2@matterofhealth.com">pimah2@matterofhealth.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>KC Market 9</td>
+          <td>Harry</td>
+          <td>404-668-9091</td>
+          <td><a href="mailto:kcmarket09@gmail.com">kcmarket09@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Pap's Market</td>
+          <td>Manny / Josh</td>
+          <td>740-876-4110</td>
+          <td><a href="mailto:papscarryoutnewboston@gmail.com">papscarryoutnewboston@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Marquette Food Coop</td>
+          <td>Megan (MI)</td>
+          <td>906-225-0671</td>
+          <td><a href="mailto:mpenney@marquettefood.coop">mpenney@marquettefood.coop</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Healthy Choice Markets</td>
+          <td>Chris (IL)</td>
+          <td>618-857-2366</td>
+          <td><a href="mailto:cvalenti@hcwc.com">cvalenti@hcwc.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>19 Wine &amp; Spirits</td>
+          <td>Ketan (OH)</td>
+          <td>864-569-5744</td>
+          <td><a href="mailto:19wineandspirits@gmail.com">19wineandspirits@gmail.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/9</span></td>
+          <td>Granby Liquor Store</td>
+          <td>Krunal (MA)</td>
+          <td>413-467-3456</td>
+          <td><a href="mailto:granbyliquors@gmail.com">granbyliquors@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/9</span></td>
+          <td class="acct">The Cocoa Muse</td>
+          <td></td>
+          <td>513-900-9015</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/9</span></td>
+          <td class="acct">Hometown Cafe</td>
+          <td></td>
+          <td>513-677-2600</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/9</span></td>
+          <td class="acct">Exprezzo</td>
+          <td></td>
+          <td>513-831-2253</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/9</span></td>
+          <td class="acct">Sweet Joy Bakery</td>
+          <td></td>
+          <td>513-800-4472</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/9</span></td>
+          <td class="acct">Forager Coffee Plus Tea</td>
+          <td></td>
+          <td>513-248-0042</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+
+        <!-- 3/13 -->
+        <tr>
+          <td><span class="date-badge">3/13</span></td>
+          <td>Rolling Oats</td>
+          <td>Robert / Jonathan (Tampa, FL)</td>
+          <td>813-873-7428</td>
+          <td><a href="mailto:jonathan@rollinoats.com">jonathan@rollinoats.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/13</span></td>
+          <td>The Health Basket</td>
+          <td>Emjay</td>
+          <td>352-735-1166</td>
+          <td><a href="mailto:emjay@healthbasketmtdora.com">emjay@healthbasketmtdora.com</a></td>
+        </tr>
+        <tr>
+          <td><span class="date-badge">3/13</span></td>
+          <td>Get Healthy</td>
+          <td>Holly (Spring Hill, FL)</td>
+          <td>352-688-9119</td>
+          <td><a href="mailto:getfitgethealthyholly@gmail.com">getfitgethealthyholly@gmail.com</a></td>
+        </tr>
+        <tr class="no-email">
+          <td><span class="date-badge">3/13</span></td>
+          <td class="acct">Jennifer (FL) — Call before Noon</td>
+          <td>Jennifer</td>
+          <td>813-265-4951</td>
+          <td><span class="email-missing">NO EMAIL</span></td>
+        </tr>
+
+        <!-- Totals -->
+        <tr class="totals-row">
+          <td colspan="4"><strong>TOTALS — 93 Contacts &nbsp;|&nbsp; Feb 27 – Mar 13, 2026</strong></td>
+          <td><strong>67 Emails Collected &nbsp;|&nbsp; 26 Missing</strong></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
