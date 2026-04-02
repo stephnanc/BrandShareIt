@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle Dashboard - Apr 1-15, 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; padding: 2rem; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* WHITE HEADER */
+        .header {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .header-left h1 { font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
+        .header-left p { font-size: 1rem; color: #64748b; margin-bottom: 0.1rem; }
+        .header-left p.small-text { font-size: 0.6rem; color: #94a3b8; }
+        .header-right { display: flex; flex-direction: row; gap: 0.75rem; text-align: right; align-items: flex-start; }
+        .stat-box { padding: 0.5rem 0.75rem; min-width: 120px; border-radius: 0.5rem; background: #1e2530; text-align: center; }
+        .stat-label { font-size: 0.7rem; color: #ffffff; margin-bottom: 0.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.125rem; font-weight: 500; color: #ffffff; }
+
+        /* TABS */
+        .tabs-container { background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; }
+        .tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: white;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab:hover { background: #f8fafc; color: #1e293b; }
+        .tab.active { background: #1e2530; color: #ffffff; border-bottom: 3px solid #1e2530; }
+        .tab-content { padding: 2rem; display: none; }
+        .tab-content.active { display: block; }
+
+        /* CARDS */
+        .card { background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; overflow: hidden; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: linear-gradient(to right, #f8fafc, #f1f5f9); cursor: pointer; transition: background 0.2s; }
+        .card-header:hover { background: linear-gradient(to right, #f1f5f9, #e2e8f0); }
+        .card-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+        .card-arrow { transition: transform 0.3s ease; color: #64748b; font-size: 1.5rem; font-weight: bold; }
+        .card-arrow.collapsed { transform: rotate(-90deg); }
+        .card-content { padding: 1.5rem; display: none; }
+        .card-content.expanded { display: block; }
+
+        /* TABLES */
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table thead { background: #f8fafc; }
+        .orders-table th { padding: 0.75rem; text-align: center; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .orders-table td { padding: 1rem 0.75rem; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 0.875rem; text-align: center; }
+        .orders-table tbody tr:hover { background: #f8fafc; }
+        .orders-table tbody tr:last-child td { border-bottom: none; }
+        .order-details { line-height: 1.5; color: #475569; }
+        .order-total { font-weight: 600; color: #059669; font-size: 0.875rem; }
+        .order-cases { font-weight: 600; color: #059669; font-size: 0.875rem; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 3rem 2rem; color: #94a3b8; }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state-text { font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .empty-state-subtext { font-size: 0.875rem; }
+
+        /* ORDER SUMMARY */
+        .order-summary { margin-top: 2rem; padding-top: 2rem; border-top: 3px solid #e2e8f0; }
+        .order-summary h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; text-align: center; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .summary-card { background: white; border: 2px solid #e2e8f0; border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .summary-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
+        .summary-card-title { font-size: 0.95rem; font-weight: 600; color: #475569; margin-bottom: 1rem; text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .summary-label { font-size: 0.875rem; color: #64748b; }
+        .summary-value { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+        .summary-value.sales { color: #059669; }
+        .grand-total-card { border: 3px solid #0f172a; }
+        .grand-total-card .summary-card-title { color: #0f172a; font-weight: 700; font-size: 1.1rem; }
+        .grand-total-card .summary-label { color: #0f172a; font-weight: 700; }
+        .grand-total-card .summary-value { color: #0f172a; font-weight: 700; font-size: 1rem; }
+        .no-track { font-size: 0.75rem; color: #94a3b8; font-style: italic; text-align: center; margin-top: 0.5rem; }
+
+        /* BLANK TAB MESSAGE */
+        .blank-tab { display: flex; align-items: center; justify-content: center; min-height: 200px; color: #94a3b8; font-size: 1rem; font-style: italic; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- WHITE HEADER -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>Swoffle</h1>
+                <p>Interactive Dashboard Summary Report</p>
+                <p>April 1st–15th, 2026</p>
+                <p class="small-text">Prepared by Stephen Nance</p>
+            </div>
+            <div class="header-right">
+                <div class="stat-box">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Cases</div>
+                    <div class="stat-value" id="totalCases">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Sales</div>
+                    <div class="stat-value" id="totalSales">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(0)">Direct Orders</button>
+            <button class="tab" onclick="switchTab(1)">Admin Reporting</button>
+            <button class="tab" onclick="switchTab(2)">Distributor Prospects</button>
+            <button class="tab" onclick="switchTab(3)">New Business Development</button>
+        </div>
+
+        <!-- TAB 0: Direct Orders -->
+        <div class="tab-content active" id="tab-0">
+
+            <!-- Distributor Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Distributor Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="distributor-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Distributor direct orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Independent Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Independent Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="independent-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🏪</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Independent direct orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Duo Sales Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Duo Sales Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="duo-sales-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🤝</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Duo Sales direct orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- The Good Food Services Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">The Good Food Services Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="good-food-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🌿</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Good Food Services orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Lisa Baines - Sales Rep -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Lisa Baines - Sales Rep</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="lisa-baines-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Lisa Baines orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Valley Food Specialties Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Valley Food Specialties Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="valley-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🏔️</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Valley Food Specialties orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- HALA Direct Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">HALA Direct Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="hala-direct-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🌱</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">HALA direct orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hala Indirect Turnover Orders -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Hala Indirect Turnover Orders</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th></tr></thead>
+                        <tbody id="hala-indirect-orders">
+                            <tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Hala indirect turnover orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Faire Online Marketplace -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Faire Online Marketplace</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="faire-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">✨</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Faire orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mabel Online Marketplace -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Mabel Online Marketplace</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="mabel-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🛒</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Mabel orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Airgoods Online Marketplace -->
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3 class="card-title">Airgoods Online Marketplace</h3>
+                    <span class="card-arrow collapsed">▼</span>
+                </div>
+                <div class="card-content">
+                    <table class="orders-table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+                        <tbody id="airgoods-orders">
+                            <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">✈️</div><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Airgoods orders will appear here</div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-grid">
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Distributor Direct Orders</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-distributor-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-distributor-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-distributor-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Independent Orders</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-independent-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-independent-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-independent-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Duo Sales Direct Orders</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-duo-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-duo-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-duo-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">The Good Food Services</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-good-food-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-good-food-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-good-food-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Lisa Baines - Sales Rep</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-lisa-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-lisa-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-lisa-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Valley Food Specialties</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-valley-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-valley-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-valley-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">HALA Direct Orders</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-hala-direct-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-hala-direct-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-hala-direct-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Hala Indirect Turnover Orders</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-hala-indirect-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-hala-indirect-cases">0</span></div>
+                        <div class="no-track">(Cases counted in grand total; not tracked in order sales)</div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Faire Online Marketplace</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-faire-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-faire-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-faire-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Mabel Online Marketplace</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-mabel-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-mabel-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-mabel-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-card-title">Airgoods Online Marketplace</div>
+                        <div class="summary-row"><span class="summary-label">Number of Orders:</span><span class="summary-value" id="summary-airgoods-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value sales" id="summary-airgoods-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Combined Total:</span><span class="summary-value sales" id="summary-airgoods-sales">$0.00</span></div>
+                    </div>
+
+                    <div class="summary-card grand-total-card">
+                        <div class="summary-card-title">GRAND TOTAL</div>
+                        <div class="summary-row"><span class="summary-label">Total Orders:</span><span class="summary-value" id="summary-grand-orders">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Cases:</span><span class="summary-value" id="summary-grand-cases">0</span></div>
+                        <div class="summary-row"><span class="summary-label">Total Sales:</span><span class="summary-value" id="summary-grand-sales">$0.00</span></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: Admin Reporting -->
+        <div class="tab-content" id="tab-1">
+            <div class="blank-tab">Admin Reporting cards will be added as the period progresses.</div>
+        </div>
+
+        <!-- TAB 2: Distributor Prospects -->
+        <div class="tab-content" id="tab-2">
+            <div class="blank-tab">Distributor Prospects cards will be added as the period progresses.</div>
+        </div>
+
+        <!-- TAB 3: New Business Development -->
+        <div class="tab-content" id="tab-3">
+            <div class="blank-tab">New Business Development cards will be added as the period progresses.</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function formatCurrency(amount) {
+        return '$' + parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function switchTab(tabIndex) {
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab')[tabIndex].classList.add('active');
+        document.getElementById('tab-' + tabIndex).classList.add('active');
+    }
+
+    function toggleCard(header) {
+        const arrow = header.querySelector('.card-arrow');
+        const content = header.nextElementSibling;
+        arrow.classList.toggle('collapsed');
+        content.classList.toggle('expanded');
+    }
+
+    function getRowData(tbodyId) {
+        const rows = document.querySelectorAll('#' + tbodyId + ' tr');
+        let sales = 0, cases = 0, orders = 0;
+        rows.forEach(row => {
+            const totalCell = row.querySelector('.order-total');
+            const casesCell = row.querySelector('.order-cases');
+            if (totalCell) {
+                const amount = parseFloat(totalCell.textContent.replace(/[$,]/g, ''));
+                if (!isNaN(amount)) { sales += amount; orders++; }
+            }
+            if (casesCell) {
+                const c = parseInt(casesCell.textContent);
+                if (!isNaN(c)) cases += c;
+            }
+        });
+        return { sales, cases, orders };
+    }
+
+    function updateDashboardTotals() {
+        let grandSales = 0, grandCases = 0, grandOrders = 0;
+
+        const sections = [
+            { id: 'distributor-orders', salesId: 'summary-distributor-sales', casesId: 'summary-distributor-cases', ordersId: 'summary-distributor-orders' },
+            { id: 'independent-orders', salesId: 'summary-independent-sales', casesId: 'summary-independent-cases', ordersId: 'summary-independent-orders' },
+            { id: 'duo-sales-orders',   salesId: 'summary-duo-sales',         casesId: 'summary-duo-cases',         ordersId: 'summary-duo-orders' },
+            { id: 'good-food-orders',   salesId: 'summary-good-food-sales',   casesId: 'summary-good-food-cases',   ordersId: 'summary-good-food-orders' },
+            { id: 'lisa-baines-orders', salesId: 'summary-lisa-sales',        casesId: 'summary-lisa-cases',        ordersId: 'summary-lisa-orders' },
+            { id: 'valley-orders',      salesId: 'summary-valley-sales',      casesId: 'summary-valley-cases',      ordersId: 'summary-valley-orders' },
+            { id: 'hala-direct-orders', salesId: 'summary-hala-direct-sales', casesId: 'summary-hala-direct-cases', ordersId: 'summary-hala-direct-orders' },
+            { id: 'faire-orders',       salesId: 'summary-faire-sales',       casesId: 'summary-faire-cases',       ordersId: 'summary-faire-orders' },
+            { id: 'mabel-orders',       salesId: 'summary-mabel-sales',       casesId: 'summary-mabel-cases',       ordersId: 'summary-mabel-orders' },
+            { id: 'airgoods-orders',    salesId: 'summary-airgoods-sales',    casesId: 'summary-airgoods-cases',    ordersId: 'summary-airgoods-orders' },
+        ];
+
+        sections.forEach(s => {
+            const { sales, cases, orders } = getRowData(s.id);
+            document.getElementById(s.salesId).textContent = formatCurrency(sales);
+            document.getElementById(s.casesId).textContent = cases;
+            document.getElementById(s.ordersId).textContent = orders;
+            grandSales += sales;
+            grandCases += cases;
+            grandOrders += orders;
+        });
+
+        // Hala Indirect — cases count toward grand total, sales do NOT
+        const halaIndirect = getRowData('hala-indirect-orders');
+        document.getElementById('summary-hala-indirect-orders').textContent = halaIndirect.orders;
+        document.getElementById('summary-hala-indirect-cases').textContent = halaIndirect.cases;
+        grandCases += halaIndirect.cases;
+        grandOrders += halaIndirect.orders;
+
+        // Grand totals
+        document.getElementById('summary-grand-orders').textContent = grandOrders;
+        document.getElementById('summary-grand-cases').textContent = grandCases;
+        document.getElementById('summary-grand-sales').textContent = formatCurrency(grandSales);
+
+        // Header stat boxes
+        document.getElementById('totalSales').textContent = formatCurrency(grandSales);
+        document.getElementById('totalCases').textContent = grandCases;
+        document.getElementById('totalOrders').textContent = grandOrders;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateDashboardTotals();
+    });
+</script>
+</body>
+</html>
