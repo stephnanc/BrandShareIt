@@ -76,7 +76,7 @@ body {
 .tab-btn {
   background: #ffffff;
   color: #555;
-  border: 1px solid #d0d0d0;
+  border: 1px solid #d0d8e0;
   border-bottom: none;
   border-radius: 6px 6px 0 0;
   padding: 11px 20px;
@@ -88,8 +88,8 @@ body {
   text-transform: uppercase;
   white-space: nowrap;
 }
-.tab-btn:hover { background: #f0f0f0; color: #000; }
-.tab-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+.tab-btn:hover { background: #f0f4f8; color: #000; }
+.tab-btn.active { background: #f0f4f8; color: #1a3a5c; border-color: #d0d8e0; font-weight: 600; }
 
 /* ── CONTENT ── */
 .tab-content { display: none; padding: 28px 32px; }
@@ -359,6 +359,7 @@ body {
   <button class="tab-btn" onclick="openTab(event,'tab-13wk')">KeHE Last 13 Weeks</button>
   <button class="tab-btn" onclick="openTab(event,'tab-26wk')">KeHE Last 26 Weeks</button>
   <button class="tab-btn" onclick="openTab(event,'tab-kehe52')">KeHE Last 52 Weeks</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-new-accounts')">New at KeHE Sold</button>
 </div>
 
 <!-- ══════════════ TAB: SUMMARY ══════════════ -->
@@ -375,7 +376,7 @@ body {
   <!-- ── CROSS-PERIOD SCORECARD ── -->
   <div class="section-header">Cross-Period Scorecard — All Time Windows</div>
   <div style="overflow-x:auto;margin-bottom:22px;">
-    <table class="data-table" style="min-width:750px;">
+    <table class="data-table" id="sum-scorecard" style="min-width:750px;">
       <thead>
         <tr>
           <th>Metric</th>
@@ -490,10 +491,17 @@ body {
   </div>
 
   <!-- ── DEDUCTIONS & SPOILS ── -->
+  <style>
+    #sum-scorecard th, #sum-financials th {
+      background: #f0f4f8;
+      color: #000;
+      border-bottom: 2px solid #d0d8e0;
+    }
+  </style>
   <div class="section-header" style="margin-top:18px;">Financials — Deductions & Spoils (Consistent Across Periods)</div>
   <div class="chart-grid">
     <div class="data-table-wrap">
-      <table class="data-table">
+      <table class="data-table" id="sum-financials">
         <thead><tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr></thead>
         <tbody>
           <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
@@ -541,35 +549,35 @@ body {
 
   <!-- ── EXECUTIVE NARRATIVE ── -->
   <div class="section-header">Executive Narrative — Prepared by Stephen Nance</div>
-  <div style="border:1px solid #2563a8;border-radius:8px;overflow:hidden;margin-bottom:20px;">
-    <div onclick="toggleCard('exec-narrative')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#2563a8;user-select:none;">
+  <div style="border:1px solid #d0d8e0;border-radius:8px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div onclick="toggleCard('exec-narrative')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#f0f4f8;border-bottom:1px solid #d0d8e0;user-select:none;">
       <div>
-        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#fff;">Swoffle LLC — KeHE Performance Analysis</div>
-        <div style="font-size:0.72rem;color:#b8d4f0;margin-top:2px;">Full narrative across all time periods &nbsp;|&nbsp; Click to expand</div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">Swoffle LLC — KeHE Performance Analysis</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px;">Full narrative across all time periods &nbsp;|&nbsp; Click to expand</div>
       </div>
-      <span id="exec-narrative-icon" style="font-size:1.1rem;color:#fff;font-weight:600;transition:transform .2s;">&#9660;</span>
+      <span id="exec-narrative-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
     </div>
-    <div id="exec-narrative" style="display:none;padding:20px 22px;background:#f0f5fb;border-top:1px solid #2563a8;">
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">Across all six time periods tracked in this dashboard, Swoffle's KeHE performance in 2025–2026 tells a story of strong operational execution against a backdrop of continuing revenue pressure. The fill rate improvement is the clearest and most consistent win — from 88.13% over the last 52 weeks to a remarkable 95.12% over the last 26 weeks — representing one of the most dramatic YoY fill rate recoveries in the brand's KeHE history. This is a lead talking point in any conversation with David Shaffer's team.</p>
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">Distribution (PODs) is showing encouraging recovery in the shorter time windows — up 22.86% MTD and 13.71% over the last 13 weeks — after trending negative in the 12-month and 52-week views. This suggests new doors are being won in early 2026, which should translate into volume recovery as those PODs mature. The purchases surge of 128.07% over the last 13 weeks and 68.05% YTD signals KeHE is actively stocking Swoffle — the critical question is whether sell-through is keeping pace, which makes the COGS trend the most important number to watch as Q2 unfolds.</p>
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;">SKU productivity declining 47–60% across every time period is the most persistent concern and almost certainly reflects the 16-pack to 12-pack transition disruption. This warrants a direct conversation with KeHE about velocity expectations at the item level and whether the current SKU mix is properly positioned for the new pack size. Retailer deductions at 60% of the total $7,254 deduction burden are the primary financial lever to address with the KeHE team. Overall, the trajectory is improving — fill rate, PODs, and purchases are all moving in the right direction — and the revenue gap is narrowing from the 52-week (▼ 12.45%) to the 13-week (▼ 6.30%) window.</p>
+    <div id="exec-narrative" style="display:none;padding:20px 22px;background:#fff;border-top:1px solid #d0d8e0;">
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;">Across all six time periods tracked in this dashboard, Swoffle's KeHE performance in 2025–2026 tells a story of strong operational execution against a backdrop of continuing revenue pressure. The fill rate improvement is the clearest and most consistent win — from 88.13% over the last 52 weeks to a remarkable 95.12% over the last 26 weeks — representing one of the most dramatic YoY fill rate recoveries in the brand's KeHE history. This is a lead talking point in any conversation with David Shaffer's team.</p>
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;">Distribution (PODs) is showing encouraging recovery in the shorter time windows — up 22.86% MTD and 13.71% over the last 13 weeks — after trending negative in the 12-month and 52-week views. This suggests new doors are being won in early 2026, which should translate into volume recovery as those PODs mature. The purchases surge of 128.07% over the last 13 weeks and 68.05% YTD signals KeHE is actively stocking Swoffle — the critical question is whether sell-through is keeping pace, which makes the COGS trend the most important number to watch as Q2 unfolds.</p>
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;">SKU productivity declining 47–60% across every time period is the most persistent concern and almost certainly reflects the 16-pack to 12-pack transition disruption. This warrants a direct conversation with KeHE about velocity expectations at the item level and whether the current SKU mix is properly positioned for the new pack size. Retailer deductions at 60% of the total $7,254 deduction burden are the primary financial lever to address with the KeHE team. Overall, the trajectory is improving — fill rate, PODs, and purchases are all moving in the right direction — and the revenue gap is narrowing from the 52-week (▼ 12.45%) to the 13-week (▼ 6.30%) window.</p>
     </div>
   </div>
 
   <!-- ── SKU PRODUCTIVITY EXPLAINER ── -->
-  <div style="border:1px solid #2563a8;border-radius:8px;overflow:hidden;margin-top:4px;">
-    <div onclick="toggleCard('sku-explainer')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#2563a8;user-select:none;">
+  <div style="border:1px solid #d0d8e0;border-radius:8px;overflow:hidden;margin-top:4px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div onclick="toggleCard('sku-explainer')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#f0f4f8;border-bottom:1px solid #d0d8e0;user-select:none;">
       <div>
-        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#fff;">Understanding SKU Productivity — Why It's Down ~50% &amp; What It Means</div>
-        <div style="font-size:0.72rem;color:#b8d4f0;margin-top:2px;">The 16-pack to 12-pack transition explained &nbsp;|&nbsp; Click to expand</div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">Understanding SKU Productivity — Why It's Down ~50% &amp; What It Means</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px;">The 16-pack to 12-pack transition explained &nbsp;|&nbsp; Click to expand</div>
       </div>
-      <span id="sku-explainer-icon" style="font-size:1.1rem;color:#fff;font-weight:600;transition:transform .2s;">&#9660;</span>
+      <span id="sku-explainer-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
     </div>
-    <div id="sku-explainer" style="display:none;padding:20px 22px;background:#f0f5fb;border-top:1px solid #2563a8;">
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">SKU Productivity in KeHE's analytics system is a measure of <strong>how much revenue each individual SKU generates per point of distribution</strong>. Think of it this way: if Swoffle has 5 SKUs listed at KeHE and they're in 100 stores, that's 500 "opportunities" to sell. SKU Productivity tells you how efficiently those opportunities are being converted into actual dollars. A high number means your SKUs are working hard — they're in doors and selling through. A low number means either the SKUs aren't moving well at the store level, or SKUs are occupying distribution slots without generating meaningful volume.</p>
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;"><strong>Why Swoffle's number dropped ~50% across every time period</strong> comes down to two things happening simultaneously. First, the <strong>16-pack to 12-pack transition</strong>. When a pack size changes, KeHE's system treats the new 12-pack as a different SKU. For a period of time you have the old SKU losing velocity as it phases out, and the new SKU building from zero — both dragging the average down hard at the same time. Second, during a pack change transition there is often a window where <strong>PODs are counted but sell-through hasn't caught up yet</strong>. The brand is in the door, but the new pack is still finding its footing with shoppers and store staff. That gap between distribution and velocity crushes the productivity metric temporarily.</p>
-      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;"><strong>The good news</strong> is that SKU productivity is one of the most recoverable metrics once the transition dust settles. As the 12-pack establishes velocity in those 523 doors, the number should start climbing back. The POD gains visible in the shorter time windows — up 13–22% in Q1 2026 — are actually a leading indicator that productivity should follow. More doors filled with a settled, well-positioned SKU means higher productivity scores ahead.</p>
-      <div style="background:#2563a8;border-radius:6px;padding:12px 16px;font-size:0.82rem;color:#fff;line-height:1.7;">
+    <div id="sku-explainer" style="display:none;padding:20px 22px;background:#fff;border-top:1px solid #d0d8e0;">
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;">SKU Productivity in KeHE's analytics system is a measure of <strong>how much revenue each individual SKU generates per point of distribution</strong>. Think of it this way: if Swoffle has 5 SKUs listed at KeHE and they're in 100 stores, that's 500 "opportunities" to sell. SKU Productivity tells you how efficiently those opportunities are being converted into actual dollars. A high number means your SKUs are working hard — they're in doors and selling through. A low number means either the SKUs aren't moving well at the store level, or SKUs are occupying distribution slots without generating meaningful volume.</p>
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;"><strong>Why Swoffle's number dropped ~50% across every time period</strong> comes down to two things happening simultaneously. First, the <strong>16-pack to 12-pack transition</strong>. When a pack size changes, KeHE's system treats the new 12-pack as a different SKU. For a period of time you have the old SKU losing velocity as it phases out, and the new SKU building from zero — both dragging the average down hard at the same time. Second, during a pack change transition there is often a window where <strong>PODs are counted but sell-through hasn't caught up yet</strong>. The brand is in the door, but the new pack is still finding its footing with shoppers and store staff. That gap between distribution and velocity crushes the productivity metric temporarily.</p>
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;"><strong>The good news</strong> is that SKU productivity is one of the most recoverable metrics once the transition dust settles. As the 12-pack establishes velocity in those 523 doors, the number should start climbing back. The POD gains visible in the shorter time windows — up 13–22% in Q1 2026 — are actually a leading indicator that productivity should follow. More doors filled with a settled, well-positioned SKU means higher productivity scores ahead.</p>
+      <div style="background:#f0f4f8;border-left:4px solid #2563a8;border-radius:0 4px 4px 0;padding:12px 16px;font-size:0.82rem;color:#1a3a5c;line-height:1.7;">
         <strong>Talking point for David Shaffer:</strong> Frame the SKU productivity decline as a transition artifact tied to the pack change, not a demand or shelf performance problem. The supporting evidence — fill rate up 11–21 points, purchases up 5–128% depending on window, and POD recovery in Q1 2026 — all argue that the brand's fundamentals are intact and the productivity metric will normalize as the 12-pack matures in distribution.
       </div>
     </div>
@@ -1669,7 +1677,174 @@ body {
 
 </div><!-- /tab-kehe52 -->
 
-<!-- ══════════════ FOOTER ══════════════ -->
+<!-- ══════════════ TAB: NEW AT KeHE SOLD ══════════════ -->
+<div id="tab-new-accounts" class="tab-content">
+
+  <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:14px 18px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:0.95rem;font-weight:600;color:#000;">New at KeHE Sold</div>
+      <div style="font-size:0.78rem;color:#555;margin-top:2px;">KeHE Portal Orders &amp; HALA Orders &nbsp;|&nbsp; Swoffle LLC &nbsp;|&nbsp; As of 4/6/2026</div>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">Portal Accounts</div>
+        <div style="font-size:1.3rem;font-weight:600;color:#2563a8;">24</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">HALA Accounts</div>
+        <div style="font-size:1.3rem;font-weight:600;color:#27ae60;">21</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">Total Accounts</div>
+        <div style="font-size:1.3rem;font-weight:600;color:#000;">45</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search / Filter -->
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" id="acct-search" oninput="filterAccounts()" placeholder="Search by store, city, or state..." style="flex:1;min-width:200px;padding:8px 12px;border:1px solid #d0d0d0;border-radius:6px;font-size:0.82rem;">
+    <select id="acct-type" onchange="filterAccounts()" style="padding:8px 12px;border:1px solid #d0d0d0;border-radius:6px;font-size:0.82rem;">
+      <option value="all">All Orders</option>
+      <option value="portal">KeHE Portal Only</option>
+      <option value="hala">HALA Only</option>
+    </select>
+    <select id="acct-state" onchange="filterAccounts()" style="padding:8px 12px;border:1px solid #d0d0d0;border-radius:6px;font-size:0.82rem;">
+      <option value="all">All States</option>
+      <option value="FL">Florida</option>
+      <option value="VA">Virginia</option>
+      <option value="NC">North Carolina</option>
+      <option value="SC">South Carolina</option>
+      <option value="GA">Georgia</option>
+      <option value="TN">Tennessee</option>
+    </select>
+  </div>
+
+  <!-- KeHE Portal Orders -->
+  <div style="border:1px solid #d0d0d0;border-radius:8px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div onclick="toggleCard('portal-table-wrap')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;background:#fff;border-bottom:1px solid #e0e0e0;user-select:none;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">KeHE Portal Orders — 24 Accounts</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px;">FL · VA · NC · SC · GA &nbsp;|&nbsp; Click to expand</div>
+      </div>
+      <span id="portal-table-wrap-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
+    </div>
+    <div id="portal-table-wrap" style="display:none;background:#fff;">
+      <style>
+        #portal-table th, #hala-table th {
+          background: #f0f4f8;
+          color: #000;
+          border-bottom: 2px solid #d0d8e0;
+        }
+      </style>
+      <div style="overflow-x:auto;padding:0;">
+        <table class="data-table" id="portal-table" style="min-width:900px;">
+          <thead>
+            <tr>
+              <th>Store Name</th>
+              <th>Phone</th>
+              <th>City</th>
+              <th>ST</th>
+              <th>Retailer Parent</th>
+              <th>Retailer Area</th>
+              <th style="text-align:right;">Ordered ($)</th>
+              <th style="text-align:center;">SKU Count</th>
+              <th>Items Ordered (SKU / Ordered / Shipped)</th>
+              <th style="text-align:center;">KeHE Portal Orders</th>
+            </tr>
+          </thead>
+          <tbody id="portal-body">
+        <tr data-state="FL" data-type="portal"><td>Ada's Natural Market</td><td>(239) 939-9600</td><td>Fort Myers</td><td>FL</td><td>HCWC</td><td>HCWC</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">1</td><td style="font-size:0.75rem;">1.16 OZ Caramel (863852000006): $25.20 / $25.20</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Beehive Natural Foods</td><td>(305) 666-3360</td><td>Miami</td><td>FL</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$32.88</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Chuck's Natural Fields Market</td><td>(813) 657-2555</td><td>Brandon</td><td>FL</td><td>All Other</td><td>All Other</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Debbie's Health Food</td><td>(386) 763-7046</td><td>Port Orange</td><td>FL</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60 | 1.45 OZ Drk Choc: $20.28</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Diane's Natural Food Mkt — INFRA</td><td>(904) 808-9978</td><td>St. Augustine</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$37.80</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $25.20 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Farmer Joe's Market</td><td>(239) 510-4385</td><td>Cape Coral</td><td>FL</td><td>All Other</td><td>Oakes Farms Market</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60 | 1.45 OZ Drk Choc: $20.28</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Food for Thought Grocery — INFRA</td><td>(863) 385-8995</td><td>Sebring</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60 | 1.45 OZ Drk Choc: $20.28</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Health Basket of Mt Dora — INFRA</td><td>(352) 735-1166</td><td>Mount Dora</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Healthy Habits of WH — INFRA</td><td>(863) 875-6551</td><td>Winter Haven</td><td>FL</td><td>INFRA</td><td>INFRA North Central</td><td style="text-align:right;">$20.28</td><td style="text-align:center;">1</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Perrine's Produce (Port Orange)</td><td>(386) 281-3375</td><td>Port Orange</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$100.80</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $50.40 | 1.16 OZ Frn Van: $50.40</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Perrine's Produce (New Smyrna Beach)</td><td>(386) 423-2336</td><td>New Smyrna Beach</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$100.80</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $50.40 | 1.16 OZ Frn Van: $50.40</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Perrine's Produce OB — INFRA</td><td>(386) 872-4344</td><td>Ormond Beach</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$100.80</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $50.40 | 1.16 OZ Caramel: $50.40</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Register Family Farm</td><td>(850) 392-7404</td><td>Freeport</td><td>FL</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Sav a Lot Nutrition Centers</td><td>(754) 307-1655</td><td>Margate</td><td>FL</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Super Value Nutrition</td><td>(941) 342-1908</td><td>Sarasota</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>The Green Apple Hlth Fds — INFRA</td><td>(352) 350-2191</td><td>The Villages</td><td>FL</td><td>INFRA</td><td>INFRA Southeast</td><td style="text-align:right;">$37.80</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $25.20 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Wards Supermarket Inc</td><td>(352) 372-1741</td><td>Gainesville</td><td>FL</td><td>All Other</td><td>All Other</td><td style="text-align:right;">$70.68</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $25.20 | 1.45 OZ Drk Choc: $20.28 | 1.16 OZ Frn Van: $25.20</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="VA" data-type="portal"><td>Little House Green Grocery</td><td>(804) 262-7474</td><td>Richmond</td><td>VA</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="portal"><td>Mountain Man Nutrition</td><td>(828) 456-3216</td><td>Waynesville</td><td>NC</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="portal"><td>Nature's Storehouse</td><td>(828) 859-6356</td><td>Tryon</td><td>NC</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$12.60</td><td style="text-align:center;">1</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="portal"><td>Tidal Creek Foods Inc.</td><td>(910) 799-2667</td><td>Wilmington</td><td>NC</td><td>NCG</td><td>NCG Southeast</td><td style="text-align:right;">$40.56</td><td style="text-align:center;">1</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $40.56</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="portal"><td>Garner's Natural Foods</td><td>(864) 585-1021</td><td>Spartanburg</td><td>SC</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="portal"><td>The Healthy Food Store</td><td>(843) 629-9204</td><td>Florence</td><td>SC</td><td>All Other</td><td>All Other</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="GA" data-type="portal"><td>Nature's Corner Market Wdstk — INFRA</td><td>(678) 310-2532</td><td>Woodstock</td><td>GA</td><td>All Other</td><td>INFRA NON-SA</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+      </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HALA Orders -->
+  <div style="border:1px solid #d0d0d0;border-radius:8px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div onclick="toggleCard('hala-table-wrap')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;background:#fff;border-bottom:1px solid #e0e0e0;user-select:none;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">HALA Orders — 21 Accounts</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px;">FL · NC · SC · TN &nbsp;|&nbsp; Click to expand</div>
+      </div>
+      <span id="hala-table-wrap-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
+    </div>
+    <div id="hala-table-wrap" style="display:none;background:#fff;">
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="hala-table" style="min-width:600px;">
+          <thead>
+            <tr>
+              <th>Store Name</th>
+              <th>Phone</th>
+              <th>City</th>
+              <th>ST</th>
+              <th style="text-align:center;">HALA Orders</th>
+            </tr>
+          </thead>
+          <tbody id="hala-body">
+        <tr data-state="FL" data-type="hala"><td>Diane's Natural Foods</td><td>(904) 808-9978</td><td>St. Augustine</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Get Healthy Brooksville</td><td>(352) 796-9798</td><td>Brooksville</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Get Healthy Spring Hill</td><td>(352) 688-3831</td><td>Spring Hill</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Grassroots Natural Market</td><td>(904) 384-4474</td><td>Jacksonville</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Judy's Natural Foods</td><td>(727) 943-0020</td><td>Holiday</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Love Whole Foods Café & Market</td><td>(386) 677-5236</td><td>Ormond Beach</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Love Whole Foods Café & Market</td><td>(386) 767-6543</td><td>Port Orange</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>M & M Vitamins</td><td>(407) 333-3112</td><td>Lake Mary</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Morton's Gourmet Market</td><td>(941) 955-9856</td><td>Sarasota</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>Rollin Oats</td><td>(813) 873-7428</td><td>Tampa</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="hala"><td>The Health Basket</td><td>(352) 735-1166</td><td>Mount Dora</td><td>FL</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="hala"><td>Deep Roots Market</td><td>(336) 292-9216</td><td>Greensboro</td><td>NC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="hala"><td>Food Matters</td><td>(828) 885-3663</td><td>Brevard</td><td>NC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="NC" data-type="hala"><td>Tidal Creek Coop</td><td>(910) 799-2667</td><td>Wilmington</td><td>NC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="hala"><td>Belue Farms Natural Market</td><td>(864) 578-0446</td><td>Boiling Springs</td><td>SC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="hala"><td>Garner's Natural Foods</td><td>(864) 585-1021</td><td>Spartanburg</td><td>SC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="hala"><td>Nature's Cupboard</td><td>(864) 225-5002</td><td>Anderson</td><td>SC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="SC" data-type="hala"><td>Rosewood Market</td><td>(803) 765-1083</td><td>Columbia</td><td>SC</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="TN" data-type="hala"><td>Abundant Living</td><td>(423) 614-7885</td><td>Cleveland</td><td>TN</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="TN" data-type="hala"><td>Columbia Health Foods</td><td>(931) 388-1148</td><td>Columbia</td><td>TN</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="TN" data-type="hala"><td>Natural Foods Market</td><td>(423) 610-1000</td><td>Johnson City</td><td>TN</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+      </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- State Summary -->
+  <div class="section-header">Accounts by State</div>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-label">Florida</div><div class="mc-value">28</div><div class="mc-delta" style="color:#555;">17 Portal · 11 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">North Carolina</div><div class="mc-value">6</div><div class="mc-delta" style="color:#555;">3 Portal · 3 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">South Carolina</div><div class="mc-value">6</div><div class="mc-delta" style="color:#555;">2 Portal · 4 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">Tennessee</div><div class="mc-value">3</div><div class="mc-delta" style="color:#555;">0 Portal · 3 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">Virginia</div><div class="mc-value">1</div><div class="mc-delta" style="color:#555;">1 Portal · 0 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">Georgia</div><div class="mc-value">1</div><div class="mc-delta" style="color:#555;">1 Portal · 0 HALA</div></div>
+  </div>
+
+</div><!-- /tab-new-accounts -->
 <div class="dashboard-footer">
   <span>Last Database Sync: 4/6/2026 9:30:10 AM ET</span>
   <span>Swoffle LLC &nbsp;|&nbsp; KeHE Analytics &nbsp;|&nbsp; Prepared by Brand Share It Sales Partners</span>
@@ -1715,6 +1890,12 @@ const tabHeaders = {
     label2: 'L26W Purchases',  val2: '$35,718',   delta2: '▲ 8.69% vs PY',     cls2: 'delta-pos',
     label3: 'L26W Sales COGS', val3: '$27,205',   delta3: '▼ 13.73% vs PY',    cls3: 'delta-neg'
   },
+  'tab-new-accounts': {
+    subtitle: 'New at KeHE Sold — Portal & HALA Orders &nbsp;|&nbsp; As of 4/6/2026',
+    label1: 'Portal Accounts', val1: '24',    delta1: 'KeHE Portal Orders',  cls1: 'delta-pos',
+    label2: 'HALA Accounts',   val2: '21',    delta2: 'HALA Rep Orders',     cls2: 'delta-pos',
+    label3: 'Total Accounts',  val3: '45',    delta3: 'Across 6 States',     cls3: 'delta-pos'
+  },
   'tab-kehe52': {
     subtitle: 'Last 52 Weeks: 4/6/2025 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
     label1: 'L52W Fill Rate',  val1: '88.13%',    delta1: '▲ 11.41 pts vs PY',cls1: 'delta-pos',
@@ -1739,6 +1920,24 @@ function updateHeader(tabId) {
   document.getElementById('hdr-val3').textContent   = h.val3;
   const d3 = document.getElementById('hdr-delta3');
   d3.textContent = h.delta3; d3.className = 'stat-delta ' + h.cls3;
+}
+
+function filterAccounts() {
+  const search = document.getElementById('acct-search').value.toLowerCase();
+  const type = document.getElementById('acct-type').value;
+  const state = document.getElementById('acct-state').value;
+  ['portal-body', 'hala-body'].forEach(bodyId => {
+    const rows = document.getElementById(bodyId).querySelectorAll('tr');
+    rows.forEach(row => {
+      const rowType = row.dataset.type;
+      const rowState = row.dataset.state;
+      const text = row.textContent.toLowerCase();
+      const typeMatch = type === 'all' || type === rowType;
+      const stateMatch = state === 'all' || state === rowState;
+      const searchMatch = !search || text.includes(search);
+      row.style.display = typeMatch && stateMatch && searchMatch ? '' : 'none';
+    });
+  });
 }
 
 function toggleCard(id) {
@@ -2117,3 +2316,4 @@ new Chart(document.getElementById('ch-spoils'), {
 </script>
 </body>
 </html>
+
