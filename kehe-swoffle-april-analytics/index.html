@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle — KeHE Analytics Summary | Last 52 Weeks</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: #ffffff;
+  color: #000000;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px solid #e0e0e0;
+}
+.header-left h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  color: #000;
+}
+.header-left .subtitle {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 4px;
+}
+.header-right {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.header-stat {
+  text-align: right;
+}
+.header-stat .stat-label {
+  font-size: 0.7rem;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.header-stat .stat-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000;
+}
+.header-stat .stat-delta {
+  font-size: 0.75rem;
+  margin-top: 1px;
+}
+.delta-neg { color: #c0392b; }
+.delta-pos { color: #1a7a3a; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  background: #f5f5f5;
+  padding: 12px 24px 0;
+  gap: 6px;
+  border-bottom: 2px solid #e0e0e0;
+}
+.tab-btn {
+  background: #ffffff;
+  color: #555;
+  border: 1px solid #d0d0d0;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 11px 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tab-btn:hover { background: #f0f0f0; color: #000; }
+.tab-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+
+/* ── CONTENT ── */
+.tab-content { display: none; padding: 28px 32px; }
+.tab-content.active { display: block; }
+
+/* ── METRIC CARDS ── */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.metric-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+.metric-card .mc-label {
+  font-size: 0.72rem;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 6px;
+}
+.metric-card .mc-value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #000;
+  line-height: 1.1;
+}
+.metric-card .mc-delta {
+  font-size: 0.78rem;
+  margin-top: 5px;
+}
+.metric-card .mc-py {
+  font-size: 0.72rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #1a3a5c;
+  border-left: 4px solid #2563a8;
+  padding-left: 10px;
+  margin-bottom: 14px;
+  margin-top: 8px;
+}
+
+/* ── CHARTS ── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.chart-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+}
+.chart-card h4 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1a3a5c;
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 0.72rem;
+  color: #555;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.legend-sq {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+.chart-wrap { position: relative; width: 100%; height: 180px; }
+.chart-wrap-tall { position: relative; width: 100%; height: 220px; }
+.full-chart-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.full-chart-card h4 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1a3a5c;
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ── TABLES ── */
+.data-table-wrap {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.data-table th {
+  background: #2563a8;
+  color: #fff;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.data-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #000;
+}
+.data-table tr:last-child td {
+  font-weight: 600;
+  background: #f5f5f5;
+  border-bottom: none;
+}
+.data-table tr:hover td { background: #fafafa; }
+
+/* ── SPOILS / SMALL CARDS ── */
+.spoils-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.spoil-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+.spoil-card .sp-label {
+  font-size: 0.68rem;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 5px;
+}
+.spoil-card .sp-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000;
+}
+
+/* ── SYNOPSIS / SIGNAL TABLE ── */
+.synopsis-box {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.synopsis-box p {
+  font-size: 0.86rem;
+  color: #222;
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+.synopsis-box p:last-child { margin-bottom: 0; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.badge-ok { background: #d4edda; color: #155724; }
+.badge-warn { background: #fff3cd; color: #856404; }
+.badge-alert { background: #f8d7da; color: #721c24; }
+
+/* ── COGS BY GBB ── */
+.gbb-table-wrap {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* ── FOOTER ── */
+.dashboard-footer {
+  background: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  padding: 12px 32px;
+  font-size: 0.72rem;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@media (max-width: 700px) {
+  .header { flex-direction: column; }
+  .header-right { justify-content: flex-start; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab-btn { padding: 12px 10px; font-size: 0.72rem; }
+  .tab-content { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Swoffle — KeHE Analytics Dashboard</h1>
+    <div class="subtitle" id="hdr-subtitle">Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer &nbsp;|&nbsp; Item Category Manager: David Shaffer</div>
+  </div>
+  <div class="header-right">
+    <div class="header-stat">
+      <div class="stat-label" id="hdr-label1">Sales COGS</div>
+      <div class="stat-value" id="hdr-val1">$750</div>
+      <div class="stat-delta" id="hdr-delta1" class="delta-neg">▼ 7.05% vs PY</div>
+    </div>
+    <div class="header-stat">
+      <div class="stat-label" id="hdr-label2">Fill Rate</div>
+      <div class="stat-value" id="hdr-val2">100.00%</div>
+      <div class="stat-delta" id="hdr-delta2" class="delta-pos">CY vs PY 0.00%</div>
+    </div>
+    <div class="header-stat">
+      <div class="stat-label" id="hdr-label3">PODs</div>
+      <div class="stat-value" id="hdr-val3">43</div>
+      <div class="stat-delta" id="hdr-delta3" class="delta-pos">▲ 22.86% vs PY</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TABS ══════════════ -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="openTab(event,'tab-summary')">Summary</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-mtd')">KeHE Month to Date</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-ytd')">KeHE Year to Date</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-12mo')">KeHE Last 12 Months</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-13wk')">KeHE Last 13 Weeks</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-26wk')">KeHE Last 26 Weeks</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-kehe52')">KeHE Last 52 Weeks</button>
+</div>
+
+<!-- ══════════════ TAB: SUMMARY ══════════════ -->
+<div id="tab-summary" class="tab-content active">
+
+  <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:18px 22px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:1rem;font-weight:600;color:#000;">Swoffle LLC — KeHE Performance Summary</div>
+      <div style="font-size:0.78rem;color:#555;margin-top:3px;">All time periods as of 4/6/2026 &nbsp;|&nbsp; Category Owner: David Shaffer</div>
+    </div>
+    <div style="font-size:0.75rem;color:#777;">Last Database Sync: 4/6/2026 9:30 AM ET</div>
+  </div>
+
+  <!-- ── CROSS-PERIOD SCORECARD ── -->
+  <div class="section-header">Cross-Period Scorecard — All Time Windows</div>
+  <div style="overflow-x:auto;margin-bottom:22px;">
+    <table class="data-table" style="min-width:750px;">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th style="text-align:center;">MTD<br><span style="font-weight:400;font-size:0.68rem;">4/1–4/4/26</span></th>
+          <th style="text-align:center;">YTD<br><span style="font-weight:400;font-size:0.68rem;">1/1–4/4/26</span></th>
+          <th style="text-align:center;">Last 13 Wks<br><span style="font-weight:400;font-size:0.68rem;">1/4–4/4/26</span></th>
+          <th style="text-align:center;">Last 26 Wks<br><span style="font-weight:400;font-size:0.68rem;">10/5/25–4/4/26</span></th>
+          <th style="text-align:center;">Last 12 Mo<br><span style="font-weight:400;font-size:0.68rem;">4/1/25–3/31/26</span></th>
+          <th style="text-align:center;">Last 52 Wks<br><span style="font-weight:400;font-size:0.68rem;">4/6/25–4/4/26</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sales COGS (CY)</strong></td>
+          <td style="text-align:center;">$750<br><span style="color:#c0392b;font-size:0.72rem;">▼ 7.05%</span></td>
+          <td style="text-align:center;">$14,018<br><span style="color:#c0392b;font-size:0.72rem;">▼ 7.76%</span></td>
+          <td style="text-align:center;">$13,853<br><span style="color:#c0392b;font-size:0.72rem;">▼ 6.30%</span></td>
+          <td style="text-align:center;">$27,205<br><span style="color:#c0392b;font-size:0.72rem;">▼ 13.73%</span></td>
+          <td style="text-align:center;">$56,137<br><span style="color:#c0392b;font-size:0.72rem;">▼ 12.20%</span></td>
+          <td style="text-align:center;">$56,081<br><span style="color:#c0392b;font-size:0.72rem;">▼ 12.45%</span></td>
+        </tr>
+        <tr>
+          <td><strong>PODs (CY)</strong></td>
+          <td style="text-align:center;">43<br><span style="color:#27ae60;font-size:0.72rem;">▲ 22.86%</span></td>
+          <td style="text-align:center;">343<br><span style="color:#27ae60;font-size:0.72rem;">▲ 13.58%</span></td>
+          <td style="text-align:center;">340<br><span style="color:#27ae60;font-size:0.72rem;">▲ 13.71%</span></td>
+          <td style="text-align:center;">436<br><span style="color:#27ae60;font-size:0.72rem;">▲ 6.60%</span></td>
+          <td style="text-align:center;">518<br><span style="color:#c0392b;font-size:0.72rem;">▼ 6.33%</span></td>
+          <td style="text-align:center;">523<br><span style="color:#c0392b;font-size:0.72rem;">▼ 4.91%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Fill Rate (CY)</strong></td>
+          <td style="text-align:center;">100.00%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 0.00 pts</span></td>
+          <td style="text-align:center;">90.92%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 3.33 pts</span></td>
+          <td style="text-align:center;">90.82%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 3.54 pts</span></td>
+          <td style="text-align:center;">95.12%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 21.16 pts</span></td>
+          <td style="text-align:center;">88.15%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 12.23 pts</span></td>
+          <td style="text-align:center;">88.13%<br><span style="color:#27ae60;font-size:0.72rem;">▲ 11.41 pts</span></td>
+        </tr>
+        <tr>
+          <td><strong>SKU Productivity (CY)</strong></td>
+          <td style="text-align:center;">$107<br><span style="color:#c0392b;font-size:0.72rem;">▼ 60.17%</span></td>
+          <td style="text-align:center;">$2,003<br><span style="color:#c0392b;font-size:0.72rem;">▼ 47.29%</span></td>
+          <td style="text-align:center;">$1,979<br><span style="color:#c0392b;font-size:0.72rem;">▼ 46.45%</span></td>
+          <td style="text-align:center;">$3,886<br><span style="color:#c0392b;font-size:0.72rem;">▼ 50.70%</span></td>
+          <td style="text-align:center;">$8,020<br><span style="color:#c0392b;font-size:0.72rem;">▼ 49.83%</span></td>
+          <td style="text-align:center;">$8,012<br><span style="color:#c0392b;font-size:0.72rem;">▼ 49.97%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Purchases / PO $</strong></td>
+          <td style="text-align:center;color:#999;">Blank</td>
+          <td style="text-align:center;">$23,602<br><span style="color:#27ae60;font-size:0.72rem;">▲ 68.05%</span></td>
+          <td style="text-align:center;">$23,602<br><span style="color:#27ae60;font-size:0.72rem;">▲ 128.07%</span></td>
+          <td style="text-align:center;">$35,718<br><span style="color:#27ae60;font-size:0.72rem;">▲ 8.69%</span></td>
+          <td style="text-align:center;">$64,613<br><span style="color:#27ae60;font-size:0.72rem;">▲ 5.46%</span></td>
+          <td style="text-align:center;">$64,613<br><span style="color:#27ae60;font-size:0.72rem;">▲ 5.46%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Total Spoils</strong></td>
+          <td style="text-align:center;">$10</td>
+          <td style="text-align:center;">$200<br><span style="color:#555;font-size:0.72rem;">0.85% to PO</span></td>
+          <td style="text-align:center;">$198<br><span style="color:#555;font-size:0.72rem;">0.84% to PO</span></td>
+          <td style="text-align:center;">$398<br><span style="color:#555;font-size:0.72rem;">1.11% to PO</span></td>
+          <td style="text-align:center;">$796<br><span style="color:#555;font-size:0.72rem;">1.23% to PO</span></td>
+          <td style="text-align:center;">$798<br><span style="color:#555;font-size:0.72rem;">1.24% to PO</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── FILL RATE TREND CHART ── -->
+  <div class="section-header">Fill Rate Trend — Across All Periods (CY vs PY)</div>
+  <div class="full-chart-card">
+    <h4>Outbound Fill Rate % — CY vs PY by Period</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#27ae60;"></span>CY 2025–26</span>
+      <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 2024–25</span>
+    </div>
+    <div style="position:relative;width:100%;height:240px;"><canvas id="sum-fill"></canvas></div>
+  </div>
+
+  <!-- ── SALES COGS TREND ── -->
+  <div class="section-header">Sales COGS — CY vs PY Across All Periods</div>
+  <div class="full-chart-card">
+    <h4>Sales COGS $ — CY vs PY by Period</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#2563a8;"></span>CY 2025–26</span>
+      <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY 2024–25</span>
+    </div>
+    <div style="position:relative;width:100%;height:240px;"><canvas id="sum-cogs"></canvas></div>
+  </div>
+
+  <!-- ── PODS TREND ── -->
+  <div class="section-header">PODs & Purchases — CY vs PY Across All Periods</div>
+  <div class="chart-grid">
+    <div class="full-chart-card" style="margin-bottom:0;">
+      <h4>PODs — CY vs PY by Period</h4>
+      <div class="chart-legend" style="justify-content:center;">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY</span>
+      </div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="sum-pods"></canvas></div>
+    </div>
+    <div class="full-chart-card" style="margin-bottom:0;">
+      <h4>Purchases / PO $ — CY vs PY by Period</h4>
+      <div class="chart-legend" style="justify-content:center;">
+        <span><span class="legend-sq" style="background:#8e44ad;"></span>CY</span>
+        <span><span class="legend-sq" style="background:#c39bd3;"></span>PY</span>
+      </div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="sum-purchases"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── DEDUCTIONS & SPOILS ── -->
+  <div class="section-header" style="margin-top:18px;">Financials — Deductions & Spoils (Consistent Across Periods)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr></thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="sum-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── KEY SIGNALS ── -->
+  <div class="section-header">Key Signals — What the Data Is Telling Us</div>
+  <div class="chart-grid" style="margin-bottom:18px;">
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:16px;">
+      <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;margin-bottom:10px;">Strengths</div>
+      <ul style="font-size:0.82rem;color:#222;line-height:1.9;padding-left:16px;">
+        <li>Fill rate at <strong>95.12%</strong> over last 26 weeks — best in dashboard</li>
+        <li>Fill rate positive across <strong>every single time period</strong></li>
+        <li>PODs growing in shorter windows: ▲ 22.86% MTD, ▲ 13.71% L13W</li>
+        <li>KeHE purchases up across all periods — distributor still investing</li>
+        <li>Spoils consistently below 1.25% to PO across all windows</li>
+        <li>100% fill rate in early April MTD — clean execution start to Q2</li>
+      </ul>
+    </div>
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:16px;">
+      <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;margin-bottom:10px;">Watch Items</div>
+      <ul style="font-size:0.82rem;color:#222;line-height:1.9;padding-left:16px;">
+        <li>Sales COGS declining <strong>every time period</strong> — 6% to 14% YoY</li>
+        <li>SKU productivity down ~47–60% across all windows — persistent concern</li>
+        <li>PODs negative over 12-month and 52-week views — door recovery needed</li>
+        <li>Retailer deductions at 60% of total ($4,318) — largest financial burden</li>
+        <li>Total deductions at 13.17% of COGS — heavy structural drag</li>
+        <li>Purchases surge (▲128% L13W) vs. COGS decline — inventory build risk</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── EXECUTIVE NARRATIVE ── -->
+  <div class="section-header">Executive Narrative — Prepared by Stephen Nance</div>
+  <div style="border:1px solid #2563a8;border-radius:8px;overflow:hidden;margin-bottom:20px;">
+    <div onclick="toggleCard('exec-narrative')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#2563a8;user-select:none;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#fff;">Swoffle LLC — KeHE Performance Analysis</div>
+        <div style="font-size:0.72rem;color:#b8d4f0;margin-top:2px;">Full narrative across all time periods &nbsp;|&nbsp; Click to expand</div>
+      </div>
+      <span id="exec-narrative-icon" style="font-size:1.1rem;color:#fff;font-weight:600;transition:transform .2s;">&#9660;</span>
+    </div>
+    <div id="exec-narrative" style="display:none;padding:20px 22px;background:#f0f5fb;border-top:1px solid #2563a8;">
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">Across all six time periods tracked in this dashboard, Swoffle's KeHE performance in 2025–2026 tells a story of strong operational execution against a backdrop of continuing revenue pressure. The fill rate improvement is the clearest and most consistent win — from 88.13% over the last 52 weeks to a remarkable 95.12% over the last 26 weeks — representing one of the most dramatic YoY fill rate recoveries in the brand's KeHE history. This is a lead talking point in any conversation with David Shaffer's team.</p>
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">Distribution (PODs) is showing encouraging recovery in the shorter time windows — up 22.86% MTD and 13.71% over the last 13 weeks — after trending negative in the 12-month and 52-week views. This suggests new doors are being won in early 2026, which should translate into volume recovery as those PODs mature. The purchases surge of 128.07% over the last 13 weeks and 68.05% YTD signals KeHE is actively stocking Swoffle — the critical question is whether sell-through is keeping pace, which makes the COGS trend the most important number to watch as Q2 unfolds.</p>
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;">SKU productivity declining 47–60% across every time period is the most persistent concern and almost certainly reflects the 16-pack to 12-pack transition disruption. This warrants a direct conversation with KeHE about velocity expectations at the item level and whether the current SKU mix is properly positioned for the new pack size. Retailer deductions at 60% of the total $7,254 deduction burden are the primary financial lever to address with the KeHE team. Overall, the trajectory is improving — fill rate, PODs, and purchases are all moving in the right direction — and the revenue gap is narrowing from the 52-week (▼ 12.45%) to the 13-week (▼ 6.30%) window.</p>
+    </div>
+  </div>
+
+  <!-- ── SKU PRODUCTIVITY EXPLAINER ── -->
+  <div style="border:1px solid #2563a8;border-radius:8px;overflow:hidden;margin-top:4px;">
+    <div onclick="toggleCard('sku-explainer')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:#2563a8;user-select:none;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#fff;">Understanding SKU Productivity — Why It's Down ~50% &amp; What It Means</div>
+        <div style="font-size:0.72rem;color:#b8d4f0;margin-top:2px;">The 16-pack to 12-pack transition explained &nbsp;|&nbsp; Click to expand</div>
+      </div>
+      <span id="sku-explainer-icon" style="font-size:1.1rem;color:#fff;font-weight:600;transition:transform .2s;">&#9660;</span>
+    </div>
+    <div id="sku-explainer" style="display:none;padding:20px 22px;background:#f0f5fb;border-top:1px solid #2563a8;">
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;">SKU Productivity in KeHE's analytics system is a measure of <strong>how much revenue each individual SKU generates per point of distribution</strong>. Think of it this way: if Swoffle has 5 SKUs listed at KeHE and they're in 100 stores, that's 500 "opportunities" to sell. SKU Productivity tells you how efficiently those opportunities are being converted into actual dollars. A high number means your SKUs are working hard — they're in doors and selling through. A low number means either the SKUs aren't moving well at the store level, or SKUs are occupying distribution slots without generating meaningful volume.</p>
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;"><strong>Why Swoffle's number dropped ~50% across every time period</strong> comes down to two things happening simultaneously. First, the <strong>16-pack to 12-pack transition</strong>. When a pack size changes, KeHE's system treats the new 12-pack as a different SKU. For a period of time you have the old SKU losing velocity as it phases out, and the new SKU building from zero — both dragging the average down hard at the same time. Second, during a pack change transition there is often a window where <strong>PODs are counted but sell-through hasn't caught up yet</strong>. The brand is in the door, but the new pack is still finding its footing with shoppers and store staff. That gap between distribution and velocity crushes the productivity metric temporarily.</p>
+      <p style="font-size:0.84rem;color:#1a3a5c;line-height:1.8;margin-bottom:12px;"><strong>The good news</strong> is that SKU productivity is one of the most recoverable metrics once the transition dust settles. As the 12-pack establishes velocity in those 523 doors, the number should start climbing back. The POD gains visible in the shorter time windows — up 13–22% in Q1 2026 — are actually a leading indicator that productivity should follow. More doors filled with a settled, well-positioned SKU means higher productivity scores ahead.</p>
+      <div style="background:#2563a8;border-radius:6px;padding:12px 16px;font-size:0.82rem;color:#fff;line-height:1.7;">
+        <strong>Talking point for David Shaffer:</strong> Frame the SKU productivity decline as a transition artifact tied to the pack change, not a demand or shelf performance problem. The supporting evidence — fill rate up 11–21 points, purchases up 5–128% depending on window, and POD recovery in Q1 2026 — all argue that the brand's fundamentals are intact and the productivity metric will normalize as the 12-pack matures in distribution.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-summary -->
+
+<!-- ══════════════ TAB: KeHE MONTH TO DATE ══════════════ -->
+<div id="tab-mtd" class="tab-content">
+
+  <div style="background:#f0f5fb;border:1px solid #b8d0ea;border-radius:8px;padding:14px 18px;margin-bottom:22px;font-size:0.83rem;color:#1a3a5c;line-height:1.6;">
+    <strong>April 2026 — Month to Date (4/1/2026 – 4/4/2026 | 4 days)</strong> &nbsp;|&nbsp; CY: 4/1/2026 – 4/4/2026 &nbsp;|&nbsp; PY: 4/1/2025 – 4/4/2025 &nbsp;|&nbsp; Last Database Sync: 4/6/2026 9:30 AM ET
+  </div>
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — MTD CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$750</div>
+      <div class="mc-delta delta-neg">▼ 7.05% vs PY</div>
+      <div class="mc-py">PY: $806</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">43</div>
+      <div class="mc-delta delta-pos">▲ 22.86% vs PY</div>
+      <div class="mc-py">PY: 35</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$107</div>
+      <div class="mc-delta delta-neg">▼ 60.17% vs PY</div>
+      <div class="mc-py">PY: $269</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value" style="font-size:1.1rem;color:#999;">Blank</div>
+      <div class="mc-delta" style="color:#999;">Not yet populated</div>
+      <div class="mc-py">PY: Blank</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Outbound Fill Rate (CY)</div>
+      <div class="mc-value">100.00%</div>
+      <div class="mc-delta" style="color:#555;">0.00% vs PY</div>
+      <div class="mc-py">PY: 100.00%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="section-header">MTD Charts — CY vs PY</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $750</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $806</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 43</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 35</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-pods"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $107</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $269</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-sku"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 100%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 100%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Regional</td><td>$358</td><td>47.81%</td></tr>
+          <tr><td>Grocery — Independent</td><td>$253</td><td>33.70%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$139</td><td>18.49%</td></tr>
+          <tr><td>Total</td><td>$750</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Regional 47.81%</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Independent 33.70%</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National 18.49%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mtd-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Spoils -->
+  <div class="section-header">Supplier Spoils — MTD</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$10</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Spoils Allowance</div><div class="sp-value">$10 / 100%</div></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">MTD Synopsis — Early April Read</div>
+  <div class="synopsis-box">
+    <p>With just 4 days of data (4/1 – 4/4/2026), this MTD snapshot is directional rather than conclusive. Sales COGS of $750 is running 7.05% below the same 4-day window last year ($806), continuing the YoY revenue pressure seen in the 52-week view. SKU productivity at $107 vs. $269 PY (▼ 60.17%) is the most concerning early signal — though with such a small sample, one or two SKU mix shifts can distort this figure significantly.</p>
+    <p>The standout positive is PODs: 43 CY vs. 35 PY, up 22.86% — a meaningful early indicator that April may be showing distribution gains, which would be a reversal of the 52-week trend. Fill rate is 100% on both CY and PY for this window, indicating clean early-month order execution. Purchases (PO $) are blank, likely not yet recorded in the system for this period. Spoils are minimal at $10, entirely customer allowance.</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>MTD CY</th><th>MTD PY</th><th>vs PY</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$750</td><td>$806</td><td>▼ 7.05%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>43</td><td>35</td><td>▲ 22.86%</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$107</td><td>$269</td><td>▼ 60.17%</td><td><span class="badge badge-alert">Watch — Small Sample</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>100.00%</td><td>100.00%</td><td>0.00%</td><td><span class="badge badge-ok">Perfect</span></td></tr>
+        <tr><td>Purchases / PO $</td><td>Blank</td><td>Blank</td><td>—</td><td><span class="badge badge-warn">Pending</span></td></tr>
+        <tr><td>Total Deductions</td><td colspan="2">($7,254) — Financial period 3/23/2025–3/28/2026</td><td>13.17% COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Total Spoils</td><td>$10</td><td>—</td><td>100% cust. allowance</td><td><span class="badge badge-ok">Minimal</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-mtd -->
+
+<!-- ══════════════ TAB: KeHE YEAR TO DATE ══════════════ -->
+<div id="tab-ytd" class="tab-content">
+
+  <div style="background:#f0f5fb;border:1px solid #b8d0ea;border-radius:8px;padding:14px 18px;margin-bottom:22px;font-size:0.83rem;color:#1a3a5c;line-height:1.6;">
+    <strong>Year to Date — 1/1/2026 – 4/4/2026</strong> &nbsp;|&nbsp; CY: 1/1/2026 – 4/4/2026 &nbsp;|&nbsp; PY: 1/1/2025 – 4/4/2025 &nbsp;|&nbsp; Last Database Sync: 4/6/2026 9:30 AM ET
+  </div>
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — YTD CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$14,018</div>
+      <div class="mc-delta delta-neg">▼ 7.76% vs PY</div>
+      <div class="mc-py">PY: $15,197</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">343</div>
+      <div class="mc-delta delta-pos">▲ 13.58% vs PY</div>
+      <div class="mc-py">PY: 302</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$2,003</div>
+      <div class="mc-delta delta-neg">▼ 47.29% vs PY</div>
+      <div class="mc-py">PY: $3,799</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value">$23,602</div>
+      <div class="mc-delta delta-pos">▲ 68.05% vs PY</div>
+      <div class="mc-py">PY: $14,045</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Outbound Fill Rate</div>
+      <div class="mc-value">90.92%</div>
+      <div class="mc-delta delta-pos">▲ 3.33% vs PY</div>
+      <div class="mc-py">PY: 87.59%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $14,018</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $15,197</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 90.92%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 87.59%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 343</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 302</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-pods"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $2,003</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $3,799</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-sku"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Purchases chart full width -->
+  <div class="full-chart-card">
+    <h4>Purchases / PO $ — CY vs PY</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#8e44ad;"></span>CY $23,602</span>
+      <span><span class="legend-sq" style="background:#c39bd3;"></span>PY $14,045</span>
+    </div>
+    <div style="position:relative;width:100%;height:180px;"><canvas id="ytd-purchases"></canvas></div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions (3/23/2025 – 3/28/2026)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Independent</td><td>$6,436</td><td>45.91%</td></tr>
+          <tr><td>Grocery — Regional</td><td>$6,167</td><td>44.00%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$1,394</td><td>9.95%</td></tr>
+          <tr><td>Resellers</td><td>$20</td><td>0.14%</td></tr>
+          <tr><td>Total</td><td>$14,017</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Independent 45.91%</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Regional 44.00%</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National 9.95%</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Resellers 0.14%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ytd-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Spoils -->
+  <div class="section-header">Supplier Spoils — YTD</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$200</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value">0.85%</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value">$11 / 5.57%</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Spoils Allowance</div><div class="sp-value">$189 / 94.43%</div></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">YTD Synopsis — January through April 4, 2026</div>
+  <div class="synopsis-box">
+    <p>Year to date through April 4th, Swoffle's KeHE performance tells a mixed but improving story. Sales COGS of $14,018 is running 7.76% below PY ($15,197), continuing the revenue decline trend visible in the 52-week view — but the gap is narrowing. The more encouraging signal is PODs: 343 CY vs. 302 PY, up 13.58%, indicating meaningful distribution gains early in 2026 that should eventually translate to volume recovery.</p>
+    <p>Purchases of $23,602 are up a striking 68.05% vs. PY ($14,045) — KeHE is buying significantly more product. With COGS still below PY, this creates an inventory build dynamic to monitor closely with the KeHE team. Fill rate improved to 90.92% vs. 87.59% PY (▲ 3.33 pts), reinforcing the strong operational execution story. SKU productivity remains a concern at $2,003 vs. $3,799 PY (▼ 47.29%), though this is consistent with the SKU transition impact seen across all time periods.</p>
+    <p>On the channel mix, Independent and Regional Grocery are nearly equal at 45.91% and 44.00% respectively — together representing nearly 90% of YTD COGS. Spoils are well-managed at $200 (0.85% to PO), with 94% as customer allowance.</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>YTD CY</th><th>YTD PY</th><th>vs PY</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$14,018</td><td>$15,197</td><td>▼ 7.76%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>343</td><td>302</td><td>▲ 13.58%</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$2,003</td><td>$3,799</td><td>▼ 47.29%</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>90.92%</td><td>87.59%</td><td>▲ 3.33 pts</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>Purchases / PO $</td><td>$23,602</td><td>$14,045</td><td>▲ 68.05%</td><td><span class="badge badge-ok">Monitor Inventory</span></td></tr>
+        <tr><td>Total Deductions</td><td>($7,254)</td><td>—</td><td>13.17% of COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Total Spoils</td><td>$200</td><td>—</td><td>0.85% to PO</td><td><span class="badge badge-ok">Manageable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-ytd -->
+
+<!-- ══════════════ TAB: KeHE LAST 12 MONTHS ══════════════ -->
+<div id="tab-12mo" class="tab-content">
+
+  <div style="background:#f0f5fb;border:1px solid #b8d0ea;border-radius:8px;padding:14px 18px;margin-bottom:22px;font-size:0.83rem;color:#1a3a5c;line-height:1.6;">
+    <strong>Last 12 Months — 4/1/2025 – 3/31/2026</strong> &nbsp;|&nbsp; CY: 4/1/2025 – 3/31/2026 &nbsp;|&nbsp; PY: 4/1/2024 – 3/31/2025 &nbsp;|&nbsp; Last Database Sync: 4/6/2026 9:30 AM ET
+  </div>
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — Last 12 Months CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$56,137</div>
+      <div class="mc-delta delta-neg">▼ 12.20% vs PY</div>
+      <div class="mc-py">PY: $63,934</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">518</div>
+      <div class="mc-delta delta-neg">▼ 6.33% vs PY</div>
+      <div class="mc-py">PY: 553</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$8,020</div>
+      <div class="mc-delta delta-neg">▼ 49.83% vs PY</div>
+      <div class="mc-py">PY: $15,984</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value">$64,613</div>
+      <div class="mc-delta delta-pos">▲ 5.46% vs PY</div>
+      <div class="mc-py">PY: $61,269</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Outbound Fill Rate</div>
+      <div class="mc-value">88.15%</div>
+      <div class="mc-delta delta-pos">▲ 12.23% vs PY</div>
+      <div class="mc-py">PY: 75.91%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $56,137</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $63,934</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 88.15%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 75.91%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 518</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 553</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-pods"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $8,020</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $15,984</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-sku"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions (3/23/2025 – 3/28/2026)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Regional</td><td>$26,406</td><td>47.04%</td></tr>
+          <tr><td>Grocery — Independent</td><td>$21,349</td><td>38.03%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$6,817</td><td>12.14%</td></tr>
+          <tr><td>Resellers</td><td>$1,515</td><td>2.70%</td></tr>
+          <tr><td>Drug</td><td>$50</td><td>0.09%</td></tr>
+          <tr><td>Total</td><td>$56,137</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Regional 47.04%</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Independent 38.03%</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National 12.14%</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Other 2.79%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="l12-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Spoils -->
+  <div class="section-header">Supplier Spoils — Last 12 Months</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$796</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value">1.23%</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value">$40 / 5.08%</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Spoils Allowance</div><div class="sp-value">$755 / 94.92%</div></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">Last 12 Months Synopsis</div>
+  <div class="synopsis-box">
+    <p>The Last 12 Months view (4/1/2025 – 3/31/2026) paints a consistent picture with the 52-week data — revenue pressure alongside strong operational improvement. Sales COGS of $56,137 is down 12.20% vs. PY ($63,934), and PODs declined from 553 to 518 (▼ 6.33%), confirming door erosion has been a persistent theme over the full trailing year. SKU productivity remains deeply impacted at $8,020 vs. $15,984 PY (▼ 49.83%), consistent with the 16-pack to 12-pack transition impact.</p>
+    <p>The fill rate story is the clearest bright spot: 88.15% CY vs. 75.91% PY, a 12.23-point improvement — the largest YoY fill rate gain across all time periods tracked in this dashboard. Purchases held steady at $64,613 (▲ 5.46% vs. PY), indicating KeHE continued buying through the transition. Regional Grocery leads channel mix at 47.04%, followed closely by Independent at 38.03% — together representing 85% of 12-month COGS. Spoils are clean at $796 (1.23% to PO), nearly all contractual customer allowance.</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>L12M CY</th><th>L12M PY</th><th>vs PY</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$56,137</td><td>$63,934</td><td>▼ 12.20%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>518</td><td>553</td><td>▼ 6.33%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$8,020</td><td>$15,984</td><td>▼ 49.83%</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>88.15%</td><td>75.91%</td><td>▲ 12.23 pts</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>Purchases / PO $</td><td>$64,613</td><td>$61,269</td><td>▲ 5.46%</td><td><span class="badge badge-ok">Positive</span></td></tr>
+        <tr><td>Total Deductions</td><td>($7,254)</td><td>—</td><td>13.17% of COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Total Spoils</td><td>$796</td><td>—</td><td>1.23% to PO</td><td><span class="badge badge-ok">Manageable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-12mo -->
+
+<!-- ══════════════ TAB: KeHE LAST 13 WEEKS ══════════════ -->
+<div id="tab-13wk" class="tab-content">
+
+  <div style="background:#f0f5fb;border:1px solid #b8d0ea;border-radius:8px;padding:14px 18px;margin-bottom:22px;font-size:0.83rem;color:#1a3a5c;line-height:1.6;">
+    <strong>Last 13 Weeks — 1/4/2026 – 4/4/2026</strong> &nbsp;|&nbsp; CY: 1/4/2026 – 4/4/2026 &nbsp;|&nbsp; PY: 1/5/2025 – 4/5/2025 &nbsp;|&nbsp; Last Database Sync: 4/6/2026 9:30 AM ET
+  </div>
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — Last 13 Weeks CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$13,853</div>
+      <div class="mc-delta delta-neg">▼ 6.30% vs PY</div>
+      <div class="mc-py">PY: $14,784</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">340</div>
+      <div class="mc-delta delta-pos">▲ 13.71% vs PY</div>
+      <div class="mc-py">PY: 299</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$1,979</div>
+      <div class="mc-delta delta-neg">▼ 46.45% vs PY</div>
+      <div class="mc-py">PY: $3,696</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value">$23,602</div>
+      <div class="mc-delta delta-pos">▲ 128.07% vs PY</div>
+      <div class="mc-py">PY: $10,349</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Outbound Fill Rate</div>
+      <div class="mc-value">90.82%</div>
+      <div class="mc-delta delta-pos">▲ 3.54% vs PY</div>
+      <div class="mc-py">PY: 87.28%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $13,853</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $14,784</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 90.82%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 87.28%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 340</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 299</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-pods"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $1,979</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $3,696</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-sku"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Purchases highlight -->
+  <div class="full-chart-card">
+    <h4>Purchases / PO $ — CY vs PY (▲ 128%)</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#8e44ad;"></span>CY $23,602</span>
+      <span><span class="legend-sq" style="background:#c39bd3;"></span>PY $10,349</span>
+    </div>
+    <div style="position:relative;width:100%;height:180px;"><canvas id="w13-purchases"></canvas></div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions (3/23/2025 – 3/28/2026)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Independent</td><td>$6,419</td><td>46.34%</td></tr>
+          <tr><td>Grocery — Regional</td><td>$6,069</td><td>43.81%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$1,344</td><td>9.70%</td></tr>
+          <tr><td>Resellers</td><td>$20</td><td>0.15%</td></tr>
+          <tr><td>Total</td><td>$13,852</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Independent 46.34%</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Regional 43.81%</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National 9.70%</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Resellers 0.15%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w13-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Spoils -->
+  <div class="section-header">Supplier Spoils — Last 13 Weeks</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$198</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value">0.84%</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value">$11 / 5.64%</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Spoils Allowance</div><div class="sp-value">$187 / 94.36%</div></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">Last 13 Weeks Synopsis</div>
+  <div class="synopsis-box">
+    <p>The Last 13 Weeks (Q1 2026, 1/4 – 4/4/2026) shows Swoffle's most recent quarterly trajectory through KeHE. Sales COGS of $13,853 is down 6.30% vs. PY ($14,784) — notably a smaller decline than the 12-month view (▼ 12.20%), suggesting the revenue gap is beginning to close as Q1 2026 progresses. PODs continue to show strong growth at 340 vs. 299 PY (▲ 13.71%), the largest door gain across all time periods — a clear indication that new distribution is being won in 2026.</p>
+    <p>The purchases number is the most striking data point in this window: $23,602 vs. $10,349 PY, up 128.07%. This level of KeHE buying activity in a single 13-week window warrants a close look — it either reflects significant forward buying, a large promotional order, or a stocking event tied to new distribution wins. Monitoring sell-through against this purchase volume will be critical. Fill rate held strong at 90.82% vs. 87.28% PY. SKU productivity remains pressured at $1,979 vs. $3,696 PY (▼ 46.45%), consistent with prior periods. Spoils are minimal at $198 (0.84% to PO).</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>L13W CY</th><th>L13W PY</th><th>vs PY</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$13,853</td><td>$14,784</td><td>▼ 6.30%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>340</td><td>299</td><td>▲ 13.71%</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$1,979</td><td>$3,696</td><td>▼ 46.45%</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>90.82%</td><td>87.28%</td><td>▲ 3.54 pts</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>Purchases / PO $</td><td>$23,602</td><td>$10,349</td><td>▲ 128.07%</td><td><span class="badge badge-ok">Investigate Volume</span></td></tr>
+        <tr><td>Total Deductions</td><td>($7,254)</td><td>—</td><td>13.17% of COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Total Spoils</td><td>$198</td><td>—</td><td>0.84% to PO</td><td><span class="badge badge-ok">Manageable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-13wk -->
+
+<!-- ══════════════ TAB: KeHE LAST 26 WEEKS ══════════════ -->
+<div id="tab-26wk" class="tab-content">
+
+  <div style="background:#f0f5fb;border:1px solid #b8d0ea;border-radius:8px;padding:14px 18px;margin-bottom:22px;font-size:0.83rem;color:#1a3a5c;line-height:1.6;">
+    <strong>Last 26 Weeks — 10/5/2025 – 4/4/2026</strong> &nbsp;|&nbsp; CY: 10/5/2025 – 4/4/2026 &nbsp;|&nbsp; PY: 10/6/2024 – 4/5/2025 &nbsp;|&nbsp; Last Database Sync: 4/6/2026 9:30 AM ET
+  </div>
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — Last 26 Weeks CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$27,205</div>
+      <div class="mc-delta delta-neg">▼ 13.73% vs PY</div>
+      <div class="mc-py">PY: $31,536</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">436</div>
+      <div class="mc-delta delta-pos">▲ 6.60% vs PY</div>
+      <div class="mc-py">PY: 409</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$3,886</div>
+      <div class="mc-delta delta-neg">▼ 50.70% vs PY</div>
+      <div class="mc-py">PY: $7,884</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value">$35,718</div>
+      <div class="mc-delta delta-pos">▲ 8.69% vs PY</div>
+      <div class="mc-py">PY: $32,861</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Outbound Fill Rate</div>
+      <div class="mc-value">95.12%</div>
+      <div class="mc-delta delta-pos">▲ 21.16 pts vs PY</div>
+      <div class="mc-py">PY: 73.96%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $27,205</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $31,536</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 95.12%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 73.96%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 436</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 409</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-pods"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $3,886</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $7,884</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-sku"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Purchases highlight -->
+  <div class="full-chart-card">
+    <h4>Purchases / PO $ — CY vs PY (▲ 8.69%)</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#8e44ad;"></span>CY $35,718</span>
+      <span><span class="legend-sq" style="background:#c39bd3;"></span>PY $32,861</span>
+    </div>
+    <div style="position:relative;width:100%;height:180px;"><canvas id="w26-purchases"></canvas></div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions (3/23/2025 – 3/28/2026)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Spend Type</th><th>Amount</th><th>% of Total</th><th>% to COGS</th><th>% to POs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Regional</td><td>$12,558</td><td>46.16%</td></tr>
+          <tr><td>Grocery — Independent</td><td>$11,620</td><td>42.71%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$2,990</td><td>10.99%</td></tr>
+          <tr><td>Resellers</td><td>$20</td><td>0.07%</td></tr>
+          <tr><td>Drug</td><td>$17</td><td>0.06%</td></tr>
+          <tr><td>Total</td><td>$27,205</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Regional 46.16%</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Independent 42.71%</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National 10.99%</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Other 0.13%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="w26-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Spoils -->
+  <div class="section-header">Supplier Spoils — Last 26 Weeks</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$398</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value">1.11%</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value">$21 / 5.26%</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value" style="color:#999;">Blank</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Spoils Allowance</div><div class="sp-value">$377 / 94.74%</div></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">Last 26 Weeks Synopsis</div>
+  <div class="synopsis-box">
+    <p>The Last 26 Weeks (10/5/2025 – 4/4/2026) captures Swoffle's second-half 2025 through early Q2 2026 performance through KeHE — and it contains the most compelling fill rate story in the entire dashboard. At 95.12% CY vs. 73.96% PY, the 21.16-point improvement is the largest YoY fill rate gain across all time periods, a direct reflection of Swoffle's operational execution turnaround in the back half of 2025.</p>
+    <p>PODs grew from 409 to 436 (▲ 6.60%), and purchases increased to $35,718 (▲ 8.69% vs. PY $32,861) — both signaling that KeHE continues to invest in the brand despite the COGS headwinds. Sales COGS at $27,205 is down 13.73% vs. PY ($31,536), the steepest 26-week decline, which points to the SKU transition impact being concentrated in this window. SKU productivity at $3,886 vs. $7,884 PY (▼ 50.70%) remains the persistent watch item across every time period. Regional and Independent Grocery together represent 89% of 26-week COGS. Spoils are well-controlled at $398 (1.11% to PO).</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>L26W CY</th><th>L26W PY</th><th>vs PY</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$27,205</td><td>$31,536</td><td>▼ 13.73%</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>436</td><td>409</td><td>▲ 6.60%</td><td><span class="badge badge-ok">Positive</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$3,886</td><td>$7,884</td><td>▼ 50.70%</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>95.12%</td><td>73.96%</td><td>▲ 21.16 pts</td><td><span class="badge badge-ok">Strongest in Dashboard</span></td></tr>
+        <tr><td>Purchases / PO $</td><td>$35,718</td><td>$32,861</td><td>▲ 8.69%</td><td><span class="badge badge-ok">Positive</span></td></tr>
+        <tr><td>Total Deductions</td><td>($7,254)</td><td>—</td><td>13.17% of COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Total Spoils</td><td>$398</td><td>—</td><td>1.11% to PO</td><td><span class="badge badge-ok">Manageable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-26wk -->
+
+<!-- ══════════════ TAB: KeHE Last 52 Weeks ══════════════ -->
+<div id="tab-kehe52" class="tab-content">
+
+  <!-- Supplier Metrics -->
+  <div class="section-header">Supplier Metrics — CY vs PY</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-label">Sales COGS</div>
+      <div class="mc-value">$56,081</div>
+      <div class="mc-delta delta-neg">▼ 12.45% YoY</div>
+      <div class="mc-py">PY: $64,057</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">PODs</div>
+      <div class="mc-value">523</div>
+      <div class="mc-delta delta-neg">▼ 4.91% YoY</div>
+      <div class="mc-py">PY: 550</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">SKU Productivity</div>
+      <div class="mc-value">$8,012</div>
+      <div class="mc-delta delta-neg">▼ 49.97% YoY</div>
+      <div class="mc-py">PY: $16,014</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Purchases / PO $</div>
+      <div class="mc-value">$64,613</div>
+      <div class="mc-delta delta-pos">▲ 5.46% YoY</div>
+      <div class="mc-py">PY: $61,269</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Fill Rate (CY)</div>
+      <div class="mc-value">88.13%</div>
+      <div class="mc-delta delta-pos">▲ 11.41 pts YoY</div>
+      <div class="mc-py">PY: 76.73%</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Total Deductions</div>
+      <div class="mc-value">($7,254)</div>
+      <div class="mc-delta delta-neg">13.17% of COGS</div>
+      <div class="mc-py">11.23% of POs</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Sales COGS — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>CY $56,081</span>
+        <span><span class="legend-sq" style="background:#7eb3e8;"></span>PY $64,057</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-cogs"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>SKU Productivity — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#c0392b;"></span>CY $8,012</span>
+        <span><span class="legend-sq" style="background:#e89090;"></span>PY $16,014</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-sku"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>PODs — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#e67e22;"></span>CY 523</span>
+        <span><span class="legend-sq" style="background:#f5c18a;"></span>PY 550</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-pods"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Outbound Fill Rate — CY vs PY</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#27ae60;"></span>CY 88.13%</span>
+        <span><span class="legend-sq" style="background:#82d9a4;"></span>PY 76.73%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-fill"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Supplier Financials -->
+  <div class="section-header">Supplier Financials — Deductions (3/23/2025 – 3/28/2026)</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Spend Type</th>
+            <th>Amount</th>
+            <th>% of Total</th>
+            <th>% to COGS</th>
+            <th>% to POs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>KeHE</td><td>($2,936)</td><td>40.48%</td><td>-5.33%</td><td>-4.54%</td></tr>
+          <tr><td>Retailer</td><td>($4,318)</td><td>59.52%</td><td>-7.84%</td><td>-6.68%</td></tr>
+          <tr><td>Total</td><td>($7,254)</td><td>100.00%</td><td>-13.17%</td><td>-11.23%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>Deduction Split — KeHE vs Retailer</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>KeHE $2,936 (40%)</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Retailer $4,318 (60%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-deduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- COGS by GBB -->
+  <div class="section-header">COGS by GBB — Channel Breakdown</div>
+  <div class="chart-grid">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Channel</th><th>COGS $</th><th>% Share</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Grocery — Regional</td><td>$26,529</td><td>47.31%</td></tr>
+          <tr><td>Grocery — Independent</td><td>$21,215</td><td>37.83%</td></tr>
+          <tr><td>Grocery — Chain (National)</td><td>$6,770</td><td>12.07%</td></tr>
+          <tr><td>Resellers</td><td>$1,515</td><td>2.70%</td></tr>
+          <tr><td>Drug</td><td>$50</td><td>0.09%</td></tr>
+          <tr><td>Total</td><td>$56,079</td><td>100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <h4>COGS by Channel (%)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Regional</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>Independent</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>National</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Other</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-gbb"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Supplier Spoils -->
+  <div class="section-header">Supplier Spoils</div>
+  <div class="spoils-grid">
+    <div class="spoil-card"><div class="sp-label">Total Spoils $</div><div class="sp-value">$798</div></div>
+    <div class="spoil-card"><div class="sp-label">% to PO $</div><div class="sp-value">1.24%</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils</div><div class="sp-value">$40</div></div>
+    <div class="spoil-card"><div class="sp-label">Store Spoils %</div><div class="sp-value">5.07%</div></div>
+    <div class="spoil-card"><div class="sp-label">Warehouse Spoils</div><div class="sp-value">—</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Allowance</div><div class="sp-value">$758</div></div>
+    <div class="spoil-card"><div class="sp-label">Customer Allow. %</div><div class="sp-value">94.93%</div></div>
+  </div>
+
+  <div class="full-chart-card">
+    <h4>Spoils Composition ($)</h4>
+    <div class="chart-legend" style="justify-content:center;">
+      <span><span class="legend-sq" style="background:#2563a8;"></span>Customer Allowance $758</span>
+      <span><span class="legend-sq" style="background:#e67e22;"></span>Store Spoils $40</span>
+    </div>
+    <div style="position:relative;width:100%;height:140px;"><canvas id="ch-spoils"></canvas></div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">Synopsis — What This Dashboard Is Telling Us</div>
+  <div class="synopsis-box">
+    <p>Sales COGS declined 12.45% year-over-year to $56,081, while SKU productivity dropped nearly 50% — both likely tied to the 16-pack to 12-pack transition and potential retailer door attrition. PODs slipped from 550 to 523, indicating distribution erosion that needs to be addressed directly with KeHE's category team.</p>
+    <p>On the positive side, fill rate improved dramatically from 76.73% to 88.13%, an 11.4-point gain — this is a strong operational story to lead with in any KeHE conversation. Purchases from KeHE actually increased 5.46%, meaning KeHE is still buying more product even as sell-through lags, which may signal inventory buildup at the distributor level to monitor.</p>
+    <p>Total deductions of $7,254 represent 13.17% of COGS — a heavy burden. Retailer deductions at $4,318 (60% of total) are the larger concern and likely include scan allowances, MCB activity, or spoils allowances. Spoils are manageable at $798 total, with 95% classified as a contractual Customer Spoils Allowance — not a product quality issue. Grocery Regional and Grocery Independent together represent 85% of COGS by channel, making those two segments the priority for growth and door recovery.</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>Result</th><th>Signal</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sales COGS</td><td>$56,081 CY / $64,057 PY</td><td>Down 12.45% YoY</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>PODs</td><td>523 CY / 550 PY</td><td>Lost 27 doors YoY</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>SKU Productivity</td><td>$8,012 CY / $16,014 PY</td><td>Down ~50% YoY</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Outbound Fill Rate</td><td>88.13% CY / 76.73% PY</td><td>Up 11.4 pts YoY</td><td><span class="badge badge-ok">Strong</span></td></tr>
+        <tr><td>Purchases</td><td>$64,613 CY / $61,269 PY</td><td>Up 5.46% YoY</td><td><span class="badge badge-ok">Positive</span></td></tr>
+        <tr><td>Total Deductions</td><td>($7,254)</td><td>13.17% of COGS</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        <tr><td>Spoils</td><td>$798 total</td><td>95% contractual allowance</td><td><span class="badge badge-ok">Manageable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-kehe52 -->
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<div class="dashboard-footer">
+  <span>Last Database Sync: 4/6/2026 9:30:10 AM ET</span>
+  <span>Swoffle LLC &nbsp;|&nbsp; KeHE Analytics &nbsp;|&nbsp; Prepared by Brand Share It Sales Partners</span>
+</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const tabHeaders = {
+  'tab-summary': {
+    subtitle: 'All Periods Summary — as of 4/6/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'Best Fill Rate',  val1: '95.12%',    delta1: '▲ 21.16 pts — L26W',  cls1: 'delta-pos',
+    label2: 'Best POD Gain',   val2: '+22.86%',   delta2: '▲ MTD vs PY',          cls2: 'delta-pos',
+    label3: '52-Wk COGS',      val3: '$56,081',   delta3: '▼ 12.45% vs PY',       cls3: 'delta-neg'
+  },
+  'tab-mtd': {
+    subtitle: 'Month to Date: 4/1/2026 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'MTD Sales COGS', val1: '$750',       delta1: '▼ 7.05% vs PY',    cls1: 'delta-neg',
+    label2: 'MTD Fill Rate',  val2: '100.00%',    delta2: '▲ Perfect — 4 days',cls2: 'delta-pos',
+    label3: 'MTD PODs',       val3: '43',         delta3: '▲ 22.86% vs PY',   cls3: 'delta-pos'
+  },
+  'tab-ytd': {
+    subtitle: 'Year to Date: 1/1/2026 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'YTD Purchases',  val1: '$23,602',    delta1: '▲ 68.05% vs PY',   cls1: 'delta-pos',
+    label2: 'YTD PODs',       val2: '343',        delta2: '▲ 13.58% vs PY',   cls2: 'delta-pos',
+    label3: 'YTD Sales COGS', val3: '$14,018',    delta3: '▼ 7.76% vs PY',    cls3: 'delta-neg'
+  },
+  'tab-12mo': {
+    subtitle: 'Last 12 Months: 4/1/2025 – 3/31/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'L12M Fill Rate',  val1: '88.15%',    delta1: '▲ 12.23 pts vs PY',cls1: 'delta-pos',
+    label2: 'L12M Purchases',  val2: '$64,613',   delta2: '▲ 5.46% vs PY',    cls2: 'delta-pos',
+    label3: 'L12M Sales COGS', val3: '$56,137',   delta3: '▼ 12.20% vs PY',   cls3: 'delta-neg'
+  },
+  'tab-13wk': {
+    subtitle: 'Last 13 Weeks: 1/4/2026 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'L13W Purchases',  val1: '$23,602',   delta1: '▲ 128.07% vs PY',  cls1: 'delta-pos',
+    label2: 'L13W PODs',       val2: '340',       delta2: '▲ 13.71% vs PY',   cls2: 'delta-pos',
+    label3: 'L13W Sales COGS', val3: '$13,853',   delta3: '▼ 6.30% vs PY',    cls3: 'delta-neg'
+  },
+  'tab-26wk': {
+    subtitle: 'Last 26 Weeks: 10/5/2025 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'L26W Fill Rate',  val1: '95.12%',    delta1: '▲ 21.16 pts vs PY', cls1: 'delta-pos',
+    label2: 'L26W Purchases',  val2: '$35,718',   delta2: '▲ 8.69% vs PY',     cls2: 'delta-pos',
+    label3: 'L26W Sales COGS', val3: '$27,205',   delta3: '▼ 13.73% vs PY',    cls3: 'delta-neg'
+  },
+  'tab-kehe52': {
+    subtitle: 'Last 52 Weeks: 4/6/2025 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
+    label1: 'L52W Fill Rate',  val1: '88.13%',    delta1: '▲ 11.41 pts vs PY',cls1: 'delta-pos',
+    label2: 'L52W Purchases',  val2: '$64,613',   delta2: '▲ 5.46% vs PY',    cls2: 'delta-pos',
+    label3: 'L52W Sales COGS', val3: '$56,081',   delta3: '▼ 12.45% vs PY',   cls3: 'delta-neg'
+  }
+};
+
+function updateHeader(tabId) {
+  const h = tabHeaders[tabId];
+  if (!h) return;
+  document.getElementById('hdr-subtitle').innerHTML = h.subtitle;
+  document.getElementById('hdr-label1').textContent = h.label1;
+  document.getElementById('hdr-val1').textContent   = h.val1;
+  const d1 = document.getElementById('hdr-delta1');
+  d1.textContent = h.delta1; d1.className = 'stat-delta ' + h.cls1;
+  document.getElementById('hdr-label2').textContent = h.label2;
+  document.getElementById('hdr-val2').textContent   = h.val2;
+  const d2 = document.getElementById('hdr-delta2');
+  d2.textContent = h.delta2; d2.className = 'stat-delta ' + h.cls2;
+  document.getElementById('hdr-label3').textContent = h.label3;
+  document.getElementById('hdr-val3').textContent   = h.val3;
+  const d3 = document.getElementById('hdr-delta3');
+  d3.textContent = h.delta3; d3.className = 'stat-delta ' + h.cls3;
+}
+
+function toggleCard(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  const open = el.style.display === 'block';
+  el.style.display = open ? 'none' : 'block';
+  icon.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function openTab(evt, tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  evt.currentTarget.classList.add('active');
+  updateHeader(tabId);
+}
+
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#444';
+
+const barOpt = (yFmt, yMin) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { autoSkip: false, font: { size: 11 } }, grid: { display: false } },
+    y: {
+      min: yMin || 0,
+      ticks: { callback: yFmt, font: { size: 10 } },
+      grid: { color: '#f0f0f0' }
+    }
+  }
+});
+
+const doughOpt = (total) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { callbacks: { label: ctx => ' $' + ctx.parsed.toLocaleString() + (total ? ' (' + ((ctx.parsed / total) * 100).toFixed(1) + '%)' : '') } }
+  }
+});
+
+/* ── Summary Charts ── */
+const periods = ['MTD', 'YTD', 'L13W', 'L26W', 'L12M', 'L52W'];
+new Chart(document.getElementById('sum-fill'), {
+  type: 'bar',
+  data: {
+    labels: periods,
+    datasets: [
+      { label: 'CY', data: [100.00, 90.92, 90.82, 95.12, 88.15, 88.13], backgroundColor: '#27ae60' },
+      { label: 'PY', data: [100.00, 87.59, 87.28, 73.96, 75.91, 76.73], backgroundColor: '#82d9a4' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+      y: { min: 60, ticks: { callback: v => v + '%', font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+    }
+  }
+});
+new Chart(document.getElementById('sum-cogs'), {
+  type: 'bar',
+  data: {
+    labels: periods,
+    datasets: [
+      { label: 'CY', data: [750, 14018, 13853, 27205, 56137, 56081], backgroundColor: '#2563a8' },
+      { label: 'PY', data: [806, 15197, 14784, 31536, 63934, 64057], backgroundColor: '#7eb3e8' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+      y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+    }
+  }
+});
+new Chart(document.getElementById('sum-pods'), {
+  type: 'bar',
+  data: {
+    labels: periods,
+    datasets: [
+      { label: 'CY', data: [43, 343, 340, 436, 518, 523], backgroundColor: '#e67e22' },
+      { label: 'PY', data: [35, 302, 299, 409, 553, 550], backgroundColor: '#f5c18a' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+      y: { ticks: { font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+    }
+  }
+});
+new Chart(document.getElementById('sum-purchases'), {
+  type: 'bar',
+  data: {
+    labels: ['YTD', 'L13W', 'L26W', 'L12M', 'L52W'],
+    datasets: [
+      { label: 'CY', data: [23602, 23602, 35718, 64613, 64613], backgroundColor: '#8e44ad' },
+      { label: 'PY', data: [14045, 10349, 32861, 61269, 61269], backgroundColor: '#c39bd3' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+      y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+    }
+  }
+});
+new Chart(document.getElementById('sum-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+
+/* ── MTD Charts ── */
+new Chart(document.getElementById('mtd-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY Apr', 'PY Apr'], datasets: [{ data: [750, 806], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + v)
+});
+new Chart(document.getElementById('mtd-pods'), {
+  type: 'bar',
+  data: { labels: ['CY Apr', 'PY Apr'], datasets: [{ data: [43, 35], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 0)
+});
+new Chart(document.getElementById('mtd-sku'), {
+  type: 'bar',
+  data: { labels: ['CY Apr', 'PY Apr'], datasets: [{ data: [107, 269], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + v)
+});
+new Chart(document.getElementById('mtd-fill'), {
+  type: 'bar',
+  data: { labels: ['CY Apr', 'PY Apr'], datasets: [{ data: [100, 100], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v + '%', 0)
+});
+new Chart(document.getElementById('mtd-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+new Chart(document.getElementById('mtd-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Grocery Regional', 'Grocery Independent', 'National Chain'],
+    datasets: [{ data: [358, 253, 139], backgroundColor: ['#2563a8', '#27ae60', '#e67e22'], borderWidth: 0 }]
+  },
+  options: doughOpt(750)
+});
+
+/* ── YTD Charts ── */
+new Chart(document.getElementById('ytd-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY 2026', 'PY 2025'], datasets: [{ data: [14018, 15197], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('ytd-fill'), {
+  type: 'bar',
+  data: { labels: ['CY 2026', 'PY 2025'], datasets: [{ data: [90.92, 87.59], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v.toFixed(1) + '%', 80)
+});
+new Chart(document.getElementById('ytd-pods'), {
+  type: 'bar',
+  data: { labels: ['CY 2026', 'PY 2025'], datasets: [{ data: [343, 302], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 260)
+});
+new Chart(document.getElementById('ytd-sku'), {
+  type: 'bar',
+  data: { labels: ['CY 2026', 'PY 2025'], datasets: [{ data: [2003, 3799], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(1) + 'K')
+});
+new Chart(document.getElementById('ytd-purchases'), {
+  type: 'bar',
+  data: { labels: ['CY 2026', 'PY 2025'], datasets: [{ data: [23602, 14045], backgroundColor: ['#8e44ad', '#c39bd3'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('ytd-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+new Chart(document.getElementById('ytd-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Independent', 'Regional', 'National Chain', 'Resellers'],
+    datasets: [{ data: [6436, 6167, 1394, 20], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b'], borderWidth: 0 }]
+  },
+  options: doughOpt(14017)
+});
+
+/* ── Last 12 Months Charts ── */
+new Chart(document.getElementById('l12-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [56137, 63934], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('l12-fill'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [88.15, 75.91], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v.toFixed(1) + '%', 60)
+});
+new Chart(document.getElementById('l12-pods'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [518, 553], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 480)
+});
+new Chart(document.getElementById('l12-sku'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [8020, 15984], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('l12-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+new Chart(document.getElementById('l12-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Regional', 'Independent', 'National Chain', 'Resellers', 'Drug'],
+    datasets: [{ data: [26406, 21349, 6817, 1515, 50], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b', '#8e44ad'], borderWidth: 0 }]
+  },
+  options: doughOpt(56137)
+});
+
+/* ── Last 13 Weeks Charts ── */
+new Chart(document.getElementById('w13-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [13853, 14784], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('w13-fill'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [90.82, 87.28], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v.toFixed(1) + '%', 80)
+});
+new Chart(document.getElementById('w13-pods'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [340, 299], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 260)
+});
+new Chart(document.getElementById('w13-sku'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [1979, 3696], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(1) + 'K')
+});
+new Chart(document.getElementById('w13-purchases'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [23602, 10349], backgroundColor: ['#8e44ad', '#c39bd3'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('w13-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+new Chart(document.getElementById('w13-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Independent', 'Regional', 'National Chain', 'Resellers'],
+    datasets: [{ data: [6419, 6069, 1344, 20], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b'], borderWidth: 0 }]
+  },
+  options: doughOpt(13852)
+});
+
+/* ── Last 26 Weeks Charts ── */
+new Chart(document.getElementById('w26-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [27205, 31536], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K')
+});
+new Chart(document.getElementById('w26-fill'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [95.12, 73.96], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v.toFixed(1) + '%', 60)
+});
+new Chart(document.getElementById('w26-pods'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [436, 409], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 370)
+});
+new Chart(document.getElementById('w26-sku'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [3886, 7884], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(1) + 'K')
+});
+new Chart(document.getElementById('w26-purchases'), {
+  type: 'bar',
+  data: { labels: ['CY', 'PY'], datasets: [{ data: [35718, 32861], backgroundColor: ['#8e44ad', '#c39bd3'] }] },
+  options: barOpt(v => '$' + (v/1000).toFixed(0) + 'K', 28000)
+});
+new Chart(document.getElementById('w26-deduct'), {
+  type: 'doughnut',
+  data: { labels: ['KeHE', 'Retailer'], datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }] },
+  options: doughOpt(7254)
+});
+new Chart(document.getElementById('w26-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Regional', 'Independent', 'National Chain', 'Other'],
+    datasets: [{ data: [12558, 11620, 2990, 37], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b'], borderWidth: 0 }]
+  },
+  options: doughOpt(27205)
+});
+
+/* ── 52-Week Charts ── */
+new Chart(document.getElementById('ch-cogs'), {
+  type: 'bar',
+  data: { labels: ['CY 2025–26', 'PY 2024–25'], datasets: [{ data: [56081, 64057], backgroundColor: ['#2563a8', '#7eb3e8'] }] },
+  options: barOpt(v => '$' + (v / 1000).toFixed(0) + 'K')
+});
+
+new Chart(document.getElementById('ch-sku'), {
+  type: 'bar',
+  data: { labels: ['CY 2025–26', 'PY 2024–25'], datasets: [{ data: [8012, 16014], backgroundColor: ['#c0392b', '#e89090'] }] },
+  options: barOpt(v => '$' + (v / 1000).toFixed(0) + 'K')
+});
+
+new Chart(document.getElementById('ch-pods'), {
+  type: 'bar',
+  data: { labels: ['CY 2025–26', 'PY 2024–25'], datasets: [{ data: [523, 550], backgroundColor: ['#e67e22', '#f5c18a'] }] },
+  options: barOpt(v => v, 490)
+});
+
+new Chart(document.getElementById('ch-fill'), {
+  type: 'bar',
+  data: { labels: ['CY 2025–26', 'PY 2024–25'], datasets: [{ data: [88.13, 76.73], backgroundColor: ['#27ae60', '#82d9a4'] }] },
+  options: barOpt(v => v.toFixed(1) + '%', 60)
+});
+
+new Chart(document.getElementById('ch-deduct'), {
+  type: 'doughnut',
+  data: {
+    labels: ['KeHE', 'Retailer'],
+    datasets: [{ data: [2936, 4318], backgroundColor: ['#2563a8', '#c0392b'], borderWidth: 0 }]
+  },
+  options: doughOpt(7254)
+});
+
+new Chart(document.getElementById('ch-gbb'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Grocery Regional', 'Grocery Independent', 'National Chain', 'Resellers', 'Drug'],
+    datasets: [{ data: [26529, 21215, 6770, 1515, 50], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b', '#8e44ad'], borderWidth: 0 }]
+  },
+  options: doughOpt(null)
+});
+
+new Chart(document.getElementById('ch-spoils'), {
+  type: 'bar',
+  data: {
+    labels: ['Customer Allowance', 'Store Spoils'],
+    datasets: [{ data: [758, 40], backgroundColor: ['#2563a8', '#e67e22'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => '$' + v }, grid: { color: '#f0f0f0' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
