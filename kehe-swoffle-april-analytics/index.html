@@ -63,6 +63,7 @@ body {
 }
 .delta-neg { color: #c0392b; }
 .delta-pos { color: #1a7a3a; }
+.delta-warn { color: #e67e22; }
 
 /* ── TABS ── */
 .tabs {
@@ -359,6 +360,7 @@ body {
   <button class="tab-btn" onclick="openTab(event,'tab-13wk')">KeHE Last 13 Weeks</button>
   <button class="tab-btn" onclick="openTab(event,'tab-26wk')">KeHE Last 26 Weeks</button>
   <button class="tab-btn" onclick="openTab(event,'tab-kehe52')">KeHE Last 52 Weeks</button>
+  <button class="tab-btn" onclick="openTab(event,'tab-gap-void')">KeHE Gap & Void</button>
   <button class="tab-btn" onclick="openTab(event,'tab-new-accounts')">New at KeHE Sold</button>
 </div>
 
@@ -1677,6 +1679,187 @@ body {
 
 </div><!-- /tab-kehe52 -->
 
+<!-- ══════════════ TAB: KeHE GAP & VOID ══════════════ -->
+<div id="tab-gap-void" class="tab-content">
+
+  <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:14px 18px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:0.95rem;font-weight:600;color:#000;">KeHE CONNECT Analytics — Gap & Void Dashboard</div>
+      <div style="font-size:0.78rem;color:#555;margin-top:2px;">Retailer Summary — Sales $ &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; All Channels</div>
+    </div>
+    <div style="font-size:0.72rem;color:#777;">Source: KeHE CONNECT Analytics</div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="section-header">Top-Line KPIs — What These Numbers Mean</div>
+  <div class="metric-grid" style="grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:8px;">
+    <div class="metric-card" style="border-top:4px solid #2563a8;">
+      <div class="mc-label">Total Sales</div>
+      <div class="mc-value" style="font-size:1.4rem;">$7.84M</div>
+      <div class="mc-delta" style="color:#555;font-size:0.72rem;">Swoffle's full universe of KeHE sales potential across all retailer doors</div>
+    </div>
+    <div class="metric-card" style="border-top:4px solid #27ae60;">
+      <div class="mc-label">Current $</div>
+      <div class="mc-value" style="font-size:1.4rem;">$50.47K</div>
+      <div class="mc-delta" style="color:#27ae60;font-size:0.72rem;">Actively selling — product is in the door and moving</div>
+    </div>
+    <div class="metric-card" style="border-top:4px solid #e67e22;">
+      <div class="mc-label">Void $</div>
+      <div class="mc-value" style="font-size:1.4rem;">$77.67K</div>
+      <div class="mc-delta" style="color:#e67e22;font-size:0.72rem;">Was selling — item was authorized but has since stopped ordering</div>
+    </div>
+    <div class="metric-card" style="border-top:4px solid #c0392b;">
+      <div class="mc-label">Gap $</div>
+      <div class="mc-value" style="font-size:1.4rem;">$7.71M</div>
+      <div class="mc-delta" style="color:#c0392b;font-size:0.72rem;">Never sold — authorized doors that have never placed an order</div>
+    </div>
+    <div class="metric-card" style="border-top:4px solid #8e44ad;">
+      <div class="mc-label">Opportunity $</div>
+      <div class="mc-value" style="font-size:1.4rem;">$7.79M</div>
+      <div class="mc-delta" style="color:#8e44ad;font-size:0.72rem;">Gap + Void combined — the total recoverable revenue target</div>
+    </div>
+  </div>
+
+  <!-- What it all means explainer -->
+  <div style="border:1px solid #d0d8e0;border-radius:8px;overflow:hidden;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div onclick="toggleCard('gv-explainer')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;background:#f0f4f8;border-bottom:1px solid #d0d8e0;user-select:none;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">What Gap & Void Means — Plain Language Explanation</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px;">Understanding the four status categories &nbsp;|&nbsp; Click to expand</div>
+      </div>
+      <span id="gv-explainer-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
+    </div>
+    <div id="gv-explainer" style="display:none;padding:20px 22px;background:#fff;">
+      <p style="font-size:0.84rem;color:#222;line-height:1.8;margin-bottom:12px;">KeHE's Gap & Void dashboard measures the difference between where Swoffle <em>could</em> be selling and where it <em>is</em> selling. Every retailer door that has authorized Swoffle's items through KeHE represents a sales opportunity. That universe of authorized doors — multiplied by expected velocity — equals the $7.84M total sales potential figure at the top of the dashboard.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div style="background:#f0f4f8;border-left:4px solid #27ae60;padding:12px 14px;border-radius:0 6px 6px 0;">
+          <div style="font-size:0.75rem;font-weight:600;color:#000;margin-bottom:4px;">CURRENT ($50.47K)</div>
+          <div style="font-size:0.8rem;color:#333;line-height:1.7;">Doors where Swoffle is authorized AND actively ordering. Product is on shelf. This is the only category generating real revenue today. At $50.47K it represents less than 1% of the total $7.84M potential — which tells you the scale of the untapped opportunity.</div>
+        </div>
+        <div style="background:#f0f4f8;border-left:4px solid #e67e22;padding:12px 14px;border-radius:0 6px 6px 0;">
+          <div style="font-size:0.75rem;font-weight:600;color:#000;margin-bottom:4px;">VOID ($77.67K)</div>
+          <div style="font-size:0.8rem;color:#333;line-height:1.7;">Doors that previously ordered Swoffle but have since stopped. The item is still authorized — the retailer just hasn't reordered. This is the most actionable short-term recovery target because the relationship already exists. These accounts need a direct conversation or a reset.</div>
+        </div>
+        <div style="background:#f0f4f8;border-left:4px solid #c0392b;padding:12px 14px;border-radius:0 6px 6px 0;">
+          <div style="font-size:0.75rem;font-weight:600;color:#000;margin-bottom:4px;">GAP ($7.71M)</div>
+          <div style="font-size:0.8rem;color:#333;line-height:1.7;">Doors where Swoffle is authorized through KeHE but has never placed a single order. This is the largest number on the dashboard and represents the structural distribution gap — retailers that said yes to the item but have never actually stocked it. This is primarily a field sales and retailer engagement problem.</div>
+        </div>
+        <div style="background:#f0f4f8;border-left:4px solid #8e44ad;padding:12px 14px;border-radius:0 6px 6px 0;">
+          <div style="font-size:0.75rem;font-weight:600;color:#000;margin-bottom:4px;">OPPORTUNITY ($7.79M)</div>
+          <div style="font-size:0.8rem;color:#333;line-height:1.7;">Gap + Void combined. This is KeHE's calculation of the total revenue Swoffle is leaving on the table within its currently authorized distribution network. Capturing even 10% of this opportunity would represent ~$779K in incremental annual revenue through KeHE alone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gap by SKU -->
+  <div class="section-header">Gap & Void by SKU — Current Void Gap $</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Current Void Gap $ by SKU</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Dark Choc 1.45 OZ</span>
+        <span><span class="legend-sq" style="background:#27ae60;"></span>French Van 1.16 OZ</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>Caramel 1.16 OZ</span>
+      </div>
+      <div class="chart-wrap" style="height:220px;"><canvas id="gv-sku"></canvas></div>
+    </div>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>SKU</th><th style="text-align:right;">Gap $ (Void + Gap)</th><th style="text-align:center;">% of Total Gap</th></tr></thead>
+        <tbody>
+          <tr><td>Cookie Strpwafl Drk Choc 1.45 OZ</td><td style="text-align:right;">$3.09M</td><td style="text-align:center;">40.1%</td></tr>
+          <tr><td>Cookie Strpwafel Frn Van 1.16 OZ</td><td style="text-align:right;">$2.38M</td><td style="text-align:center;">30.9%</td></tr>
+          <tr><td>Cookie Strpwafl Caramel 1.16 OZ</td><td style="text-align:right;">$2.24M</td><td style="text-align:center;">29.1%</td></tr>
+          <tr><td>Total</td><td style="text-align:right;">$7.71M</td><td style="text-align:center;">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top 10 Retailer Parents -->
+  <div class="section-header">Top 10 Total Sales by Retailer Parent</div>
+  <div class="chart-grid">
+    <div class="chart-card" style="grid-column:1/-1;">
+      <h4>Total Sales $ by Retailer Parent (Current + Gap + Void)</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Total Sales Potential $</span>
+      </div>
+      <div style="position:relative;width:100%;height:320px;"><canvas id="gv-retailers"></canvas></div>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;margin-bottom:22px;">
+    <table class="data-table">
+      <thead><tr><th>Retailer Parent</th><th style="text-align:right;">Total Sales $</th><th style="text-align:center;">Priority</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>All Other</td><td style="text-align:right;">$1.16M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>Fragmented — independent and regional accounts</td></tr>
+        <tr><td>Kroger</td><td style="text-align:right;">$0.82M</td><td style="text-align:center;"><span class="badge badge-alert">Action Needed</span></td><td>Largest named chain opportunity — significant gap potential</td></tr>
+        <tr><td>ACI (Albertsons Cos.)</td><td style="text-align:right;">$0.66M</td><td style="text-align:center;"><span class="badge badge-alert">Action Needed</span></td><td>Broad banner footprint — authorized but likely under-stocked</td></tr>
+        <tr><td>Single Store Retailers</td><td style="text-align:right;">$0.65M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>High count of individual doors — field sales territory</td></tr>
+        <tr><td>MDI (Merchants Distrib.)</td><td style="text-align:right;">$0.64M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>Southeast distributor — regional independent coverage</td></tr>
+        <tr><td>Publix</td><td style="text-align:right;">$0.43M</td><td style="text-align:center;"><span class="badge badge-alert">Action Needed</span></td><td>Strong Southeast fit — gap here is a direct sales call priority</td></tr>
+        <tr><td>HEB</td><td style="text-align:right;">$0.35M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>Texas-focused — strong natural set</td></tr>
+        <tr><td>Meijer</td><td style="text-align:right;">$0.26M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>Midwest — authorized, velocity building needed</td></tr>
+        <tr><td>Smart & Final</td><td style="text-align:right;">$0.23M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>West Coast — club/bulk format, value play</td></tr>
+        <tr><td>Giant Eagle</td><td style="text-align:right;">$0.20M</td><td style="text-align:center;"><span class="badge badge-warn">Watch</span></td><td>Midwest/Mid-Atlantic — strong grocery banner</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Channel breakdown -->
+  <div class="section-header">Status by Channel</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Current Void Gap $ by Channel</h4>
+      <div class="chart-legend">
+        <span><span class="legend-sq" style="background:#2563a8;"></span>Current</span>
+        <span><span class="legend-sq" style="background:#e67e22;"></span>Gap</span>
+        <span><span class="legend-sq" style="background:#c0392b;"></span>Void</span>
+      </div>
+      <div class="chart-wrap" style="height:220px;"><canvas id="gv-channel"></canvas></div>
+    </div>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Channel</th><th style="text-align:right;">Est. Gap $</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>Grocery — Regional</td><td style="text-align:right;">~$2.5M</td><td><span class="badge badge-alert">Highest</span></td></tr>
+          <tr><td>Grocery — Chain (National)</td><td style="text-align:right;">~$2.0M</td><td><span class="badge badge-alert">High</span></td></tr>
+          <tr><td>Grocery — Independent</td><td style="text-align:right;">~$1.5M</td><td><span class="badge badge-warn">Medium</span></td></tr>
+          <tr><td>Wholesalers & Distributors</td><td style="text-align:right;">~$0.75M</td><td><span class="badge badge-warn">Medium</span></td></tr>
+          <tr><td>Other Retail</td><td style="text-align:right;">~$0.5M</td><td><span class="badge badge-warn">Watch</span></td></tr>
+          <tr><td>All Other Channels</td><td style="text-align:right;">~$0.46M</td><td><span class="badge badge-warn">Watch</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Synopsis -->
+  <div class="section-header">Gap & Void Synopsis — Prepared by Stephen Nance</div>
+  <div class="synopsis-box">
+    <p>The Gap & Void dashboard reveals that Swoffle has authorized distribution across a $7.84M sales universe through KeHE, yet is capturing only $50.47K in active current sales — less than 1% of its authorized potential. The $7.71M gap figure represents doors that have authorized Swoffle but have never placed a single order. This is the defining challenge the brand faces within the KeHE network.</p>
+    <p>The Void of $77.67K represents accounts that previously ordered and have since stopped. These are the most immediately actionable accounts — the relationship exists, the authorization is in place, and a targeted outreach effort or promotional incentive could convert a meaningful portion back to active status.</p>
+    <p>By SKU, Dark Chocolate carries the largest gap at $3.09M (40%), followed by French Vanilla at $2.38M (31%) and Caramel at $2.24M (29%). The gap is distributed across all three SKUs, which indicates this is a distribution execution issue rather than a product-specific problem. By retailer, Kroger, ACI/Albertsons, and Publix represent the three largest named-chain opportunities — each with significant authorized door counts that have not converted to orders. These warrant direct engagement through KeHE's category and retail sales teams.</p>
+    <p>The $7.79M combined opportunity figure is the number to bring to David Shaffer. It is the clearest single-number representation of what Swoffle's authorized KeHE network could produce if existing distribution were activated. Capturing 10% of that figure — roughly $779K — would represent a meaningful step toward reversing the COGS decline visible across all other time periods in this dashboard.</p>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Category</th><th>Value</th><th>Action</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Total Authorized Potential</td><td>$7.84M</td><td>Reference benchmark</td><td><span class="badge badge-warn">Context</span></td></tr>
+        <tr><td>Current Active Sales</td><td>$50.47K</td><td>Protect and grow</td><td><span class="badge badge-ok">Maintain</span></td></tr>
+        <tr><td>Void — Re-engage</td><td>$77.67K</td><td>Direct outreach to lapsed accounts</td><td><span class="badge badge-alert">Immediate</span></td></tr>
+        <tr><td>Gap — Activate</td><td>$7.71M</td><td>Field sales + KeHE category push</td><td><span class="badge badge-alert">Strategic</span></td></tr>
+        <tr><td>Total Opportunity</td><td>$7.79M</td><td>Lead KeHE conversation with this number</td><td><span class="badge badge-alert">Key Talking Point</span></td></tr>
+        <tr><td>Kroger Gap</td><td>~$0.82M</td><td>Largest single named-chain target</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+        <tr><td>Publix Gap</td><td>~$0.43M</td><td>Southeast priority — strong brand fit</td><td><span class="badge badge-alert">Action Needed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /tab-gap-void -->
+
 <!-- ══════════════ TAB: NEW AT KeHE SOLD ══════════════ -->
 <div id="tab-new-accounts" class="tab-content">
 
@@ -1688,7 +1871,7 @@ body {
     <div style="display:flex;gap:20px;flex-wrap:wrap;">
       <div style="text-align:center;">
         <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">Portal Accounts</div>
-        <div style="font-size:1.3rem;font-weight:600;color:#2563a8;">24</div>
+        <div style="font-size:1.3rem;font-weight:600;color:#2563a8;">25</div>
       </div>
       <div style="text-align:center;">
         <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">HALA Accounts</div>
@@ -1696,7 +1879,7 @@ body {
       </div>
       <div style="text-align:center;">
         <div style="font-size:0.68rem;color:#777;text-transform:uppercase;letter-spacing:.05em;">Total Accounts</div>
-        <div style="font-size:1.3rem;font-weight:600;color:#000;">45</div>
+        <div style="font-size:1.3rem;font-weight:600;color:#000;">46</div>
       </div>
     </div>
   </div>
@@ -1724,7 +1907,7 @@ body {
   <div style="border:1px solid #d0d0d0;border-radius:8px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
     <div onclick="toggleCard('portal-table-wrap')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;cursor:pointer;background:#fff;border-bottom:1px solid #e0e0e0;user-select:none;">
       <div>
-        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">KeHE Portal Orders — 24 Accounts</div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#000;">KeHE Portal Orders — 25 Accounts</div>
         <div style="font-size:0.72rem;color:#555;margin-top:2px;">FL · VA · NC · SC · GA &nbsp;|&nbsp; Click to expand</div>
       </div>
       <span id="portal-table-wrap-icon" style="font-size:1.1rem;color:#000;font-weight:600;transition:transform .2s;">&#9660;</span>
@@ -1777,6 +1960,7 @@ body {
         <tr data-state="NC" data-type="portal"><td>Tidal Creek Foods Inc.</td><td>(910) 799-2667</td><td>Wilmington</td><td>NC</td><td>NCG</td><td>NCG Southeast</td><td style="text-align:right;">$40.56</td><td style="text-align:center;">1</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $40.56</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
         <tr data-state="SC" data-type="portal"><td>Garner's Natural Foods</td><td>(864) 585-1021</td><td>Spartanburg</td><td>SC</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
         <tr data-state="SC" data-type="portal"><td>The Healthy Food Store</td><td>(843) 629-9204</td><td>Florence</td><td>SC</td><td>All Other</td><td>All Other</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.45 OZ Drk Choc: $20.28 | 1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
+        <tr data-state="FL" data-type="portal"><td>Nassau Health Foods</td><td>(904) 277-3158</td><td>Fernandina Beach</td><td>FL</td><td>Single-Store Retailers</td><td>Single-Store Retailers</td><td style="text-align:right;">$45.48</td><td style="text-align:center;">3</td><td style="font-size:0.75rem;">1.16 OZ Caramel: $12.60 | 1.16 OZ Frn Van: $12.60 | 1.45 OZ Drk Choc: $20.28</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
         <tr data-state="GA" data-type="portal"><td>Nature's Corner Market Wdstk — INFRA</td><td>(678) 310-2532</td><td>Woodstock</td><td>GA</td><td>All Other</td><td>INFRA NON-SA</td><td style="text-align:right;">$25.20</td><td style="text-align:center;">2</td><td style="font-size:0.75rem;">1.16 OZ Frn Van: $12.60 | 1.16 OZ Caramel: $12.60</td><td style="text-align:center;"><span class="badge badge-ok">Ordered</span></td></tr>
       </tbody>
         </table>
@@ -1836,7 +2020,7 @@ body {
   <!-- State Summary -->
   <div class="section-header">Accounts by State</div>
   <div class="metric-grid">
-    <div class="metric-card"><div class="mc-label">Florida</div><div class="mc-value">28</div><div class="mc-delta" style="color:#555;">17 Portal · 11 HALA</div></div>
+    <div class="metric-card"><div class="mc-label">Florida</div><div class="mc-value">29</div><div class="mc-delta" style="color:#555;">18 Portal · 11 HALA</div></div>
     <div class="metric-card"><div class="mc-label">North Carolina</div><div class="mc-value">6</div><div class="mc-delta" style="color:#555;">3 Portal · 3 HALA</div></div>
     <div class="metric-card"><div class="mc-label">South Carolina</div><div class="mc-value">6</div><div class="mc-delta" style="color:#555;">2 Portal · 4 HALA</div></div>
     <div class="metric-card"><div class="mc-label">Tennessee</div><div class="mc-value">3</div><div class="mc-delta" style="color:#555;">0 Portal · 3 HALA</div></div>
@@ -1890,11 +2074,17 @@ const tabHeaders = {
     label2: 'L26W Purchases',  val2: '$35,718',   delta2: '▲ 8.69% vs PY',     cls2: 'delta-pos',
     label3: 'L26W Sales COGS', val3: '$27,205',   delta3: '▼ 13.73% vs PY',    cls3: 'delta-neg'
   },
+  'tab-gap-void': {
+    subtitle: 'KeHE CONNECT Analytics — Gap & Void Dashboard &nbsp;|&nbsp; Supplier: Swoffle LLC',
+    label1: 'Total Opportunity', val1: '$7.79M',  delta1: 'Gap + Void combined',      cls1: 'delta-pos',
+    label2: 'Gap $',             val2: '$7.71M',  delta2: 'Authorized — never ordered',cls2: 'delta-neg',
+    label3: 'Current Active $',  val3: '$50.47K', delta3: '<1% of $7.84M potential',  cls3: 'delta-warn'
+  },
   'tab-new-accounts': {
     subtitle: 'New at KeHE Sold — Portal & HALA Orders &nbsp;|&nbsp; As of 4/6/2026',
-    label1: 'Portal Accounts', val1: '24',    delta1: 'KeHE Portal Orders',  cls1: 'delta-pos',
+    label1: 'Portal Accounts', val1: '25',    delta1: 'KeHE Portal Orders',  cls1: 'delta-pos',
     label2: 'HALA Accounts',   val2: '21',    delta2: 'HALA Rep Orders',     cls2: 'delta-pos',
-    label3: 'Total Accounts',  val3: '45',    delta3: 'Across 6 States',     cls3: 'delta-pos'
+    label3: 'Total Accounts',  val3: '46',    delta3: 'Across 6 States',     cls3: 'delta-pos'
   },
   'tab-kehe52': {
     subtitle: 'Last 52 Weeks: 4/6/2025 – 4/4/2026 &nbsp;|&nbsp; Supplier: Swoffle LLC &nbsp;|&nbsp; Category Owner: David Shaffer',
@@ -1980,6 +2170,50 @@ const doughOpt = (total) => ({
   plugins: {
     legend: { display: false },
     tooltip: { callbacks: { label: ctx => ' $' + ctx.parsed.toLocaleString() + (total ? ' (' + ((ctx.parsed / total) * 100).toFixed(1) + '%)' : '') } }
+  }
+});
+
+/* ── Gap & Void Charts ── */
+new Chart(document.getElementById('gv-sku'), {
+  type: 'bar',
+  data: {
+    labels: ['Drk Choc 1.45 OZ', 'Frn Van 1.16 OZ', 'Caramel 1.16 OZ'],
+    datasets: [{ data: [3090000, 2380000, 2240000], backgroundColor: ['#2563a8', '#27ae60', '#e67e22'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 10 } }, grid: { display: false } },
+      y: { ticks: { callback: v => '$' + (v/1000000).toFixed(1) + 'M', font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+    }
+  }
+});
+new Chart(document.getElementById('gv-retailers'), {
+  type: 'bar',
+  data: {
+    labels: ['All Other', 'Kroger', 'ACI (Albertsons)', 'Single Store', 'MDI', 'Publix', 'HEB', 'Meijer', 'Smart & Final', 'Giant Eagle'],
+    datasets: [{ data: [1160000, 820000, 660000, 650000, 640000, 430000, 350000, 260000, 230000, 200000], backgroundColor: '#2563a8', borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => '$' + (v/1000000).toFixed(2) + 'M', font: { size: 10 } }, grid: { color: '#f0f0f0' } },
+      y: { ticks: { font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+new Chart(document.getElementById('gv-channel'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Grocery Regional', 'Grocery Chain National', 'Grocery Independent', 'Wholesalers', 'Other Retail', 'All Other'],
+    datasets: [{ data: [2500000, 2000000, 1500000, 750000, 500000, 460000], backgroundColor: ['#2563a8', '#27ae60', '#e67e22', '#c0392b', '#8e44ad', '#bbb'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + (ctx.parsed/1000000).toFixed(2) + 'M' } } }
   }
 });
 
@@ -2316,4 +2550,3 @@ new Chart(document.getElementById('ch-spoils'), {
 </script>
 </body>
 </html>
-
