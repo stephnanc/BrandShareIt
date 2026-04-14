@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle — Q1 2025 vs Q1 2026 Sales Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f4f3ee;
+    color: #1a1a18;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 960px; margin: 0 auto; }
+
+  .header { margin-bottom: 2rem; }
+  .header-top { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+  .brand { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #888780; }
+  .title { font-size: 26px; font-weight: 500; color: #1a1a18; margin: 4px 0; }
+  .subtitle { font-size: 13px; color: #888780; }
+  .period-badge {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    background: #e1f5ee; color: #0f6e56; border-radius: 6px; padding: 4px 10px;
+  }
+
+  .divider { border: none; border-top: 0.5px solid #d3d1c7; margin: 1.5rem 0; }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 1.75rem; }
+  @media (max-width: 640px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .metric {
+    background: #fff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .metric-label { font-size: 11px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .metric-value { font-size: 24px; font-weight: 500; color: #1a1a18; }
+  .metric-sub { font-size: 12px; margin-top: 5px; }
+  .up { color: #0f6e56; }
+  .down { color: #a32d2d; }
+  .neutral { color: #888780; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; color: #888780;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin: 1.75rem 0 0.6rem;
+  }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 10px; font-size: 12px; color: #5f5e5a; flex-wrap: wrap; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: middle; }
+
+  .chart-card {
+    background: #fff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .chart-wrap { position: relative; width: 100%; }
+
+  .winner-loser-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 0.5rem; }
+  @media (max-width: 600px) { .winner-loser-grid { grid-template-columns: 1fr; } }
+
+  .wl-card {
+    background: #fff;
+    border: 0.5px solid #d3d1c7;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .wl-header {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 8px 14px;
+  }
+  .wl-header.winners { background: #e1f5ee; color: #0f6e56; }
+  .wl-header.losers  { background: #fcebeb; color: #a32d2d; }
+  .wl-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 14px; border-top: 0.5px solid #f1efe8; font-size: 13px; }
+  .wl-name { color: #1a1a18; }
+  .wl-pct { font-weight: 500; }
+  .wl-pct.up { color: #0f6e56; }
+  .wl-pct.down { color: #a32d2d; }
+
+  .footer { margin-top: 2.5rem; font-size: 11px; color: #b4b2a9; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="brand">Brand Share It Sales Partners</span>
+      <span class="period-badge">Q1: Jan 1 – Mar 31</span>
+    </div>
+    <div class="title">Swoffle — Q1 Sales Dashboard</div>
+    <div class="subtitle">Year-over-year comparison · 2025 vs 2026</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Q1 2025 Total</div>
+      <div class="metric-value">$113,159</div>
+      <div class="metric-sub neutral">Jan 1 – Mar 31, 2025</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Q1 2026 Total</div>
+      <div class="metric-value">$167,212</div>
+      <div class="metric-sub up">+47.8% year-over-year</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Revenue Growth</div>
+      <div class="metric-value up">+$54,052</div>
+      <div class="metric-sub neutral">absolute dollar lift</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Independent Stores</div>
+      <div class="metric-value">$26,021</div>
+      <div class="metric-sub up">vs $15,897 in 2025 (+63.7%)</div>
+    </div>
+  </div>
+
+  <div class="section-label">All accounts — Q1 sales comparison</div>
+
+  <div class="chart-card">
+    <div class="legend">
+      <span><span class="leg-dot" style="background:#3266ad"></span>Q1 2025</span>
+      <span><span class="leg-dot" style="background:#1D9E75"></span>Q1 2026</span>
+    </div>
+    <div class="chart-wrap" style="height: 860px;">
+      <canvas id="mainChart" role="img" aria-label="Horizontal bar chart comparing Q1 2025 vs Q1 2026 sales for all Swoffle accounts">Account sales comparison across all distributor and partner accounts.</canvas>
+    </div>
+  </div>
+
+  <div class="section-label">Year-over-year growth by account (%)</div>
+  <div class="chart-card">
+    <div class="legend">
+      <span><span class="leg-dot" style="background:#1D9E75"></span>Growth</span>
+      <span><span class="leg-dot" style="background:#E24B4A"></span>Decline</span>
+    </div>
+    <div class="chart-wrap" style="height: 720px;">
+      <canvas id="pctChart" role="img" aria-label="Horizontal bar chart showing year-over-year percentage change by account">Percentage change data by account.</canvas>
+    </div>
+  </div>
+
+  <div class="section-label">Winners &amp; accounts needing attention</div>
+  <div class="winner-loser-grid">
+    <div class="wl-card">
+      <div class="wl-header winners">Top growth accounts</div>
+      <div class="wl-row"><span class="wl-name">UNFI Moreno Valley</span><span class="wl-pct up">+285%</span></div>
+      <div class="wl-row"><span class="wl-name">The Paper Store</span><span class="wl-pct up">+261%</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Rocklin</span><span class="wl-pct up">+177%</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Aurora DC</span><span class="wl-pct up">+156%</span></div>
+      <div class="wl-row"><span class="wl-name">Snacktree International</span><span class="wl-pct up">+127%</span></div>
+      <div class="wl-row"><span class="wl-name">KeHE</span><span class="wl-pct up">+102%</span></div>
+      <div class="wl-row"><span class="wl-name">Independent Stores</span><span class="wl-pct up">+64%</span></div>
+      <div class="wl-row"><span class="wl-name">Rainforest Distribution</span><span class="wl-pct up">+62%</span></div>
+      <div class="wl-row"><span class="wl-name">Boston Bean</span><span class="wl-pct up">+50%</span></div>
+      <div class="wl-row"><span class="wl-name">Minimus</span><span class="wl-pct up">from $0</span></div>
+      <div class="wl-row"><span class="wl-name">Gartland Distributors</span><span class="wl-pct up">from $0</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Racine</span><span class="wl-pct up">from $0</span></div>
+    </div>
+    <div class="wl-card">
+      <div class="wl-header losers">Accounts needing attention</div>
+      <div class="wl-row"><span class="wl-name">Atlantic Beverage</span><span class="wl-pct down">−71%</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Sarasota</span><span class="wl-pct down">−100%</span></div>
+      <div class="wl-row"><span class="wl-name">Frankford Farms</span><span class="wl-pct down">−100%</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Ridgefield</span><span class="wl-pct down">−33%</span></div>
+      <div class="wl-row"><span class="wl-name">Paramount Foods</span><span class="wl-pct down">−24%</span></div>
+      <div class="wl-row"><span class="wl-name">UNFI Carlisle</span><span class="wl-pct down">−22%</span></div>
+      <div class="wl-row"><span class="wl-name">Northeast Specialty Foods</span><span class="wl-pct down">−0.8%</span></div>
+    </div>
+  </div>
+
+  <div class="footer">Swoffle &nbsp;·&nbsp; Brand Share It Sales Partners &nbsp;·&nbsp; Q1 2025 vs Q1 2026 &nbsp;·&nbsp; Generated April 2026</div>
+
+</div>
+
+<script>
+const accounts = [
+  { name: "UNFI Ridgefield",            v25: 21648,    v26: 14507   },
+  { name: "Rainforest Distribution",    v25: 13716,    v26: 22155   },
+  { name: "KeHE",                       v25: 10349,    v26: 20948   },
+  { name: "Quality Foods Distributing", v25: 9672,     v26: 13940   },
+  { name: "UNFI Rocklin",               v25: 4435,     v26: 12295   },
+  { name: "UNFI Moreno Valley",         v25: 2419,     v26: 9302    },
+  { name: "Boston Bean",                v25: 5644,     v26: 8467    },
+  { name: "Snacktree International",    v25: 3226,     v26: 7333    },
+  { name: "UNFI Aurora DC",             v25: 2285,     v26: 5845    },
+  { name: "Minimus",                    v25: 0,        v26: 4912    },
+  { name: "Fortune Fish & Gourmet",     v25: 4301,     v26: 4366    },
+  { name: "UNFI Greenwood",             v25: 3696,     v26: 4200    },
+  { name: "UNFI Carlisle",              v25: 3599,     v26: 2822    },
+  { name: "Paramount Foods",            v25: 2340,     v26: 1776    },
+  { name: "The Paper Store",            v25: 403.20,   v26: 1456    },
+  { name: "Gartland Distributors",      v25: 0,        v26: 1467    },
+  { name: "UNFI Twin Cities",           v25: 1277,     v26: 1445    },
+  { name: "Northeast Specialty Foods",  v25: 1344,     v26: 1333    },
+  { name: "UNFI Racine",                v25: 0,        v26: 941     },
+  { name: "Atlantic Beverage",          v25: 5858,     v26: 1680.96 },
+  { name: "UNFI Sarasota",              v25: 403.20,   v26: 0       },
+  { name: "Frankford Farms",            v25: 647,      v26: 0       },
+  { name: "Independent Stores",         v25: 15896.82, v26: 26020.66},
+];
+
+new Chart(document.getElementById('mainChart'), {
+  type: 'bar',
+  data: {
+    labels: accounts.map(a => a.name),
+    datasets: [
+      { label: 'Q1 2025', data: accounts.map(a => a.v25), backgroundColor: '#3266ad', borderRadius: 3 },
+      { label: 'Q1 2026', data: accounts.map(a => a.v26), backgroundColor: '#1D9E75', borderRadius: 3 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' $' + ctx.raw.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { callback: v => '$' + (v / 1000).toFixed(0) + 'k', font: { size: 11 }, color: '#888780' },
+        grid: { color: 'rgba(136,135,128,0.15)' }
+      },
+      y: {
+        ticks: { font: { size: 11 }, color: '#444441', autoSkip: false },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+const pctLabels = [];
+const pctData = [];
+const pctColors = [];
+const pctTooltips = [];
+
+accounts.forEach(a => {
+  if (a.v25 === 0) {
+    pctLabels.push(a.name + ' (from $0)');
+    pctData.push(100);
+    pctColors.push('#1D9E75');
+    pctTooltips.push('$0 → $' + a.v26.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' (from $0)');
+  } else if (a.v26 === 0) {
+    pctLabels.push(a.name);
+    pctData.push(-100);
+    pctColors.push('#E24B4A');
+    pctTooltips.push('−100% (dropped to $0)');
+  } else {
+    const pct = Math.round((a.v26 - a.v25) / a.v25 * 100);
+    pctLabels.push(a.name);
+    pctData.push(pct);
+    pctColors.push(pct >= 0 ? '#1D9E75' : '#E24B4A');
+    pctTooltips.push(pct + '%');
+  }
+});
+
+new Chart(document.getElementById('pctChart'), {
+  type: 'bar',
+  data: {
+    labels: pctLabels,
+    datasets: [{
+      label: 'YOY %',
+      data: pctData,
+      backgroundColor: pctColors,
+      borderRadius: 3
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ' ' + pctTooltips[ctx.dataIndex]
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { callback: v => v + '%', font: { size: 11 }, color: '#888780' },
+        grid: { color: 'rgba(136,135,128,0.15)' }
+      },
+      y: {
+        ticks: { font: { size: 11 }, color: '#444441', autoSkip: false },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
