@@ -74,6 +74,7 @@
 
   .tab-btn.active.unfi { border-top: 3px solid #1d6fa4; }
   .tab-btn.active.kehe { border-top: 3px solid #2d9e6b; }
+  .tab-btn.active.kehe-disputes { border-top: 3px solid #e65100; }
 
   /* ─── PANEL ─── */
   .tab-panel {
@@ -345,15 +346,15 @@
 
   .disputable-badge {
     display: inline-block;
-    background: #f9a825;
-    color: #000;
+    background: #e65100;
+    color: #fff;
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
     padding: 3px 8px;
     border-radius: 3px;
     letter-spacing: 0.5px;
-    border: 1px solid #f57f17;
+    border: 1px solid #bf360c;
     text-transform: uppercase;
   }
 
@@ -438,12 +439,13 @@
 
 <!-- TAB NAV -->
 <div class="tab-nav">
-  <button class="tab-btn unfi active" onclick="switchTab('unfi')">UNFI East-West</button>
+  <button class="tab-btn kehe-disputes active" onclick="switchTab('kehe-disputes')">KeHE Dispute-In-Progress</button>
+  <button class="tab-btn unfi" onclick="switchTab('unfi')">UNFI East-West</button>
   <button class="tab-btn kehe" onclick="switchTab('kehe')">KeHE Distributors</button>
 </div>
 
 <!-- ═══════════════════════════ UNFI PANEL ═══════════════════════════ -->
-<div class="tab-panel active" id="panel-unfi">
+<div class="tab-panel" id="panel-unfi">
 
   <div class="card-header">
     <div class="header-left">
@@ -628,6 +630,97 @@
   </div>
   <div class="export-bar">
     <span>KeHE Distributors, LLC · Checks 3243581, 3230718, 3261693, 3263385, 3265778 &amp; 3267949 · SWOFFLE LLC Vendor #23017256</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ KEHE DISPUTES PANEL ═══════════════════════════ -->
+<div class="tab-panel active" id="panel-kehe-disputes">
+
+  <div class="card-header">
+    <div class="header-left">
+      <div class="dist-label kehe" style="color:#e65100;">KeHE DISTRIBUTORS — DISPUTES</div>
+      <div class="card-title">KeHE Dispute-In-Progress Tracker</div>
+      <div class="card-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #23017256 &nbsp;·&nbsp; Active Deduction Disputes</div>
+    </div>
+    <div class="header-right">
+      <div class="created-by">Worksheet created by</div>
+      <div class="created-name">Stephen Nance</div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-card"><div class="summary-label">Total Disputes</div><div class="summary-val dark" id="kd-sum-count">0</div></div>
+    <div class="summary-card"><div class="summary-label">Total Amount Disputed</div><div class="summary-val red" id="kd-sum-total">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Largest Single Dispute</div><div class="summary-val" id="kd-sum-largest" style="color:#e65100;">$0.00</div></div>
+    <div class="summary-card"><div class="summary-label">Checks Involved</div><div class="summary-val dark" id="kd-sum-checks">0</div></div>
+    <div class="summary-card"><div class="summary-label">Visible Rows</div><div class="summary-val dark" id="kd-sum-visible">0</div></div>
+  </div>
+
+  <div class="controls-bar">
+    <input class="search-box" type="text" id="kd-globalSearch" placeholder="🔍  Search disputes...">
+    <select class="filter-select" id="kd-checkFilter">
+      <option value="">All Checks</option>
+      <option value="3230718">3230718 — 12/12/2025</option>
+      <option value="3243581">3243581 — 01/23/2026</option>
+      <option value="3261693">3261693 — 03/25/2026</option>
+      <option value="3265778">3265778 — 04/03/2026</option>
+    </select>
+    <select class="filter-select" id="kd-typeFilter">
+      <option value="">All Dispute Types</option>
+      <option value="MCBB Fee">MCBB Fee</option>
+      <option value="Invoice Adjustment">Invoice Adjustment</option>
+      <option value="Vendor Recoupment">Vendor Recoupment</option>
+      <option value="Lump Sum">Lump Sum</option>
+      <option value="Late Fees">Late Fees</option>
+      <option value="Other">Other</option>
+    </select>
+    <button class="btn" onclick="exportDisputeCSV()">↓ Export CSV</button>
+    <button class="btn" onclick="window.print()">⎙ Print</button>
+    <button class="btn-reset" onclick="resetDisputes()">✕ Reset</button>
+    <span class="row-count" id="kd-rowCount">0 rows</span>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr id="kd-headerRow">
+          <th onclick="sortDisputes(0)" data-col="0"><span class="sort-arrow"></span>#</th>
+          <th onclick="sortDisputes(1)" data-col="1"><span class="sort-arrow"></span>Check Date</th>
+          <th onclick="sortDisputes(2)" data-col="2"><span class="sort-arrow"></span>Check #</th>
+          <th onclick="sortDisputes(3)" data-col="3"><span class="sort-arrow"></span>Invoice Date</th>
+          <th onclick="sortDisputes(4)" data-col="4"><span class="sort-arrow"></span>Invoice Number</th>
+          <th onclick="sortDisputes(5)" data-col="5"><span class="sort-arrow"></span>Dispute Type</th>
+          <th onclick="sortDisputes(6)" data-col="6"><span class="sort-arrow"></span>Gross Amount</th>
+          <th onclick="sortDisputes(7)" data-col="7"><span class="sort-arrow"></span>Dispute Amount</th>
+          <th data-col="8">Dispute Details &amp; Action</th>
+          <th data-col="9">Status Notes</th>
+        </tr>
+        <tr class="filter-row">
+          <th></th>
+          <th><input class="col-filter" data-tab="kd" data-col="1" placeholder="Check date..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="2" placeholder="Check #..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="3" placeholder="Inv. date..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="4" placeholder="Invoice #..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="5" placeholder="Type..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="6" placeholder="Gross..." oninput="renderDisputes()"></th>
+          <th><input class="col-filter" data-tab="kd" data-col="7" placeholder="Dispute amt..." oninput="renderDisputes()"></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="kd-tableBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">TOTAL DISPUTED (Visible Rows)</td>
+          <td class="amount-cell" id="kd-foot-gross" style="font-size:13px;"></td>
+          <td class="amount-cell red" id="kd-foot-dispute" style="font-size:13px;font-weight:600;color:#e65100;"></td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="export-bar">
+    <span>KeHE Distributors, LLC · Active Dispute-In-Progress · SWOFFLE LLC Vendor #23017256</span>
   </div>
 </div>
 
@@ -820,7 +913,7 @@ const DATA = {
     { checkDate:"04/03/2026", checkNum:"3265778", date:"03/26/26", invoice:"AMPE02019589.0326.01", desc:"AMP2025P13",          gross:-37.76,   discount:0.00,  net:-37.76,   note:"AMP = KeHE Advertising & Marketing Program. DC: Breinigsville, PA. PO: AMP2025P13. Period 2025 P13. Rate at $37.76 — slightly below the consistent $38.20 of prior periods. Contractual if enrolled. Verify AMP agreement rate with KeHE."   },
     { checkDate:"04/03/2026", checkNum:"3265778", date:"03/27/26", invoice:"ACMPL15017256.0326.01",desc:"ACME776",             gross:-13.68,   discount:0.00,  net:-13.68,   note:"ACMPL = KeHE program billing — ACME776 program reference. DC: Breinigsville, PA. PO: ACME776. New billing type not seen on prior checks. Verify what ACME776 program represents and whether Swoffle authorized this charge with KeHE."   },
     { checkDate:"04/03/2026", checkNum:"3265778", date:"03/29/26", invoice:"0413245",              desc:"MCB",                 gross:-13.86,   discount:0.00,  net:-13.86,   note:"Free Goods charge — $13.86. This is not an MCB. KeHE deducted for free goods provided. No $65 fee applied."   },
-    { checkDate:"04/03/2026", checkNum:"3265778", date:"03/29/26", invoice:"0472950",              desc:"MCB",                 gross:-424.16,  discount:0.00,  net:-424.16,  disputable:true, note:"MCB Amount: $359.16 · Fee Amount: $65.00 · Disputable Amount: $65.00"   },
+    { checkDate:"04/03/2026", checkNum:"3265778", date:"03/29/26", invoice:"0472950",              desc:"MCB",                 gross:-424.16,  discount:0.00,  net:-424.16,  disputable:true, note:"DISPUTE IN PROGRESS — MCBB Fee (Other) | Dispute Amount: $65.00 | The $65.00 flat fee represents over 18% of the $359.16 base MCB charge and is considered disproportionate. Requesting waiver or reduction of the $65.00 fee. DC: Elkton, FL | Check 3265778 (4/3/26)"   },
     { checkDate:"04/03/2026", checkNum:"3265778", date:"03/30/26", invoice:"CS003717944",          desc:"4310433",             gross:-10.05,   discount:0.00,  net:-10.05,   note:"CS = KeHE Customer Service Claim. DC: North East, MD. KeHE internal claim reference 4310433. Request documentation from KeHE accounts payable citing invoice CS003717944 and claim 4310433."   },
     { checkDate:"04/03/2026", checkNum:"3265778", date:"03/30/26", invoice:"CS003707604",          desc:"5531895",             gross:-7.25,    discount:0.00,  net:-7.25,    note:"CS = KeHE Customer Service Claim. DC: Elkton, FL. KeHE internal claim reference 5531895. Request documentation from KeHE accounts payable citing invoice CS003707604 and claim 5531895."   },
     // ─── CHECK 3267949 · 04/10/2026 ───
@@ -862,8 +955,10 @@ const p = t => t === 'unfi' ? 'u' : 'k';
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelector(`.tab-btn.${tab}`).classList.add('active');
+  const btn = document.querySelector(`.tab-btn.${tab === 'kehe-disputes' ? 'kehe-disputes' : tab}`);
+  if (btn) btn.classList.add('active');
   document.getElementById(`panel-${tab}`).classList.add('active');
+  if (tab === 'kehe-disputes') renderDisputes();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -891,7 +986,7 @@ function renderTable(tab, data) {
       <td style="font-size:11px;">${row.date}</td>
       <td class="inv-num">${row.invoice}</td>
       <td>${row.desc ? `<span class="desc-badge">${row.desc}</span>` : '<span style="color:var(--text-dim);font-size:10px;">—</span>'}</td>
-      <td>${isDisputable ? '<span class="disputable-badge">⚠ Disputable Deduction</span>' : `<span class="type-badge ${type.toLowerCase()}">${type}</span>`}</td>
+      <td>${isDisputable ? '<span class="disputable-badge">⏳ Dispute In Progress</span>' : `<span class="type-badge ${type.toLowerCase()}">${type}</span>`}</td>
       <td class="amount-cell ${fmtClass(row.gross)}" style="${isDisputable?'color:#b71c1c;font-weight:700;':''}">${fmt(row.gross)}</td>
       <td class="amount-cell ${fmtClass(row.discount)}">${row.discount!==0 ? fmt(row.discount) : '<span style="color:var(--text-dim)">—</span>'}</td>
       <td class="amount-cell ${fmtClass(row.net)}" style="${isDisputable?'color:#b71c1c;font-weight:700;':''}">${fmt(row.net)}</td>
@@ -931,10 +1026,11 @@ function getFilteredData(tab) {
 
   return DATA[tab].filter(row => {
     const type = row.net > 0 ? 'credit' : 'deduction';
-    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.desc, type,
+    const typeLabel = row.disputable ? 'disputable deduction' : type;
+    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.desc, typeLabel,
                    fmt(row.gross), row.discount!==0 ? fmt(row.discount) : '', fmt(row.net), ''];
     if (checkF && row.checkNum !== checkF) return false;
-    if (typeF  && !type.includes(typeF))   return false;
+    if (typeF  && !typeLabel.includes(typeF))   return false;
     if (global && !cells.join(' ').toLowerCase().includes(global)) return false;
     for (const f of colFilters) {
       if (f.val && !cells[f.col].toLowerCase().includes(f.val)) return false;
@@ -1011,8 +1107,137 @@ function exportCSV(tab) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// INIT
+// KEHE DISPUTES DATA
 // ═══════════════════════════════════════════════════════════════════════════
+const DISPUTES = [
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/16/25", invoice:"400332",               disputeType:"MCBB Fee",          gross:-398.06,  disputeAmt:65.00,  detail:"$65.00 fee on $333.06 base MCB — nearly 20% of transaction value. Contesting flat minimum fee as disproportionate to order scale.", action:"Request waiver or reduction of $65.00 fee." },
+  { checkDate:"12/12/2025", checkNum:"3230718", date:"11/30/25", invoice:"401841",               disputeType:"MCBB Fee",          gross:-484.26,  disputeAmt:65.00,  detail:"$65.00 fee on $419.26 base MCB. Fee adds significant percentage to base order cost. Contesting fairness of flat $65.00 minimum fee relative to order size.", action:"Request waiver or adjustment of $65.00 fee." },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/14/25", invoice:"0403336",              disputeType:"MCBB Fee",          gross:-83.01,   disputeAmt:65.00,  detail:"$65.00 fee on $18.01 base MCB charge. Fee far exceeds the base transaction value.", action:"Request waiver or reduction of $65.00 fee." },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/18/25", invoice:"A825424725",           disputeType:"Other",             gross:-435.00,  disputeAmt:435.00, detail:"DC: Portland, OR — only Portland DC deduction across all KeHE checks. High round-dollar amount with no PO. Potentially a West Coast store or program charge not authorized by Swoffle.", action:"Request full reversal pending verification. Ref claim 61800257664." },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"12/28/25", invoice:"0404881",              disputeType:"MCBB Fee",          gross:-179.40,  disputeAmt:65.00,  detail:"$65.00 fee on $114.40 base MCB charge. Fee represents over 50% of transaction value.", action:"Request waiver or reduction of $65.00 fee." },
+  { checkDate:"01/23/2026", checkNum:"3243581", date:"01/15/26", invoice:"7999IA",               disputeType:"Invoice Adjustment",gross:-197.56,  disputeAmt:189.66, detail:"IA adjustment to PO 03458500 (Inv 7999) reduced net payout from $580.85 to $387.24. Includes -$3.95 discount reversal. Verifying whether cause was short shipment, pricing error, or return.", action:"Verify with KeHE and request reversal if cause is unsubstantiated." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"01/28/26", invoice:"LF32515",              disputeType:"Late Fees",         gross:-500.00,  disputeAmt:500.00, detail:"$500.00 LDF Q4 2025 ($250/PO). Shipments were only 1–2 days late. Fees are disproportionate to the delay and prior notice may have been provided.", action:"Waiver of both $250 fees. Refs: PO 3388662 (Inv 7938) | PO 3434335 (Inv 7977)." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"02/01/26", invoice:"0407753",              disputeType:"MCBB Fee",          gross:-98.25,   disputeAmt:65.00,  detail:"$65.00 fee on $33.25 base MCB — nearly 200% of transaction value. Disproportionate for a small order amount.", action:"Request waiver or reduction of $65.00 fee." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"02/15/26", invoice:"0409109",              disputeType:"MCBB Fee",          gross:-97.95,   disputeAmt:65.00,  detail:"$65.00 fee on $32.95 base MCB — nearly 200% of transaction value. Disproportionate for a small order amount.", action:"Request waiver or reduction of $65.00 fee." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"02/19/26", invoice:"8077IA",               disputeType:"Invoice Adjustment",gross:-774.46,  disputeAmt:774.46, detail:"$774.46 deduction for 8 cases of French Vanilla (item 352804) against PO 3510218. French Vanilla was not in the original PO — deduction incorrectly taken against other delivered items rather than as an out-of-stock credit.", action:"Request full reversal of $774.46. Underlying product was not part of the invoice balance." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"02/24/26", invoice:"LUM16018515",          disputeType:"Lump Sum",          gross:-75.00,   disputeAmt:75.00,  detail:"$75.00 UPS Ground lumper fee for Period 2026 P09 is disproportionate vs. $4.50 FedEx fee applied same period. Charge was not authorized.", action:"Request full waiver or reduction to $4.50 to match FedEx rate." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"03/05/26", invoice:"8126IA",               disputeType:"Invoice Adjustment",gross:-387.24,  disputeAmt:387.24, detail:"KeHE claims only 20 cases delivered on PO 3548578. Backup documentation confirms 24 cases of French Vanilla Master Cases (SKU: DSTFVP12MC) were processed and shipped.", action:"Request full reversal of $387.24 based on proof of 24-cs delivery." },
+  { checkDate:"03/25/2026", checkNum:"3261693", date:"03/16/26", invoice:"VR27017256.0326.01",   disputeType:"Vendor Recoupment", gross:-3002.76, disputeAmt:3002.76,detail:"$3,002.76 return deduction. No proof of delivery confirming product was received back by Swoffle. Credit lists 12-pack items but returns should have been legacy 14 and 16-pack Dark Chocolate units — SKU error.", action:"Request full reversal of $3,002.76 deduction." },
+  { checkDate:"04/03/2026", checkNum:"3265778", date:"03/29/26", invoice:"0472950",              disputeType:"MCBB Fee",          gross:-424.16,  disputeAmt:65.00,  detail:"$65.00 fee on $359.16 base MCB. Fee represents over 18% of transaction value — disproportionate.", action:"Request waiver or reduction of $65.00 fee." },
+];
+
+const disputeState = { sortCol:-1, sortDir:1, statusNotes:{} };
+
+function getFilteredDisputes() {
+  const global = document.getElementById('kd-globalSearch').value.toLowerCase();
+  const typeF  = document.getElementById('kd-typeFilter').value.toLowerCase();
+  const checkF = document.getElementById('kd-checkFilter').value;
+  const colFilters = [...document.querySelectorAll('.col-filter[data-tab="kd"]')].map(el => ({
+    col: parseInt(el.dataset.col), val: el.value.toLowerCase()
+  }));
+  return DISPUTES.filter(row => {
+    const cells = ['', row.checkDate, row.checkNum, row.date, row.invoice, row.disputeType,
+                   fmt(row.gross), fmt(row.disputeAmt), row.detail, ''];
+    if (checkF && row.checkNum !== checkF) return false;
+    if (typeF  && !row.disputeType.toLowerCase().includes(typeF)) return false;
+    if (global && !cells.join(' ').toLowerCase().includes(global)) return false;
+    for (const f of colFilters) {
+      if (f.val && !(cells[f.col]||'').toLowerCase().includes(f.val)) return false;
+    }
+    return true;
+  });
+}
+
+function renderDisputes() {
+  let data = getFilteredDisputes();
+  if (disputeState.sortCol >= 0) {
+    const keys = [null,'checkDate','checkNum','date','invoice','disputeType','gross','disputeAmt'];
+    data = [...data].sort((a,b) => {
+      const k = keys[disputeState.sortCol];
+      if (!k) return 0;
+      if (typeof a[k]==='number') return disputeState.sortDir*(a[k]-b[k]);
+      return disputeState.sortDir*a[k].localeCompare(b[k]);
+    });
+  }
+  const tbody = document.getElementById('kd-tableBody');
+  tbody.innerHTML = '';
+  let totGross=0, totDispute=0;
+  const checks = new Set();
+
+  data.forEach((row, i) => {
+    const idx = DISPUTES.indexOf(row);
+    const saved = disputeState.statusNotes[idx] !== undefined ? disputeState.statusNotes[idx] : '';
+    const tr = document.createElement('tr');
+    tr.style.background = i%2===0 ? '#fff9f5' : '#fff4ef';
+    tr.innerHTML = `
+      <td class="row-num">${i+1}</td>
+      <td style="font-size:11px;">${row.checkDate}</td>
+      <td style="font-size:11px;font-weight:500;">${row.checkNum}</td>
+      <td style="font-size:11px;">${row.date}</td>
+      <td class="inv-num">${row.invoice}</td>
+      <td><span style="display:inline-block;background:#fff3e0;border:1px solid #ffcc80;border-radius:3px;font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 8px;color:#e65100;text-transform:uppercase;">${row.disputeType}</span></td>
+      <td class="amount-cell negative">${fmt(row.gross)}</td>
+      <td class="amount-cell" style="color:#e65100;font-weight:700;">${fmt(row.disputeAmt)}</td>
+      <td style="font-family:var(--sans);font-size:11px;color:var(--text);max-width:340px;white-space:normal;line-height:1.5;">
+        <div style="margin-bottom:4px;">${row.detail}</div>
+        <div style="color:#e65100;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">▶ ${row.action}</div>
+      </td>
+      <td><input class="notes-input" placeholder="Update status..." value="${saved}" onchange="disputeState.statusNotes[${idx}]=this.value" style="width:190px;"></td>
+    `;
+    tbody.appendChild(tr);
+    totGross += row.gross;
+    totDispute += row.disputeAmt;
+    checks.add(row.checkNum);
+  });
+
+  const largest = data.length ? Math.max(...data.map(r=>r.disputeAmt)) : 0;
+  document.getElementById('kd-foot-gross').innerHTML = `<span class="negative">${fmt(totGross)}</span>`;
+  document.getElementById('kd-foot-dispute').textContent = fmt(totDispute);
+  document.getElementById('kd-sum-count').textContent = DISPUTES.length;
+  document.getElementById('kd-sum-total').textContent = fmt(DISPUTES.reduce((s,r)=>s+r.disputeAmt,0));
+  document.getElementById('kd-sum-largest').textContent = fmt(largest);
+  document.getElementById('kd-sum-checks').textContent = new Set(DISPUTES.map(r=>r.checkNum)).size;
+  document.getElementById('kd-sum-visible').textContent = data.length;
+  document.getElementById('kd-rowCount').textContent = `${data.length} row${data.length!==1?'s':''}`;
+}
+
+function sortDisputes(col) {
+  if (disputeState.sortCol===col) disputeState.sortDir*=-1; else { disputeState.sortCol=col; disputeState.sortDir=1; }
+  document.querySelectorAll('#kd-headerRow th').forEach((th,i) => {
+    th.classList.remove('sorted-asc','sorted-desc');
+    if (i===col) th.classList.add(disputeState.sortDir===1?'sorted-asc':'sorted-desc');
+  });
+  renderDisputes();
+}
+
+function resetDisputes() {
+  document.getElementById('kd-globalSearch').value='';
+  document.getElementById('kd-typeFilter').value='';
+  document.getElementById('kd-checkFilter').value='';
+  document.querySelectorAll('.col-filter[data-tab="kd"]').forEach(el=>el.value='');
+  disputeState.sortCol=-1; disputeState.sortDir=1;
+  document.querySelectorAll('#kd-headerRow th').forEach(th=>th.classList.remove('sorted-asc','sorted-desc'));
+  renderDisputes();
+}
+
+function exportDisputeCSV() {
+  const data = getFilteredDisputes();
+  const headers = ['#','Check Date','Check Number','Invoice Date','Invoice Number','Dispute Type','Gross Amount','Dispute Amount','Detail','Action','Status Notes'];
+  const rows = data.map((row,i) => {
+    const idx = DISPUTES.indexOf(row);
+    return [i+1,row.checkDate,row.checkNum,row.date,row.invoice,`"${row.disputeType}"`,
+            row.gross.toFixed(2),row.disputeAmt.toFixed(2),`"${row.detail}"`,`"${row.action}"`,
+            `"${disputeState.statusNotes[idx]||''}"`].join(',');
+  });
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='KeHE_Disputes_In_Progress.csv';
+  a.click();
+}
+
+
 document.getElementById('u-sum-count').textContent = DATA.unfi.length;
 document.getElementById('k-sum-count').textContent = DATA.kehe.length;
 ['unfi','kehe'].forEach(tab => {
@@ -1022,9 +1247,14 @@ document.getElementById('k-sum-count').textContent = DATA.kehe.length;
   document.getElementById(`${px}-globalSearch`).addEventListener('input',()=>applyFilters(tab));
   applyFilters(tab);
 });
+document.getElementById('kd-typeFilter').addEventListener('change', renderDisputes);
+document.getElementById('kd-checkFilter').addEventListener('change', renderDisputes);
+document.getElementById('kd-globalSearch').addEventListener('input', renderDisputes);
+renderDisputes();
 </script>
 </body>
 </html>
+
 
 
 
