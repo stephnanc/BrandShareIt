@@ -3,798 +3,927 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Turn & Cash Flow Metrics Dashboard</title>
+    <title>Inventory Turn & Cash Flow Metrics — Brand Share It Sales Partners</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --white: #ffffff;
+            --off-white: #f8f8f6;
+            --ink: #111111;
+            --ink-soft: #3a3a3a;
+            --ink-muted: #777777;
+            --rule: #e8e8e5;
+            --accent: #1a3d26;
+            --accent-mid: #2e6b42;
+            --accent-light: #f0f5f1;
+            --gold: #9a6f2e;
+            --excellent: #2e6b42;
+            --excellent-bg: #f0f5f1;
+            --warn: #d97706;
+            --warn-bg: #fffbeb;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --info: #1d4ed8;
+            --info-bg: #eff6ff;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+            font-family: 'Outfit', sans-serif;
+            background: var(--off-white);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            padding: 2rem;
         }
-        
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule);
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
         }
-        
-        /* Header */
-        .header {
-            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
-            border-radius: 0.75rem;
-            padding: 3.125rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        .nav-brand {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover { color: var(--accent-mid); }
+
+        /* ── HEADER ── */
+        .dashboard-header {
+            background: var(--ink);
+            padding: 56px 48px 48px;
             position: relative;
             overflow: hidden;
         }
-        
-        .texture-overlay {
+
+        .dashboard-header::after {
+            content: '';
             position: absolute;
             inset: 0;
-            opacity: 0.1;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background: radial-gradient(ellipse 70% 80% at 100% 50%, rgba(46,107,66,0.25) 0%, transparent 70%);
+            pointer-events: none;
         }
-        
-        .header-content {
+
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
             position: relative;
+            z-index: 1;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
+            align-items: flex-end;
             flex-wrap: wrap;
+            gap: 24px;
         }
-        
-        .header-left {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .header-title {
-            font-size: 1.875rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-        
-        .header-subtitle {
-            font-size: 1.125rem;
-            color: white;
-        }
-        
-        .header-right {
-            text-align: center;
-        }
-        
-        .brand-name {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .brand-tagline {
-            font-size: 0.9375rem;
-            margin-top: 0.25rem;
-            color: white;
-        }
-        
-        /* Filter */
-        .filter-bar {
-            margin-bottom: 1.5rem;
+
+        .header-eyebrow {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #8aab93;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 10px;
+        }
+
+        .header-eyebrow::after {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: #8aab93;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(26px, 4vw, 44px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.05;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header h1 em {
+            font-style: italic;
+            color: #a8c9b0;
+        }
+
+        .dashboard-header p {
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            max-width: 480px;
+        }
+
+        .header-badge {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .header-badge-name {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header-badge-tag {
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 48px 80px;
+        }
+
+        /* ── FILTER BAR ── */
+        .filter-bar {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 20px 28px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
             flex-wrap: wrap;
         }
-        
+
         .filter-label {
-            font-size: 0.875rem;
+            font-size: 11px;
             font-weight: 600;
-            color: #374151;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            white-space: nowrap;
         }
-        
+
         .filter-select {
-            padding: 0.5rem 1rem;
-            border: 2px solid #d1d5db;
-            border-radius: 0.5rem;
-            background: white;
-            color: #111827;
-            font-size: 1rem;
+            padding: 10px 36px 10px 14px;
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            background: var(--off-white);
+            color: var(--ink);
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpolyline points='2,4 6,8 10,4' fill='none' stroke='%23777' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 240px;
+            transition: border-color 0.15s;
         }
-        
+
         .filter-select:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--accent-mid);
+            background-color: var(--white);
         }
-        
-        /* Metric Cards */
+
+        /* ── METRIC CARDS ── */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1px;
+            background: var(--rule);
+            margin-bottom: 28px;
+            border: 1px solid var(--rule);
         }
-        
+
         .metric-card {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid;
+            background: var(--white);
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.15s;
         }
-        
-        .card-green { border-left-color: #10b981; }
-        .card-blue { border-left-color: #3b82f6; }
-        .card-purple { border-left-color: #a855f7; }
-        .card-orange { border-left-color: #f97316; }
-        
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            transition: opacity 0.15s;
+        }
+
+        .metric-card:hover { background: var(--accent-light); }
+        .metric-card:hover::before { opacity: 1; }
+
+        .card-green::before { background: var(--accent-mid); opacity: 0; }
+        .card-blue::before { background: var(--info); opacity: 0; }
+        .card-purple::before { background: #7c3aed; opacity: 0; }
+        .card-orange::before { background: var(--warn); opacity: 0; }
+
         .card-content {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 12px;
         }
-        
-        .card-left {
-            flex: 1;
-        }
-        
+
+        .card-left { flex: 1; }
+
         .card-label {
-            font-size: 0.875rem;
-            color: #4b5563;
-            margin-bottom: 0.25rem;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 10px;
         }
-        
+
         .card-value {
-            font-size: 1.875rem;
-            font-weight: bold;
-            color: #111827;
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+            margin-bottom: 6px;
         }
-        
+
         .card-subtext {
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
+            font-size: 12px;
+            font-weight: 300;
         }
-        
-        .subtext-green { color: #10b981; }
-        .subtext-blue { color: #3b82f6; }
-        .subtext-purple { color: #a855f7; }
-        .subtext-orange { color: #f97316; }
-        
+
+        .subtext-green { color: var(--accent-mid); }
+        .subtext-blue { color: var(--info); }
+        .subtext-purple { color: #7c3aed; }
+        .subtext-orange { color: var(--warn); }
+
         .card-right {
             text-align: right;
-            margin-left: 1rem;
+            flex-shrink: 0;
         }
-        
+
         .benchmark-label {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
-        }
-        
-        .benchmark-value {
-            font-size: 1.125rem;
+            font-size: 9px;
             font-weight: 600;
-            color: #374151;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 4px;
         }
-        
+
+        .benchmark-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink-soft);
+        }
+
         .benchmark-unit {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
+            font-size: 10px;
+            font-weight: 300;
+            color: var(--ink-muted);
+            margin-top: 2px;
         }
-        
-        /* Explanation Box */
+
+        /* ── EXPLANATION BOX ── */
         .explanation-box {
-            background: #eff6ff;
-            border-left: 4px solid #3b82f6;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 2rem;
+            background: var(--info-bg);
+            border-left: 3px solid var(--info);
+            padding: 20px 24px;
+            border-radius: 0 2px 2px 0;
+            margin-bottom: 28px;
         }
-        
+
         .explanation-text {
-            font-size: 0.875rem;
-            color: #374151;
-            line-height: 1.5;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-soft);
+            line-height: 1.7;
         }
-        
-        /* Section Cards */
+
+        .explanation-text strong {
+            font-weight: 600;
+            color: var(--info);
+        }
+
+        /* ── SECTION CARDS ── */
         .section-card {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 36px 32px;
+            margin-bottom: 28px;
         }
-        
+
+        .section-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 6px;
+        }
+
         .section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #111827;
-            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+            line-height: 1.15;
         }
-        
+
         .section-description {
-            font-size: 0.875rem;
-            color: #4b5563;
-            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-muted);
+            margin-bottom: 28px;
+            line-height: 1.65;
         }
-        
-        /* Chart Container */
+
+        /* ── CHART ── */
         .chart-container {
             position: relative;
             height: 350px;
             width: 100%;
-            margin-bottom: 1.5rem;
+            margin-bottom: 32px;
         }
-        
-        /* Product Cards Grid */
-        .product-cards {
-            margin-top: 1.5rem;
-        }
-        
+
+        /* ── PRODUCT CARDS ── */
+        .product-cards { margin-top: 8px; }
+
         .product-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        
+
         .product-card {
-            padding: 1rem;
-            border-radius: 0.75rem;
-            background: white;
-            border-left: 4px solid;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 16px 18px;
+            border-radius: 2px;
+            border-left: 3px solid;
+            background: var(--off-white);
+            transition: background 0.15s;
         }
-        
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .border-green { border-left-color: #10b981; }
-        .border-orange { border-left-color: #f97316; }
-        .border-red { border-left-color: #ef4444; }
-        
+
+        .product-card:hover { background: var(--white); }
+
+        .border-green { border-left-color: var(--excellent); }
+        .border-orange { border-left-color: var(--warn); }
+        .border-red { border-left-color: var(--danger); }
+
         .product-name {
-            font-size: 0.875rem;
+            font-size: 11px;
             font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
         }
-        
-        .text-green { color: #10b981; }
-        .text-orange { color: #f97316; }
-        .text-red { color: #ef4444; }
-        
+
+        .text-green { color: var(--excellent); }
+        .text-orange { color: var(--warn); }
+        .text-red { color: var(--danger); }
+
         .product-value {
-            font-size: 1.125rem;
-            font-weight: bold;
-            margin-top: 0.25rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
-        
+
         .product-status {
-            font-size: 0.75rem;
-            color: #4b5563;
-            margin-top: 0.25rem;
+            font-size: 11px;
+            font-weight: 300;
+            color: var(--ink-muted);
         }
-        
-        /* Legend */
+
+        /* ── LEGEND TEXT ── */
         .legend-text {
-            font-size: 0.875rem;
-            color: #4b5563;
-            margin-top: 1rem;
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--ink-muted);
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--rule);
+            line-height: 1.65;
         }
-        
-        /* Performance Cards */
+
+        .legend-text strong {
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        /* ── PERFORMANCE CARDS ── */
         .performance-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1px;
+            background: var(--rule);
+            margin-top: 28px;
+            border: 1px solid var(--rule);
         }
-        
+
         .performance-card {
-            padding: 1rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 24px 20px;
         }
-        
-        .performance-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .bg-green { background: #f0fdf4; border: 1px solid #dcfce7; }
-        .bg-yellow { background: #fefce8; border: 1px solid #fef9c3; }
-        .bg-red { background: #fef2f2; border: 1px solid #fee2e2; }
-        
+
+        .bg-green { background: var(--excellent-bg); }
+        .bg-yellow { background: var(--warn-bg); }
+        .bg-red { background: var(--danger-bg); }
+
         .perf-label {
-            font-size: 0.875rem;
-            color: #4b5563;
-            margin-bottom: 0.25rem;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 8px;
         }
-        
+
         .perf-title {
-            font-size: 1.125rem;
-            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
-        
-        .title-green { color: #15803d; }
-        .title-yellow { color: #a16207; }
-        .title-red { color: #b91c1c; }
-        
+
+        .title-green { color: var(--excellent); }
+        .title-yellow { color: var(--warn); }
+        .title-red { color: var(--danger); }
+
         .perf-desc {
-            font-size: 0.75rem;
-            color: #4b5563;
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--ink-muted);
+            line-height: 1.5;
         }
-        
-        /* Alert Box */
+
+        /* ── ALERT BOX ── */
         .alert-box {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            margin-top: 2rem;
-            border-left: 4px solid #f97316;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-left: 3px solid var(--warn);
+            border-radius: 0 2px 2px 0;
+            padding: 28px 32px;
+            margin-top: 0;
         }
-        
-        .alert-box:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.15), 0 10px 15px -6px rgba(0, 0, 0, 0.1);
+
+        .alert-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--warn);
+            margin-bottom: 6px;
         }
-        
+
         .alert-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.75rem;
-            color: #f97316;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 20px;
         }
-        
+
         .alert-items {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 12px;
         }
-        
+
         .alert-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            gap: 12px;
         }
-        
+
         .alert-bullet {
-            width: 0.5rem;
-            height: 0.5rem;
-            background: #f97316;
+            width: 6px;
+            height: 6px;
+            background: var(--warn);
             border-radius: 50%;
-            margin-right: 0.75rem;
             flex-shrink: 0;
+            margin-top: 6px;
         }
-        
+
         .alert-text {
-            font-size: 0.875rem;
-            color: #374151;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-soft);
+            line-height: 1.6;
         }
-        
+
+        /* ── FOOTER ── */
+        .dashboard-footer {
+            border-top: 1px solid var(--rule);
+            padding: 24px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--white);
+            margin-top: 40px;
+        }
+
+        .footer-brand {
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .footer-link {
+            font-size: 11px;
+            color: var(--accent-mid);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+        }
+
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            
-            .header-title {
-                font-size: 1.5rem;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .product-row {
-                grid-template-columns: 1fr;
-            }
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
+            .dashboard-header { padding: 40px 24px 36px; }
+            .container { padding: 24px 20px 60px; }
+            .cards-grid { grid-template-columns: 1fr 1fr; }
+            .product-row { grid-template-columns: 1fr; }
+            .section-card { padding: 24px 20px; }
+            .dashboard-footer { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="texture-overlay"></div>
-            <div class="header-content">
-                <div class="header-left">
-                    <h1 class="header-title">Inventory Turn & Cash Flow Metrics Dashboard</h1>
-                    <p class="header-subtitle">Real-time visibility into working capital optimization</p>
+
+<!-- NAV -->
+<nav>
+    <a class="nav-brand" href="https://www.brandshareit.com">Brand Share It</a>
+    <div class="nav-links">
+        <a href="/kpi-dashboards">← KPI Dashboards</a>
+        <a href="/kpi-spotlight">KPI Spotlight</a>
+        <a href="/services">Services</a>
+        <a href="mailto:stephen@brandshareit.com">Contact</a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="dashboard-header">
+    <div class="header-inner">
+        <div>
+            <p class="header-eyebrow">Dashboard Example · Module 05</p>
+            <h1>Inventory Turn &<br><em>Cash Flow Metrics.</em></h1>
+            <p>Real-time visibility into working capital optimization — track turnover, days inventory outstanding, and cash conversion cycle across every SKU.</p>
+        </div>
+        <div class="header-badge">
+            <div class="header-badge-name">Brand Share It Sales Partners</div>
+            <div class="header-badge-tag">One Step Ahead · Reaching for Tomorrow</div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <span class="filter-label">Filter by Product</span>
+        <select id="productFilter" class="filter-select">
+            <option value="all">All Products Combined</option>
+            <option value="Protein Bar Peanut Butter">Protein Bar Peanut Butter</option>
+            <option value="Organic Granola Bar Chocolate">Organic Granola Bar Chocolate</option>
+            <option value="Energy Bites Mixed Berry">Energy Bites Mixed Berry</option>
+            <option value="Trail Mix Bar Classic">Trail Mix Bar Classic</option>
+            <option value="Organic Granola Bar Almond">Organic Granola Bar Almond</option>
+            <option value="Protein Bar Chocolate Chip">Protein Bar Chocolate Chip</option>
+            <option value="Energy Bites Peanut Butter">Energy Bites Peanut Butter</option>
+            <option value="Trail Mix Bar Cranberry">Trail Mix Bar Cranberry</option>
+            <option value="Organic Granola Bar Coconut">Organic Granola Bar Coconut</option>
+            <option value="Protein Bar Vanilla Almond">Protein Bar Vanilla Almond</option>
+        </select>
+    </div>
+
+    <!-- METRIC CARDS -->
+    <div class="cards-grid">
+        <div class="metric-card card-green">
+            <div class="card-content">
+                <div class="card-left">
+                    <div class="card-label" id="turnoverLabel">Average Turnover</div>
+                    <div class="card-value" id="turnoverValue">9.9x</div>
+                    <div class="card-subtext subtext-green" id="turnoverSubtext">Across all products</div>
                 </div>
-                <div class="header-right">
-                    <div class="brand-name">Brand Share It Sales Partners</div>
-                    <div class="brand-tagline">One Step Ahead, Reaching For Tomorrow</div>
+                <div class="card-right">
+                    <div class="benchmark-label">Benchmark</div>
+                    <div class="benchmark-value">10.0x</div>
+                    <div class="benchmark-unit">Shelf-stable</div>
                 </div>
             </div>
         </div>
-
-        <!-- Product Filter Bar -->
-        <div class="filter-bar">
-            <label class="filter-label">Filter Dashboard by Product:</label>
-            <select id="productFilter" class="filter-select">
-                <option value="all">All Products Combined</option>
-                <option value="Protein Bar Peanut Butter">Protein Bar Peanut Butter</option>
-                <option value="Organic Granola Bar Chocolate">Organic Granola Bar Chocolate</option>
-                <option value="Energy Bites Mixed Berry">Energy Bites Mixed Berry</option>
-                <option value="Trail Mix Bar Classic">Trail Mix Bar Classic</option>
-                <option value="Organic Granola Bar Almond">Organic Granola Bar Almond</option>
-                <option value="Protein Bar Chocolate Chip">Protein Bar Chocolate Chip</option>
-                <option value="Energy Bites Peanut Butter">Energy Bites Peanut Butter</option>
-                <option value="Trail Mix Bar Cranberry">Trail Mix Bar Cranberry</option>
-                <option value="Organic Granola Bar Coconut">Organic Granola Bar Coconut</option>
-                <option value="Protein Bar Vanilla Almond">Protein Bar Vanilla Almond</option>
-            </select>
-        </div>
-
-        <!-- Key Metrics Cards -->
-        <div class="cards-grid">
-            <!-- Card 1: Average Turnover -->
-            <div class="metric-card card-green">
-                <div class="card-content">
-                    <div class="card-left">
-                        <div class="card-label" id="turnoverLabel">Average Turnover</div>
-                        <div class="card-value" id="turnoverValue">9.9x</div>
-                        <div class="card-subtext subtext-green" id="turnoverSubtext">Across all products</div>
-                    </div>
-                    <div class="card-right">
-                        <div class="benchmark-label">Benchmark</div>
-                        <div class="benchmark-value">10.0x</div>
-                        <div class="benchmark-unit">Shelf-stable</div>
-                    </div>
+        <div class="metric-card card-blue">
+            <div class="card-content">
+                <div class="card-left">
+                    <div class="card-label">Days Inventory Outstanding</div>
+                    <div class="card-value" id="dioValue">42</div>
+                    <div class="card-subtext subtext-blue">days</div>
                 </div>
-            </div>
-
-            <!-- Card 2: DIO -->
-            <div class="metric-card card-blue">
-                <div class="card-content">
-                    <div class="card-left">
-                        <div class="card-label">Days Inventory Outstanding</div>
-                        <div class="card-value" id="dioValue">42</div>
-                        <div class="card-subtext subtext-blue">days</div>
-                    </div>
-                    <div class="card-right">
-                        <div class="benchmark-label">Target</div>
-                        <div class="benchmark-value">≤36</div>
-                        <div class="benchmark-unit">days</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: CCC -->
-            <div class="metric-card card-purple">
-                <div class="card-content">
-                    <div class="card-left">
-                        <div class="card-label">Cash Conversion Cycle</div>
-                        <div class="card-value" id="cccValue">72</div>
-                        <div class="card-subtext subtext-purple">days</div>
-                    </div>
-                    <div class="card-right">
-                        <div class="benchmark-label">Target</div>
-                        <div class="benchmark-value">≤45</div>
-                        <div class="benchmark-unit">days</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Working Capital -->
-            <div class="metric-card card-orange">
-                <div class="card-content">
-                    <div class="card-left">
-                        <div class="card-label">Working Capital Tied Up</div>
-                        <div class="card-value" id="wcValue">$368K</div>
-                        <div class="card-subtext subtext-orange" id="wcSubtext">Total inventory value</div>
-                    </div>
-                    <div class="card-right">
-                        <div class="benchmark-label">Goal</div>
-                        <div class="benchmark-value">↓30%</div>
-                        <div class="benchmark-unit">reduction</div>
-                    </div>
+                <div class="card-right">
+                    <div class="benchmark-label">Target</div>
+                    <div class="benchmark-value">≤36</div>
+                    <div class="benchmark-unit">days</div>
                 </div>
             </div>
         </div>
-
-        <!-- Explanation Box -->
-        <div class="explanation-box">
-            <p class="explanation-text">
-                <strong>Understanding Cash Conversion Cycle:</strong> This measures how long your cash is tied up in operations. It starts when you buy inventory and ends when customers pay you. Example: If CCC is 72 days, you spend $100K today and won't see that money back for 72 days. Lower is better—faster cash return means more money available for growth.
-            </p>
-        </div>
-
-        <!-- Turnover by Product -->
-        <div class="section-card">
-            <h2 class="section-title">Inventory Turnover by Product</h2>
-            <div class="section-description">
-                Compare actual turnover vs. 10x benchmark (shelf-stable category standard). Color-coded alerts show products needing attention.
-            </div>
-            <div class="chart-container">
-                <canvas id="turnoverChart"></canvas>
-            </div>
-            
-            <!-- Product Cards -->
-            <div class="product-cards">
-                <!-- Row 1 -->
-                <div class="product-row">
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Granola Bar Chocolate</div>
-                        <div class="product-value text-green">14.2x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Granola Bar Almond</div>
-                        <div class="product-value text-green">13.8x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
+        <div class="metric-card card-purple">
+            <div class="card-content">
+                <div class="card-left">
+                    <div class="card-label">Cash Conversion Cycle</div>
+                    <div class="card-value" id="cccValue">72</div>
+                    <div class="card-subtext subtext-purple">days</div>
                 </div>
-                <!-- Row 2 -->
-                <div class="product-row">
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Protein Bar Peanut Butter</div>
-                        <div class="product-value text-green">12.5x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Trail Mix Bar Classic</div>
-                        <div class="product-value text-green">11.5x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
-                </div>
-                <!-- Row 3 -->
-                <div class="product-row">
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Energy Bites Mixed Berry</div>
-                        <div class="product-value text-green">10.8x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
-                    <div class="product-card border-green">
-                        <div class="product-name text-green">Protein Bar Chocolate Chip</div>
-                        <div class="product-value text-green">9.2x turns</div>
-                        <div class="product-status">✓ Above Benchmark</div>
-                    </div>
-                </div>
-                <!-- Row 4 -->
-                <div class="product-row">
-                    <div class="product-card border-orange">
-                        <div class="product-name text-orange">Energy Bites Peanut Butter</div>
-                        <div class="product-value text-orange">8.5x turns</div>
-                        <div class="product-status">⚠ Below Target</div>
-                    </div>
-                    <div class="product-card border-orange">
-                        <div class="product-name text-orange">Trail Mix Bar Cranberry</div>
-                        <div class="product-value text-orange">7.2x turns</div>
-                        <div class="product-status">⚠ Below Target</div>
-                    </div>
-                </div>
-                <!-- Row 5 -->
-                <div class="product-row">
-                    <div class="product-card border-red">
-                        <div class="product-name text-red">Granola Bar Coconut</div>
-                        <div class="product-value text-red">6.8x turns</div>
-                        <div class="product-status">🔴 Action Needed</div>
-                    </div>
-                    <div class="product-card border-red">
-                        <div class="product-name text-red">Protein Bar Vanilla Almond</div>
-                        <div class="product-value text-red">4.5x turns</div>
-                        <div class="product-status">🔴 Action Needed</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="legend-text">
-                <strong>Category Benchmarks Legend:</strong> Use these industry standards to evaluate performance across different product types you work with. Perishables (15-20 turns), Refrigerated (12-18 turns), Shelf-Stable (8-12 turns), Specialty (4-8 turns).
-            </div>
-        </div>
-
-        <!-- Cash Conversion Cycle by Product -->
-        <div class="section-card">
-            <h2 class="section-title">Cash Conversion Cycle by Product</h2>
-            <div class="section-description">
-                Track DIO (Days Inventory Outstanding) and CCC (Cash Conversion Cycle) for each product. Lower is better—cash flows faster. DSO held constant at 30 days across all products.
-            </div>
-            <div class="chart-container">
-                <canvas id="cccChart"></canvas>
-            </div>
-            
-            <div class="performance-grid">
-                <div class="performance-card bg-green">
-                    <div class="perf-label">Best Performers</div>
-                    <div class="perf-title title-green">Granola Bars</div>
-                    <div class="perf-desc">26 day CCC - fastest cash conversion</div>
-                </div>
-                <div class="performance-card bg-yellow">
-                    <div class="perf-label">Average Performers</div>
-                    <div class="perf-title title-yellow">Energy & Trail Mix</div>
-                    <div class="perf-desc">32-43 day CCC - moderate cash flow</div>
-                </div>
-                <div class="performance-card bg-red">
-                    <div class="perf-label">Action Required</div>
-                    <div class="perf-title title-red">Slow Movers</div>
-                    <div class="perf-desc">50+ day CCC - cash tied up too long</div>
+                <div class="card-right">
+                    <div class="benchmark-label">Target</div>
+                    <div class="benchmark-value">≤45</div>
+                    <div class="benchmark-unit">days</div>
                 </div>
             </div>
         </div>
-
-        <!-- Alert Summary -->
-        <div class="alert-box">
-            <h3 class="alert-title">⚠️ Action Required</h3>
-            <div class="alert-items">
-                <div class="alert-item">
-                    <div class="alert-bullet"></div>
-                    <span class="alert-text">1 SKU in 90+ day aging bucket (PB-010 Protein Bar Vanilla Almond) - Consider markdown or liquidation</span>
+        <div class="metric-card card-orange">
+            <div class="card-content">
+                <div class="card-left">
+                    <div class="card-label">Working Capital Tied Up</div>
+                    <div class="card-value" id="wcValue">$368K</div>
+                    <div class="card-subtext subtext-orange" id="wcSubtext">Total inventory value</div>
                 </div>
-                <div class="alert-item">
-                    <div class="alert-bullet"></div>
-                    <span class="alert-text">2 SKUs in 61-90 day range - Review pricing and promotional strategy</span>
-                </div>
-                <div class="alert-item">
-                    <div class="alert-bullet"></div>
-                    <span class="alert-text">Potential to free up $200K in working capital by improving turnover to 10x</span>
+                <div class="card-right">
+                    <div class="benchmark-label">Goal</div>
+                    <div class="benchmark-value">↓30%</div>
+                    <div class="benchmark-unit">reduction</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Data
-        const skuData = [
-            { sku: 'PB-001', name: 'Protein Bar Peanut Butter', turnover: 12.5, dio: 29, value: 45000 },
-            { sku: 'GB-002', name: 'Organic Granola Bar Chocolate', turnover: 14.2, dio: 26, value: 52000 },
-            { sku: 'EB-003', name: 'Energy Bites Mixed Berry', turnover: 10.8, dio: 34, value: 38000 },
-            { sku: 'TM-004', name: 'Trail Mix Bar Classic', turnover: 11.5, dio: 32, value: 42000 },
-            { sku: 'GB-005', name: 'Organic Granola Bar Almond', turnover: 13.8, dio: 26, value: 48000 },
-            { sku: 'PB-006', name: 'Protein Bar Chocolate Chip', turnover: 9.2, dio: 40, value: 35000 },
-            { sku: 'EB-007', name: 'Energy Bites Peanut Butter', turnover: 8.5, dio: 43, value: 32000 },
-            { sku: 'TM-008', name: 'Trail Mix Bar Cranberry', turnover: 7.2, dio: 51, value: 28000 },
-            { sku: 'GB-009', name: 'Organic Granola Bar Coconut', turnover: 6.8, dio: 54, value: 26000 },
-            { sku: 'PB-010', name: 'Protein Bar Vanilla Almond', turnover: 4.5, dio: 81, value: 22000 }
-        ];
+    <!-- EXPLANATION BOX -->
+    <div class="explanation-box">
+        <p class="explanation-text">
+            <strong>Understanding Cash Conversion Cycle:</strong> This measures how long your cash is tied up in operations. It starts when you buy inventory and ends when customers pay you. If your CCC is 72 days, you spend $100K today and will not see that money back for 72 days. Lower is better — faster cash return means more capital available for growth.
+        </p>
+    </div>
 
-        // Calculate metrics
-        function calculateMetrics(productName) {
-            const data = productName === 'all' ? skuData : skuData.filter(item => item.name === productName);
-            const avgTurnover = data.reduce((sum, item) => sum + item.turnover, 0) / data.length;
-            const avgDio = data.reduce((sum, item) => sum + item.dio, 0) / data.length;
-            const totalValue = data.reduce((sum, item) => sum + item.value, 0);
-            const avgCcc = avgDio + 30;
-            
-            return {
-                avgTurnover: avgTurnover.toFixed(1),
-                avgDio: Math.round(avgDio),
-                avgCcc: Math.round(avgCcc),
-                totalValue: totalValue
-            };
-        }
+    <!-- TURNOVER BY PRODUCT -->
+    <div class="section-card">
+        <p class="section-eyebrow">Product Intelligence</p>
+        <h2 class="section-title">Inventory Turnover by Product</h2>
+        <p class="section-description">Compare actual turnover against the 10x benchmark standard for shelf-stable categories. Color-coded performance cards surface the products that need immediate attention.</p>
+        <div class="chart-container">
+            <canvas id="turnoverChart"></canvas>
+        </div>
 
-        // Update metrics cards
-        function updateMetrics(productName) {
-            const metrics = calculateMetrics(productName);
-            document.getElementById('turnoverValue').textContent = metrics.avgTurnover + 'x';
-            document.getElementById('dioValue').textContent = metrics.avgDio;
-            document.getElementById('cccValue').textContent = metrics.avgCcc;
-            document.getElementById('wcValue').textContent = '$' + (metrics.totalValue / 1000).toFixed(0) + 'K';
-            
-            if (productName === 'all') {
-                document.getElementById('turnoverLabel').textContent = 'Average Turnover';
-                document.getElementById('turnoverSubtext').textContent = 'Across all products';
-                document.getElementById('wcSubtext').textContent = 'Total inventory value';
-            } else {
-                document.getElementById('turnoverLabel').textContent = 'Product Turnover';
-                document.getElementById('turnoverSubtext').textContent = 'Individual product metric';
-                document.getElementById('wcSubtext').textContent = 'Product inventory value';
-            }
-        }
+        <div class="product-cards">
+            <div class="product-row">
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Granola Bar Chocolate</div>
+                    <div class="product-value text-green">14.2x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Granola Bar Almond</div>
+                    <div class="product-value text-green">13.8x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+            </div>
+            <div class="product-row">
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Protein Bar Peanut Butter</div>
+                    <div class="product-value text-green">12.5x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Trail Mix Bar Classic</div>
+                    <div class="product-value text-green">11.5x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+            </div>
+            <div class="product-row">
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Energy Bites Mixed Berry</div>
+                    <div class="product-value text-green">10.8x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+                <div class="product-card border-green">
+                    <div class="product-name text-green">Protein Bar Chocolate Chip</div>
+                    <div class="product-value text-green">9.2x turns</div>
+                    <div class="product-status">Above Benchmark</div>
+                </div>
+            </div>
+            <div class="product-row">
+                <div class="product-card border-orange">
+                    <div class="product-name text-orange">Energy Bites Peanut Butter</div>
+                    <div class="product-value text-orange">8.5x turns</div>
+                    <div class="product-status">Below Target — Review Needed</div>
+                </div>
+                <div class="product-card border-orange">
+                    <div class="product-name text-orange">Trail Mix Bar Cranberry</div>
+                    <div class="product-value text-orange">7.2x turns</div>
+                    <div class="product-status">Below Target — Review Needed</div>
+                </div>
+            </div>
+            <div class="product-row">
+                <div class="product-card border-red">
+                    <div class="product-name text-red">Granola Bar Coconut</div>
+                    <div class="product-value text-red">6.8x turns</div>
+                    <div class="product-status">Action Required</div>
+                </div>
+                <div class="product-card border-red">
+                    <div class="product-name text-red">Protein Bar Vanilla Almond</div>
+                    <div class="product-value text-red">4.5x turns</div>
+                    <div class="product-status">Action Required</div>
+                </div>
+            </div>
+        </div>
 
-        // Filter event
-        document.getElementById('productFilter').addEventListener('change', function(e) {
-            updateMetrics(e.target.value);
-        });
+        <p class="legend-text">
+            <strong>Category Benchmarks:</strong> Perishables (15-20 turns) · Refrigerated (12-18 turns) · Shelf-Stable (8-12 turns) · Specialty (4-8 turns)
+        </p>
+    </div>
 
-        // Initialize charts
-        const chartConfig = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
-                },
-                x: {
-                    ticks: {
-                        font: {
-                            size: 11
-                        },
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
-            }
+    <!-- CASH CONVERSION CYCLE -->
+    <div class="section-card">
+        <p class="section-eyebrow">Cash Flow Intelligence</p>
+        <h2 class="section-title">Cash Conversion Cycle by Product</h2>
+        <p class="section-description">Track DIO and CCC for each product. Lower is better — cash flows faster. DSO held constant at 30 days across all products.</p>
+        <div class="chart-container">
+            <canvas id="cccChart"></canvas>
+        </div>
+
+        <div class="performance-grid">
+            <div class="performance-card bg-green">
+                <div class="perf-label">Best Performers</div>
+                <div class="perf-title title-green">Granola Bars</div>
+                <div class="perf-desc">26 day CCC — fastest cash conversion in the portfolio</div>
+            </div>
+            <div class="performance-card bg-yellow">
+                <div class="perf-label">Average Performers</div>
+                <div class="perf-title title-yellow">Energy & Trail Mix</div>
+                <div class="perf-desc">32-43 day CCC — moderate cash flow, monitor closely</div>
+            </div>
+            <div class="performance-card bg-red">
+                <div class="perf-label">Action Required</div>
+                <div class="perf-title title-red">Slow Movers</div>
+                <div class="perf-desc">50+ day CCC — cash tied up too long, requires intervention</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALERT BOX -->
+    <div class="alert-box">
+        <p class="alert-eyebrow">Action Required</p>
+        <h3 class="alert-title">Inventory Alerts</h3>
+        <div class="alert-items">
+            <div class="alert-item">
+                <div class="alert-bullet"></div>
+                <span class="alert-text">1 SKU in 90+ day aging bucket (PB-010 Protein Bar Vanilla Almond) — Consider markdown or liquidation strategy immediately</span>
+            </div>
+            <div class="alert-item">
+                <div class="alert-bullet"></div>
+                <span class="alert-text">2 SKUs in 61-90 day range — Review pricing and promotional strategy before they enter critical aging territory</span>
+            </div>
+            <div class="alert-item">
+                <div class="alert-bullet"></div>
+                <span class="alert-text">Potential to free up $200K in working capital by improving overall portfolio turnover to the 10x benchmark</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="dashboard-footer">
+    <span class="footer-brand">© 2026 Brand Share It Sales Partners · Inventory Turn & Cash Flow Metrics Dashboard</span>
+    <a class="footer-link" href="https://www.brandshareit.com">brandshareit.com</a>
+</div>
+
+<script>
+    const skuData = [
+        { sku: 'PB-001', name: 'Protein Bar Peanut Butter', turnover: 12.5, dio: 29, value: 45000 },
+        { sku: 'GB-002', name: 'Organic Granola Bar Chocolate', turnover: 14.2, dio: 26, value: 52000 },
+        { sku: 'EB-003', name: 'Energy Bites Mixed Berry', turnover: 10.8, dio: 34, value: 38000 },
+        { sku: 'TM-004', name: 'Trail Mix Bar Classic', turnover: 11.5, dio: 32, value: 42000 },
+        { sku: 'GB-005', name: 'Organic Granola Bar Almond', turnover: 13.8, dio: 26, value: 48000 },
+        { sku: 'PB-006', name: 'Protein Bar Chocolate Chip', turnover: 9.2, dio: 40, value: 35000 },
+        { sku: 'EB-007', name: 'Energy Bites Peanut Butter', turnover: 8.5, dio: 43, value: 32000 },
+        { sku: 'TM-008', name: 'Trail Mix Bar Cranberry', turnover: 7.2, dio: 51, value: 28000 },
+        { sku: 'GB-009', name: 'Organic Granola Bar Coconut', turnover: 6.8, dio: 54, value: 26000 },
+        { sku: 'PB-010', name: 'Protein Bar Vanilla Almond', turnover: 4.5, dio: 81, value: 22000 }
+    ];
+
+    function calculateMetrics(productName) {
+        const data = productName === 'all' ? skuData : skuData.filter(item => item.name === productName);
+        const avgTurnover = data.reduce((sum, item) => sum + item.turnover, 0) / data.length;
+        const avgDio = data.reduce((sum, item) => sum + item.dio, 0) / data.length;
+        const totalValue = data.reduce((sum, item) => sum + item.value, 0);
+        const avgCcc = avgDio + 30;
+        return {
+            avgTurnover: avgTurnover.toFixed(1),
+            avgDio: Math.round(avgDio),
+            avgCcc: Math.round(avgCcc),
+            totalValue
         };
+    }
 
-        // Turnover Chart
-        const turnoverCtx = document.getElementById('turnoverChart').getContext('2d');
-        new Chart(turnoverCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Granola Choc', 'Granola Almond', 'Protein PB', 'Trail Classic', 'Energy Berry', 
-                         'Protein Choc', 'Energy PB', 'Trail Cran', 'Granola Coco', 'Protein Vanilla'],
-                datasets: [{
-                    label: 'Actual Turnover',
-                    data: [14.2, 13.8, 12.5, 11.5, 10.8, 9.2, 8.5, 7.2, 6.8, 4.5],
-                    backgroundColor: '#3b82f6'
-                }, {
-                    label: 'Benchmark (10x)',
-                    data: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-                    backgroundColor: '#10b981'
-                }]
-            },
-            options: {
-                ...chartConfig,
-                scales: {
-                    ...chartConfig.scales,
-                    y: {
-                        ...chartConfig.scales.y,
-                        title: {
-                            display: true,
-                            text: 'Annual Turns'
-                        }
-                    }
-                }
-            }
-        });
+    function updateMetrics(productName) {
+        const metrics = calculateMetrics(productName);
+        document.getElementById('turnoverValue').textContent = metrics.avgTurnover + 'x';
+        document.getElementById('dioValue').textContent = metrics.avgDio;
+        document.getElementById('cccValue').textContent = metrics.avgCcc;
+        document.getElementById('wcValue').textContent = '$' + (metrics.totalValue / 1000).toFixed(0) + 'K';
+        if (productName === 'all') {
+            document.getElementById('turnoverLabel').textContent = 'Average Turnover';
+            document.getElementById('turnoverSubtext').textContent = 'Across all products';
+            document.getElementById('wcSubtext').textContent = 'Total inventory value';
+        } else {
+            document.getElementById('turnoverLabel').textContent = 'Product Turnover';
+            document.getElementById('turnoverSubtext').textContent = 'Individual product metric';
+            document.getElementById('wcSubtext').textContent = 'Product inventory value';
+        }
+    }
 
-        // CCC Chart
-        const cccCtx = document.getElementById('cccChart').getContext('2d');
-        new Chart(cccCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Granola Choc', 'Granola Almond', 'Protein PB', 'Trail Classic', 'Energy Berry', 
-                         'Protein Choc', 'Energy PB', 'Trail Cran', 'Granola Coco', 'Protein Vanilla'],
-                datasets: [{
-                    label: 'DIO (Days Inventory)',
-                    data: [26, 26, 29, 32, 34, 40, 43, 51, 54, 81],
-                    backgroundColor: '#3b82f6'
-                }, {
-                    label: 'Cash Conversion Cycle',
-                    data: [56, 56, 59, 62, 64, 70, 73, 81, 84, 111],
-                    backgroundColor: '#ef4444'
-                }]
-            },
-            options: {
-                ...chartConfig,
-                scales: {
-                    ...chartConfig.scales,
-                    y: {
-                        ...chartConfig.scales.y,
-                        title: {
-                            display: true,
-                            text: 'Days'
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+    document.getElementById('productFilter').addEventListener('change', function(e) {
+        updateMetrics(e.target.value);
+    });
+
+    const chartDefaults = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true, position: 'top', labels: { font: { family: 'Outfit', size: 12 }, color: '#777777', boxWidth: 12, padding: 16 } }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { font: { family: 'Outfit', size: 11 }, color: '#777777' }, grid: { color: '#e8e8e5' } },
+            x: { ticks: { font: { family: 'Outfit', size: 10 }, color: '#777777', maxRotation: 45, minRotation: 45 }, grid: { display: false } }
+        }
+    };
+
+    const turnoverCtx = document.getElementById('turnoverChart').getContext('2d');
+    new Chart(turnoverCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Granola Choc', 'Granola Almond', 'Protein PB', 'Trail Classic', 'Energy Berry', 'Protein Choc', 'Energy PB', 'Trail Cran', 'Granola Coco', 'Protein Vanilla'],
+            datasets: [
+                { label: 'Actual Turnover', data: [14.2, 13.8, 12.5, 11.5, 10.8, 9.2, 8.5, 7.2, 6.8, 4.5], backgroundColor: '#2e6b42', borderRadius: 2 },
+                { label: 'Benchmark (10x)', data: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10], backgroundColor: '#d97706', borderRadius: 2 }
+            ]
+        },
+        options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, title: { display: true, text: 'Annual Turns', font: { family: 'Outfit', size: 11 }, color: '#777777' } } } }
+    });
+
+    const cccCtx = document.getElementById('cccChart').getContext('2d');
+    new Chart(cccCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Granola Choc', 'Granola Almond', 'Protein PB', 'Trail Classic', 'Energy Berry', 'Protein Choc', 'Energy PB', 'Trail Cran', 'Granola Coco', 'Protein Vanilla'],
+            datasets: [
+                { label: 'DIO (Days Inventory)', data: [26, 26, 29, 32, 34, 40, 43, 51, 54, 81], backgroundColor: '#2e6b42', borderRadius: 2 },
+                { label: 'Cash Conversion Cycle', data: [56, 56, 59, 62, 64, 70, 73, 81, 84, 111], backgroundColor: '#dc2626', borderRadius: 2 }
+            ]
+        },
+        options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, title: { display: true, text: 'Days', font: { family: 'Outfit', size: 11 }, color: '#777777' } } } }
+    });
+</script>
 </body>
 </html>
+
