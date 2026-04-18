@@ -1,556 +1,1099 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNFI Sales & Velocity Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <title>Sales Velocity Analytics — Brand Share It Sales Partners</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f9fafb;
-            padding: 2rem;
-            color: #333;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --white: #ffffff;
+            --off-white: #f8f8f6;
+            --ink: #111111;
+            --ink-soft: #3a3a3a;
+            --ink-muted: #777777;
+            --rule: #e8e8e5;
+            --accent: #1a3d26;
+            --accent-mid: #2e6b42;
+            --accent-light: #f0f5f1;
+            --gold: #9a6f2e;
+            --excellent: #2e6b42;
+            --excellent-bg: #f0f5f1;
+            --good: #1d4ed8;
+            --good-bg: #eff6ff;
+            --fair: #92400e;
+            --fair-bg: #fffbeb;
+            --poor: #991b1b;
+            --poor-bg: #fef2f2;
         }
-        .container { max-width: 1600px; margin: 0 auto; }
-        .header {
-            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--off-white);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule);
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+
+        .nav-brand {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover { color: var(--accent-mid); }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            text-decoration: none;
+        }
+
+        .nav-back svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ── HEADER ── */
+        .dashboard-header {
+            background: var(--ink);
+            padding: 56px 48px 48px;
             position: relative;
             overflow: hidden;
         }
-        .texture-overlay {
+
+        .dashboard-header::after {
+            content: '';
             position: absolute;
             inset: 0;
-            opacity: 0.1;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background: radial-gradient(ellipse 70% 80% at 100% 50%, rgba(46,107,66,0.25) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .header-content { position: relative; z-index: 1; }
-        .header h1 {
-            color: white;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .header p {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 1.1rem;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        
-        .alert-banner {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
-        }
-        .alert-banner h2 {
-            color: #1e40af;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .alert-banner p {
-            color: #1f2937;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .summary-card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-        }
-        .summary-card h3 {
-            color: #6b7280;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-        .summary-card .big-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .summary-card .big-number.positive { color: #16a34a; }
-        .summary-card .big-number.negative { color: #dc2626; }
-        .summary-card .big-number.neutral { color: #1f2937; }
-        .summary-card .subtitle {
-            color: #6b7280;
-            font-size: 0.95rem;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            margin-bottom: 2rem;
-        }
-        .card h2 {
-            color: #1f2937;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-        
-        .chart-container {
+
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
             position: relative;
-            height: 400px;
-            margin-top: 1rem;
-        }
-        
-        .channel-comparison {
-            display: grid;
-            gap: 1rem;
-        }
-        .channel-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 1rem;
-            padding: 1.25rem;
-            background: #f9fafb;
-            border-radius: 0.5rem;
-            align-items: center;
-        }
-        .channel-row.critical { background: #ffffff; }
-        .channel-row.warning { background: #ffffff; }
-        .channel-row.healthy { background: #ffffff; }
-        
-        .channel-name {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 1.05rem;
-        }
-        .channel-metric {
-            text-align: center;
-        }
-        .channel-metric .label {
-            font-size: 0.75rem;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.25rem;
-        }
-        .channel-metric .value {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-        .channel-metric .value.positive { color: #16a34a; }
-        .channel-metric .value.negative { color: #dc2626; }
-        
-        .risk-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            text-align: center;
-        }
-        .risk-badge.critical { background: #dc2626; color: white; }
-        .risk-badge.warning { background: #f59e0b; color: white; }
-        .risk-badge.attention { background: #3b82f6; color: white; }
-        .risk-badge.healthy { background: #16a34a; color: white; }
-        
-        .insight-box {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .insight-box h3 {
-            color: #1e40af;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-        .insight-box p {
-            color: #1f2937;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-        .insight-box ul {
-            margin-left: 1.5rem;
-            color: #1f2937;
-        }
-        .insight-box li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .legend {
+            z-index: 1;
             display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-top: 1rem;
+            justify-content: space-between;
+            align-items: flex-end;
             flex-wrap: wrap;
+            gap: 24px;
         }
+
+        .header-eyebrow {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #8aab93;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-eyebrow::after {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: #8aab93;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.05;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header h1 em {
+            font-style: italic;
+            color: #a8c9b0;
+        }
+
+        .dashboard-header p {
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            max-width: 480px;
+        }
+
+        .header-badge {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .header-badge-name {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header-badge-tag {
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 48px 80px;
+        }
+
+        /* ── FILTERS ── */
+        .filters {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+        }
+
+        .filters-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--rule);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 8px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            background: var(--white);
+            color: var(--ink);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpolyline points='2,4 6,8 10,4' fill='none' stroke='%23777' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+            transition: border-color 0.15s;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent-mid);
+        }
+
+        /* ── METRIC CARDS ── */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1px;
+            background: var(--rule);
+            margin-bottom: 28px;
+            border: 1px solid var(--rule);
+        }
+
+        .metric-card {
+            background: var(--white);
+            padding: 32px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.15s;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-mid);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .metric-card:hover::before { opacity: 1; }
+        .metric-card:hover { background: var(--accent-light); }
+
+        .metric-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .metric-unit {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--ink-muted);
+        }
+
+        /* ── CHART CARDS ── */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 32px;
+        }
+
+        .chart-card-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 6px;
+        }
+
+        .chart-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--ink);
+            margin-bottom: 28px;
+            line-height: 1.2;
+        }
+
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+        .bar-item { display: flex; align-items: center; gap: 14px; }
+
+        .bar-label {
+            min-width: 160px;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--ink-soft);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 22px;
+            background: var(--off-white);
+            border-radius: 1px;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 1px;
+            transition: width 0.4s ease;
+        }
+
+        .bar-value {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* ── LEGEND ── */
+        .legend {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+        }
+
+        .legend-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 6px;
+        }
+
+        .legend h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--ink);
+            margin-bottom: 24px;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--off-white);
+            border-radius: 2px;
         }
+
         .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .legend-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 2px;
+        }
+
+        .legend-range {
+            font-size: 11px;
+            font-weight: 300;
+            color: var(--ink-muted);
+        }
+
+        /* ── TABLE ── */
+        .table-section {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rule);
+            transition: background 0.15s;
+        }
+
+        .table-header:hover { background: var(--off-white); }
+
+        .table-header-left {}
+
+        .table-header-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 4px;
+        }
+
+        .table-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--ink);
+        }
+
+        .chevron {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--rule);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s, background 0.15s;
+            flex-shrink: 0;
+        }
+
+        .chevron svg {
+            width: 12px;
+            height: 12px;
+            stroke: var(--ink-muted);
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.25s;
+        }
+
+        .chevron.expanded svg { transform: rotate(180deg); }
+
+        .table-body-wrap { padding: 24px 32px; }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            color: var(--ink);
+            background: var(--off-white);
+            margin-bottom: 20px;
+            transition: border-color 0.15s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-mid);
+            background: var(--white);
+        }
+
+        .search-box::placeholder { color: var(--ink-muted); }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            background: var(--off-white);
+            border-bottom: 1px solid var(--rule);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+
+        th:hover { color: var(--accent-mid); }
+        th.align-right { text-align: right; }
+
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid var(--rule);
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--ink-soft);
+        }
+
+        td.align-right { text-align: right; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--accent-light); }
+
+        /* ── VELOCITY BADGES ── */
+        .velocity-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .velocity-excellent {
+            background: var(--excellent-bg);
+            color: var(--excellent);
+        }
+
+        .velocity-good {
+            background: var(--good-bg);
+            color: var(--good);
+        }
+
+        .velocity-fair {
+            background: var(--fair-bg);
+            color: var(--fair);
+        }
+
+        .velocity-poor {
+            background: var(--poor-bg);
+            color: var(--poor);
+        }
+
+        /* ── FOOTER ── */
+        .dashboard-footer {
+            border-top: 1px solid var(--rule);
+            padding: 24px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--white);
+            margin-top: 40px;
+        }
+
+        .footer-brand {
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .footer-link {
+            font-size: 11px;
+            color: var(--accent-mid);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+        }
+
+        .hidden { display: none; }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
+            .dashboard-header { padding: 40px 24px 36px; }
+            .container { padding: 24px 20px 60px; }
+            .filters { padding: 20px; }
+            .chart-grid { grid-template-columns: 1fr; }
+            .legend-grid { grid-template-columns: 1fr 1fr; }
+            .table-header { padding: 20px; }
+            .table-body-wrap { padding: 16px 20px; }
+            .dashboard-footer { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="texture-overlay"></div>
-            <div class="header-content">
-                <h1>UNFI Sales and Velocity Findings</h1>
-                <p>Year-to-Date 1/1 to 10/31 2025 versus 2024</p>
+
+<!-- NAV -->
+<nav>
+    <a class="nav-brand" href="https://www.brandshareit.com">Brand Share It</a>
+    <div class="nav-links">
+        <a href="/kpi-dashboards">← KPI Dashboards</a>
+        <a href="/kpi-spotlight">KPI Spotlight</a>
+        <a href="/services">Services</a>
+        <a href="mailto:stephen@brandshareit.com">Contact</a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="dashboard-header">
+    <div class="header-inner">
+        <div>
+            <p class="header-eyebrow">Dashboard Example · Module 01</p>
+            <h1>Sales Velocity<br><em>Analytics.</em></h1>
+            <p>Track units per store per week across your entire retail network — filtered by region, retailer, and SKU in real time.</p>
+        </div>
+        <div class="header-badge">
+            <div class="header-badge-name">Brand Share It Sales Partners</div>
+            <div class="header-badge-tag">One Step Ahead · Reaching for Tomorrow</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+    <!-- FILTERS -->
+    <div class="filters">
+        <p class="filters-label">Filters</p>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label>Region</label>
+                <select id="regionFilter">
+                    <option value="All">All Regions</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Retailer</label>
+                <select id="retailerFilter">
+                    <option value="All">All Retailers</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>SKU</label>
+                <select id="skuFilter">
+                    <option value="All">All SKUs</option>
+                </select>
             </div>
         </div>
-        
-        <div class="alert-banner">
-            <h2>📊 Sales & Velocity Gap Analysis</h2>
-            <p>Sales show strong growth at +43% while velocity data reveals opportunities for optimization at -19% - creating a 62-point variance. This analysis helps us identify where to focus our promotional and merchandising efforts, particularly in the Independents channel.</p>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics">
+        <div class="metric-card">
+            <div class="metric-label">Avg Velocity</div>
+            <div class="metric-value" id="avgVelocity">0.00</div>
+            <div class="metric-unit">units / store / week</div>
         </div>
-        
-        <div class="summary-grid">
-            <div class="summary-card">
-                <h3>Total Sales Growth</h3>
-                <div class="big-number positive">+43%</div>
-                <div class="subtitle">$380.4K → $666.4K</div>
-                <div class="subtitle" style="margin-top: 0.5rem;">What we shipped to UNFI</div>
-            </div>
-            
-            <div class="summary-card">
-                <h3>Total Velocity Growth</h3>
-                <div class="big-number negative">-19%</div>
-                <div class="subtitle">Estimated based on channel mix</div>
-                <div class="subtitle" style="margin-top: 0.5rem;">What consumers bought</div>
-            </div>
-            
-            <div class="summary-card">
-                <h3>Sales vs Velocity Gap</h3>
-                <div class="big-number negative">62 pts</div>
-                <div class="subtitle">Inventory Risk Indicator</div>
-                <div class="subtitle" style="margin-top: 0.5rem;">Gap should be <10 points</div>
-            </div>
-            
-            <div class="summary-card">
-                <h3>Channels at Risk</h3>
-                <div class="big-number neutral">4 of 6</div>
-                <div class="subtitle">Sales outpacing velocity</div>
-                <div class="subtitle" style="margin-top: 0.5rem;">Requires immediate action</div>
-            </div>
+        <div class="metric-card">
+            <div class="metric-label">Total Stores</div>
+            <div class="metric-value" id="totalStores">0</div>
+            <div class="metric-unit">active locations</div>
         </div>
-        
-        <div class="card">
-            <h2>Sales vs Velocity: Channel-by-Channel Comparison</h2>
-            <div class="chart-container">
-                <canvas id="comparisonChart"></canvas>
-            </div>
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #3b82f6;"></div>
-                    <span>Sales Growth %</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #22d3ee;"></div>
-                    <span>Velocity Growth %</span>
-                </div>
-            </div>
+        <div class="metric-card">
+            <div class="metric-label">Weekly Units</div>
+            <div class="metric-value" id="weeklyUnits">0</div>
+            <div class="metric-unit">units sold / week</div>
         </div>
-        
-        <div class="card">
-            <h2>Channel Health Assessment</h2>
-            <div class="channel-comparison">
-                <div class="channel-row" style="background: #e5e7eb; font-weight: 700;">
-                    <div class="channel-name">CHANNEL</div>
-                    <div class="channel-metric">
-                        <div class="label">SALES GROWTH</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="label">VELOCITY GROWTH</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="label">RISK LEVEL</div>
-                    </div>
-                </div>
-                
-                <div class="channel-row critical">
-                    <div class="channel-name">Independents</div>
-                    <div class="channel-metric">
-                        <div class="value positive">+47%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="value negative">-32%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <span class="risk-badge critical">PRIORITY</span>
-                    </div>
-                </div>
-                
-                <div class="channel-row warning">
-                    <div class="channel-name">Market Basket</div>
-                    <div class="channel-metric">
-                        <div class="value positive">+37%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="value positive">+7.5%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <span class="risk-badge warning">ATTENTION</span>
-                    </div>
-                </div>
-                
-                <div class="channel-row warning">
-                    <div class="channel-name">Harmons-Super 1-URM</div>
-                    <div class="channel-metric">
-                        <div class="value positive">+68%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="value positive">+112%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <span class="risk-badge warning">MONITOR</span>
-                    </div>
-                </div>
-                
-                <div class="channel-row healthy">
-                    <div class="channel-name">Heinen's</div>
-                    <div class="channel-metric">
-                        <div class="value positive">+19%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="value positive">+84%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <span class="risk-badge healthy">HEALTHY</span>
-                    </div>
-                </div>
-                
-                <div class="channel-row critical">
-                    <div class="channel-name">Festival Foods</div>
-                    <div class="channel-metric">
-                        <div class="value negative">-34%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <div class="value negative">-45%</div>
-                    </div>
-                    <div class="channel-metric">
-                        <span class="risk-badge critical">PRIORITY</span>
-                    </div>
-                </div>
-            </div>
+        <div class="metric-card">
+            <div class="metric-label">Annual Revenue</div>
+            <div class="metric-value" id="annualRevenue">$0.00M</div>
+            <div class="metric-unit">projected annual</div>
         </div>
-        
-        <div class="card">
-            <h2>Dollar Value Analysis: Sales vs Velocity</h2>
-            <div class="chart-container">
-                <canvas id="dollarChart"></canvas>
-            </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <p class="chart-card-label">Performance Ranking</p>
+            <h3>Top Retailers by Velocity</h3>
+            <div class="bar-chart" id="retailerChart"></div>
         </div>
-        
-        <div class="card">
-            <h2>Key Insights & Findings</h2>
-            
-            <div class="insight-box">
-                <h3>📊 Opportunity Area: Independents Channel</h3>
-                <p><strong>The Gap:</strong> Sales up 47% ($210K → $392.8K) but velocity down 32% ($56.0K → $38.1K)</p>
-                <p><strong>What This Means:</strong></p>
-                <ul>
-                    <li>We're shipping nearly double the product while consumer demand has fallen by a third</li>
-                    <li>344 independent stores likely have elevated inventory levels</li>
-                </ul>
-                <p><strong>Action:</strong> Immediate audit of top 20 independent accounts; pause new store expansions until velocity improves</p>
-            </div>
-            
-            <div class="insight-box">
-                <h3>✅ Success Model: Heinen's</h3>
-                <p><strong>The Win:</strong> Sales up 19% ($19.2K → $23.6K) while velocity up 84% ($4.2K → $7.7K)</p>
-                <p><strong>What This Means:</strong></p>
-                <ul>
-                    <li>Velocity far exceeding sales = healthy inventory turnover</li>
-                    <li>Consumers buying through existing stock faster than we're replenishing</li>
-                    <li>This is the only channel with sustainable, healthy growth</li>
-                </ul>
-                <p><strong>Action:</strong> Document what's working (promotions, pricing, placement) and replicate across other channels</p>
-            </div>
-            
-            <div class="insight-box">
-                <h3>⚠️ Accumulation Risk: Market Basket</h3>
-                <p><strong>The Gap:</strong> Sales up 37% but velocity only up 7.5%</p>
-                <p><strong>What This Means:</strong></p>
-                <ul>
-                    <li>We're shipping 5x faster than product is moving off shelves</li>
-                    <li>Inventory accumulating across 32 Market Basket locations</li>
-                    <li>While velocity is positive, the gap suggests growing inventory levels</li>
-                </ul>
-                <p><strong>Action:</strong> Review store-level inventory; adjust shipment frequency to match actual turnover</p>
-            </div>
-            
-            <div class="insight-box">
-                <h3 style="color: #92400e;">📋 Review Needed: Festival Foods</h3>
-                <p style="color: #1f2937;"><strong>The Situation:</strong> Sales down 34%, velocity down 45%, revenue per case down 56%</p>
-                <p style="color: #1f2937;"><strong>What This Means:</strong></p>
-                <ul style="color: #1f2937;">
-                    <li>Both metrics declining, with velocity showing a steeper decline than sales</li>
-                    <li>Cases up 50% but revenue down indicates pricing structure needs review</li>
-                    <li>Current terms may need adjustment for long-term sustainability</li>
-                </ul>
-                <p style="color: #1f2937;"><strong>Action:</strong> Schedule meeting with UNFI and Festival Foods to review promotional terms and pricing structure</p>
-            </div>
+        <div class="chart-card">
+            <p class="chart-card-label">Product Intelligence</p>
+            <h3>SKU Performance</h3>
+            <div class="bar-chart" id="skuChart"></div>
         </div>
-        
-        <div class="card">
-            <h2>Understanding the Metrics</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+        <p class="legend-label">Performance Zones</p>
+        <h3>Velocity Performance Zones</h3>
+        <div class="legend-grid">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2e6b42;"></div>
                 <div>
-                    <h3 style="color: #3b82f6; margin-bottom: 1rem;">Sales (Sell-In)</h3>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Revenue from shipments to UNFI/retailers</p>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product leaves our warehouse</p>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> Our revenue and market expansion</p>
-                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #16a34a; font-weight: 700;">+43% growth</span></p>
+                    <div class="legend-text">Excellent</div>
+                    <div class="legend-range">≥ 5.0 units / store / week</div>
                 </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #1d4ed8;"></div>
                 <div>
-                    <h3 style="color: #22d3ee; margin-bottom: 1rem;">Velocity (Sell-Through)</h3>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it measures:</strong> Actual consumer purchases at checkout</p>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>When recorded:</strong> When product scans at retail POS</p>
-                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 0.75rem;"><strong>What it tells us:</strong> True consumer demand and inventory health</p>
-                    <p style="color: #6b7280; line-height: 1.6;"><strong>Our performance:</strong> <span style="color: #dc2626; font-weight: 700;">-19% decline</span></p>
+                    <div class="legend-text">Good</div>
+                    <div class="legend-range">3.0 – 4.9 units / store / week</div>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #d97706;"></div>
+                <div>
+                    <div class="legend-text">Fair</div>
+                    <div class="legend-range">2.0 – 2.9 units / store / week</div>
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #dc2626;"></div>
+                <div>
+                    <div class="legend-text">Needs Attention</div>
+                    <div class="legend-range">< 2.0 units / store / week</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script>
-        // Comparison Chart
-        new Chart(document.getElementById('comparisonChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
-                datasets: [{
-                    label: 'Sales Growth %',
-                    data: [47, 37, 68, 19, -34],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 6
-                }, {
-                    label: 'Velocity Growth %',
-                    data: [-31.9, 7.5, 112, 84.3, -44.5],
-                    backgroundColor: '#22d3ee',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Growth Rate (%)',
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Channel',
-                            font: { size: 14, weight: 'bold' }
-                        }
+
+    <!-- TABLE -->
+    <div class="table-section">
+        <div class="table-header" onclick="toggleTable()">
+            <div class="table-header-left">
+                <p class="table-header-label">Drill Down</p>
+                <h3>Detailed View <span id="recordCount" style="font-size:14px;font-weight:300;color:var(--ink-muted);font-family:'Outfit',sans-serif;">(0 records)</span></h3>
+            </div>
+            <div class="chevron expanded" id="chevronWrap">
+                <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
+            </div>
+        </div>
+        <div id="tableContent">
+            <div class="table-body-wrap">
+                <input type="text" class="search-box" id="searchBox" placeholder="Search by product name or retailer...">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('region')">Region <span id="sort-region"></span></th>
+                                <th onclick="sortTable('retailer')">Retailer <span id="sort-retailer"></span></th>
+                                <th onclick="sortTable('skuName')">SKU <span id="sort-skuName"></span></th>
+                                <th class="align-right" onclick="sortTable('storeCount')">Stores <span id="sort-storeCount"></span></th>
+                                <th class="align-right" onclick="sortTable('velocity')">Velocity <span id="sort-velocity"></span></th>
+                                <th class="align-right" onclick="sortTable('weeklyUnits')">Weekly Units <span id="sort-weeklyUnits"></span></th>
+                                <th class="align-right" onclick="sortTable('weeklyRevenue')">Weekly Revenue <span id="sort-weeklyRevenue"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="dashboard-footer">
+    <span class="footer-brand">© 2026 Brand Share It Sales Partners · Sales Velocity Analytics Dashboard</span>
+    <a class="footer-link" href="https://www.brandshareit.com">brandshareit.com</a>
+</div>
+
+<script>
+    const RETAILERS = {
+        'North Atlantic': {'Whole Foods': 45, 'Trader Joe\'s': 38, 'Wegmans': 22, 'Stop & Shop': 68, 'ShopRite': 52, 'Giant Food': 31},
+        'Mid Atlantic': {'MOM\'s Organic Market': 18, 'Whole Foods': 52, 'Wegmans': 34, 'The Fresh Market': 28, 'Weis Markets': 42, 'ACME': 45, 'Safeway East': 36},
+        'Southeast': {'Earth Fare': 15, 'Sprouts Farmers Market': 42, 'The Fresh Market': 31, 'Harris Teeter': 62, 'Dekalb': 8},
+        'Florida': {'Whole Foods': 28, 'Lucky\'s Market': 6, 'The Fresh Market': 19, 'Winn-Dixie': 92, 'Sedano\'s': 34},
+        'Midwest': {'Fresh Thyme': 31, 'Natural Grocers': 45, 'Mariano\'s': 38, 'Hy-Vee': 125, 'Meijer': 94, 'Kroger': 142},
+        'Southwest': {'Sprouts Farmers Market': 68, 'Natural Grocers': 38, 'Central Market': 9, 'Fiesta Mart': 34, 'H-E-B': 186, 'Albertsons': 54, 'El Super': 28},
+        'Mountain': {'Natural Grocers': 42, 'Sprouts Farmers Market': 36, 'AJ\'s Fine Foods': 8, 'King Soopers': 78, 'Albertsons': 48, 'Smith\'s': 52},
+        'Pacific Northwest': {'New Seasons Market': 19, 'PCC Community Markets': 15, 'Metropolitan Market': 8, 'Town & Country': 6, 'Safeway': 64, 'Fred Meyer': 58, 'QFC': 32},
+        'North Pacific': {'Berkeley Bowl': 3, 'Rainbow Grocery': 2, 'Andronico\'s': 7, 'Mollie Stone\'s': 6, 'Safeway': 72, 'Lucky Supermarkets': 38, 'Raley\'s': 48},
+        'South Pacific': {'Erewhon': 6, 'Bristol Farms': 14, 'Lazy Acres': 5, 'Gelson\'s': 27, 'Northgate González': 42, 'Vons': 68, 'Stater Bros': 72}
+    };
+
+    const SKUS = [
+        {id: 'SKU-001', name: 'Organic Granola Bar - Chocolate', price: 8.99, category: 'Organic'},
+        {id: 'SKU-002', name: 'Organic Granola Bar - Almond', price: 8.99, category: 'Organic'},
+        {id: 'SKU-003', name: 'Protein Bar - Peanut Butter', price: 11.99, category: 'Specialty'},
+        {id: 'SKU-004', name: 'Energy Bites - Mixed Berry', price: 9.49, category: 'Specialty'},
+        {id: 'SKU-005', name: 'Trail Mix Bar - Classic', price: 7.99, category: 'Grocery'},
+        {id: 'SKU-006', name: 'Organic Snack Bar - Coconut', price: 8.99, category: 'Organic'},
+        {id: 'SKU-007', name: 'Protein Bar - Chocolate Chip', price: 11.99, category: 'Specialty'},
+        {id: 'SKU-008', name: 'Kids Snack Bar - Honey', price: 6.99, category: 'Grocery'},
+        {id: 'SKU-009', name: 'Organic Energy Bar - Date', price: 10.49, category: 'Organic'},
+        {id: 'SKU-010', name: 'Nut Butter Bar - Cashew', price: 9.99, category: 'Specialty'}
+    ];
+
+    let salesData = [];
+    let currentSort = {key: 'velocity', direction: 'desc'};
+    let tableExpanded = true;
+
+    function generateSalesData() {
+        const data = [];
+        Object.entries(RETAILERS).forEach(([region, retailers]) => {
+            Object.entries(retailers).forEach(([retailer, storeCount]) => {
+                const isOrganic = retailer.includes('Whole Foods') || retailer.includes('Organic') ||
+                                retailer.includes('Sprouts') || retailer.includes('Natural') ||
+                                retailer.includes('Earth Fare') || retailer.includes('Erewhon');
+                const isSpecialty = retailer.includes('Fresh Market') || retailer.includes('Wegmans') || retailer.includes('Bristol');
+                const isPremium = isOrganic || isSpecialty;
+
+                SKUS.forEach(sku => {
+                    let performanceMultiplier = 1.0;
+                    if (isPremium && (sku.category === 'Organic' || sku.category === 'Specialty')) {
+                        performanceMultiplier = 0.9 + Math.random() * 0.4;
+                    } else if (!isPremium && sku.category === 'Grocery') {
+                        performanceMultiplier = 0.7 + Math.random() * 0.3;
+                    } else {
+                        performanceMultiplier = 0.3 + Math.random() * 0.5;
                     }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + '%';
-                            }
-                        }
-                    }
-                }
-            }
+
+                    const baseVelocity = 0.35 + Math.random() * 0.55;
+                    const velocity = baseVelocity * performanceMultiplier;
+                    const weeklyUnits = Math.round(velocity * storeCount * 100) / 100;
+                    const weeklyRevenue = weeklyUnits * sku.price;
+
+                    data.push({
+                        region, retailer, storeCount,
+                        sku: sku.id, skuName: sku.name, category: sku.category, price: sku.price,
+                        weeklyUnits, velocity: parseFloat(velocity.toFixed(2)),
+                        weeklyRevenue: parseFloat(weeklyRevenue.toFixed(2))
+                    });
+                });
+            });
         });
-        
-        // Dollar Value Chart
-        new Chart(document.getElementById('dollarChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Independents', 'Market Basket', 'Harmons-Super 1-URM', 'Heinen\'s', 'Festival Foods'],
-                datasets: [{
-                    label: '2024 Sales',
-                    data: [210, 36.4, 15.2, 19.2, 44.8],
-                    backgroundColor: '#94a3b8',
-                    borderRadius: 6
-                }, {
-                    label: '2025 Sales',
-                    data: [392.8, 58, 47.6, 23.6, 29.6],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 6
-                }, {
-                    label: '2024 Velocity',
-                    data: [56.0, 7.67, 3.62, 4.16, 10.81],
-                    backgroundColor: '#cbd5e1',
-                    borderRadius: 6
-                }, {
-                    label: '2025 Velocity',
-                    data: [38.12, 8.25, 7.68, 7.68, 6.00],
-                    backgroundColor: '#22d3ee',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Dollars (Thousands)',
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value + 'K';
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': $' + context.parsed.y.toFixed(1) + 'K';
-                            }
-                        }
-                    }
-                }
-            }
+        return data;
+    }
+
+    function populateFilters() {
+        const regions = ['All', ...new Set(salesData.map(d => d.region))];
+        const skus = ['All', ...SKUS.map(s => s.id)];
+
+        const regionSelect = document.getElementById('regionFilter');
+        regions.forEach(r => {
+            if (r === 'All') return;
+            const option = document.createElement('option');
+            option.value = r;
+            option.textContent = r;
+            regionSelect.appendChild(option);
         });
-    </script>
+
+        const skuSelect = document.getElementById('skuFilter');
+        skus.forEach(s => {
+            if (s === 'All') return;
+            const option = document.createElement('option');
+            option.value = s;
+            option.textContent = SKUS.find(sku => sku.id === s).name;
+            skuSelect.appendChild(option);
+        });
+    }
+
+    function updateRetailerFilter() {
+        const region = document.getElementById('regionFilter').value;
+        const filtered = region === 'All' ? salesData : salesData.filter(d => d.region === region);
+        const retailers = ['All', ...new Set(filtered.map(d => d.retailer))];
+
+        const select = document.getElementById('retailerFilter');
+        select.innerHTML = '';
+        retailers.forEach(r => {
+            const option = document.createElement('option');
+            option.value = r;
+            option.textContent = r === 'All' ? 'All Retailers' : r;
+            select.appendChild(option);
+        });
+    }
+
+    function getFilteredData() {
+        const region = document.getElementById('regionFilter').value;
+        const retailer = document.getElementById('retailerFilter').value;
+        const sku = document.getElementById('skuFilter').value;
+        const search = document.getElementById('searchBox').value.toLowerCase();
+
+        let filtered = salesData;
+        if (region !== 'All') filtered = filtered.filter(d => d.region === region);
+        if (retailer !== 'All') filtered = filtered.filter(d => d.retailer === retailer);
+        if (sku !== 'All') filtered = filtered.filter(d => d.sku === sku);
+        if (search) filtered = filtered.filter(d =>
+            d.skuName.toLowerCase().includes(search) ||
+            d.retailer.toLowerCase().includes(search)
+        );
+
+        return filtered;
+    }
+
+    function updateMetrics() {
+        const filtered = getFilteredData();
+        const selectedSKU = document.getElementById('skuFilter').value;
+
+        const totalStores = filtered.reduce((sum, d) => sum + d.storeCount, 0);
+        const totalUnits = filtered.reduce((sum, d) => sum + d.weeklyUnits, 0);
+        const totalRevenue = filtered.reduce((sum, d) => sum + d.weeklyRevenue, 0);
+        const avgVelocity = filtered.length > 0 ? filtered.reduce((sum, d) => sum + d.velocity, 0) / filtered.length : 0;
+
+        document.getElementById('avgVelocity').textContent = avgVelocity.toFixed(2);
+        document.getElementById('totalStores').textContent = Math.round(totalStores / (selectedSKU === 'All' ? SKUS.length : 1)).toLocaleString();
+        document.getElementById('weeklyUnits').textContent = Math.round(totalUnits).toLocaleString();
+        document.getElementById('annualRevenue').textContent = '$' + (totalRevenue * 52 / 1000000).toFixed(2) + 'M';
+    }
+
+    function getBarColor(velocity) {
+        if (velocity >= 5) return '#2e6b42';
+        if (velocity >= 3) return '#1d4ed8';
+        if (velocity >= 2) return '#d97706';
+        return '#dc2626';
+    }
+
+    function updateCharts() {
+        const filtered = getFilteredData();
+
+        const retailerAgg = {};
+        filtered.forEach(d => {
+            if (!retailerAgg[d.retailer]) {
+                retailerAgg[d.retailer] = {retailer: d.retailer, totalUnits: 0, totalStores: d.storeCount};
+            }
+            retailerAgg[d.retailer].totalUnits += d.weeklyUnits;
+        });
+
+        const retailerData = Object.values(retailerAgg)
+            .map(d => ({...d, velocity: d.totalUnits / d.totalStores}))
+            .sort((a, b) => b.velocity - a.velocity)
+            .slice(0, 10);
+
+        const retailerChart = document.getElementById('retailerChart');
+        retailerChart.innerHTML = '';
+        retailerData.forEach(d => {
+            const maxVel = Math.max(...retailerData.map(r => r.velocity));
+            const width = (d.velocity / maxVel * 100) + '%';
+            retailerChart.innerHTML += `
+                <div class="bar-item">
+                    <div class="bar-label">${d.retailer}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${width}; background: ${getBarColor(d.velocity)};"></div>
+                        <div class="bar-value">${d.velocity.toFixed(2)}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        const skuAgg = {};
+        filtered.forEach(d => {
+            if (!skuAgg[d.sku]) {
+                skuAgg[d.sku] = {sku: d.skuName, totalUnits: 0, totalStores: 0};
+            }
+            skuAgg[d.sku].totalUnits += d.weeklyUnits;
+            skuAgg[d.sku].totalStores += d.storeCount;
+        });
+
+        const skuData = Object.values(skuAgg)
+            .map(d => ({...d, velocity: d.totalUnits / d.totalStores}))
+            .sort((a, b) => b.velocity - a.velocity);
+
+        const skuChart = document.getElementById('skuChart');
+        skuChart.innerHTML = '';
+        skuData.forEach(d => {
+            const maxVel = Math.max(...skuData.map(s => s.velocity));
+            const width = (d.velocity / maxVel * 100) + '%';
+            skuChart.innerHTML += `
+                <div class="bar-item">
+                    <div class="bar-label">${d.sku}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${width}; background: ${getBarColor(d.velocity)};"></div>
+                        <div class="bar-value">${d.velocity.toFixed(2)}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function getVelocityClass(velocity) {
+        if (velocity >= 5) return 'velocity-excellent';
+        if (velocity >= 3) return 'velocity-good';
+        if (velocity >= 2) return 'velocity-fair';
+        return 'velocity-poor';
+    }
+
+    function updateTable() {
+        let filtered = getFilteredData();
+
+        filtered.sort((a, b) => {
+            const aVal = a[currentSort.key];
+            const bVal = b[currentSort.key];
+            if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        filtered = filtered.slice(0, 100);
+
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        filtered.forEach(row => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${row.region}</td>
+                    <td>${row.retailer}</td>
+                    <td>${row.skuName}</td>
+                    <td class="align-right">${row.storeCount}</td>
+                    <td class="align-right">
+                        <span class="velocity-badge ${getVelocityClass(row.velocity)}">${row.velocity}</span>
+                    </td>
+                    <td class="align-right">${row.weeklyUnits.toLocaleString()}</td>
+                    <td class="align-right">$${row.weeklyRevenue.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('recordCount').textContent = `(${filtered.length} records)`;
+        document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+        const indicator = document.getElementById(`sort-${currentSort.key}`);
+        if (indicator) indicator.textContent = currentSort.direction === 'asc' ? ' ↑' : ' ↓';
+    }
+
+    function sortTable(key) {
+        if (currentSort.key === key) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort = {key, direction: 'desc'};
+        }
+        updateTable();
+    }
+
+    function toggleTable() {
+        tableExpanded = !tableExpanded;
+        document.getElementById('tableContent').classList.toggle('hidden');
+        document.getElementById('chevronWrap').classList.toggle('expanded');
+    }
+
+    function updateAll() {
+        updateMetrics();
+        updateCharts();
+        updateTable();
+    }
+
+    salesData = generateSalesData();
+    populateFilters();
+    updateAll();
+
+    document.getElementById('regionFilter').addEventListener('change', () => {
+        updateRetailerFilter();
+        updateAll();
+    });
+    document.getElementById('retailerFilter').addEventListener('change', updateAll);
+    document.getElementById('skuFilter').addEventListener('change', updateAll);
+    document.getElementById('searchBox').addEventListener('input', updateTable);
+</script>
 </body>
 </html>
