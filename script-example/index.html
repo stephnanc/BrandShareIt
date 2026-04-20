@@ -3,411 +3,774 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Good Nature Cookies Sales Script - Direct Sales</title>
+    <title>Good Nature Cookies — Sales Script Example · Brand Share It</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --white: #ffffff;
+            --off-white: #f8f8f6;
+            --ink: #111111;
+            --ink-soft: #3a3a3a;
+            --ink-muted: #777777;
+            --rule: #e8e8e5;
+            --accent: #1a3d26;
+            --accent-mid: #2e6b42;
+            --accent-light: #f0f5f1;
+            --gold: #9a6f2e;
+            --gold-bg: #fdf6ec;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: white;
+            font-family: 'Outfit', sans-serif;
+            background: var(--off-white);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            color: #333;
-            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule);
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
         }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 2rem;
+        .nav-brand {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover { color: var(--accent-mid); }
+
+        /* ── HEADER ── */
+        .script-header {
+            background: var(--ink);
+            padding: 56px 48px 48px;
             position: relative;
-            background: linear-gradient(to bottom right, #38bdf8, #3b82f6, #22d3ee);
-            padding: 2rem;
-            margin: -20px -20px 2rem -20px;
-            border-radius: 0 0 0.75rem 0.75rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
         }
 
-        .texture-overlay {
+        .script-header::after {
+            content: '';
             position: absolute;
             inset: 0;
-            opacity: 0.1;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background: radial-gradient(ellipse 70% 80% at 100% 50%, rgba(46,107,66,0.25) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: slideIn 0.8s ease-out;
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 24px;
         }
 
-        .header .subtitle {
-            font-size: 1.3em;
-            opacity: 0.9;
-            animation: fadeIn 1s ease-out 0.3s both;
-            position: relative;
-            z-index: 1;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideUp 0.8s ease-out forwards;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .card:nth-child(1) { animation-delay: 0.2s; }
-        .card:nth-child(2) { animation-delay: 0.4s; }
-        .card:nth-child(3) { animation-delay: 0.6s; }
-        .card:nth-child(4) { animation-delay: 0.8s; }
-
-        .card h2 {
-            color: #2a5298;
-            margin-bottom: 15px;
-            font-size: 1.8em;
+        .header-eyebrow {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #8aab93;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .icon {
-            font-size: 1.2em;
+        .header-eyebrow::after {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: #8aab93;
         }
 
-        .opening-hook {
-            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .benefit-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .benefit-list li {
-            padding: 12px 0;
-            padding-left: 35px;
-            position: relative;
-            font-size: 1.1em;
-            line-height: 1.5;
-            transition: transform 0.2s ease;
-        }
-
-        .benefit-list li:hover {
-            transform: translateX(10px);
-        }
-
-        .benefit-list li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        .story-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #667eea;
-        }
-
-        .impact-box {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .impact-box h3 {
-            font-size: 2em;
+        .script-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(26px, 4vw, 44px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.05;
             margin-bottom: 10px;
         }
 
+        .script-header h1 em {
+            font-style: italic;
+            color: #a8c9b0;
+        }
+
+        .script-header p {
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .header-badge-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: right;
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 48px 80px;
+        }
+
+        /* ── OPENING HOOK ── */
+        .opening-hook {
+            background: var(--accent);
+            color: #ffffff;
+            padding: 36px 40px;
+            border-radius: 2px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .opening-hook::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: #a8c9b0;
+        }
+
+        .hook-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #a8c9b0;
+            margin-bottom: 14px;
+        }
+
+        .hook-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-style: italic;
+            font-weight: 400;
+            color: #ffffff;
+            line-height: 1.65;
+        }
+
+        /* ── MAIN GRID ── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent-mid);
+        }
+
+        .section-card.gold::before { background: var(--gold); }
+        .section-card.dark::before { background: var(--ink); }
+
+        .card-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-mid);
+            margin-bottom: 6px;
+        }
+
+        .card-eyebrow.gold { color: var(--gold); }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        /* ── STORY BLOCK ── */
+        .story-block {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent-mid);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .story-block p {
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-soft);
+            line-height: 1.65;
+        }
+
+        .story-block strong {
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .script-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-style: italic;
+            color: var(--ink-soft);
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        /* ── BENEFIT LIST ── */
+        .benefit-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .benefit-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-soft);
+            line-height: 1.55;
+            padding: 10px 14px;
+            background: var(--off-white);
+            border-radius: 2px;
+        }
+
+        .benefit-check {
+            color: var(--accent-mid);
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .benefit-label {
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        /* ── PRODUCT GRID ── */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .product-item {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 10px;
+            background: var(--off-white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 16px;
             text-align: center;
-            transition: all 0.3s ease;
         }
 
-        .product-item:hover {
-            background: #e0e0e0;
-            transform: scale(1.05);
+        .product-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 4px;
         }
 
-        .cta-section {
-            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 52%, #1d4ed8 90%);
-            padding: 30px;
-            border-radius: 20px;
+        .product-desc {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--ink-muted);
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-mid);
+        }
+
+        /* ── IMPACT BOX ── */
+        .impact-box {
+            background: var(--ink);
+            border-radius: 2px;
+            padding: 28px 24px;
             text-align: center;
-            color: white;
-            margin-top: 30px;
-            animation: gradient 3s ease infinite;
-            background-size: 200% 200%;
+            margin-bottom: 16px;
         }
 
-        .cta-section h2 {
-            font-size: 2.5em;
+        .impact-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #a8c9b0;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .impact-label {
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.55);
+        }
+
+        /* ── FULL WIDTH CARD ── */
+        .full-card {
+            background: var(--white);
+            border: 1px solid var(--rule);
+            border-radius: 2px;
+            padding: 36px 40px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .full-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gold);
+        }
+
+        .innovation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .innovation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--accent-light);
+            border-radius: 2px;
+        }
+
+        .innovation-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-mid);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .innovation-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            line-height: 1.5;
+        }
+
+        /* ── BUSINESS CASE ── */
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--rule);
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid var(--rule);
         }
 
-        .cta-button {
+        .business-cell {
+            background: var(--off-white);
+            padding: 16px 20px;
+        }
+
+        .business-cell-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 4px;
+        }
+
+        .business-cell-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .why-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .why-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ink-soft);
+            line-height: 1.55;
+        }
+
+        .why-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-mid);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 7px;
+        }
+
+        /* ── CTA STRIP ── */
+        .cta-strip {
+            background: var(--accent);
+            border-radius: 2px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .cta-strip-eyebrow {
+            font-size: 10px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+
+        .cta-strip-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .cta-strip-sub {
+            font-size: 15px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 28px;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.65;
+        }
+
+        .cta-btn {
             display: inline-block;
-            background: white;
-            color: #2a5298;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.3em;
-            font-weight: bold;
+            background: #ffffff;
+            color: var(--accent);
             text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 16px 36px;
+            border-radius: 2px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Outfit', sans-serif;
+            transition: opacity 0.15s;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        .cta-btn:hover { opacity: 0.9; }
+
+        .cta-closing {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-style: italic;
+            color: rgba(255,255,255,0.5);
+            margin-top: 20px;
         }
 
-        .highlight {
-            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: bold;
+        /* ── FOOTER ── */
+        .script-footer {
+            border-top: 1px solid var(--rule);
+            padding: 24px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--white);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(-50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .footer-brand {
+            font-size: 10px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .footer-link {
+            font-size: 11px;
+            color: var(--accent-mid);
+            text-decoration: none;
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 2em;
-            }
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
+            .script-header { padding: 40px 24px 36px; }
+            .container { padding: 24px 20px 60px; }
+            .opening-hook { padding: 24px; }
+            .main-grid { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: 1fr 1fr; }
+            .innovation-grid { grid-template-columns: 1fr; }
+            .business-grid { grid-template-columns: repeat(2, 1fr); }
+            .full-card { padding: 24px; }
+            .cta-strip { padding: 28px 20px; }
+            .script-footer { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="texture-overlay"></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
-                <div style="text-align: left;">
-                    <h1 style="margin-bottom: 10px;">Good Nature Cookies</h1>
-                    <p style="font-size: 1.3em; opacity: 0.9;">Sales Script Example</p>
-                </div>
-                <div style="text-align: right;">
-                    <p style="font-size: 1.4em; font-weight: bold; margin-bottom: 5px;">Brand Share It Sales Partners</p>
-                    <p style="font-size: 1em; opacity: 0.9;">One Step Ahead, Reaching for Tomorrow</p>
-                </div>
-            </div>
+
+<!-- NAV -->
+<nav>
+    <a class="nav-brand" href="https://www.brandshareit.com">Brand Share It</a>
+    <div class="nav-links">
+        <a href="/growth-tools">← Growth Tools</a>
+        <a href="/services">Services</a>
+        <a href="mailto:stephen@brandshareit.com">Contact</a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="script-header">
+    <div class="header-inner">
+        <div>
+            <p class="header-eyebrow">Sales Script Example · Growth Tools</p>
+            <h1>Good Nature Cookies<br><em>Sales Script.</em></h1>
+            <p>A high-conversion CPG buyer conversation framework built from real-world natural trade experience.</p>
         </div>
-
-        <div class="opening-hook">
-            <strong>🎯 Opening Hook:</strong><br>
-            "I'm calling you today about a fabulous snack that's not just delicious, but also organic and gluten-free and gives back to the community with every purchase. Good Nature Cookies are transforming the better-for-you snack category. Picture this. You have a sweet craving, but you want something healthy. Good Nature's Cookies provides that with healthier ingredients. I'm also excited to bring you new, convenient 12-unit display trays that take up very little space on the shelf and will give you faster turns."
-        </div>
-
-        <div class="main-content">
-            <div class="card">
-                <h2><span class="icon">🌟</span> The Good Nature Cookies Story</h2>
-                <div class="story-section">
-                    <p><strong>The Good Nature Cookies Legacy:</strong> Founded in 2018 by a father-daughter team in Tampa, FL, Good Nature Cookies blends Family Roots, Mindful Ingredients, and Giving Back To Those In Need.</p>
-                </div>
-                <p style="margin-top: 15px; font-style: italic;">
-                    "Good Nature Cookies delivers what today's health-conscious consumers are looking for - a delicious treat they can feel good about. Each cookie is crafted with USDA organic ingredients, certified gluten-free, and made with better-for-you components that don't compromise on taste. Your customers no longer have to choose between indulgence and wellness."
-                </p>
-                <p style="margin-top: 15px; font-style: italic;">
-                    "Good Nature Cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."
-                </p>
-                <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #3b82f6;">
-                    <p><strong>Our Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">💚</span> Clean Ingredient Promise</h2>
-                <ul class="benefit-list">
-                    <li><span class="highlight">USDA Organic</span> - Premium certified ingredients</li>
-                    <li><span class="highlight">Certified Gluten-Free</span> - Safe for celiac customers</li>
-                    <li><span class="highlight">Kosher Dairy</span> - Meeting diverse dietary needs</li>
-                    <li><span class="highlight">Dairy & Nut Free</span> - Allergen-conscious formulation</li>
-                    <li>NO artificial ingredients or sweeteners</li>
-                    <li>Lower sugar vs traditional cookies</li>
-                    <li>Simple, clean-label ingredients you can pronounce</li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">🎁</span> Product Portfolio - New Tray Format - 12 Units per Tray</h2>
-                <div class="product-grid">
-                    <div class="product-item">
-                        <h4>🍫 Dark Chocolate Chip</h4>
-                        <p>Classic organic favorite</p>
-                        <strong>$2.99 MSRP</strong>
-                    </div>
-                    <div class="product-item">
-                        <h4>🌿 Creamy Vanilla Hemp</h4>
-                        <p>Smooth & creamy</p>
-                        <strong>$2.99 MSRP</strong>
-                    </div>
-                    <div class="product-item">
-                        <h4>🥜 Peanut Butter Flax</h4>
-                        <p>Newest flavor innovation</p>
-                        <strong>$2.99 MSRP</strong>
-                    </div>
-                    <div class="product-item">
-                        <h4>🫐 Blueberry Chia</h4>
-                        <p>Superfood indulgence</p>
-                        <strong>$2.99 MSRP</strong>
-                    </div>
-                </div>
-                <p style="margin-top: 15px; text-align: center;">
-                    <strong>12 Individually Wrapped Units per Tray for Freshness and Convenience</strong>
-                </p>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">❤️</span> Social Impact</h2>
-                <div class="impact-box">
-                    <h3>Over 2 Million Meals</h3>
-                    <p>Provided to those in need since 2020</p>
-                </div>
-                <p style="margin-top: 15px;">
-                    "Every display tray you stock doesn't just satisfy your customers - it feeds families in need through community partnerships since 2020."
-                </p>
-            </div>
-        </div>
-
-        <div class="card" style="grid-column: 1 / -1; background: #e8e3f5; color: #333; padding: 40px;">
-            <h2 style="color: #4a3a7a; font-size: 2.2em; margin-bottom: 20px; text-align: center;">🚀 Packaging Innovation - Game Changer!</h2>
-            <div style="background: rgba(255,255,255,0.6); padding: 30px; border-radius: 15px;">
-                <div style="font-size: 1.4em; line-height: 1.8; text-align: center; margin-bottom: 20px;">
-                    <p style="margin-bottom: 15px;"><strong>✨ Almost 50% Smaller Tray Extends Valuable Shelf Space</strong></p>
-                    <p style="margin-bottom: 15px;"><strong>✨ Perfect for Snack, Cookie, and/or Gluten-Free Sets</strong></p>
-                    <p style="margin-bottom: 15px;"><strong>✨ Excellent Cross Merchandising at Checkout, Coffee Bar, Grab and Go</strong></p>
-                    <p><strong>✨ 12 Units per Tray</strong></p>
-                </div>
-                <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin-top: 20px; border: 2px solid #4a3a7a;">
-                    <p style="font-size: 1.2em; text-align: center; margin: 0;"><strong>The new 12-unit tray maximizes your retail space efficiency while maintaining full product visibility and customer appeal!</strong></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" style="grid-column: 1 / -1;">
-            <h2><span class="icon">💰</span> The Business Case</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
-                    <div><strong>Format:</strong> 12 units per display tray</div>
-                    <div><strong>Shelf Life:</strong> 9 months</div>
-                    <div><strong>Wholesale:</strong> $1.87 per unit</div>
-                    <div><strong>Margin:</strong> 38% at suggested retail</div>
-                    <div><strong>Min Order:</strong> 6 display trays</div>
-                    <div><strong>Pallet:</strong> 120 trays | 20 tier | 6 high</div>
-                </div>
-            </div>
-            
-            <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                <h3 style="color: #2e7d32; margin-bottom: 10px;">🚀 Why Good Nature Cookies Sells:</h3>
-                <ul style="list-style: none;">
-                    <li style="margin-bottom: 12px;">✨ Premium positioning at accessible price point</li>
-                    <li style="margin-bottom: 12px;">✨ Almost 50% smaller tray extends valuable shelf space</li>
-                    <li style="margin-bottom: 12px;">✨ Appeals to multiple dietary preferences in one SKU</li>
-                    <li style="margin-bottom: 12px;">✨ Perfect grab-and-go format with long shelf life</li>
-                    <li style="margin-bottom: 12px;">✨ A reliable everyday seller with broad, cross-category relevance</li>
-                    <li>✨ 7-year-old company with wide acceptance and built-in customer loyalty</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="cta-section">
-            <h2>Ready to Delight Your Customers?</h2>
-            <p style="font-size: 1.3em; margin-bottom: 25px;">
-                Let's get Good Nature Cookies on your shelves and start making a difference - one delicious cookie at a time!
-            </p>
-            <a href="#" class="cta-button" onclick="alert('Sample request initiated! We\'ll send you our bestselling flavors to try.')">
-                Would you like us to send you some samples to try, so you can see how delicious Good Nature Cookies are?
-            </a>
-            <p style="margin-top: 20px; font-size: 1.1em;">
-                "Good Nature Cookies - where organic, gluten-free ingredients meet delicious taste, all while giving back to communities in need!"
-            </p>
+        <div>
+            <div class="header-badge-name">Brand Share It Sales Partners</div>
         </div>
     </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <!-- OPENING HOOK -->
+    <div class="opening-hook">
+        <p class="hook-eyebrow">Opening Hook — First 15 Seconds</p>
+        <p class="hook-text">"I'm calling you today about a fabulous snack that's not just delicious, but also organic and gluten-free and gives back to the community with every purchase. Good Nature Cookies are transforming the better-for-you snack category. Picture this — you have a sweet craving, but you want something healthy. Good Nature Cookies provides that with healthier ingredients. I'm also excited to bring you new, convenient 12-unit display trays that take up very little space on the shelf and will give you faster turns."</p>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+        <!-- Brand Story -->
+        <div class="section-card">
+            <p class="card-eyebrow">Section 01</p>
+            <h2 class="card-title">The Good Nature Cookies Story</h2>
+            <div class="story-block">
+                <p><strong>The Legacy:</strong> Founded in 2018 by a father-daughter team in Tampa, FL — blending family roots, mindful ingredients, and giving back to those in need.</p>
+            </div>
+            <p class="script-quote">"Good Nature Cookies delivers what today's health-conscious consumers are looking for — a delicious treat they can feel good about. Each cookie is crafted with USDA organic ingredients, certified gluten-free, and made with better-for-you components that don't compromise on taste. Your customers no longer have to choose between indulgence and wellness."</p>
+            <p class="script-quote">"Good Nature Cookies are fantastic for on-the-go, hiking, bike riding. Just pop one in your pocket and take it with you for a burst of energy."</p>
+            <div class="story-block">
+                <p><strong>Mission:</strong> To create clean, gluten-free delights that elevate moments, fuel retail growth, and support communities through values-aligned partnerships.</p>
+            </div>
+        </div>
+
+        <!-- Clean Ingredient Promise -->
+        <div class="section-card gold">
+            <p class="card-eyebrow gold">Section 02</p>
+            <h2 class="card-title">Clean Ingredient Promise</h2>
+            <ul class="benefit-list">
+                <li><span class="benefit-check">✓</span><div><span class="benefit-label">USDA Organic</span> — Premium certified ingredients</div></li>
+                <li><span class="benefit-check">✓</span><div><span class="benefit-label">Certified Gluten-Free</span> — Safe for celiac customers</div></li>
+                <li><span class="benefit-check">✓</span><div><span class="benefit-label">Kosher Dairy</span> — Meeting diverse dietary needs</div></li>
+                <li><span class="benefit-check">✓</span><div><span class="benefit-label">Dairy & Nut Free</span> — Allergen-conscious formulation</div></li>
+                <li><span class="benefit-check">✓</span><div>No artificial ingredients or sweeteners</div></li>
+                <li><span class="benefit-check">✓</span><div>Lower sugar vs traditional cookies</div></li>
+                <li><span class="benefit-check">✓</span><div>Simple clean-label ingredients you can pronounce</div></li>
+            </ul>
+        </div>
+
+        <!-- Product Portfolio -->
+        <div class="section-card">
+            <p class="card-eyebrow">Section 03</p>
+            <h2 class="card-title">Product Portfolio — 12 Units Per Tray</h2>
+            <div class="product-grid">
+                <div class="product-item">
+                    <div class="product-name">Dark Chocolate Chip</div>
+                    <div class="product-desc">Classic organic favorite</div>
+                    <div class="product-price">$2.99</div>
+                </div>
+                <div class="product-item">
+                    <div class="product-name">Creamy Vanilla Hemp</div>
+                    <div class="product-desc">Smooth & creamy</div>
+                    <div class="product-price">$2.99</div>
+                </div>
+                <div class="product-item">
+                    <div class="product-name">Peanut Butter Flax</div>
+                    <div class="product-desc">Newest flavor innovation</div>
+                    <div class="product-price">$2.99</div>
+                </div>
+                <div class="product-item">
+                    <div class="product-name">Blueberry Chia</div>
+                    <div class="product-desc">Superfood indulgence</div>
+                    <div class="product-price">$2.99</div>
+                </div>
+            </div>
+            <p style="font-size:13px;font-weight:300;color:var(--ink-muted);text-align:center;">12 Individually Wrapped Units Per Tray · Freshness and Convenience</p>
+        </div>
+
+        <!-- Social Impact -->
+        <div class="section-card dark">
+            <p class="card-eyebrow" style="color:#8aab93;">Section 04</p>
+            <h2 class="card-title" style="color:#ffffff;">Social Impact</h2>
+            <div class="impact-box">
+                <div class="impact-num">2M+</div>
+                <div class="impact-label">Meals provided to those in need since 2020</div>
+            </div>
+            <p style="font-size:14px;font-weight:300;color:rgba(255,255,255,0.55);line-height:1.7;font-style:italic;font-family:'Playfair Display',serif;">"Every display tray you stock doesn't just satisfy your customers — it feeds families in need through community partnerships since 2020."</p>
+        </div>
+
+    </div>
+
+    <!-- PACKAGING INNOVATION -->
+    <div class="full-card">
+        <p class="card-eyebrow gold">Section 05 · Packaging Innovation</p>
+        <h2 class="card-title">Game-Changing Tray Format</h2>
+        <div class="innovation-grid">
+            <div class="innovation-item">
+                <div class="innovation-dot"></div>
+                <div class="innovation-text">Almost 50% smaller tray extends valuable shelf space</div>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-dot"></div>
+                <div class="innovation-text">Perfect for Snack, Cookie, and Gluten-Free sets</div>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-dot"></div>
+                <div class="innovation-text">Excellent cross-merchandising at Checkout, Coffee Bar, and Grab-and-Go</div>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-dot"></div>
+                <div class="innovation-text">12 units per tray — maximum retail space efficiency</div>
+            </div>
+        </div>
+        <div class="story-block">
+            <p><strong>The new 12-unit tray maximizes retail space efficiency while maintaining full product visibility and customer appeal.</strong></p>
+        </div>
+    </div>
+
+    <!-- BUSINESS CASE -->
+    <div class="full-card">
+        <p class="card-eyebrow">Section 06 · The Business Case</p>
+        <h2 class="card-title">Why This Works for Your Shelf</h2>
+        <div class="business-grid">
+            <div class="business-cell">
+                <div class="business-cell-label">Format</div>
+                <div class="business-cell-value">12 units</div>
+            </div>
+            <div class="business-cell">
+                <div class="business-cell-label">Shelf Life</div>
+                <div class="business-cell-value">9 months</div>
+            </div>
+            <div class="business-cell">
+                <div class="business-cell-label">Wholesale</div>
+                <div class="business-cell-value">$1.87/unit</div>
+            </div>
+            <div class="business-cell">
+                <div class="business-cell-label">Margin</div>
+                <div class="business-cell-value">38%</div>
+            </div>
+            <div class="business-cell">
+                <div class="business-cell-label">Min Order</div>
+                <div class="business-cell-value">6 trays</div>
+            </div>
+            <div class="business-cell">
+                <div class="business-cell-label">Pallet</div>
+                <div class="business-cell-value">120 trays</div>
+            </div>
+        </div>
+        <ul class="why-list">
+            <li><div class="why-dot"></div>Premium positioning at an accessible price point</li>
+            <li><div class="why-dot"></div>Almost 50% smaller tray extends valuable shelf space</li>
+            <li><div class="why-dot"></div>Appeals to multiple dietary preferences in one SKU</li>
+            <li><div class="why-dot"></div>Perfect grab-and-go format with long shelf life</li>
+            <li><div class="why-dot"></div>A reliable everyday seller with broad cross-category relevance</li>
+            <li><div class="why-dot"></div>7-year-old company with wide acceptance and built-in customer loyalty</li>
+        </ul>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-strip">
+        <p class="cta-strip-eyebrow">The Close</p>
+        <h2 class="cta-strip-title">Ready to Delight Your Customers?</h2>
+        <p class="cta-strip-sub">Let's get Good Nature Cookies on your shelves and start making a difference — one delicious cookie at a time.</p>
+        <button class="cta-btn" onclick="alert('Sample request initiated! We\'ll send you our bestselling flavors to try.')">
+            Would You Like Us to Send You Samples to Try?
+        </button>
+        <p class="cta-closing">"Good Nature Cookies — where organic, gluten-free ingredients meet delicious taste, all while giving back to communities in need."</p>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="script-footer">
+    <span class="footer-brand">© 2026 Brand Share It Sales Partners · Sales Script Example</span>
+    <a class="footer-link" href="https://www.brandshareit.com">brandshareit.com</a>
+</div>
+
 </body>
 </html>
