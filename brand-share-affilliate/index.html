@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Affiliate Partners — Brand Share It Sales Partners</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --off-white: #f8f8f6;
+    --ink: #111111;
+    --ink-soft: #3a3a3a;
+    --ink-muted: #777777;
+    --rule: #e8e8e5;
+    --accent: #1a3d26;
+    --accent-mid: #2e6b42;
+    --accent-light: #f0f5f1;
+    --gold: #9a6f2e;
+    --gold-bg: #fdf6ec;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-brand {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 36px; }
+
+  .nav-links a {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--accent-mid); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #fff !important;
+    padding: 8px 20px;
+    border-radius: 2px;
+    font-size: 11px !important;
+  }
+
+  .hero {
+    background: var(--ink);
+    padding: 80px 48px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 100% 50%, rgba(46,107,66,0.28) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8aab93;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: #8aab93;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin-bottom: 20px;
+    max-width: 680px;
+  }
+
+  .hero h1 em { font-style: italic; color: #a8c9b0; }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    line-height: 1.7;
+    border-left: 3px solid #8aab93;
+    padding-left: 20px;
+  }
+
+  .cat-nav {
+    background: var(--off-white);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 48px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .cat-nav::-webkit-scrollbar { display: none; }
+  .cat-nav-inner { display: inline-flex; }
+
+  .cat-nav a {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-decoration: none;
+    padding: 16px 20px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .cat-nav a:hover {
+    color: var(--accent-mid);
+    border-bottom-color: var(--accent-mid);
+  }
+
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 48px 48px;
+  }
+
+  .affiliate-section { padding-top: 72px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 8px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    white-space: nowrap;
+  }
+
+  .section-label.gold { color: var(--gold); }
+  .section-rule { flex: 1; height: 1px; background: var(--rule); }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin-bottom: 36px;
+    max-width: 580px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .card { border-top: 1px solid var(--rule); }
+  .card:last-child { border-bottom: 1px solid var(--rule); }
+
+  .card-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 28px 0;
+    text-align: left;
+  }
+
+  .card-toggle:hover .card-title-text { color: var(--accent-mid); }
+
+  .card-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-muted);
+    min-width: 28px;
+    flex-shrink: 0;
+  }
+
+  .card-title-wrap { flex: 1; }
+
+  .card-category {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 4px;
+  }
+
+  .card-category.gold { color: var(--gold); }
+  .card-category.muted { color: var(--ink-muted); }
+
+  .card-title-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 2.5vw, 22px);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.25;
+    transition: color 0.15s;
+  }
+
+  .card-arrow {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .card-toggle:hover .card-arrow {
+    border-color: var(--accent-mid);
+    background: var(--accent-light);
+  }
+
+  .card-arrow svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--ink-muted);
+    stroke-width: 2;
+    fill: none;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), stroke 0.15s;
+  }
+
+  .card.open .card-arrow svg {
+    transform: rotate(180deg);
+    stroke: var(--accent-mid);
+  }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .card.open .card-body { max-height: 1600px; }
+
+  .card-inner { padding: 0 0 40px 52px; }
+
+  .card-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.75;
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+
+  .stephens-take {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent-mid);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .stephens-take.gold-take {
+    background: var(--gold-bg);
+    border-left-color: var(--gold);
+  }
+
+  .take-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 8px;
+  }
+
+  .take-label.gold { color: var(--gold); }
+
+  .take-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  .takeaways {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .takeaways li { display: flex; gap: 20px; align-items: flex-start; }
+
+  .takeaway-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--accent-mid);
+    min-width: 30px;
+    line-height: 1.2;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .takeaway-num.gold { color: var(--gold); }
+
+  .takeaway-content strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+
+  .takeaway-content span {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    font-weight: 300;
+    display: block;
+  }
+
+  .card-closing {
+    font-size: 15px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    border-left: 2px solid var(--accent-mid);
+    padding-left: 16px;
+    line-height: 1.6;
+    max-width: 560px;
+    margin-bottom: 24px;
+  }
+
+  .card-closing.gold { border-left-color: var(--gold); }
+
+  .affiliate-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    text-decoration: none;
+    border: 1px solid var(--accent-mid);
+    padding: 12px 24px;
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .affiliate-link.gold { color: var(--gold); border-color: var(--gold); }
+  .affiliate-link:hover { background: var(--accent-mid); color: #fff; }
+  .affiliate-link.gold:hover { background: var(--gold); color: #fff; }
+
+  .affiliate-link svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .card-byline {
+    margin-top: 24px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #bbb;
+  }
+
+  .card.coming-soon .card-toggle { opacity: 0.45; cursor: default; }
+  .card.coming-soon .card-arrow { display: none; }
+
+  .dark-divider {
+    background: var(--ink);
+    padding: 64px 48px;
+    margin-top: 72px;
+  }
+
+  .dark-divider-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .dark-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #8aab93;
+    margin-bottom: 12px;
+  }
+
+  .dark-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .dark-title em { font-style: italic; color: #a8c9b0; }
+
+  .dark-body {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.45);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .disclosure {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+    font-style: italic;
+    margin-top: 72px;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 48px;
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-brand {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+
+  .footer-links a {
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover { color: var(--accent-mid); }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 60px 24px 56px; }
+    .cat-nav { padding: 0 20px; }
+    .content { padding: 0 20px 48px; }
+    .card-inner { padding-left: 0; }
+    .dark-divider { padding: 48px 24px; }
+    footer { padding: 24px; flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="https://www.brandshareit.com">Brand Share It</a>
+  <div class="nav-links">
+    <a href="/services">Services</a>
+    <a href="/kpi-spotlight">KPI Spotlight</a>
+    <a href="/glossary">Trade Glossary</a>
+    <a href="/insights">Industry Insights</a>
+    <a href="mailto:stephen@brandshareit.com" class="nav-cta">Contact Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Affiliate Partners</p>
+    <h1>Trusted Partners.<br><em>Shared Values.</em></h1>
+    <p class="hero-sub">Two sides of one trusted network. Service affiliates cover the professional services that fall beyond my core discipline — but are essential to running and scaling a natural food brand. Brand affiliates are proven products ready for distributor, broker, and retail opportunities. Every partner on this page has earned their place through performance, integrity, and alignment with the values of the natural, organic, and specialty food trade.</p>
+  </div>
+</section>
+
+<div class="cat-nav">
+  <div class="cat-nav-inner">
+    <a href="#services">Service Affiliates</a>
+    <a href="#products">Brand Affiliates</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══ SERVICES ══ -->
+  <div class="affiliate-section" id="services">
+    <div class="section-header">
+      <span class="section-label">Section 01</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2 class="section-title">Services Affiliates</h2>
+    <p class="section-desc">Trusted professionals and service providers who support the operational, financial, and strategic needs of growing natural and specialty food brands. These relationships are built on shared values and mutual respect for the industry.</p>
+
+    <!-- ── TEMPLATE CARD — Copy this block for each new service partner ──
+    <div class="card" id="s-01">
+      <button class="card-toggle" onclick="toggleCard('s-01')">
+        <span class="card-number">01</span>
+        <div class="card-title-wrap">
+          <p class="card-category">[Category · e.g. Accounting]</p>
+          <h3 class="card-title-text">[Company Name] — [One Line Value Proposition]</h3>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="card-body">
+        <div class="card-inner">
+
+          <!-- LOGO IMAGE — place partner logo here -->
+          <div style="margin-bottom:28px;">
+            <img src="[partner-logo.png]" alt="[Company Name]" style="height:60px;width:auto;object-fit:contain;display:block;">
+          </div>
+
+          <p class="card-desc">[Two to three sentence factual description of what this company does and who they serve.]</p>
+          <div class="stephens-take">
+            <p class="take-label">Stephen's Take</p>
+            <p class="take-text">"[Your personal endorsement in your own voice.]"</p>
+          </div>
+          <ul class="takeaways">
+            <li>
+              <span class="takeaway-num">01</span>
+              <div class="takeaway-content">
+                <strong>[Key Benefit]</strong>
+                <span>[One to two sentences.]</span>
+              </div>
+            </li>
+            <li>
+              <span class="takeaway-num">02</span>
+              <div class="takeaway-content">
+                <strong>[Key Benefit]</strong>
+                <span>[One to two sentences.]</span>
+              </div>
+            </li>
+            <li>
+              <span class="takeaway-num">03</span>
+              <div class="takeaway-content">
+                <strong>[Key Benefit]</strong>
+                <span>[One to two sentences.]</span>
+              </div>
+            </li>
+          </ul>
+          <p class="card-closing">[Single punchy closing line in your voice.]</p>
+          <a class="affiliate-link" href="mailto:stephen@brandshareit.com?subject=[Company Name] Inquiry" >
+            Inquire About [Company Name]
+            <svg viewBox="0 0 14 14"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8"/><polyline points="8,1 12,1 12,5"/><line x1="12" y1="1" x2="6" y2="7"/></svg>
+          </a>
+          <p class="card-byline">Brand Share It Sales Partners · Services Affiliate</p>
+        </div>
+      </div>
+    </div>
+    ── END TEMPLATE ── -->
+
+    <!-- COMING SOON CARDS — Services -->
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">01</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">02</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">03</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">04</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">05</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">06</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
+
+  </div>
+
+</div>
+
+<!-- DARK DIVIDER -->
+<div class="dark-divider">
+  <div class="dark-divider-inner">
+    <p class="dark-eyebrow">Natural · Organic · Specialty</p>
+    <h2 class="dark-title">Products We<br><em>Believe In.</em></h2>
+    <p class="dark-body">Every brand featured below has been evaluated for retail performance, ingredient integrity, and market readiness. These are not cold introductions — they are warm endorsements from someone who has spent decades placing brands in the natural trade. Distributors, brokers, and retailers take note.</p>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══ NATURAL PRODUCTS ══ -->
+  <div class="affiliate-section" id="products">
+    <div class="section-header">
+      <span class="section-label gold">Section 02</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2 class="section-title">Featured Brand Partners</h2>
+    <p class="section-desc">Natural, organic, and specialty food brands that have earned a place in this network through proven performance, clean credentials, and a story worth telling. If you are a distributor, broker, or retailer looking for your next great brand — start here.</p>
+
+    <!-- SWOFFLE — ACTIVE -->
+    <div class="card open" id="p-01">
+      <button class="card-toggle" onclick="toggleCard('p-01')">
+        <span class="card-number">01</span>
+        <div class="card-title-wrap">
+          <p class="card-category gold">Featured Brand · Better-For-You Snacks</p>
+          <h3 class="card-title-text">Swoffle — A Premium Organic Stroopwafel Brand Built for the Natural Trade</h3>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="card-body">
+        <div class="card-inner">
+
+          <!-- PRODUCT IMAGE — place product photo here -->
+          <div style="margin-bottom:28px;">
+            <img src="swoffle-product-photo.jpg" alt="Swoffle Organic Gluten-Free Stroopwafels" style="width:100%;max-width:560px;height:260px;object-fit:cover;border-radius:2px;display:block;">
+          </div>
+
+          <p class="card-desc">Swoffle is an organic, gluten-free stroopwafel brand rooted in Concord, Massachusetts. Built on a foundation of clean ingredients, mission-driven values, and consistent retail performance, Swoffle has earned its place in the natural channel through seven years of disciplined execution. Every product is USDA Organic, Certified Gluten Free, Kosher, dairy free, and nut free — with no artificial ingredients and lower sugar than traditional stroopwafels.</p>
+
+          <div class="stephens-take gold-take">
+            <p class="take-label gold">Stephen's Take</p>
+            <p class="take-text">"I have worked alongside Swoffle for seven years and I have watched this brand earn every account it has ever won. The velocity is real. The reorders are consistent. The ingredient story resonates with today's natural channel consumer in a way that very few brands can match. This is not a brand chasing a trend — it is a brand that has built something lasting. If you are a distributor, broker, or retailer looking for a proven performer in the better-for-you snack category, this conversation is worth having."</p>
+          </div>
+
+          <ul class="takeaways">
+            <li>
+              <span class="takeaway-num gold">01</span>
+              <div class="takeaway-content">
+                <strong>Proven Retail Performance</strong>
+                <span>Seven years of consistent velocity across natural, specialty, and conventional channels. Retail partners include Whole Foods, Market Basket, Hy-Vee, Harmons, Bristol Farms, Festival Foods, and Market of Choice — many of these relationships four to six years strong. Velocity that holds is velocity that earns placement.</span>
+              </div>
+            </li>
+            <li>
+              <span class="takeaway-num gold">02</span>
+              <div class="takeaway-content">
+                <strong>A Credential Stack That Opens Doors</strong>
+                <span>USDA Organic. Certified Gluten Free. Kosher. Dairy free. Nut free. No artificial ingredients. Lower sugar. This level of certification breadth makes Swoffle relevant across multiple sets — natural, gluten-free, better-for-you, and allergen-conscious. One brand that fits multiple category conversations.</span>
+              </div>
+            </li>
+            <li>
+              <span class="takeaway-num gold">03</span>
+              <div class="takeaway-content">
+                <strong>A Mission That Resonates at Every Level</strong>
+                <span>Since 2017, Swoffle's Buy One Give One partnership with Feeding America has resulted in 1.68 million meals donated to families in need. In a retail environment where consumers and buyers alike are looking for brands that stand for something — Swoffle has a story worth telling and numbers to back it up.</span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="card-closing gold">Consistent velocity. Clean credentials. A mission with measurable impact. Swoffle is the kind of brand that makes a buyer's job easier.</p>
+
+          <a class="affiliate-link gold" href="mailto:stephen@brandshareit.com?subject=Swoffle Distributor/Broker Inquiry" style="margin-bottom:12px;">
+            Inquire About Opportunities
+            <svg viewBox="0 0 14 14"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8"/><polyline points="8,1 12,1 12,5"/><line x1="12" y1="1" x2="6" y2="7"/></svg>
+          </a>
+          <p style="font-size:13px;font-weight:300;color:var(--ink-muted);margin-top:4px;">Distributor, broker, and retail inquiries welcome. We will connect you with the right people.</p>
+          <p class="card-byline">Brand Share It Sales Partners · Featured Brand Affiliate</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING SOON CARDS — Products -->
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">02</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">03</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">04</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">05</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">06</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
+
+    <p class="disclosure">Affiliate Disclosure: Brand Share It Sales Partners maintains affiliate relationships with select service providers and product brands listed on this page. This means we may receive compensation when you click a link and make a purchase or inquiry. This compensation never influences which partners are featured — every listing reflects a genuine recommendation based on quality, integrity, and alignment with the values of the natural and specialty food trade. We only partner with companies we would recommend regardless of compensation.</p>
+
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-brand">© 2026 Brand Share It Sales Partners</span>
+  <div class="footer-links">
+    <a href="/services">Services</a>
+    <a href="/kpi-spotlight">KPI Spotlight</a>
+    <a href="/glossary">Trade Glossary</a>
+    <a href="/insights">Industry Insights</a>
+    <a href="mailto:stephen@brandshareit.com">stephen@brandshareit.com</a>
+  </div>
+</footer>
+
+<script>
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    if (!card || card.classList.contains('coming-soon')) return;
+    card.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
