@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>SWOFFLE – Velocity Dashboard by Chain</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8f8f6;
+      color: #222;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.4rem;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      background: radial-gradient(circle at center, rgba(46,107,66,0.35), transparent 60%), #111111;
+      padding: 60px 40px;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .hero h2 {
+      font-size: 1.3rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    /* Card Grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      padding: 30px 40px 10px 40px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2e6b42;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .arrow-up {
+      color: #2e6b42;
+      font-weight: 700;
+    }
+
+    .arrow-down {
+      color: #b33a3a;
+      font-weight: 700;
+    }
+
+    /* Section + dividers */
+    section {
+      padding: 20px 40px 30px 40px;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid rgba(46,107,66,0.25);
+      margin: 10px 40px 20px 40px;
+    }
+
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 0.5rem;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    th {
+      background: #f0f0ed;
+      text-align: left;
+    }
+
+    /* Bar charts */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      font-size: 0.85rem;
+    }
+
+    .bar-label {
+      width: 45%;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      flex: 1;
+      background: #e6e6e2;
+      margin: 0 6px;
+      height: 10px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .positive {
+      background: #2e6b42;
+    }
+
+    .negative {
+      background: #b33a3a;
+    }
+
+    blockquote {
+      font-size: 0.85rem;
+      color: #555;
+      border-left: 3px solid #ccc;
+      padding-left: 10px;
+      margin-left: 0;
+    }
+
+    .compare-grid {
+      margin-top: 10px;
+    }
+
+    .compare-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .compare-sub {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>SWOFFLE</h1>
+  <h2>Velocity by Chain – Units & Dollars Per Store Per Week</h2>
+</div>
+
+<!-- KPI CARDS – VELOCITY SUMMARY -->
+<div class="card-grid">
+
+  <div class="card">
+    <div class="card-title">Top Velocity Chain</div>
+    <div class="card-value">Palo Alto Egg Co.</div>
+    <div class="card-sub">
+      12.1 units / store / week<br />
+      <span class="arrow-up">▲ From 0 – New Distribution</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fastest Velocity Growth</div>
+    <div class="card-value">Northwest Grocers</div>
+    <div class="card-sub">
+      0.0 → 0.3 units / store / week<br />
+      <span class="arrow-up">▲ +610% Velocity</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel + New Chain</div>
+    <div class="card-value">Bristol Farms</div>
+    <div class="card-sub">
+      0.0 → 0.5 units / store / week<br />
+      <span class="arrow-up">▲ +100% Velocity</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel Growth – Existing</div>
+    <div class="card-value">Raise The Bar</div>
+    <div class="card-sub">
+      1.6 → 2.8 units / store / week<br />
+      <span class="arrow-up">▲ +79% Velocity</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel Growth – Natural</div>
+    <div class="card-value">Good Earth Fairfax</div>
+    <div class="card-sub">
+      1.0 → 1.7 units / store / week<br />
+      <span class="arrow-up">▲ +60% Velocity</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Velocity Risk – Large Chain</div>
+    <div class="card-value">Festival Foods</div>
+    <div class="card-sub">
+      0.3 → 0.2 units / store / week<br />
+      <span class="arrow-down">▼ –38% Velocity</span>
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider" />
+
+<section>
+  <h2>What “Velocity” Means in This Report</h2>
+  <p>
+    Velocity here is defined as <strong>units per store per week</strong> and <strong>dollars per store per week</strong> for each chain. It answers a simple question:
+    “Once SWOFFLE is on shelf, how fast does it move?”
+  </p>
+  <blockquote>
+    ∙ Units Per Store Per Week (UPSPW) – average number of units sold per store, per week<br />
+    ∙ Dollars Per Store Per Week – average sales dollars per store, per week<br />
+    ∙ Percent Change – year-over-year change in those velocity metrics
+  </blockquote>
+  <p>
+    Velocity removes the distortion of store count and shows true consumer pull. High velocity with low distribution signals upside. Low velocity with high distribution signals risk or a need for support.
+  </p>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Top velocity performers – units per store per week</h2>
+  <p>Chains where SWOFFLE is moving fastest once it’s on shelf.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>Δ UPSPW</th>
+        <th>% Δ UPSPW</th>
+        <th>$ / Store / Week Current</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Palo Alto Egg Company</td>
+        <td>0.0</td>
+        <td>12.1</td>
+        <td>+12.1</td>
+        <td>+100%</td>
+        <td>$11,606.77</td>
+      </tr>
+      <tr>
+        <td>Raise The Bar</td>
+        <td>1.6</td>
+        <td>2.8</td>
+        <td>+1.2</td>
+        <td>+79%</td>
+        <td>$3,430.55</td>
+      </tr>
+      <tr>
+        <td>Good Earth Fairfax</td>
+        <td>1.0</td>
+        <td>1.7</td>
+        <td>+0.6</td>
+        <td>+59.6%</td>
+        <td>$2,068.75</td>
+      </tr>
+      <tr>
+        <td>New Leaf Independents</td>
+        <td>1.4</td>
+        <td>1.7</td>
+        <td>+0.3</td>
+        <td>+19.4%</td>
+        <td>$1,593.89</td>
+      </tr>
+      <tr>
+        <td>Jimbos</td>
+        <td>0.5</td>
+        <td>0.5</td>
+        <td>+0.1</td>
+        <td>+10.9%</td>
+        <td>$718.19</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Visual – Top 5 velocity chains (UPSPW)</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">Palo Alto Egg Company</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:100%;"></div></div>
+    <div class="bar-value">12.1</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Raise The Bar</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:23%;"></div></div>
+    <div class="bar-value">2.8</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Good Earth Fairfax</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:14%;"></div></div>
+    <div class="bar-value">1.7</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">New Leaf Independents</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:14%;"></div></div>
+    <div class="bar-value">1.7</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Jimbos</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:4%;"></div></div>
+    <div class="bar-value">0.5</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Fastest-growing velocity accounts</h2>
+  <p>Chains with the largest percentage increase in units per store per week.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>Δ UPSPW</th>
+        <th>% Δ UPSPW</th>
+        <th>Cases Selected</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lazy Acres</td>
+        <td>0.1</td>
+        <td>0.4</td>
+        <td>+0.3</td>
+        <td>+515%</td>
+        <td>82</td>
+      </tr>
+      <tr>
+        <td>Northwest Grocers</td>
+        <td>0.0</td>
+        <td>0.3</td>
+        <td>+0.2</td>
+        <td>+610%</td>
+        <td>71</td>
+      </tr>
+      <tr>
+        <td>Sierra Hills Market</td>
+        <td>0.1</td>
+        <td>0.4</td>
+        <td>+0.3</td>
+        <td>+450%</td>
+        <td>22</td>
+      </tr>
+      <tr>
+        <td>Shop N Kart Ashland</td>
+        <td>0.2</td>
+        <td>0.6</td>
+        <td>+0.4</td>
+        <td>+190%</td>
+        <td>29</td>
+      </tr>
+      <tr>
+        <td>JBros Gluten Free Market</td>
+        <td>0.3</td>
+        <td>0.7</td>
+        <td>+0.4</td>
+        <td>+157%</td>
+        <td>36</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Visual – YoY velocity change</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">Northwest Grocers</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:100%;"></div></div>
+    <div class="bar-value">+610%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Lazy Acres</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:84%;"></div></div>
+    <div class="bar-value">+515%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Sierra Hills Market</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:74%;"></div></div>
+    <div class="bar-value">+450%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Shop N Kart Ashland</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:31%;"></div></div>
+    <div class="bar-value">+190%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">JBros Gluten Free Market</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:26%;"></div></div>
+    <div class="bar-value">+157%</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Big accounts with opportunity – volume vs velocity</h2>
+  <p>Large chains where cases are strong but velocity suggests room to grow.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>UPSPW Current</th>
+        <th>$ / Store / Week Current</th>
+        <th>Cases Prior</th>
+        <th>Cases Current</th>
+        <th>% Δ Cases</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Demoulas Supermarket</td>
+        <td>0.3</td>
+        <td>$371.58</td>
+        <td>476</td>
+        <td>674</td>
+        <td>+42%</td>
+      </tr>
+      <tr>
+        <td>Super 1 Foods</td>
+        <td>0.4</td>
+        <td>$515.46</td>
+        <td>348</td>
+        <td>476</td>
+        <td>+37%</td>
+      </tr>
+      <tr>
+        <td>URM Stores</td>
+        <td>0.2</td>
+        <td>$308.63</td>
+        <td>168</td>
+        <td>393</td>
+        <td>+134%</td>
+      </tr>
+      <tr>
+        <td>Heinen's Inc</td>
+        <td>0.3</td>
+        <td>$295.30</td>
+        <td>412</td>
+        <td>399</td>
+        <td>–3%</td>
+      </tr>
+      <tr>
+        <td>Festival Foods</td>
+        <td>0.2</td>
+        <td>$200.43</td>
+        <td>650</td>
+        <td>384</td>
+        <td>–41%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Visual – Volume vs velocity (illustrative)</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">Demoulas – Cases</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:100%;"></div></div>
+    <div class="bar-value">674</div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">Demoulas – UPSPW</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:8%;"></div></div>
+    <div class="bar-value">0.3</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Super 1 Foods – Cases</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:71%;"></div></div>
+    <div class="bar-value">476</div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">Super 1 Foods – UPSPW</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:10%;"></div></div>
+    <div class="bar-value">0.4</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">URM Stores – Cases</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:58%;"></div></div>
+    <div class="bar-value">393</div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">URM Stores – UPSPW</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:5%;"></div></div>
+    <div class="bar-value">0.2</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Velocity risk accounts – declining performance</h2>
+  <p>Chains where velocity is falling and may need attention, support, or a reset.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>% Δ UPSPW</th>
+        <th>$ / Store / Week Prior</th>
+        <th>$ / Store / Week Current</th>
+        <th>% Δ $ / Store / Week</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Festival Foods</td>
+        <td>0.3</td>
+        <td>0.2</td>
+        <td>–37.8%</td>
+        <td>$300.73</td>
+        <td>$200.43</td>
+        <td>–33.4%</td>
+      </tr>
+      <tr>
+        <td>Lunardis</td>
+        <td>0.2</td>
+        <td>0.2</td>
+        <td>–22.0%</td>
+        <td>$195.85</td>
+        <td>$155.71</td>
+        <td>–20.5%</td>
+      </tr>
+      <tr>
+        <td>Heinen's Inc</td>
+        <td>0.4</td>
+        <td>0.3</td>
+        <td>–7.4%</td>
+        <td>$321.62</td>
+        <td>$295.30</td>
+        <td>–8.2%</td>
+      </tr>
+      <tr>
+        <td>Kremers Market</td>
+        <td>0.6</td>
+        <td>0.5</td>
+        <td>–15.2%</td>
+        <td>$746.17</td>
+        <td>$645.21</td>
+        <td>–13.5%</td>
+      </tr>
+      <tr>
+        <td>NCG East All PGM</td>
+        <td>0.2</td>
+        <td>0.1</td>
+        <td>–23.1%</td>
+        <td>$157.03</td>
+        <td>$137.86</td>
+        <td>–12.2%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Visual – Velocity decline</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">Festival Foods</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:100%;"></div></div>
+    <div class="bar-value">–37.8%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Lunardis</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:58%;"></div></div>
+    <div class="bar-value">–22.0%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">NCG East All PGM</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:61%;"></div></div>
+    <div class="bar-value">–23.1%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Kremers Market</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:40%;"></div></div>
+    <div class="bar-value">–15.2%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">Heinen's Inc</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:20%;"></div></div>
+    <div class="bar-value">–7.4%</div>
+  </div>
+</section>
+
+</body>
