@@ -2,557 +2,1044 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>SWOFFLE – 16-Week YOY Performance Dashboard (UNFI)</title>
+  <title>SWOFFLE – UNFI Top 50 & Independent Accounts Summary – Last 16 Weeks</title>
+
+  <!-- Google Fonts -->
+  <link href=https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap rel="stylesheet">
+
   <style>
-    body { font-family: Arial, sans-serif; font-size: 13px; color: #222; }
-    h1, h2, h3 { margin-bottom: 4px; }
-    h1 { font-size: 20px; }
-    h2 { font-size: 16px; margin-top: 18px; }
-    h3 { font-size: 14px; margin-top: 12px; }
-    .kpi-row { display: flex; gap: 16px; margin: 8px 0 12px 0; }
-    .kpi-card { padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; min-width: 180px; }
-    .kpi-label { font-size: 11px; text-transform: uppercase; color: #666; }
-    .kpi-value { font-size: 16px; font-weight: bold; }
-    .kpi-sub { font-size: 11px; color: #444; }
-    ul { margin-top: 4px; }
-    li { margin-bottom: 2px; }
-    table { border-collapse: collapse; margin-top: 6px; width: 100%; max-width: 900px; }
-    th, td { border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 12px; }
-    th { background-color: #f4f4f4; }
-    .pos { color: #0a7a2f; font-weight: bold; }
-    .neg { color: #b00020; font-weight: bold; }
-    .note { font-size: 11px; color: #666; margin-top: 4px; }
-    .section-note { font-size: 11px; color: #555; margin-top: 2px; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8f8f6;
+      color: #222;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.4rem;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      background: radial-gradient(circle at center, rgba(46,107,66,0.35), transparent 60%), #111111;
+      padding: 60px 40px;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .hero h2 {
+      font-size: 1.3rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    /* Card Grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      padding: 30px 40px 10px 40px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2e6b42;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .arrow-up {
+      color: #2e6b42;
+      font-weight: 700;
+    }
+
+    .arrow-down {
+      color: #b33a3a;
+      font-weight: 700;
+    }
+
+    /* Section + dividers */
+    section {
+      padding: 20px 40px 30px 40px;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid rgba(46,107,66,0.25);
+      margin: 10px 40px 20px 40px;
+    }
+
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 0.5rem;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    th {
+      background: #f0f0ed;
+      text-align: left;
+    }
+
+    /* Bar charts */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      font-size: 0.85rem;
+    }
+
+    .bar-label {
+      width: 45%;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      flex: 1;
+      background: #e6e6e2;
+      margin: 0 6px;
+      height: 10px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .positive {
+      background: #2e6b42;
+    }
+
+    .negative {
+      background: #b33a3a;
+    }
+
+    blockquote {
+      font-size: 0.85rem;
+      color: #555;
+      border-left: 3px solid #ccc;
+      padding-left: 10px;
+      margin-left: 0;
+    }
+
+    .compare-grid {
+      margin-top: 10px;
+    }
+
+    .compare-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .compare-sub {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
+
 <body>
 
-  <!-- HEADER -->
-  <h1>SWOFFLE – 16-Week Year-over-Year Performance Dashboard (UNFI)</h1>
-  <div class="note">
-    Period: <strong>Jan 1, 2026 – Apr 23, 2026</strong> vs same 16-week period prior year (UNFI shipment data).
+<!-- HERO -->
+<div class="hero">
+  <h1>SWOFFLE</h1>
+  <h2>UNFI Top 50 Accounts &amp; Independent Account Summary &ndash; Last 16 Weeks (Jan 1 &ndash; Apr 23, 2026)</h2>
+</div>
+
+<!-- KPI CARDS – EXECUTIVE SUMMARY -->
+<div class="card-grid">
+
+  <div class="card">
+    <div class="card-title">Confidential</div>
+    <div class="card-value">Top Account</div>
+    <div class="card-sub">532 cases <span class="arrow-up">&#9650; +9%</span></div>
   </div>
 
-  <!-- TOPLINE KPI -->
-  <h2>1. Topline Performance – Last 16 Weeks (YOY)</h2>
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-label">Sales dollars – YTD (16 weeks)</div>
-      <div class="kpi-value">$55,153</div>
-      <div class="kpi-sub">+15% vs prior year</div>
+  <div class="card">
+    <div class="card-title">Broad Growth</div>
+    <div class="card-value">Strong Momentum</div>
+    <div class="card-sub">Multiple chains with double &amp; triple&#8209;digit gains</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Targeted Risk</div>
+    <div class="card-value">Declines Identified</div>
+    <div class="card-sub">10 Top 50 accounts contracting YoY</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">UNFI Last 16 Weeks &ndash; Total Cases</div>
+    <div class="card-value">2,878</div>
+    <div class="card-sub"><span class="arrow-up">&#9650; +23%</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">UNFI Total Sales &ndash; Last 16 Weeks</div>
+    <div class="card-value">$55,152</div>
+    <div class="card-sub"><span class="arrow-up">&#9650; +15%</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Confidential</div>
+    <div class="card-value">532 cases</div>
+    <div class="card-sub">
+      Prior: 489 &bull; <span class="arrow-up">&#9650; +9%</span> cases<br />
+      Sales: $9,172 &bull; <span class="arrow-down">&#9660; -2%</span>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Cases shipped – YTD (16 weeks)</div>
-      <div class="kpi-value">2,878</div>
-      <div class="kpi-sub">+23% vs prior year</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Palo Alto Egg Company</div>
+    <div class="card-value">236 cases</div>
+    <div class="card-sub">
+      Prior: 0 &bull; <span class="arrow-up">&#9650; +100%</span> cases<br />
+      Sales: $3,912 &bull; <span class="arrow-up">&#9650; +100%</span>
     </div>
   </div>
 
-  <ul>
-    <li><strong>Sales growth:</strong> Dollar sales are up <strong>15%</strong> on the year-over-year 16-week comparison.</li>
-    <li><strong>Volume growth:</strong> Cases shipped are up <strong>23%</strong>, indicating strong underlying unit movement.</li>
-    <li><strong>Mix effect:</strong> Cases are growing faster than dollars, suggesting some combination of deeper discounts, mix shift, or price changes versus last year.</li>
-  </ul>
-
-  <!-- TOP 50 ACCOUNTS -->
-  <h2>2. Top 50 Accounts – Last 16 Weeks (YOY)</h2>
-  <div class="section-note">
-    Source: “UNFI TOP 50 LAST 16 WEEKS JAN–APR” – top 50 chains by cases shipped in the selected period.
+  <div class="card">
+    <div class="card-title">Super 1 Foods</div>
+    <div class="card-value">144 cases</div>
+    <div class="card-sub">
+      Prior: 119 &bull; <span class="arrow-up">&#9650; +21%</span> cases<br />
+      Sales: $2,936 &bull; <span class="arrow-up">&#9650; +46%</span>
+    </div>
   </div>
 
-  <h3>2.1 Key positives – chains driving the 16-week growth</h3>
+  <div class="card">
+    <div class="card-title">Bristol Farms</div>
+    <div class="card-value">97 cases</div>
+    <div class="card-sub">
+      Prior: 0 &bull; <span class="arrow-up">&#9650; +100%</span> cases<br />
+      Sales: $1,895 &bull; <span class="arrow-up">&#9650; +100%</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Bigy Grocery Full Service</div>
+    <div class="card-value">66 cases</div>
+    <div class="card-sub">
+      Prior: 0 &bull; <span class="arrow-up">&#9650; +100%</span> cases<br />
+      Sales: $1,365 &bull; <span class="arrow-up">&#9650; +100%</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- INDEPENDENT ACCOUNT PERFORMANCE SECTION -->
+<section>
+  <h2>Independent Account Performance &ndash; Last 16 Weeks</h2>
+
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-title">Independent Accounts &ndash; Total</div>
+      <div class="card-value">186</div>
+      <div class="card-sub">Full independent base</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Independent Ordering</div>
+      <div class="card-value">124</div>
+      <div class="card-sub">Ordered in last 16 weeks</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Independent Not Ordering</div>
+      <div class="card-value">62</div>
+      <div class="card-sub">No orders in last 16 weeks</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Independent Sales &ndash; Last 16 Weeks</div>
+      <div class="card-value">$7,202</div>
+      <div class="card-sub"><span class="arrow-down">&#9660; -44%</span> (vs $12,919)</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Independent Cases &ndash; Last 16 Weeks</div>
+      <div class="card-value">335</div>
+      <div class="card-sub"><span class="arrow-down">&#9660; -41%</span> (vs 569)</div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- COMPARISON CHART -->
+<section>
+  <h2>UNFI Top 50 vs Independent Accounts &ndash; Comparison</h2>
+
+  <div class="compare-grid">
+    <div class="compare-title">Total Cases &ndash; Last 16 Weeks</div>
+    <div class="compare-sub">Top 50 vs Independents</div>
+
+    <div class="bar-row">
+      <div class="bar-label">Top 50 Cases</div>
+      <div class="bar-track">
+        <div class="bar-fill positive" style="width:100%;"></div>
+      </div>
+      <div class="bar-value">2,543 <span class="arrow-up">&#9650; +43%</span></div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">Independent Cases</div>
+      <div class="bar-track">
+        <div class="bar-fill negative" style="width:12%;"></div>
+      </div>
+      <div class="bar-value">335 <span class="arrow-down">&#9660; -41%</span></div>
+    </div>
+  </div>
+
+  <br />
+
+  <div class="compare-grid">
+    <div class="compare-title">Total Sales &ndash; Last 16 Weeks</div>
+    <div class="compare-sub">Top 50 vs Independents</div>
+
+    <div class="bar-row">
+      <div class="bar-label">Top 50 Sales</div>
+      <div class="bar-track">
+        <div class="bar-fill positive" style="width:100%;"></div>
+      </div>
+      <div class="bar-value">$47,950 <span class="arrow-up">&#9650; +37%</span></div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">Independent Sales</div>
+      <div class="bar-track">
+        <div class="bar-fill negative" style="width:13%;"></div>
+      </div>
+      <div class="bar-value">$7,202 <span class="arrow-down">&#9660; -44%</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>High-level overview</h2>
   <p>
-    The top 50 group is where most of the growth is coming from. Many chains show strong gains in both cases and dollars.
-    For example, the file shows:
-    “PALO ALTO EGG COMPANY 236 0 236 100 3912 0 100” and
-    “URM STORES 95 43 52 121 2152 1016 112”.
+    This report summarizes the UNFI last 16 weeks performance (Jan 1 &ndash; Apr 23, 2026) across the top 50 accounts and the broader independent account base of 186 stores. Combined total sales reached $55,152 (<span class="arrow-up">&#9650; +15%</span> YoY) on 2,878 cases (<span class="arrow-up">&#9650; +23%</span> YoY). The Top 50 accounts drove the vast majority of volume at 2,543 cases (<span class="arrow-up">&#9650; +43%</span>) and $47,950 in sales (<span class="arrow-up">&#9650; +37%</span>), while the independent base contributed 335 cases and $7,202 in sales &mdash; both declining year over year, pointing to a concentration of growth in larger chain partnerships.
   </p>
 
+  <blockquote>
+    7 new chains entered the Top 50 in this period, contributing 455 incremental cases and $8,388 in new revenue. Meanwhile, 10 existing Top 50 accounts contracted, representing targeted risk areas for outreach and re-engagement.
+  </blockquote>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Key strengths and growth pockets</h2>
+
+  <h3>Top 5 accounts by cases shipped</h3>
   <table>
     <thead>
       <tr>
         <th>Chain</th>
-        <th>Cases – Selected</th>
-        <th>Cases – Prior</th>
-        <th>% Change Cases</th>
-        <th>Sales $ – Selected</th>
-        <th>Sales $ – Prior</th>
-        <th>% Change Sales $</th>
-        <th>Comment</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>% &Delta; Sales $</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>CONFIDENTIAL</td><td>532</td><td>489</td><td>+43</td><td>+9%</td><td>$9,172</td><td>-2%</td></tr>
+      <tr><td>PALO ALTO EGG COMPANY</td><td>236</td><td>0</td><td>+236</td><td>+100%</td><td>$3,912</td><td>+100%</td></tr>
+      <tr><td>DEMOULAS SUPERMARKET</td><td>159</td><td>167</td><td>-8</td><td>-5%</td><td>$3,586</td><td>-4%</td></tr>
+      <tr><td>SUPER 1 FOODS</td><td>144</td><td>119</td><td>+25</td><td>+21%</td><td>$2,936</td><td>+46%</td></tr>
+      <tr><td>HARMONS NEIGHBORHOOD GROCER</td><td>120</td><td>94</td><td>+26</td><td>+28%</td><td>$1,764</td><td>+2%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Additional notable accounts</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>Sales $ (Prior)</th>
+        <th>% &Delta; Sales $</th>
       </tr>
     </thead>
     <tbody>
       <tr>
+        <td>CONFIDENTIAL</td>
+        <td>532</td>
+        <td>489</td>
+        <td>+43</td>
+        <td>+9%</td>
+        <td>$9,172</td>
+        <td>$9,344</td>
+        <td>-2%</td>
+      </tr>
+      <tr>
         <td>PALO ALTO EGG COMPANY</td>
         <td>236</td>
         <td>0</td>
-        <td class="pos">+100%</td>
-        <td>3,912</td>
-        <td>0</td>
-        <td class="pos">+100%</td>
-        <td>New distribution; strong 16-week start with meaningful volume.</td>
+        <td>+236</td>
+        <td>+100%</td>
+        <td>$3,912</td>
+        <td>$0</td>
+        <td>+100%</td>
       </tr>
       <tr>
         <td>SUPER 1 FOODS</td>
         <td>144</td>
         <td>119</td>
-        <td class="pos">+21%</td>
-        <td>2,936</td>
-        <td>2,006</td>
-        <td class="pos">+46%</td>
-        <td>Good case growth with even stronger dollar growth.</td>
-      </tr>
-      <tr>
-        <td>HARMONS NEIGHBORHOOD GROCER</td>
-        <td>120</td>
-        <td>94</td>
-        <td class="pos">+28%</td>
-        <td>1,764</td>
-        <td>1,728</td>
-        <td class="pos">+2%</td>
-        <td>Solid case lift; dollars slightly positive.</td>
-      </tr>
-      <tr>
-        <td>NCGA NATIONAL COOP GROCERS ASSOCIATION</td>
-        <td>105</td>
-        <td>68</td>
-        <td class="pos">+54%</td>
-        <td>1,815</td>
-        <td>1,239</td>
-        <td class="pos">+47%</td>
-        <td>Strong growth across the NCGA network.</td>
+        <td>+25</td>
+        <td>+21%</td>
+        <td>$2,936</td>
+        <td>$2,006</td>
+        <td>+46%</td>
       </tr>
       <tr>
         <td>RAISE THE BAR</td>
         <td>101</td>
         <td>63</td>
-        <td class="pos">+60%</td>
-        <td>2,251</td>
-        <td>1,455</td>
-        <td class="pos">+55%</td>
-        <td>High-growth account; both volume and dollars up sharply.</td>
-      </tr>
-      <tr>
-        <td>BRISTOL FARMS</td>
-        <td>97</td>
-        <td>0</td>
-        <td class="pos">+100%</td>
-        <td>1,895</td>
-        <td>0</td>
-        <td class="pos">+100%</td>
-        <td>New distribution; strong early performance.</td>
+        <td>+38</td>
+        <td>+60%</td>
+        <td>$2,251</td>
+        <td>$1,455</td>
+        <td>+55%</td>
       </tr>
       <tr>
         <td>URM STORES</td>
         <td>95</td>
         <td>43</td>
-        <td class="pos">+121%</td>
-        <td>2,152</td>
-        <td>1,016</td>
-        <td class="pos">+112%</td>
-        <td>More than doubled in both cases and dollars.</td>
+        <td>+52</td>
+        <td>+121%</td>
+        <td>$2,152</td>
+        <td>$1,016</td>
+        <td>+112%</td>
+      </tr>
+      <tr>
+        <td>BRISTOL FARMS</td>
+        <td>97</td>
+        <td>0</td>
+        <td>+97</td>
+        <td>+100%</td>
+        <td>$1,895</td>
+        <td>$0</td>
+        <td>+100%</td>
+      </tr>
+      <tr>
+        <td>NCGA NATIONAL COOP GROCERS ASSOCIATION</td>
+        <td>105</td>
+        <td>68</td>
+        <td>+37</td>
+        <td>+54%</td>
+        <td>$1,815</td>
+        <td>$1,239</td>
+        <td>+47%</td>
+      </tr>
+      <tr>
+        <td>HARMONS NEIGHBORHOOD GROCER</td>
+        <td>120</td>
+        <td>94</td>
+        <td>+26</td>
+        <td>+28%</td>
+        <td>$1,764</td>
+        <td>$1,728</td>
+        <td>+2%</td>
       </tr>
       <tr>
         <td>GOOD EARTH FAIRFAX</td>
         <td>74</td>
         <td>39</td>
-        <td class="pos">+90%</td>
-        <td>1,658</td>
-        <td>901</td>
-        <td class="pos">+84%</td>
-        <td>Very strong 16-week growth at store level.</td>
+        <td>+35</td>
+        <td>+90%</td>
+        <td>$1,658</td>
+        <td>$901</td>
+        <td>+84%</td>
       </tr>
       <tr>
-        <td>LAZY ACRES</td>
-        <td>27</td>
-        <td>20</td>
-        <td class="pos">+35%</td>
-        <td>471</td>
-        <td>203</td>
-        <td class="pos">+132%</td>
-        <td>Cases up; dollars more than doubled, indicating strong mix/price.</td>
-      </tr>
-      <tr>
-        <td>MARKET OF CHOICE</td>
-        <td>20</td>
-        <td>6</td>
-        <td class="pos">+233%</td>
-        <td>418</td>
-        <td>130</td>
-        <td class="pos">+220%</td>
-        <td>Significant growth; strong proof point in this region.</td>
-      </tr>
-      <tr>
-        <td>NORTHWEST GROCERS</td>
-        <td>19</td>
-        <td>6</td>
-        <td class="pos">+217%</td>
-        <td>437</td>
-        <td>83</td>
-        <td class="pos">+429%</td>
-        <td>High percentage growth; strong incremental dollars.</td>
-      </tr>
-      <tr>
-        <td>ECRS EDI GENERIC</td>
-        <td>9</td>
-        <td>1</td>
-        <td class="pos">+800%</td>
-        <td>193</td>
-        <td>17</td>
-        <td class="pos">+1,015%</td>
-        <td>Small base but very strong percentage lift.</td>
-      </tr>
-      <tr>
-        <td>BIGY GROCERY FULL SERVICE</td>
-        <td>66</td>
-        <td>0</td>
-        <td class="pos">+100%</td>
-        <td>1,365</td>
-        <td>0</td>
-        <td class="pos">+100%</td>
-        <td>New chain; strong 16-week contribution in cases and dollars.</td>
+        <td>HEINENS INC</td>
+        <td>101</td>
+        <td>91</td>
+        <td>+10</td>
+        <td>+11%</td>
+        <td>$1,448</td>
+        <td>$1,677</td>
+        <td>-14%</td>
       </tr>
     </tbody>
   </table>
+</section>
 
-  <ul>
-    <li><strong>New and expanding chains</strong> (Palo Alto Egg, Bristol Farms, Big Y, Piazza’s, CIDS, etc.) are key drivers of the 16-week growth.</li>
-    <li><strong>Established growth accounts</strong> like Super 1 Foods, URM Stores, Raise The Bar, and NCGA are compounding volume on top of an existing base.</li>
-    <li><strong>High % lifts on small bases</strong> (e.g., ECRS EDI GENERIC, Eureka & Harvest, Northwest Grocers) show good traction where distribution is still relatively light.</li>
-  </ul>
+<hr class="divider" />
 
-  <h3>2.2 Weaknesses / opportunity areas within the top 50</h3>
-  <p>
-    A smaller subset of the top 50 is down year-over-year in the 16-week window.
-    For example, the file shows:
-    “FESTIVAL FOODS 71 111 -40 -36 1237 2313 -47” and
-    “TOWN AND COUNTRY FOODS MONTANA 12 26 -14 -54 210 556 -62”.
-  </p>
+<section>
+  <h2>Weaknesses and risk accounts</h2>
 
+  <h3>Largest declines in cases shipped (Top 50)</h3>
   <table>
     <thead>
       <tr>
         <th>Chain</th>
-        <th>Cases – Selected</th>
-        <th>Cases – Prior</th>
-        <th>% Change Cases</th>
-        <th>Sales $ – Selected</th>
-        <th>Sales $ – Prior</th>
-        <th>% Change Sales $</th>
-        <th>Comment</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>% &Delta; Sales $</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>FESTIVAL FOODS</td>
-        <td>71</td>
-        <td>111</td>
-        <td class="neg">-36%</td>
-        <td>1,237</td>
-        <td>2,313</td>
-        <td class="neg">-47%</td>
-        <td>Meaningful decline; worth reviewing placement, promo, and in-stock.</td>
-      </tr>
-      <tr>
-        <td>NCG CENTRAL ALL PGM</td>
-        <td>49</td>
-        <td>66</td>
-        <td class="neg">-26%</td>
-        <td>797</td>
-        <td>1,192</td>
-        <td class="neg">-33%</td>
-        <td>Down in both cases and dollars; opportunity to re-engage stores.</td>
-      </tr>
-      <tr>
-        <td>HEN</td>
-        <td>25</td>
-        <td>24</td>
-        <td class="">+4%</td>
-        <td>320</td>
-        <td>442</td>
-        <td class="neg">-28%</td>
-        <td>Cases flat to slightly up, but dollars down; likely discount/mix impact.</td>
-      </tr>
-      <tr>
-        <td>TOWN AND COUNTRY FOODS MONTANA</td>
-        <td>12</td>
-        <td>26</td>
-        <td class="neg">-54%</td>
-        <td>210</td>
-        <td>556</td>
-        <td class="neg">-62%</td>
-        <td>Significant decline; needs a closer look at distribution and support.</td>
-      </tr>
-      <tr>
-        <td>NCG EAST ALL PGM</td>
-        <td>9</td>
-        <td>18</td>
-        <td class="neg">-50%</td>
-        <td>180</td>
-        <td>354</td>
-        <td class="neg">-49%</td>
-        <td>Down roughly half vs prior year; opportunity to re-activate stores.</td>
-      </tr>
-      <tr>
-        <td>BARBUR WORLD FOODS</td>
-        <td>8</td>
-        <td>13</td>
-        <td class="neg">-38%</td>
-        <td>148</td>
-        <td>247</td>
-        <td class="neg">-40%</td>
-        <td>Noticeable decline in a smaller but previously stronger account.</td>
-      </tr>
-      <tr>
-        <td>CENTRAL REGION INDIES</td>
-        <td>10</td>
-        <td>13</td>
-        <td class="neg">-23%</td>
-        <td>212</td>
-        <td>322</td>
-        <td class="neg">-34%</td>
-        <td>Regional indie cluster trending down; may need field attention.</td>
-      </tr>
+      <tr><td>FESTIVAL FOODS</td><td>71</td><td>111</td><td>-40</td><td>-36%</td><td>$1,237</td><td>-47%</td></tr>
+      <tr><td>NCG CENTRAL ALL PGM</td><td>49</td><td>66</td><td>-17</td><td>-26%</td><td>$797</td><td>-33%</td></tr>
+      <tr><td>TOWN AND COUNTRY FOODS MONTANA</td><td>12</td><td>26</td><td>-14</td><td>-54%</td><td>$210</td><td>-62%</td></tr>
+      <tr><td>NCG EAST ALL PGM</td><td>9</td><td>18</td><td>-9</td><td>-50%</td><td>$180</td><td>-49%</td></tr>
+      <tr><td>DEMOULAS SUPERMARKET</td><td>159</td><td>167</td><td>-8</td><td>-5%</td><td>$3,586</td><td>-4%</td></tr>
+      <tr><td>BARBUR WORLD FOODS</td><td>8</td><td>13</td><td>-5</td><td>-38%</td><td>$148</td><td>-40%</td></tr>
+      <tr><td>DAVESLUCKY MARKET</td><td>17</td><td>21</td><td>-4</td><td>-19%</td><td>$310</td><td>-21%</td></tr>
+      <tr><td>CENTRAL REGION INDIES</td><td>10</td><td>13</td><td>-3</td><td>-23%</td><td>$212</td><td>-34%</td></tr>
+      <tr><td>MURPHYS MARKETS</td><td>9</td><td>12</td><td>-3</td><td>-25%</td><td>$141</td><td>-40%</td></tr>
+      <tr><td>GENERIC EDI</td><td>31</td><td>32</td><td>-1</td><td>-3%</td><td>$802</td><td>-2%</td></tr>
     </tbody>
   </table>
 
-  <ul>
-    <li><strong>Festival Foods</strong> is the clearest top-50 risk: both cases and dollars are down sharply.</li>
-    <li><strong>NCG Central / NCG East</strong> show declines that may be tied to specific stores or reset activity.</li>
-    <li><strong>Town & Country Foods Montana</strong> and <strong>Barbur World Foods</strong> are smaller but meaningfully down and worth targeted follow-up.</li>
-  </ul>
+  <h3>Largest declines in cases shipped (Independents)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>% &Delta; Sales $</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>UNIVERSITY OF CALIFORNIA SCHOOL SYSTEM</td><td>6</td><td>34</td><td>-28</td><td>-82%</td><td>$114</td><td>-82%</td></tr>
+      <tr><td>NATURAL RETAIL GROUP</td><td>1</td><td>19</td><td>-18</td><td>-95%</td><td>$18</td><td>-95%</td></tr>
+      <tr><td>COOP EDI CHAIN</td><td>3</td><td>17</td><td>-14</td><td>-82%</td><td>$71</td><td>-82%</td></tr>
+      <tr><td>EXPORTERS</td><td>0</td><td>14</td><td>-14</td><td>-100%</td><td>$0</td><td>-100%</td></tr>
+      <tr><td>INFRA ATLANTIC ALL OTHER</td><td>0</td><td>12</td><td>-12</td><td>-100%</td><td>$0</td><td>-100%</td></tr>
+      <tr><td>FARM STAND IN THE GORGE</td><td>0</td><td>11</td><td>-11</td><td>-100%</td><td>$0</td><td>-100%</td></tr>
+      <tr><td>FRESCO COMMUNITY MARKETS</td><td>0</td><td>10</td><td>-10</td><td>-100%</td><td>$0</td><td>-100%</td></tr>
+      <tr><td>ORDER DOG</td><td>3</td><td>11</td><td>-8</td><td>-73%</td><td>$62</td><td>-75%</td></tr>
+      <tr><td>SOUTH REGION INDIES</td><td>1</td><td>9</td><td>-8</td><td>-89%</td><td>$17</td><td>-92%</td></tr>
+      <tr><td>DAL</td><td>0</td><td>8</td><td>-8</td><td>-100%</td><td>$0</td><td>-100%</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <!-- INDEPENDENT / MOM & POP ACCOUNTS -->
-  <h2>3. Independent & Mom-and-Pop Accounts – Last 16 Weeks (YOY)</h2>
-  <div class="section-note">
-    Source: “UNFI OTHER INDEPENDENTS LAST 16 WEEKS JAN–APR” – 186 smaller, largely independent accounts.
+<hr class="divider" />
+
+<section>
+  <h2>Visual charts &ndash; Top 5 accounts by cases shipped</h2>
+
+  <div class="bar-row">
+    <div class="bar-label">CONFIDENTIAL</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:100%;"></div></div>
+    <div class="bar-value">532</div>
   </div>
 
-  <h3>3.1 Bright spots among independents</h3>
-  <p>
-    While the independent universe is down overall, there are pockets of growth.
-    For example, the file shows:
-    “SAVE U MORE AK 7 5 2 40 207 116 79” and
-    “ORGANIC ROOTS 3 2 1 50 131 35 273”.
-  </p>
+  <div class="bar-row">
+    <div class="bar-label">PALO ALTO EGG COMPANY</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:44%;"></div></div>
+    <div class="bar-value">236</div>
+  </div>
 
+  <div class="bar-row">
+    <div class="bar-label">DEMOULAS SUPERMARKET</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:30%;"></div></div>
+    <div class="bar-value">159</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">SUPER 1 FOODS</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:27%;"></div></div>
+    <div class="bar-value">144</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">HARMONS NEIGHBORHOOD GROCER</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:23%;"></div></div>
+    <div class="bar-value">120</div>
+  </div>
+
+  <br />
+  <h3>Top 5 accounts by sales dollars</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">CONFIDENTIAL</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:100%;"></div></div>
+    <div class="bar-value">$9,172</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">PALO ALTO EGG COMPANY</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:43%;"></div></div>
+    <div class="bar-value">$3,912</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">DEMOULAS SUPERMARKET</div>
+    <div class="bar-track"><div class="bar-fill negative" style="width:39%;"></div></div>
+    <div class="bar-value">$3,586</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">SUPER 1 FOODS</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:32%;"></div></div>
+    <div class="bar-value">$2,936</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">RAISE THE BAR</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:25%;"></div></div>
+    <div class="bar-value">$2,251</div>
+  </div>
+
+  <br />
+  <h3>Top growth accounts by YoY % change in cases (min 10 cases shipped)</h3>
+
+  <div class="bar-row">
+    <div class="bar-label">EUREKA AND HARVEST</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:100%;"></div></div>
+    <div class="bar-value">+650%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">MARKET OF CHOICE</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:36%;"></div></div>
+    <div class="bar-value">+233%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">NORTHWEST GROCERS</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:33%;"></div></div>
+    <div class="bar-value">+217%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">JBROS GLUTEN FREE MARKET</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:27%;"></div></div>
+    <div class="bar-value">+175%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">WILDBERRIES</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:23%;"></div></div>
+    <div class="bar-value">+150%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">UNIVERSITY OF ARIZONA ACCOUNTS</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:19%;"></div></div>
+    <div class="bar-value">+125%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">URM STORES</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:19%;"></div></div>
+    <div class="bar-value">+121%</div>
+  </div>
+
+  <div class="bar-row">
+    <div class="bar-label">PALO ALTO EGG COMPANY</div>
+    <div class="bar-track"><div class="bar-fill positive" style="width:15%;"></div></div>
+    <div class="bar-value">+100%</div>
+  </div>
+
+</section>
+
+<hr class="divider" />
+
+<section>
+  <h2>Independent account growth leaders</h2>
+
+  <h3>Top independent accounts by sales (growth only)</h3>
   <table>
     <thead>
       <tr>
-        <th>Account</th>
-        <th>Cases – Selected</th>
-        <th>Cases – Prior</th>
-        <th>% Change Cases</th>
-        <th>Sales $ – Selected</th>
-        <th>Sales $ – Prior</th>
-        <th>% Change Sales $</th>
-        <th>Comment</th>
+        <th>Chain</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>% &Delta; Sales $</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>SAVE U MORE AK</td>
-        <td>7</td>
-        <td>5</td>
-        <td class="pos">+40%</td>
-        <td>207</td>
-        <td>116</td>
-        <td class="pos">+79%</td>
-        <td>Growing nicely; strong dollar lift on modest volume.</td>
-      </tr>
-      <tr>
-        <td>NEW MOON NATURAL FOODS</td>
-        <td>6</td>
-        <td>3</td>
-        <td class="pos">+100%</td>
-        <td>121</td>
-        <td>69</td>
-        <td class="pos">+75%</td>
-        <td>Cases doubled; dollars up strongly.</td>
-      </tr>
-      <tr>
-        <td>KENS MARKET QUEEN ANNE</td>
-        <td>6</td>
-        <td>3</td>
-        <td class="pos">+100%</td>
-        <td>115</td>
-        <td>69</td>
-        <td class="pos">+67%</td>
-        <td>Good growth in a key Seattle neighborhood store.</td>
-      </tr>
-      <tr>
-        <td>STAFF OF LIFE</td>
-        <td>5</td>
-        <td>5</td>
-        <td>0%</td>
-        <td>133</td>
-        <td>92</td>
-        <td class="pos">+44%</td>
-        <td>Stable cases with higher dollars; likely better mix or pricing.</td>
-      </tr>
-      <tr>
-        <td>ROTHS</td>
-        <td>4</td>
-        <td>1</td>
-        <td class="pos">+300%</td>
-        <td>69</td>
-        <td>20</td>
-        <td class="pos">+250%</td>
-        <td>Small base but strong growth; good regional signal.</td>
-      </tr>
-      <tr>
-        <td>STUMPS</td>
-        <td>4</td>
-        <td>1</td>
-        <td class="pos">+300%</td>
-        <td>92</td>
-        <td>21</td>
-        <td class="pos">+340%</td>
-        <td>High percentage growth; worth nurturing.</td>
-      </tr>
-      <tr>
-        <td>ORGANIC ROOTS</td>
-        <td>3</td>
-        <td>2</td>
-        <td class="pos">+50%</td>
-        <td>131</td>
-        <td>35</td>
-        <td class="pos">+273%</td>
-        <td>Excellent dollar growth; strong productivity for a small account.</td>
-      </tr>
+      <tr><td>SAVE U MORE AK</td><td>7</td><td>5</td><td>+2</td><td>+40%</td><td>$207</td><td>+79%</td></tr>
+      <tr><td>WESTRIDGE MARKET</td><td>5</td><td>0</td><td>+5</td><td>+100%</td><td>$161</td><td>+100%</td></tr>
+      <tr><td>ORGANIC ROOTS</td><td>3</td><td>2</td><td>+1</td><td>+50%</td><td>$131</td><td>+273%</td></tr>
+      <tr><td>UNIV OF WI DINING SVS</td><td>6</td><td>5</td><td>+1</td><td>+20%</td><td>$130</td><td>-6%</td></tr>
+      <tr><td>PENNGROVE MARKET</td><td>5</td><td>4</td><td>+1</td><td>+25%</td><td>$129</td><td>+39%</td></tr>
+      <tr><td>DSD CALIFORNIA</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$126</td><td>+100%</td></tr>
+      <tr><td>EL RANCHO CALI FRESH</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$123</td><td>+100%</td></tr>
+      <tr><td>NEW MOON NATURAL FOODS</td><td>6</td><td>3</td><td>+3</td><td>+100%</td><td>$121</td><td>+75%</td></tr>
+      <tr><td>KENS MARKET QUEEN ANNE</td><td>6</td><td>3</td><td>+3</td><td>+100%</td><td>$115</td><td>+67%</td></tr>
+      <tr><td>MAHS HANDY MARKET</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$111</td><td>+100%</td></tr>
     </tbody>
   </table>
+</section>
 
-  <ul>
-    <li><strong>Selective independents are performing well</strong>, with some doubling or tripling their business off small bases.</li>
-    <li><strong>Growth is fragmented</strong> – wins are scattered across regions rather than concentrated in one indie group.</li>
-    <li>These bright spots can be used as <strong>proof points</strong> for similar stores or regions.</li>
-  </ul>
+<hr class="divider" />
 
-  <h3>3.2 Where independents are down – concentration of declines</h3>
-  <p>
-    The broader independent universe is where the story turns negative. Many accounts have reduced or stopped ordering.
-    For example, the file shows:
-    “NATURAL RETAIL GROUP 1 19 -18 -95 18 393 -95” and
-    “FRESCO COMMUNITY MARKETS 0 10 -10 -100 0 254 -100”.
-  </p>
-
+<section>
+  <h2>Full Top 50 account detail</h2>
   <table>
     <thead>
       <tr>
-        <th>Account / Group</th>
-        <th>Cases – Selected</th>
-        <th>Cases – Prior</th>
-        <th>% Change Cases</th>
-        <th>Sales $ – Selected</th>
-        <th>Sales $ – Prior</th>
-        <th>% Change Sales $</th>
-        <th>Comment</th>
+        <th>#</th>
+        <th>Chain</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>Sales $ (Prior)</th>
+        <th>% &Delta; Sales $</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>NATURAL RETAIL GROUP</td>
-        <td>1</td>
-        <td>19</td>
-        <td class="neg">-95%</td>
-        <td>18</td>
-        <td>393</td>
-        <td class="neg">-95%</td>
-        <td>Major decline; effectively lost most of this business.</td>
-      </tr>
-      <tr>
-        <td>FRESCO COMMUNITY MARKETS</td>
-        <td>0</td>
-        <td>10</td>
-        <td class="neg">-100%</td>
-        <td>0</td>
-        <td>254</td>
-        <td class="neg">-100%</td>
-        <td>Completely lapsed; no shipments in the current 16 weeks.</td>
-      </tr>
-      <tr>
-        <td>EXPORTERS</td>
-        <td>0</td>
-        <td>14</td>
-        <td class="neg">-100%</td>
-        <td>0</td>
-        <td>323</td>
-        <td class="neg">-100%</td>
-        <td>Export business has gone to zero in this window.</td>
-      </tr>
-      <tr>
-        <td>INFRA ATLANTIC ALL OTHER</td>
-        <td>0</td>
-        <td>12</td>
-        <td class="neg">-100%</td>
-        <td>0</td>
-        <td>258</td>
-        <td class="neg">-100%</td>
-        <td>Significant indie cluster loss in the Atlantic region.</td>
-      </tr>
-      <tr>
-        <td>ROLLIN OATS MARKET</td>
-        <td>0</td>
-        <td>3</td>
-        <td class="neg">-100%</td>
-        <td>0</td>
-        <td>65</td>
-        <td class="neg">-100%</td>
-        <td>Previously active natural account now at zero.</td>
-      </tr>
-      <tr>
-        <td>RAINBOW BLOSSOM</td>
-        <td>1</td>
-        <td>6</td>
-        <td class="neg">-83%</td>
-        <td>24</td>
-        <td>142</td>
-        <td class="neg">-83%</td>
-        <td>Sharp decline; still ordering but at a much lower level.</td>
-      </tr>
-      <tr>
-        <td>COOP EDI CHAIN</td>
-        <td>3</td>
-        <td>17</td>
-        <td class="neg">-82%</td>
-        <td>71</td>
-        <td>384</td>
-        <td class="neg">-82%</td>
-        <td>Co-op cluster significantly down vs prior year.</td>
-      </tr>
-      <tr>
-        <td>ORDER DOG</td>
-        <td>3</td>
-        <td>11</td>
-        <td class="neg">-73%</td>
-        <td>62</td>
-        <td>252</td>
-        <td class="neg">-75%</td>
-        <td>Online/DSD ordering channel has dropped sharply.</td>
-      </tr>
+      <tr><td>1</td><td>CONFIDENTIAL</td><td>532</td><td>489</td><td>+43</td><td>+9%</td><td>$9,172</td><td>$9,344</td><td>-2%</td></tr>
+      <tr><td>2</td><td>PALO ALTO EGG COMPANY</td><td>236</td><td>0</td><td>+236</td><td>+100%</td><td>$3,912</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>3</td><td>DEMOULAS SUPERMARKET</td><td>159</td><td>167</td><td>-8</td><td>-5%</td><td>$3,586</td><td>$3,719</td><td>-4%</td></tr>
+      <tr><td>4</td><td>SUPER 1 FOODS</td><td>144</td><td>119</td><td>+25</td><td>+21%</td><td>$2,936</td><td>$2,006</td><td>+46%</td></tr>
+      <tr><td>5</td><td>HARMONS NEIGHBORHOOD GROCER</td><td>120</td><td>94</td><td>+26</td><td>+28%</td><td>$1,764</td><td>$1,728</td><td>+2%</td></tr>
+      <tr><td>6</td><td>NCGA NATIONAL COOP GROCERS ASSOCIATION</td><td>105</td><td>68</td><td>+37</td><td>+54%</td><td>$1,815</td><td>$1,239</td><td>+47%</td></tr>
+      <tr><td>7</td><td>RAISE THE BAR</td><td>101</td><td>63</td><td>+38</td><td>+60%</td><td>$2,251</td><td>$1,455</td><td>+55%</td></tr>
+      <tr><td>8</td><td>HEINENS INC</td><td>101</td><td>91</td><td>+10</td><td>+11%</td><td>$1,448</td><td>$1,677</td><td>-14%</td></tr>
+      <tr><td>9</td><td>BRISTOL FARMS</td><td>97</td><td>0</td><td>+97</td><td>+100%</td><td>$1,895</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>10</td><td>URM STORES</td><td>95</td><td>43</td><td>+52</td><td>+121%</td><td>$2,152</td><td>$1,016</td><td>+112%</td></tr>
+      <tr><td>11</td><td>GOOD EARTH FAIRFAX</td><td>74</td><td>39</td><td>+35</td><td>+90%</td><td>$1,658</td><td>$901</td><td>+84%</td></tr>
+      <tr><td>12</td><td>FESTIVAL FOODS</td><td>71</td><td>111</td><td>-40</td><td>-36%</td><td>$1,237</td><td>$2,313</td><td>-47%</td></tr>
+      <tr><td>13</td><td>BIGY GROCERY FULL SERVICE</td><td>66</td><td>0</td><td>+66</td><td>+100%</td><td>$1,365</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>14</td><td>NCG CENTRAL ALL PGM</td><td>49</td><td>66</td><td>-17</td><td>-26%</td><td>$797</td><td>$1,192</td><td>-33%</td></tr>
+      <tr><td>15</td><td>ARAMARK</td><td>37</td><td>32</td><td>+5</td><td>+16%</td><td>$783</td><td>$745</td><td>+5%</td></tr>
+      <tr><td>16</td><td>NEW LEAF</td><td>37</td><td>34</td><td>+3</td><td>+9%</td><td>$602</td><td>$479</td><td>+26%</td></tr>
+      <tr><td>17</td><td>JIMBOS</td><td>33</td><td>29</td><td>+4</td><td>+14%</td><td>$928</td><td>$683</td><td>+36%</td></tr>
+      <tr><td>18</td><td>GENERIC EDI</td><td>31</td><td>32</td><td>-1</td><td>-3%</td><td>$802</td><td>$820</td><td>-2%</td></tr>
+      <tr><td>19</td><td>NEW LEAF INDEPENDENTS</td><td>30</td><td>24</td><td>+6</td><td>+25%</td><td>$499</td><td>$444</td><td>+13%</td></tr>
+      <tr><td>20</td><td>LAZY ACRES</td><td>27</td><td>20</td><td>+7</td><td>+35%</td><td>$471</td><td>$203</td><td>+132%</td></tr>
+      <tr><td>21</td><td>HEN</td><td>25</td><td>24</td><td>+1</td><td>+4%</td><td>$320</td><td>$442</td><td>-28%</td></tr>
+      <tr><td>22</td><td>BROULIMS SUPERMARKET</td><td>21</td><td>18</td><td>+3</td><td>+17%</td><td>$395</td><td>$390</td><td>+1%</td></tr>
+      <tr><td>23</td><td>LUNARDIS</td><td>21</td><td>13</td><td>+8</td><td>+62%</td><td>$343</td><td>$258</td><td>+33%</td></tr>
+      <tr><td>24</td><td>MARKET OF CHOICE</td><td>20</td><td>6</td><td>+14</td><td>+233%</td><td>$418</td><td>$130</td><td>+220%</td></tr>
+      <tr><td>25</td><td>NORTHWEST GROCERS</td><td>19</td><td>6</td><td>+13</td><td>+217%</td><td>$437</td><td>$83</td><td>+429%</td></tr>
+      <tr><td>26</td><td>PIAZZAS FINE FOODS</td><td>19</td><td>0</td><td>+19</td><td>+100%</td><td>$310</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>27</td><td>UNIVERSITY OF ARIZONA ACCOUNTS</td><td>18</td><td>8</td><td>+10</td><td>+125%</td><td>$416</td><td>$169</td><td>+146%</td></tr>
+      <tr><td>28</td><td>DAVESLUCKY MARKET</td><td>17</td><td>21</td><td>-4</td><td>-19%</td><td>$310</td><td>$395</td><td>-21%</td></tr>
+      <tr><td>29</td><td>BERKELEY BOWL</td><td>16</td><td>10</td><td>+6</td><td>+60%</td><td>$245</td><td>$178</td><td>+38%</td></tr>
+      <tr><td>30</td><td>EUREKA AND HARVEST</td><td>15</td><td>2</td><td>+13</td><td>+650%</td><td>$335</td><td>$46</td><td>+625%</td></tr>
+      <tr><td>31</td><td>CIDS</td><td>15</td><td>0</td><td>+15</td><td>+100%</td><td>$327</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>32</td><td>GOOD LIFE GROCERY</td><td>14</td><td>8</td><td>+6</td><td>+75%</td><td>$296</td><td>$185</td><td>+60%</td></tr>
+      <tr><td>33</td><td>CLARKS NUTRITION CENTER</td><td>13</td><td>0</td><td>+13</td><td>+100%</td><td>$388</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>34</td><td>TOWN AND COUNTRY FOODS MONTANA</td><td>12</td><td>26</td><td>-14</td><td>-54%</td><td>$210</td><td>$556</td><td>-62%</td></tr>
+      <tr><td>35</td><td>LUCKYS MARKET</td><td>12</td><td>10</td><td>+2</td><td>+20%</td><td>$204</td><td>$194</td><td>+5%</td></tr>
+      <tr><td>36</td><td>JBROS GLUTEN FREE MARKET</td><td>11</td><td>4</td><td>+7</td><td>+175%</td><td>$373</td><td>$92</td><td>+304%</td></tr>
+      <tr><td>37</td><td>PLUM MARKET</td><td>11</td><td>9</td><td>+2</td><td>+22%</td><td>$175</td><td>$169</td><td>+4%</td></tr>
+      <tr><td>38</td><td>CENTRAL REGION INDIES</td><td>10</td><td>13</td><td>-3</td><td>-23%</td><td>$212</td><td>$322</td><td>-34%</td></tr>
+      <tr><td>39</td><td>WILDBERRIES</td><td>10</td><td>4</td><td>+6</td><td>+150%</td><td>$206</td><td>$88</td><td>+134%</td></tr>
+      <tr><td>40</td><td>LIFESOURCE NATURAL FOODS</td><td>10</td><td>7</td><td>+3</td><td>+43%</td><td>$193</td><td>$153</td><td>+25%</td></tr>
+      <tr><td>41</td><td>CARTWRIGHTS</td><td>10</td><td>8</td><td>+2</td><td>+25%</td><td>$218</td><td>$176</td><td>+24%</td></tr>
+      <tr><td>42</td><td>HARVEST HEALTH</td><td>10</td><td>7</td><td>+3</td><td>+43%</td><td>$172</td><td>$131</td><td>+31%</td></tr>
+      <tr><td>43</td><td>INFRA PACIFICALL OTHER SW</td><td>9</td><td>2</td><td>+7</td><td>+350%</td><td>$224</td><td>$46</td><td>+384%</td></tr>
+      <tr><td>44</td><td>ECRS EDI GENERIC</td><td>9</td><td>1</td><td>+8</td><td>+800%</td><td>$193</td><td>$17</td><td>+1015%</td></tr>
+      <tr><td>45</td><td>NCG EAST ALL PGM</td><td>9</td><td>18</td><td>-9</td><td>-50%</td><td>$180</td><td>$354</td><td>-49%</td></tr>
+      <tr><td>46</td><td>MURPHYS MARKETS</td><td>9</td><td>12</td><td>-3</td><td>-25%</td><td>$141</td><td>$233</td><td>-40%</td></tr>
+      <tr><td>47</td><td>JENSENS FINEST FOODS</td><td>9</td><td>0</td><td>+9</td><td>+100%</td><td>$191</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>48</td><td>OTHER AVENUES MARKET</td><td>8</td><td>3</td><td>+5</td><td>+167%</td><td>$154</td><td>$69</td><td>+122%</td></tr>
+      <tr><td>49</td><td>SIERRA HILLS MARKET</td><td>8</td><td>2</td><td>+6</td><td>+300%</td><td>$143</td><td>$40</td><td>+258%</td></tr>
+      <tr><td>50</td><td>BARBUR WORLD FOODS</td><td>8</td><td>13</td><td>-5</td><td>-38%</td><td>$148</td><td>$247</td><td>-40%</td></tr>
     </tbody>
+    <tfoot>
+      <tr style="font-weight:700;background:#f0f0ed;">
+        <td></td>
+        <td>TOTAL</td>
+        <td>2,543</td>
+        <td>1,776</td>
+        <td>+767</td>
+        <td>+43%</td>
+        <td>$47,950</td>
+        <td>$35,127</td>
+        <td>+37%</td>
+      </tr>
+    </tfoot>
   </table>
+</section>
 
-  <ul>
-    <li><strong>Concentrated losses</strong> in certain groups (Natural Retail Group, Fresco, Exporters, INFRA Atlantic, various co-ops) are pulling the indie segment down.</li>
-    <li><strong>Many accounts have gone to zero</strong> in the current 16 weeks, indicating lost distribution, resets, or lack of reorders.</li>
-    <li><strong>Some accounts are still ordering but at much lower levels</strong> (e.g., Rainbow Blossom, Coop EDI Chain), suggesting opportunity to re-engage rather than rebuild from scratch.</li>
-  </ul>
+<hr class="divider" />
 
-  <!-- SUMMARY / TALKING POINTS -->
-  <h2>4. Summary – How to talk about the 16-week YOY story</h2>
-  <ul>
-    <li><strong>Overall:</strong> The last 16 weeks show <strong>+15% in sales</strong> and <strong>+23% in cases</strong>, driven primarily by top 50 chains and new/expanding distribution.</li>
-    <li><strong>Top 50 chains:</strong> Strong growth from accounts like Palo Alto Egg, URM, Raise The Bar, NCGA, Super 1, Bristol Farms, Big Y, and several regional banners. A small set of chains (Festival Foods, NCG Central/East, Town & Country Montana, Barbur) are down and represent targeted opportunity areas.</li>
-    <li><strong>Independents:</strong> A handful of independents are performing well, but the segment overall is down, with many accounts either significantly reduced or at zero shipments. Losses are concentrated in specific groups and former strong accounts (Natural Retail Group, Fresco Community Markets, Exporters, INFRA Atlantic, various co-ops).</li>
-    <li><strong>Action lens:</strong> 
-      <ul>
-        <li>Protect and build on the <strong>top 50 growth engines</strong>.</li>
-        <li>Target a short list of <strong>declining chains</strong> for reset/placement/promo conversations.</li>
-        <li>Prioritize <strong>high-potential independents</strong> and a focused reactivation list where business has dropped to zero but was previously meaningful.</li>
-      </ul>
-    </li>
-  </ul>
+<section>
+  <h2>Full independent account detail (186 accounts)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Chain</th>
+        <th>Cases (Selected)</th>
+        <th>Cases (Prior)</th>
+        <th>&Delta; Cases</th>
+        <th>% &Delta; Cases</th>
+        <th>Sales $ (Selected)</th>
+        <th>Sales $ (Prior)</th>
+        <th>% &Delta; Sales $</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>51</td><td>SAVE U MORE AK</td><td>7</td><td>5</td><td>+2</td><td>+40%</td><td>$207</td><td>$116</td><td>+79%</td></tr>
+      <tr><td>52</td><td>SPD MARKETS</td><td>7</td><td>9</td><td>-2</td><td>-22%</td><td>$133</td><td>$208</td><td>-36%</td></tr>
+      <tr><td>53</td><td>UNIVERSITY OF CALIFORNIA SCHOOL SYSTEM</td><td>6</td><td>34</td><td>-28</td><td>-82%</td><td>$114</td><td>$648</td><td>-82%</td></tr>
+      <tr><td>54</td><td>RAINBOW GROCERY SF</td><td>6</td><td>6</td><td>+0</td><td>+0%</td><td>$92</td><td>$111</td><td>-17%</td></tr>
+      <tr><td>55</td><td>THE DIPPED DONUT</td><td>6</td><td>9</td><td>-3</td><td>-33%</td><td>$130</td><td>$214</td><td>-39%</td></tr>
+      <tr><td>56</td><td>NEW MOON NATURAL FOODS</td><td>6</td><td>3</td><td>+3</td><td>+100%</td><td>$121</td><td>$69</td><td>+75%</td></tr>
+      <tr><td>57</td><td>UNIV OF WI DINING SVS</td><td>6</td><td>5</td><td>+1</td><td>+20%</td><td>$130</td><td>$138</td><td>-6%</td></tr>
+      <tr><td>58</td><td>KENS MARKET QUEEN ANNE</td><td>6</td><td>3</td><td>+3</td><td>+100%</td><td>$115</td><td>$69</td><td>+67%</td></tr>
+      <tr><td>59</td><td>ALAMEDA NATURAL GROCERY</td><td>6</td><td>0</td><td>+6</td><td>+100%</td><td>$110</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>60</td><td>KREMERS MARKET</td><td>6</td><td>8</td><td>-2</td><td>-25%</td><td>$123</td><td>$190</td><td>-35%</td></tr>
+      <tr><td>61</td><td>KRIEGERS HFMKTPTW</td><td>6</td><td>9</td><td>-3</td><td>-33%</td><td>$109</td><td>$192</td><td>-43%</td></tr>
+      <tr><td>62</td><td>WILD OAK</td><td>5</td><td>3</td><td>+2</td><td>+67%</td><td>$98</td><td>$69</td><td>+42%</td></tr>
+      <tr><td>63</td><td>SHOP N KART ASHLAND</td><td>5</td><td>3</td><td>+2</td><td>+67%</td><td>$108</td><td>$69</td><td>+55%</td></tr>
+      <tr><td>64</td><td>ACME FRESH MARKET FRED A</td><td>5</td><td>0</td><td>+5</td><td>+100%</td><td>$95</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>65</td><td>PENNGROVE MARKET</td><td>5</td><td>4</td><td>+1</td><td>+25%</td><td>$129</td><td>$92</td><td>+39%</td></tr>
+      <tr><td>66</td><td>MT HOPE</td><td>5</td><td>2</td><td>+3</td><td>+150%</td><td>$93</td><td>$38</td><td>+148%</td></tr>
+      <tr><td>67</td><td>SHERM'S FOOD 4 LESS</td><td>5</td><td>2</td><td>+3</td><td>+150%</td><td>$89</td><td>$39</td><td>+125%</td></tr>
+      <tr><td>68</td><td>ROCKYS MARKET</td><td>5</td><td>2</td><td>+3</td><td>+150%</td><td>$104</td><td>$46</td><td>+125%</td></tr>
+      <tr><td>69</td><td>WESTRIDGE MARKET</td><td>5</td><td>0</td><td>+5</td><td>+100%</td><td>$161</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>70</td><td>NATURES FOOD PATCH</td><td>5</td><td>9</td><td>-4</td><td>-44%</td><td>$110</td><td>$179</td><td>-38%</td></tr>
+      <tr><td>71</td><td>STAFF OF LIFE</td><td>5</td><td>5</td><td>+0</td><td>+0%</td><td>$133</td><td>$92</td><td>+44%</td></tr>
+      <tr><td>72</td><td>DAVES SDS</td><td>4</td><td>6</td><td>-2</td><td>-33%</td><td>$86</td><td>$129</td><td>-33%</td></tr>
+      <tr><td>73</td><td>3 BEARS ALASKA</td><td>4</td><td>2</td><td>+2</td><td>+100%</td><td>$73</td><td>$46</td><td>+59%</td></tr>
+      <tr><td>74</td><td>UK</td><td>4</td><td>11</td><td>-7</td><td>-64%</td><td>$103</td><td>$258</td><td>-60%</td></tr>
+      <tr><td>75</td><td>ROTHS</td><td>4</td><td>1</td><td>+3</td><td>+300%</td><td>$69</td><td>$20</td><td>+250%</td></tr>
+      <tr><td>76</td><td>HEALTH HUT</td><td>4</td><td>11</td><td>-7</td><td>-64%</td><td>$71</td><td>$243</td><td>-71%</td></tr>
+      <tr><td>77</td><td>STUMPS</td><td>4</td><td>1</td><td>+3</td><td>+300%</td><td>$92</td><td>$21</td><td>+340%</td></tr>
+      <tr><td>78</td><td>YELM FOOD COOP</td><td>4</td><td>4</td><td>+0</td><td>+0%</td><td>$87</td><td>$69</td><td>+25%</td></tr>
+      <tr><td>79</td><td>LASSENS</td><td>4</td><td>4</td><td>+0</td><td>+0%</td><td>$87</td><td>$92</td><td>-5%</td></tr>
+      <tr><td>80</td><td>INDIGO AUTUMN LLC</td><td>4</td><td>3</td><td>+1</td><td>+33%</td><td>$75</td><td>$69</td><td>+8%</td></tr>
+      <tr><td>81</td><td>MARINA MARKET</td><td>4</td><td>3</td><td>+1</td><td>+33%</td><td>$92</td><td>$69</td><td>+33%</td></tr>
+      <tr><td>82</td><td>DEM</td><td>4</td><td>4</td><td>+0</td><td>+0%</td><td>$84</td><td>$94</td><td>-10%</td></tr>
+      <tr><td>83</td><td>NULL</td><td>4</td><td>8</td><td>-4</td><td>-50%</td><td>$93</td><td>$182</td><td>-49%</td></tr>
+      <tr><td>84</td><td>PACIFIC RANCH MARKET</td><td>4</td><td>0</td><td>+4</td><td>+100%</td><td>$88</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>85</td><td>HOKU FOODS NATURAL MARKET</td><td>4</td><td>0</td><td>+4</td><td>+100%</td><td>$64</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>86</td><td>HEAVENS PEAK ORGANICS</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$0</td><td>$0</td><td>+0%</td></tr>
+      <tr><td>87</td><td>ORGANIC ROOTS</td><td>3</td><td>2</td><td>+1</td><td>+50%</td><td>$131</td><td>$35</td><td>+273%</td></tr>
+      <tr><td>88</td><td>TRILLIUM NATURAL GROCERY</td><td>3</td><td>2</td><td>+1</td><td>+50%</td><td>$68</td><td>$46</td><td>+48%</td></tr>
+      <tr><td>89</td><td>EL RANCHO CALI FRESH</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$123</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>90</td><td>CAL STATE UNIVERSITIES</td><td>3</td><td>2</td><td>+1</td><td>+50%</td><td>$53</td><td>$39</td><td>+38%</td></tr>
+      <tr><td>91</td><td>COOP EDI CHAIN</td><td>3</td><td>17</td><td>-14</td><td>-82%</td><td>$71</td><td>$384</td><td>-82%</td></tr>
+      <tr><td>92</td><td>SUNSET FOODS</td><td>3</td><td>9</td><td>-6</td><td>-67%</td><td>$52</td><td>$186</td><td>-72%</td></tr>
+      <tr><td>93</td><td>MAHS HANDY MARKET</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$111</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>94</td><td>GOOSEBERRIES</td><td>3</td><td>7</td><td>-4</td><td>-57%</td><td>$64</td><td>$162</td><td>-61%</td></tr>
+      <tr><td>95</td><td>COUNTRY SUN CORP</td><td>3</td><td>1</td><td>+2</td><td>+200%</td><td>$56</td><td>$23</td><td>+144%</td></tr>
+      <tr><td>96</td><td>HYVEE</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$61</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>97</td><td>ROOTS MARKET</td><td>3</td><td>4</td><td>-1</td><td>-25%</td><td>$62</td><td>$73</td><td>-15%</td></tr>
+      <tr><td>98</td><td>ISLAND SAVOY MARKET</td><td>3</td><td>4</td><td>-1</td><td>-25%</td><td>$63</td><td>$92</td><td>-32%</td></tr>
+      <tr><td>99</td><td>SEMILLA NATURAL FOODS</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$58</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>100</td><td>CALIFORNIA ORGANICS</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$43</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>101</td><td>MR MAMA NATURAL FOOD INC</td><td>3</td><td>6</td><td>-3</td><td>-50%</td><td>$48</td><td>$115</td><td>-58%</td></tr>
+      <tr><td>102</td><td>HARVEST MARKET</td><td>3</td><td>4</td><td>-1</td><td>-25%</td><td>$52</td><td>$95</td><td>-45%</td></tr>
+      <tr><td>103</td><td>DSD CALIFORNIA</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$126</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>104</td><td>ORDER DOG</td><td>3</td><td>11</td><td>-8</td><td>-73%</td><td>$62</td><td>$252</td><td>-75%</td></tr>
+      <tr><td>105</td><td>SOERGEL ORCHARDS</td><td>3</td><td>4</td><td>-1</td><td>-25%</td><td>$78</td><td>$101</td><td>-23%</td></tr>
+      <tr><td>106</td><td>G AND E KATHERINE BRABBIT ZON</td><td>3</td><td>0</td><td>+3</td><td>+100%</td><td>$55</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>107</td><td>LOCH LOMOND AND WOODLANDS MARKETS</td><td>3</td><td>2</td><td>+1</td><td>+50%</td><td>$48</td><td>$38</td><td>+25%</td></tr>
+      <tr><td>108</td><td>CITY MARKETANDYS QUALIT</td><td>3</td><td>1</td><td>+2</td><td>+200%</td><td>$64</td><td>$21</td><td>+200%</td></tr>
+      <tr><td>109</td><td>FONVILLE PRESS</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$47</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>110</td><td>CACTUS FLATS DRY ONLY</td><td>2</td><td>1</td><td>+1</td><td>+100%</td><td>$46</td><td>$23</td><td>+100%</td></tr>
+      <tr><td>111</td><td>BREAD AND ROSES</td><td>2</td><td>6</td><td>-4</td><td>-67%</td><td>$40</td><td>$177</td><td>-77%</td></tr>
+      <tr><td>112</td><td>CHOICE MART DRY</td><td>2</td><td>1</td><td>+1</td><td>+100%</td><td>$46</td><td>$23</td><td>+100%</td></tr>
+      <tr><td>113</td><td>AJS MARKET AND NATURAL FOOD</td><td>2</td><td>2</td><td>+0</td><td>+0%</td><td>$40</td><td>$46</td><td>-13%</td></tr>
+      <tr><td>114</td><td>ZERBOS</td><td>2</td><td>7</td><td>-5</td><td>-71%</td><td>$34</td><td>$138</td><td>-75%</td></tr>
+      <tr><td>115</td><td>CHUPPAS MARKET</td><td>2</td><td>4</td><td>-2</td><td>-50%</td><td>$35</td><td>$95</td><td>-64%</td></tr>
+      <tr><td>116</td><td>A MARKET</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$46</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>117</td><td>RED FOX MARKET</td><td>2</td><td>2</td><td>+0</td><td>+0%</td><td>$47</td><td>$47</td><td>+0%</td></tr>
+      <tr><td>118</td><td>JOHN BROOKS</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$31</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>119</td><td>ANDYS PRODUCE MARKET</td><td>2</td><td>7</td><td>-5</td><td>-71%</td><td>$40</td><td>$162</td><td>-75%</td></tr>
+      <tr><td>120</td><td>TACOMA BOYS</td><td>2</td><td>4</td><td>-2</td><td>-50%</td><td>$46</td><td>$46</td><td>+0%</td></tr>
+      <tr><td>121</td><td>NEW SAGAY AND CITY MARKET</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$77</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>122</td><td>PIGGLY WIGGLY MIDWEST</td><td>2</td><td>6</td><td>-4</td><td>-67%</td><td>$33</td><td>$151</td><td>-78%</td></tr>
+      <tr><td>123</td><td>ATKINSONS MARKETS</td><td>2</td><td>7</td><td>-5</td><td>-71%</td><td>$39</td><td>$137</td><td>-71%</td></tr>
+      <tr><td>124</td><td>ADI SHAKTI ASHRAM MANA</td><td>2</td><td>1</td><td>+1</td><td>+100%</td><td>$34</td><td>$22</td><td>+50%</td></tr>
+      <tr><td>125</td><td>COLUMBIA MERCANTILE 1855</td><td>2</td><td>2</td><td>+0</td><td>+0%</td><td>$35</td><td>$46</td><td>-25%</td></tr>
+      <tr><td>126</td><td>MARYS HEALTH FOODS</td><td>2</td><td>2</td><td>+0</td><td>+0%</td><td>$35</td><td>$46</td><td>-25%</td></tr>
+      <tr><td>127</td><td>KONA NATURAL FOODSHEALTHWAYS</td><td>2</td><td>1</td><td>+1</td><td>+100%</td><td>$46</td><td>$23</td><td>+100%</td></tr>
+      <tr><td>128</td><td>MARIPOSA MARKET</td><td>2</td><td>3</td><td>-1</td><td>-33%</td><td>$40</td><td>$69</td><td>-42%</td></tr>
+      <tr><td>129</td><td>ASSOC GROC FL XDOCK</td><td>2</td><td>9</td><td>-7</td><td>-78%</td><td>$54</td><td>$205</td><td>-74%</td></tr>
+      <tr><td>130</td><td>DEAN AND DELUCAS</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$35</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>131</td><td>SOTOS TRUE EARTH MARKET</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$35</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>132</td><td>CHERRY SPROUT PRODUCE</td><td>2</td><td>3</td><td>-1</td><td>-33%</td><td>$39</td><td>$67</td><td>-42%</td></tr>
+      <tr><td>133</td><td>DANIMAX OF COLORADO</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$57</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>134</td><td>FIVE MARKETS 2</td><td>2</td><td>0</td><td>+2</td><td>+100%</td><td>$35</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>135</td><td>ATLANTIC REGION INDIES</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$21</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>136</td><td>STAR GROCERY</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$28</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>137</td><td>FOOD AND HEALTH BHEALTHY</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$33</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>138</td><td>RAINBOW BLOSSOM</td><td>1</td><td>6</td><td>-5</td><td>-83%</td><td>$24</td><td>$142</td><td>-83%</td></tr>
+      <tr><td>139</td><td>HARBOR GREENS UNIVERSITY</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$36</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>140</td><td>ABUNDANT LIFE</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$23</td><td>$23</td><td>+0%</td></tr>
+      <tr><td>141</td><td>CHURCH OF SCIENTOLOGY</td><td>1</td><td>7</td><td>-6</td><td>-86%</td><td>$20</td><td>$186</td><td>-89%</td></tr>
+      <tr><td>142</td><td>BREAD AND BUTTER MARKET</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$23</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>143</td><td>CAPELLA</td><td>1</td><td>3</td><td>-2</td><td>-67%</td><td>$33</td><td>$96</td><td>-66%</td></tr>
+      <tr><td>144</td><td>THE LAMB SHOPPE</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$24</td><td>$24</td><td>+0%</td></tr>
+      <tr><td>145</td><td>INFRA PACIFICNW CONTRACT</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$23</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>146</td><td>LOGISTICAFORCE</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$20</td><td>$20</td><td>+0%</td></tr>
+      <tr><td>147</td><td>DELANO S SUPERMARKETS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$17</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>148</td><td>GREAT PACIFIC WINE AND COFFEE</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$28</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>149</td><td>KEAAU NATURAL FOODS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$28</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>150</td><td>HARBOR GREENS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$36</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>151</td><td>APPLEGATE STATION MARKET AND CAFE</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$23</td><td>$23</td><td>+0%</td></tr>
+      <tr><td>152</td><td>INTERNET ACCOUNTS</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$17</td><td>$20</td><td>-15%</td></tr>
+      <tr><td>153</td><td>ADAS FRESHMOTHER EARTH</td><td>1</td><td>2</td><td>-1</td><td>-50%</td><td>$19</td><td>$37</td><td>-49%</td></tr>
+      <tr><td>154</td><td>MOUNTAIN NATURALS</td><td>1</td><td>2</td><td>-1</td><td>-50%</td><td>$17</td><td>$46</td><td>-63%</td></tr>
+      <tr><td>155</td><td>OCEANA NATURAL FOODS COOP</td><td>1</td><td>2</td><td>-1</td><td>-50%</td><td>$28</td><td>$46</td><td>-40%</td></tr>
+      <tr><td>156</td><td>NATURAL RETAIL GROUP</td><td>1</td><td>19</td><td>-18</td><td>-95%</td><td>$18</td><td>$393</td><td>-95%</td></tr>
+      <tr><td>157</td><td>ANDYS LOCAL MARKET</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$17</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>158</td><td>MANGY MOOSE MARKET</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$23</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>159</td><td>REAL FDS OCEANA AND PACIFIC</td><td>1</td><td>3</td><td>-2</td><td>-67%</td><td>$0</td><td>$69</td><td>-100%</td></tr>
+      <tr><td>160</td><td>GUCKENHEIMER ACCOUNTS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$31</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>161</td><td>SQ HUB MARKET AND CAFE</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$28</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>162</td><td>CHOICE MART FLYER</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$23</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>163</td><td>ALCHEPHARMA NATURALS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$14</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>164</td><td>SUNNY FARMS SEQUIM</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$23</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>165</td><td>S AND S PRODUCE</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$21</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>166</td><td>FS CONVENIENCE</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$17</td><td>$23</td><td>-25%</td></tr>
+      <tr><td>167</td><td>GUNNISON VITAMIN AND HEALTH</td><td>1</td><td>2</td><td>-1</td><td>-50%</td><td>$16</td><td>$42</td><td>-63%</td></tr>
+      <tr><td>168</td><td>ELLIOTTS NATURAL FOODS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$28</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>169</td><td>SOUTH REGION INDIES</td><td>1</td><td>9</td><td>-8</td><td>-89%</td><td>$17</td><td>$209</td><td>-92%</td></tr>
+      <tr><td>170</td><td>REAL FOOD STORE</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$32</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>171</td><td>BAYSIDERINCONRJS</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$17</td><td>$0</td><td>+100%</td></tr>
+      <tr><td>172</td><td>WOOSTER NATURAL FOODS</td><td>1</td><td>2</td><td>-1</td><td>-50%</td><td>$24</td><td>$47</td><td>-50%</td></tr>
+      <tr><td>173</td><td>KRISP MARKET</td><td>1</td><td>1</td><td>+0</td><td>+0%</td><td>$23</td><td>$23</td><td>+0%</td></tr>
+      <tr><td>174</td><td>SKYLINE COMMUNITY MARKET</td><td>1</td><td>0</td><td>+1</td><td>+100%</td><td>$0</td><td>$0</td><td>+0%</td></tr>
+      <tr><td>175</td><td>NORDLAND GENERAL STORE</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$69</td><td>-100%</td></tr>
+      <tr><td>176</td><td>ROLLIN OATS MARKET</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$65</td><td>-100%</td></tr>
+      <tr><td>177</td><td>SANTA CLARA NAT ORGANIC MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$17</td><td>-100%</td></tr>
+      <tr><td>178</td><td>FARM STAND IN THE GORGE</td><td>0</td><td>11</td><td>-11</td><td>-100%</td><td>$0</td><td>$263</td><td>-100%</td></tr>
+      <tr><td>179</td><td>ROCKY MOUNTAIN GROCERY</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>180</td><td>MINNESOTA STREET MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>181</td><td>INTERNATIONAL ACCTS PLAZA</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$21</td><td>-100%</td></tr>
+      <tr><td>182</td><td>FOOD WORKS</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$21</td><td>-100%</td></tr>
+      <tr><td>183</td><td>FRESH FARMS</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$85</td><td>-100%</td></tr>
+      <tr><td>184</td><td>DAVIDSON COLLEGE</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$24</td><td>-100%</td></tr>
+      <tr><td>185</td><td>HARVEST FRESH PRODUCE</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$85</td><td>-100%</td></tr>
+      <tr><td>186</td><td>BEN LOMANDSCOTTS VALLEY</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>187</td><td>SETTLERS COUNTRY MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>188</td><td>MARINA SUPERMARKET</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$69</td><td>-100%</td></tr>
+      <tr><td>189</td><td>HONEST GREENWHLS LESS 15</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$20</td><td>-100%</td></tr>
+      <tr><td>190</td><td>NCG EAST CBCD ONLY</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$58</td><td>-100%</td></tr>
+      <tr><td>191</td><td>RAFFIS MARKET AND GROCERY</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$112</td><td>-100%</td></tr>
+      <tr><td>192</td><td>AVI FOOD SYSTEMS</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$22</td><td>-100%</td></tr>
+      <tr><td>193</td><td>COMMUNITY NATURAL FOODS</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$19</td><td>-100%</td></tr>
+      <tr><td>194</td><td>KA2KEVIN ARKELIN G AND E</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$24</td><td>-100%</td></tr>
+      <tr><td>195</td><td>GRASSROOTS AND REGENCY</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$71</td><td>-100%</td></tr>
+      <tr><td>196</td><td>DAL</td><td>0</td><td>8</td><td>-8</td><td>-100%</td><td>$0</td><td>$178</td><td>-100%</td></tr>
+      <tr><td>197</td><td>PREMIER PURCHASING PARTNERS</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$86</td><td>-100%</td></tr>
+      <tr><td>198</td><td>VENTURA RANCH MARKET</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$127</td><td>-100%</td></tr>
+      <tr><td>199</td><td>LUNDS & BYERLYS</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$19</td><td>-100%</td></tr>
+      <tr><td>200</td><td>EDENS MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$24</td><td>-100%</td></tr>
+      <tr><td>201</td><td>FRESCO COMMUNITY MARKETS</td><td>0</td><td>10</td><td>-10</td><td>-100%</td><td>$0</td><td>$254</td><td>-100%</td></tr>
+      <tr><td>202</td><td>NATURAL PANTRY AK</td><td>0</td><td>7</td><td>-7</td><td>-100%</td><td>$0</td><td>$162</td><td>-100%</td></tr>
+      <tr><td>203</td><td>TONYS SPECIALTY</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>204</td><td>NEW FRONTIERS INDEPENDENT</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$73</td><td>-100%</td></tr>
+      <tr><td>205</td><td>CORNERS OF THE MOUTH</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>206</td><td>MARINWOOD MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$22</td><td>-100%</td></tr>
+      <tr><td>207</td><td>BERRYVALE GROCERY</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$20</td><td>-100%</td></tr>
+      <tr><td>208</td><td>ESTUDILLO PRODUCE</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$22</td><td>-100%</td></tr>
+      <tr><td>209</td><td>GARDENSPOT MARKET</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$74</td><td>-100%</td></tr>
+      <tr><td>210</td><td>WALKER DRUG</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>211</td><td>TRI COUNTY PRODUCE</td><td>0</td><td>5</td><td>-5</td><td>-100%</td><td>$0</td><td>$181</td><td>-100%</td></tr>
+      <tr><td>212</td><td>BACK TO THE BEST COUNTRY</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$93</td><td>-100%</td></tr>
+      <tr><td>213</td><td>SALMON RIVER OUTPOST</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>214</td><td>BRIGHTER DAY NATURAL FOOD</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$65</td><td>-100%</td></tr>
+      <tr><td>215</td><td>ASPENPEARL</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$77</td><td>-100%</td></tr>
+      <tr><td>216</td><td>LOGISTICA FORCE</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$20</td><td>-100%</td></tr>
+      <tr><td>217</td><td>SEQUENTIAL RETAIL STA 1</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$69</td><td>-100%</td></tr>
+      <tr><td>218</td><td>INFRA ATLANTIC ALL OTHER</td><td>0</td><td>12</td><td>-12</td><td>-100%</td><td>$0</td><td>$258</td><td>-100%</td></tr>
+      <tr><td>219</td><td>METROPOLITAN CAFE AND DELI</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$42</td><td>-100%</td></tr>
+      <tr><td>220</td><td>SWAMP RABBIT PTW</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$22</td><td>-100%</td></tr>
+      <tr><td>221</td><td>ISLAND NATURALS</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$103</td><td>-100%</td></tr>
+      <tr><td>222</td><td>RED MOUNTAIN FOODS</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>223</td><td>HANKS ORGANIC</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>224</td><td>BEE WELL HONEY FARM MARKT</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$24</td><td>-100%</td></tr>
+      <tr><td>225</td><td>CALES HEALTHY WAY LLC</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$57</td><td>-100%</td></tr>
+      <tr><td>226</td><td>YVONNES NATURAL MARKET</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$95</td><td>-100%</td></tr>
+      <tr><td>227</td><td>AVENDRA</td><td>0</td><td>6</td><td>-6</td><td>-100%</td><td>$0</td><td>$134</td><td>-100%</td></tr>
+      <tr><td>228</td><td>EXPORTERS</td><td>0</td><td>14</td><td>-14</td><td>-100%</td><td>$0</td><td>$323</td><td>-100%</td></tr>
+      <tr><td>229</td><td>CHAMPION NUT</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>230</td><td>SANTA ROSA COMMUNITY MARKET</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$19</td><td>-100%</td></tr>
+      <tr><td>231</td><td>SUNSHINE CORNER NUTRITION</td><td>0</td><td>4</td><td>-4</td><td>-100%</td><td>$0</td><td>$115</td><td>-100%</td></tr>
+      <tr><td>232</td><td>MILLERS</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$52</td><td>-100%</td></tr>
+      <tr><td>233</td><td>SCHOOLHOUSE PRODUCE</td><td>0</td><td>2</td><td>-2</td><td>-100%</td><td>$0</td><td>$46</td><td>-100%</td></tr>
+      <tr><td>234</td><td>VILLAGE MARKET</td><td>0</td><td>3</td><td>-3</td><td>-100%</td><td>$0</td><td>$79</td><td>-100%</td></tr>
+      <tr><td>235</td><td>OCEAN SUNSET DRUG</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+      <tr><td>236</td><td>HAMILTONS MARKETPLACE CUSTOM</td><td>0</td><td>1</td><td>-1</td><td>-100%</td><td>$0</td><td>$23</td><td>-100%</td></tr>
+    </tbody>
+    <tfoot>
+      <tr style="font-weight:700;background:#f0f0ed;">
+        <td></td>
+        <td>TOTAL</td>
+        <td>335</td>
+        <td>569</td>
+        <td>-234</td>
+        <td>-41%</td>
+        <td>$7,202</td>
+        <td>$12,919</td>
+        <td>-44%</td>
+      </tr>
+    </tfoot>
+  </table>
+</section>
 
 </body>
+</html>
