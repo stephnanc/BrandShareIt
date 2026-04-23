@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Affiliate Partners — Brand Share It Sales Partners</title>
+<title>Preferred Partners — Brand Share It Sales Partners</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,14 +25,13 @@
   html { scroll-behavior: smooth; }
 
   body {
+    font-family: 'Outfit', sans-serif;
     background: var(--white);
     color: var(--ink);
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* NAV */
   nav {
     position: sticky;
     top: 0;
@@ -78,6 +77,7 @@
     font-size: 11px !important;
   }
 
+  /* HERO */
   .hero {
     background: var(--ink);
     padding: 80px 48px 72px;
@@ -94,7 +94,7 @@
   }
 
   .hero-inner {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
@@ -128,7 +128,7 @@
     letter-spacing: -0.02em;
     color: #ffffff;
     margin-bottom: 20px;
-    max-width: 680px;
+    max-width: 720px;
   }
 
   .hero h1 em { font-style: italic; color: #a8c9b0; }
@@ -137,15 +137,15 @@
     font-size: 17px;
     font-weight: 300;
     color: rgba(255,255,255,0.55);
-    max-width: 560px;
+    max-width: 620px;
     line-height: 1.7;
     border-left: 3px solid #8aab93;
     padding-left: 20px;
   }
 
+  /* CATEGORY NAV */
   .cat-nav {
     background: var(--off-white);
-    border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
     padding: 0 48px;
     overflow-x: auto;
@@ -167,6 +167,7 @@
     padding: 16px 20px;
     border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
   }
 
   .cat-nav a:hover {
@@ -174,13 +175,15 @@
     border-bottom-color: var(--accent-mid);
   }
 
+  /* CONTENT */
   .content {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 48px 48px;
+    padding: 0 48px 96px;
   }
 
-  .affiliate-section { padding-top: 72px; }
+  /* SECTION */
+  .section { padding-top: 72px; }
 
   .section-header {
     display: flex;
@@ -199,6 +202,7 @@
   }
 
   .section-label.gold { color: var(--gold); }
+  .section-label.dark { color: var(--ink); }
   .section-rule { flex: 1; height: 1px; background: var(--rule); }
 
   .section-title {
@@ -214,13 +218,14 @@
     font-size: 15px;
     color: var(--ink-muted);
     margin-bottom: 36px;
-    max-width: 580px;
+    max-width: 620px;
     font-weight: 300;
     line-height: 1.7;
   }
 
+  /* CARD */
   .card { border-top: 1px solid var(--rule); }
-  .card:last-child { border-bottom: 1px solid var(--rule); }
+  .card:last-of-type { border-bottom: 1px solid var(--rule); }
 
   .card-toggle {
     width: 100%;
@@ -230,13 +235,13 @@
     display: flex;
     align-items: center;
     gap: 24px;
-    padding: 28px 0;
+    padding: 36px 0;
     text-align: left;
   }
 
-  .card-toggle:hover .card-title-text { color: var(--accent-mid); }
+  .card-toggle:hover .card-title { color: var(--accent-mid); }
 
-  .card-number {
+  .card-num {
     font-family: 'Playfair Display', serif;
     font-size: 13px;
     font-weight: 400;
@@ -248,7 +253,7 @@
 
   .card-title-wrap { flex: 1; }
 
-  .card-category {
+  .card-tag {
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -257,10 +262,10 @@
     margin-bottom: 4px;
   }
 
-  .card-category.gold { color: var(--gold); }
-  .card-category.muted { color: var(--ink-muted); }
+  .card-tag.gold { color: var(--gold); }
+  .card-tag.muted { color: var(--ink-muted); }
 
-  .card-title-text {
+  .card-title {
     font-family: 'Playfair Display', serif;
     font-size: clamp(17px, 2.5vw, 22px);
     font-weight: 400;
@@ -268,6 +273,8 @@
     line-height: 1.25;
     transition: color 0.15s;
   }
+
+  .card-title.muted { color: var(--ink-muted); font-style: italic; }
 
   .card-arrow {
     width: 32px;
@@ -303,31 +310,32 @@
   .card-body {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
+    transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
   }
 
-  .card.open .card-body { max-height: 1600px; }
+  .card.open .card-body { max-height: 2000px; }
 
   .card-inner { padding: 0 0 40px 52px; }
 
   .card-desc {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 300;
     color: var(--ink-soft);
     line-height: 1.75;
-    margin-bottom: 28px;
-    max-width: 640px;
+    margin-bottom: 24px;
+    max-width: 680px;
   }
 
+  /* STEPHENS TAKE */
   .stephens-take {
     background: var(--accent-light);
     border-left: 3px solid var(--accent-mid);
     padding: 20px 24px;
-    margin-bottom: 28px;
+    margin: 28px 0;
     border-radius: 0 2px 2px 0;
   }
 
-  .stephens-take.gold-take {
+  .stephens-take.gold {
     background: var(--gold-bg);
     border-left-color: var(--gold);
   }
@@ -347,11 +355,46 @@
     font-family: 'Playfair Display', serif;
     font-size: 16px;
     font-style: italic;
-    font-weight: 400;
     color: var(--ink-soft);
     line-height: 1.65;
   }
 
+  /* FROM THE FOUNDER */
+  .founder-block {
+    background: var(--ink);
+    border-left: 3px solid #a8c9b0;
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .founder-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8aab93;
+    margin-bottom: 8px;
+  }
+
+  .founder-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+
+  .founder-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* TAKEAWAYS */
   .takeaways {
     list-style: none;
     display: flex;
@@ -360,7 +403,7 @@
     margin-bottom: 28px;
   }
 
-  .takeaways li { display: flex; gap: 20px; align-items: flex-start; }
+  .takeaway { display: flex; gap: 20px; align-items: flex-start; }
 
   .takeaway-num {
     font-family: 'Playfair Display', serif;
@@ -376,7 +419,7 @@
 
   .takeaway-num.gold { color: var(--gold); }
 
-  .takeaway-content strong {
+  .takeaway-strong {
     display: block;
     font-size: 11px;
     font-weight: 600;
@@ -386,7 +429,7 @@
     margin-bottom: 5px;
   }
 
-  .takeaway-content span {
+  .takeaway-text {
     font-size: 15px;
     color: var(--ink-soft);
     line-height: 1.7;
@@ -394,69 +437,25 @@
     display: block;
   }
 
-  .card-closing {
-    font-size: 15px;
-    color: var(--ink-muted);
-    font-style: italic;
-    font-family: 'Playfair Display', serif;
-    border-left: 2px solid var(--accent-mid);
-    padding-left: 16px;
-    line-height: 1.6;
-    max-width: 560px;
-    margin-bottom: 24px;
-  }
-
-  .card-closing.gold { border-left-color: var(--gold); }
-
-  .affiliate-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent-mid);
-    text-decoration: none;
-    border: 1px solid var(--accent-mid);
-    padding: 12px 24px;
-    border-radius: 2px;
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .affiliate-link.gold { color: var(--gold); border-color: var(--gold); }
-  .affiliate-link:hover { background: var(--accent-mid); color: #fff; }
-  .affiliate-link.gold:hover { background: var(--gold); color: #fff; }
-
-  .affiliate-link svg {
-    width: 12px;
-    height: 12px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-  }
-
   .card-byline {
-    margin-top: 24px;
+    margin-top: 16px;
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #bbb;
+    color: #cccccc;
   }
 
+  /* COMING SOON */
   .card.coming-soon .card-toggle { opacity: 0.45; cursor: default; }
-  .card.coming-soon .card-arrow { display: none; }
 
+  /* DARK DIVIDER */
   .dark-divider {
     background: var(--ink);
     padding: 64px 48px;
     margin-top: 72px;
   }
 
-  .dark-divider-inner {
-    max-width: 860px;
-    margin: 0 auto;
-  }
+  .dark-divider-inner { max-width: 900px; margin: 0 auto; }
 
   .dark-eyebrow {
     font-size: 10px;
@@ -482,10 +481,11 @@
     font-size: 15px;
     font-weight: 300;
     color: rgba(255,255,255,0.45);
-    max-width: 560px;
+    max-width: 580px;
     line-height: 1.7;
   }
 
+  /* DISCLOSURE */
   .disclosure {
     font-size: 11px;
     font-weight: 300;
@@ -497,6 +497,7 @@
     margin-top: 72px;
   }
 
+  /* FOOTER */
   footer {
     border-top: 1px solid var(--rule);
     padding: 32px 48px;
@@ -532,7 +533,7 @@
     .nav-links { display: none; }
     .hero { padding: 60px 24px 56px; }
     .cat-nav { padding: 0 20px; }
-    .content { padding: 0 20px 48px; }
+    .content { padding: 0 20px 72px; }
     .card-inner { padding-left: 0; }
     .dark-divider { padding: 48px 24px; }
     footer { padding: 24px; flex-direction: column; text-align: center; }
@@ -542,213 +543,180 @@
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a class="nav-brand" href="https://www.brandshareit.com">Brand Share It</a>
   <div class="nav-links">
-    <a href="/services">Services</a>
-    <a href="/kpi-spotlight">KPI Spotlight</a>
-    <a href="/glossary">Trade Glossary</a>
-    <a href="/insights">Industry Insights</a>
-    <a href="mailto:stephen@brandshareit.com" class="nav-cta">Contact Us</a>
+    <a href="https://www.brandshareit.com/services">Services</a>
+    <a href="https://www.brandshareit.com/kpi-library">KPI Spotlight</a>
+    <a href="https://www.brandshareit.com/glossary">Trade Glossary</a>
+    <a href="https://www.brandshareit.com/industry-insights">Industry Insights</a>
+    <a href="https://www.brandshareit.com/contact" class="nav-cta">Contact Us</a>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">Affiliate Partners</p>
-    <h1>Trusted Partners.<br><em>Shared Values.</em></h1>
-    <p class="hero-sub">Two sides of one trusted network. Service affiliates cover the professional services that fall beyond my core discipline — but are essential to running and scaling a natural food brand. Brand affiliates are proven products ready for distributor, broker, and retail opportunities. Every partner on this page has earned their place through performance, integrity, and alignment with the values of the natural, organic, and specialty food trade.</p>
+    <p class="hero-eyebrow">Preferred Partners</p>
+    <h1>Trusted Partners.<br><em>Proven Results.</em></h1>
+    <p class="hero-sub">Three sides of one trusted network. Trusted Advisors covers the experts beyond my area of expertise — essential to running and scaling a natural food brand. Growth Partners are the brands I actively represent as their dedicated sales growth partner. Brand Spotlight features the natural, organic, and specialty food brands I personally endorse and recommend to my trade network. Every partner on this page has earned their place through performance, integrity, and alignment with the values of the natural, organic, and specialty food trade.</p>
   </div>
 </section>
 
+<!-- CATEGORY NAV -->
 <div class="cat-nav">
   <div class="cat-nav-inner">
-    <a href="#services">Service Affiliates</a>
-    <a href="#products">Brand Affiliates</a>
+    <a href="#services">Trusted Advisors</a>
+    <a href="#fractional">Growth Partners</a>
+    <a href="#spotlight">Brand Spotlight</a>
   </div>
 </div>
 
+<!-- CONTENT -->
 <div class="content">
 
-  <!-- ══ SERVICES ══ -->
-  <div class="affiliate-section" id="services">
+  <!-- TRUSTED ADVISORS -->
+  <div class="section" id="services">
     <div class="section-header">
       <span class="section-label">Section 01</span>
       <div class="section-rule"></div>
     </div>
-    <h2 class="section-title">Services Affiliates</h2>
-    <p class="section-desc">Trusted professionals and service providers who support the operational, financial, and strategic needs of growing natural and specialty food brands. These relationships are built on shared values and mutual respect for the industry.</p>
+    <h2 class="section-title">Trusted Advisors</h2>
+    <p class="section-desc">The experts I trust to handle the vital details of your business that fall beyond the sales desk. These are the advisors I recommend when a brand needs specialized expertise outside my area of expertise — accounting, legal, insurance, packaging, and more.</p>
 
-    <!-- ── TEMPLATE CARD — Copy this block for each new service partner ──
-    <div class="card" id="s-01">
-      <button class="card-toggle" onclick="toggleCard('s-01')">
-        <span class="card-number">01</span>
-        <div class="card-title-wrap">
-          <p class="card-category">[Category · e.g. Accounting]</p>
-          <h3 class="card-title-text">[Company Name] — [One Line Value Proposition]</h3>
-        </div>
-        <div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
-      </button>
-      <div class="card-body">
-        <div class="card-inner">
-
-          <!-- LOGO IMAGE — place partner logo here -->
-          <div style="margin-bottom:28px;">
-            <img src="[partner-logo.png]" alt="[Company Name]" style="height:60px;width:auto;object-fit:contain;display:block;">
-          </div>
-
-          <p class="card-desc">[Two to three sentence factual description of what this company does and who they serve.]</p>
-          <div class="stephens-take">
-            <p class="take-label">Stephen's Take</p>
-            <p class="take-text">"[Your personal endorsement in your own voice.]"</p>
-          </div>
-          <ul class="takeaways">
-            <li>
-              <span class="takeaway-num">01</span>
-              <div class="takeaway-content">
-                <strong>[Key Benefit]</strong>
-                <span>[One to two sentences.]</span>
-              </div>
-            </li>
-            <li>
-              <span class="takeaway-num">02</span>
-              <div class="takeaway-content">
-                <strong>[Key Benefit]</strong>
-                <span>[One to two sentences.]</span>
-              </div>
-            </li>
-            <li>
-              <span class="takeaway-num">03</span>
-              <div class="takeaway-content">
-                <strong>[Key Benefit]</strong>
-                <span>[One to two sentences.]</span>
-              </div>
-            </li>
-          </ul>
-          <p class="card-closing">[Single punchy closing line in your voice.]</p>
-          <a class="affiliate-link" href="mailto:stephen@brandshareit.com?subject=[Company Name] Inquiry" >
-            Inquire About [Company Name]
-            <svg viewBox="0 0 14 14"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8"/><polyline points="8,1 12,1 12,5"/><line x1="12" y1="1" x2="6" y2="7"/></svg>
-          </a>
-          <p class="card-byline">Brand Share It Sales Partners · Services Affiliate</p>
-        </div>
-      </div>
-    </div>
-    ── END TEMPLATE ── -->
-
-    <!-- COMING SOON CARDS — Services -->
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">01</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">02</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">03</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">04</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">05</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">06</span><div class="card-title-wrap"><p class="card-category muted">Services · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Service Partner Coming Soon</h3></div></button></div>
-
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">01</span><div class="card-title-wrap"><p class="card-tag muted">Trusted Advisors · Coming Soon</p><h3 class="card-title muted">Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">02</span><div class="card-title-wrap"><p class="card-tag muted">Trusted Advisors · Coming Soon</p><h3 class="card-title muted">Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">03</span><div class="card-title-wrap"><p class="card-tag muted">Trusted Advisors · Coming Soon</p><h3 class="card-title muted">Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">04</span><div class="card-title-wrap"><p class="card-tag muted">Trusted Advisors · Coming Soon</p><h3 class="card-title muted">Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">05</span><div class="card-title-wrap"><p class="card-tag muted">Trusted Advisors · Coming Soon</p><h3 class="card-title muted">Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
   </div>
 
 </div>
 
-<!-- DARK DIVIDER -->
+<!-- DARK DIVIDER 1 -->
 <div class="dark-divider">
   <div class="dark-divider-inner">
-    <p class="dark-eyebrow">Natural · Organic · Specialty</p>
-    <h2 class="dark-title">Products We<br><em>Believe In.</em></h2>
-    <p class="dark-body">Every brand featured below has been evaluated for retail performance, ingredient integrity, and market readiness. These are not cold introductions — they are warm endorsements from someone who has spent decades placing brands in the natural trade. Distributors, brokers, and retailers take note.</p>
+    <p class="dark-eyebrow">Active Partnerships</p>
+    <h2 class="dark-title">Brands I Actively<br><em>Represent.</em></h2>
+    <p class="dark-body">These are the brands I work with as their dedicated sales growth partner. Featured here as a benefit of our partnership — so every buyer, distributor, and broker who visits this site knows exactly who I am working with and why.</p>
   </div>
 </div>
 
 <div class="content">
 
-  <!-- ══ NATURAL PRODUCTS ══ -->
-  <div class="affiliate-section" id="products">
+  <!-- GROWTH PARTNERS -->
+  <div class="section" id="fractional">
     <div class="section-header">
       <span class="section-label gold">Section 02</span>
       <div class="section-rule"></div>
     </div>
-    <h2 class="section-title">Featured Brand Partners</h2>
-    <p class="section-desc">Natural, organic, and specialty food brands that have earned a place in this network through proven performance, clean credentials, and a story worth telling. If you are a distributor, broker, or retailer looking for your next great brand — start here.</p>
+    <h2 class="section-title">Growth Partners</h2>
+    <p class="section-desc">Brands I actively represent as their dedicated sales growth partner. I own their distribution strategy, manage their key accounts, and drive their growth across the natural, organic, and specialty food trade.</p>
 
-    <!-- SWOFFLE — ACTIVE -->
-    <div class="card open" id="p-01">
-      <button class="card-toggle" onclick="toggleCard('p-01')">
-        <span class="card-number">01</span>
+    <!-- SWOFFLE -->
+    <div class="card" id="swoffle">
+      <button class="card-toggle" onclick="toggleCard('swoffle')">
+        <span class="card-num">01</span>
         <div class="card-title-wrap">
-          <p class="card-category gold">Featured Brand · Better-For-You Snacks</p>
-          <h3 class="card-title-text">Swoffle — A Premium Organic Stroopwafel Brand Built for the Natural Trade</h3>
+          <p class="card-tag gold">Growth Partner · Better-For-You Snacks</p>
+          <h3 class="card-title">Swoffle — Organic Gluten-Free Stroopwafels Built for the Natural Trade</h3>
         </div>
         <div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
       </button>
       <div class="card-body">
         <div class="card-inner">
-
-          <!-- PRODUCT IMAGE — place product photo here -->
-          <div style="margin-bottom:28px;">
-            <img src="swoffle-product-photo.jpg" alt="Swoffle Organic Gluten-Free Stroopwafels" style="width:100%;max-width:560px;height:260px;object-fit:cover;border-radius:2px;display:block;">
-          </div>
-
           <p class="card-desc">Swoffle is an organic, gluten-free stroopwafel brand rooted in Concord, Massachusetts. Built on a foundation of clean ingredients, mission-driven values, and consistent retail performance, Swoffle has earned its place in the natural channel through seven years of disciplined execution. Every product is USDA Organic, Certified Gluten Free, Kosher, dairy free, and nut free — with no artificial ingredients and lower sugar than traditional stroopwafels.</p>
 
-          <div class="stephens-take gold-take">
+          <div class="stephens-take gold">
             <p class="take-label gold">Stephen's Take</p>
-            <p class="take-text">"I have worked alongside Swoffle for seven years and I have watched this brand earn every account it has ever won. The velocity is real. The reorders are consistent. The ingredient story resonates with today's natural channel consumer in a way that very few brands can match. This is not a brand chasing a trend — it is a brand that has built something lasting. If you are a distributor, broker, or retailer looking for a proven performer in the better-for-you snack category, this conversation is worth having."</p>
+            <p class="take-text">"I have worked alongside Swoffle for seven years and I have watched this brand earn every account it has ever won. The velocity is real. The reorders are consistent. The ingredient story resonates with today's natural channel consumer in a way that very few brands can match. If you are a distributor, broker, or retailer looking for a proven performer in the better-for-you snack category, this conversation is worth having."</p>
+          </div>
+
+          <div class="founder-block">
+            <p class="founder-label">From the Founder</p>
+            <p class="founder-text">"Stephen has been instrumental in building our nationally distributed brand across thousands of locations. His account management results speak for themselves — securing major new placements, expanding our Whole Foods presence, and achieving 30 to 160% year-to-date increases across all major distributors. 58.1% YOY in 2025 and 48% YOY through 2026. I recommend Stephen without reservation."</p>
+            <p class="founder-name">John Paino, CEO and President — Swoffle</p>
           </div>
 
           <ul class="takeaways">
-            <li>
+            <li class="takeaway">
               <span class="takeaway-num gold">01</span>
-              <div class="takeaway-content">
-                <strong>Proven Retail Performance</strong>
-                <span>Seven years of consistent velocity across natural, specialty, and conventional channels. Retail partners include Whole Foods, Market Basket, Hy-Vee, Harmons, Bristol Farms, Festival Foods, and Market of Choice — many of these relationships four to six years strong. Velocity that holds is velocity that earns placement.</span>
+              <div>
+                <strong class="takeaway-strong">Proven Retail Performance</strong>
+                <span class="takeaway-text">Seven years of consistent velocity across natural, specialty, and conventional channels. Retail partners include Whole Foods, Market Basket, Hy-Vee, Harmons, Bristol Farms, Festival Foods, and Market of Choice. Velocity that holds is velocity that earns placement.</span>
               </div>
             </li>
-            <li>
+            <li class="takeaway">
               <span class="takeaway-num gold">02</span>
-              <div class="takeaway-content">
-                <strong>A Credential Stack That Opens Doors</strong>
-                <span>USDA Organic. Certified Gluten Free. Kosher. Dairy free. Nut free. No artificial ingredients. Lower sugar. This level of certification breadth makes Swoffle relevant across multiple sets — natural, gluten-free, better-for-you, and allergen-conscious. One brand that fits multiple category conversations.</span>
+              <div>
+                <strong class="takeaway-strong">A Credential Stack That Opens Doors</strong>
+                <span class="takeaway-text">USDA Organic. Certified Gluten Free. Kosher. Dairy free. Nut free. No artificial ingredients. Lower sugar. This level of certification breadth makes Swoffle relevant across multiple sets — natural, gluten-free, better-for-you, and allergen-conscious.</span>
               </div>
             </li>
-            <li>
+            <li class="takeaway">
               <span class="takeaway-num gold">03</span>
-              <div class="takeaway-content">
-                <strong>A Mission That Resonates at Every Level</strong>
-                <span>Since 2017, Swoffle's Buy One Give One partnership with Feeding America has resulted in 1.68 million meals donated to families in need. In a retail environment where consumers and buyers alike are looking for brands that stand for something — Swoffle has a story worth telling and numbers to back it up.</span>
+              <div>
+                <strong class="takeaway-strong">A Mission With Measurable Impact</strong>
+                <span class="takeaway-text">Since 2017, Swoffle's Buy One Give One partnership with Feeding America has resulted in 1.68 million meals donated to families in need. In a retail environment where consumers and buyers alike are looking for brands that stand for something — Swoffle has a story worth telling and numbers to back it up.</span>
               </div>
             </li>
           </ul>
-
-          <p class="card-closing gold">Consistent velocity. Clean credentials. A mission with measurable impact. Swoffle is the kind of brand that makes a buyer's job easier.</p>
-
-          <a class="affiliate-link gold" href="mailto:stephen@brandshareit.com?subject=Swoffle Distributor/Broker Inquiry" style="margin-bottom:12px;">
-            Inquire About Opportunities
-            <svg viewBox="0 0 14 14"><path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8"/><polyline points="8,1 12,1 12,5"/><line x1="12" y1="1" x2="6" y2="7"/></svg>
-          </a>
-          <p style="font-size:13px;font-weight:300;color:var(--ink-muted);margin-top:4px;">Distributor, broker, and retail inquiries welcome. We will connect you with the right people.</p>
-          <p class="card-byline">Brand Share It Sales Partners · Featured Brand Affiliate</p>
+          <p class="card-byline">Brand Share It Sales Partners · Preferred Partners</p>
         </div>
       </div>
     </div>
 
-    <!-- COMING SOON CARDS — Products -->
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">02</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">03</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">04</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">05</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
-    <div class="card coming-soon"><button class="card-toggle"><span class="card-number">06</span><div class="card-title-wrap"><p class="card-category muted">Natural Products · Coming Soon</p><h3 class="card-title-text" style="color:var(--ink-muted);font-style:italic;">Brand Partner Coming Soon</h3></div></button></div>
-
-    <p class="disclosure">Affiliate Disclosure: Brand Share It Sales Partners maintains affiliate relationships with select service providers and product brands listed on this page. This means we may receive compensation when you click a link and make a purchase or inquiry. This compensation never influences which partners are featured — every listing reflects a genuine recommendation based on quality, integrity, and alignment with the values of the natural and specialty food trade. We only partner with companies we would recommend regardless of compensation.</p>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">02</span><div class="card-title-wrap"><p class="card-tag muted">Growth Partner · Coming Soon</p><h3 class="card-title muted">Brand Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">03</span><div class="card-title-wrap"><p class="card-tag muted">Growth Partner · Coming Soon</p><h3 class="card-title muted">Brand Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">04</span><div class="card-title-wrap"><p class="card-tag muted">Growth Partner · Coming Soon</p><h3 class="card-title muted">Brand Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">05</span><div class="card-title-wrap"><p class="card-tag muted">Growth Partner · Coming Soon</p><h3 class="card-title muted">Brand Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">06</span><div class="card-title-wrap"><p class="card-tag muted">Growth Partner · Coming Soon</p><h3 class="card-title muted">Brand Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
 
   </div>
 
 </div>
 
+<!-- DARK DIVIDER 2 -->
+<div class="dark-divider">
+  <div class="dark-divider-inner">
+    <p class="dark-eyebrow">Natural · Organic · Specialty</p>
+    <h2 class="dark-title">Brand<br><em>Spotlight.</em></h2>
+    <p class="dark-body">Every brand featured below has been evaluated for retail performance, ingredient integrity, and market readiness. These are not cold introductions — they are personal endorsements from someone who has spent decades placing brands in the natural trade. Distributors, brokers, and retailers take note.</p>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- BRAND SPOTLIGHT -->
+  <div class="section" id="spotlight">
+    <div class="section-header">
+      <span class="section-label dark">Section 03</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2 class="section-title">Brand Spotlight</h2>
+    <p class="section-desc">Natural, organic, and specialty food brands I personally endorse and recommend to my trade network. Each brand featured here has earned its place through clean ingredients, proven performance, and alignment with the values of the natural, organic, and specialty food trade.</p>
+
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">01</span><div class="card-title-wrap"><p class="card-tag muted">Brand Spotlight · Coming Soon</p><h3 class="card-title muted">Brand Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">02</span><div class="card-title-wrap"><p class="card-tag muted">Brand Spotlight · Coming Soon</p><h3 class="card-title muted">Brand Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">03</span><div class="card-title-wrap"><p class="card-tag muted">Brand Spotlight · Coming Soon</p><h3 class="card-title muted">Brand Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">04</span><div class="card-title-wrap"><p class="card-tag muted">Brand Spotlight · Coming Soon</p><h3 class="card-title muted">Brand Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+    <div class="card coming-soon"><button class="card-toggle"><span class="card-num">05</span><div class="card-title-wrap"><p class="card-tag muted">Brand Spotlight · Coming Soon</p><h3 class="card-title muted">Brand Partner Coming Soon</h3></div><div class="card-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button></div>
+
+    <p class="disclosure">Partner Disclosure: Brand Share It Sales Partners maintains preferred partner relationships with select service providers and brands listed on this page. Compensation arrangements vary by partner and are negotiated independently. This compensation never influences which partners are featured — every listing reflects a genuine recommendation based on quality, integrity, and alignment with the values of the natural, organic, and specialty food trade. We only partner with companies we would recommend regardless of compensation.</p>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
 <footer>
   <span class="footer-brand">© 2026 Brand Share It Sales Partners</span>
   <div class="footer-links">
-    <a href="/services">Services</a>
-    <a href="/kpi-spotlight">KPI Spotlight</a>
-    <a href="/glossary">Trade Glossary</a>
-    <a href="/insights">Industry Insights</a>
+    <a href="https://www.brandshareit.com/services">Services</a>
+    <a href="https://www.brandshareit.com/kpi-library">KPI Spotlight</a>
+    <a href="https://www.brandshareit.com/glossary">Trade Glossary</a>
+    <a href="https://www.brandshareit.com/industry-insights">Industry Insights</a>
     <a href="mailto:stephen@brandshareit.com">stephen@brandshareit.com</a>
   </div>
 </footer>
