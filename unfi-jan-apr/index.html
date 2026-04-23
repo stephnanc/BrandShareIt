@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>SWOFFLE – 16-Week YOY Performance Dashboard (UNFI)</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #222; }
+    h1, h2, h3 { margin-bottom: 4px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 16px; margin-top: 18px; }
+    h3 { font-size: 14px; margin-top: 12px; }
+    .kpi-row { display: flex; gap: 16px; margin: 8px 0 12px 0; }
+    .kpi-card { padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; min-width: 180px; }
+    .kpi-label { font-size: 11px; text-transform: uppercase; color: #666; }
+    .kpi-value { font-size: 16px; font-weight: bold; }
+    .kpi-sub { font-size: 11px; color: #444; }
+    ul { margin-top: 4px; }
+    li { margin-bottom: 2px; }
+    table { border-collapse: collapse; margin-top: 6px; width: 100%; max-width: 900px; }
+    th, td { border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 12px; }
+    th { background-color: #f4f4f4; }
+    .pos { color: #0a7a2f; font-weight: bold; }
+    .neg { color: #b00020; font-weight: bold; }
+    .note { font-size: 11px; color: #666; margin-top: 4px; }
+    .section-note { font-size: 11px; color: #555; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <h1>SWOFFLE – 16-Week Year-over-Year Performance Dashboard (UNFI)</h1>
+  <div class="note">
+    Period: <strong>Jan 1, 2026 – Apr 23, 2026</strong> vs same 16-week period prior year (UNFI shipment data).
+  </div>
+
+  <!-- TOPLINE KPI -->
+  <h2>1. Topline Performance – Last 16 Weeks (YOY)</h2>
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Sales dollars – YTD (16 weeks)</div>
+      <div class="kpi-value">$55,153</div>
+      <div class="kpi-sub">+15% vs prior year</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Cases shipped – YTD (16 weeks)</div>
+      <div class="kpi-value">2,878</div>
+      <div class="kpi-sub">+23% vs prior year</div>
+    </div>
+  </div>
+
+  <ul>
+    <li><strong>Sales growth:</strong> Dollar sales are up <strong>15%</strong> on the year-over-year 16-week comparison.</li>
+    <li><strong>Volume growth:</strong> Cases shipped are up <strong>23%</strong>, indicating strong underlying unit movement.</li>
+    <li><strong>Mix effect:</strong> Cases are growing faster than dollars, suggesting some combination of deeper discounts, mix shift, or price changes versus last year.</li>
+  </ul>
+
+  <!-- TOP 50 ACCOUNTS -->
+  <h2>2. Top 50 Accounts – Last 16 Weeks (YOY)</h2>
+  <div class="section-note">
+    Source: “UNFI TOP 50 LAST 16 WEEKS JAN–APR” – top 50 chains by cases shipped in the selected period.
+  </div>
+
+  <h3>2.1 Key positives – chains driving the 16-week growth</h3>
+  <p>
+    The top 50 group is where most of the growth is coming from. Many chains show strong gains in both cases and dollars.
+    For example, the file shows:
+    “PALO ALTO EGG COMPANY 236 0 236 100 3912 0 100” and
+    “URM STORES 95 43 52 121 2152 1016 112”.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>Cases – Selected</th>
+        <th>Cases – Prior</th>
+        <th>% Change Cases</th>
+        <th>Sales $ – Selected</th>
+        <th>Sales $ – Prior</th>
+        <th>% Change Sales $</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>PALO ALTO EGG COMPANY</td>
+        <td>236</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>3,912</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>New distribution; strong 16-week start with meaningful volume.</td>
+      </tr>
+      <tr>
+        <td>SUPER 1 FOODS</td>
+        <td>144</td>
+        <td>119</td>
+        <td class="pos">+21%</td>
+        <td>2,936</td>
+        <td>2,006</td>
+        <td class="pos">+46%</td>
+        <td>Good case growth with even stronger dollar growth.</td>
+      </tr>
+      <tr>
+        <td>HARMONS NEIGHBORHOOD GROCER</td>
+        <td>120</td>
+        <td>94</td>
+        <td class="pos">+28%</td>
+        <td>1,764</td>
+        <td>1,728</td>
+        <td class="pos">+2%</td>
+        <td>Solid case lift; dollars slightly positive.</td>
+      </tr>
+      <tr>
+        <td>NCGA NATIONAL COOP GROCERS ASSOCIATION</td>
+        <td>105</td>
+        <td>68</td>
+        <td class="pos">+54%</td>
+        <td>1,815</td>
+        <td>1,239</td>
+        <td class="pos">+47%</td>
+        <td>Strong growth across the NCGA network.</td>
+      </tr>
+      <tr>
+        <td>RAISE THE BAR</td>
+        <td>101</td>
+        <td>63</td>
+        <td class="pos">+60%</td>
+        <td>2,251</td>
+        <td>1,455</td>
+        <td class="pos">+55%</td>
+        <td>High-growth account; both volume and dollars up sharply.</td>
+      </tr>
+      <tr>
+        <td>BRISTOL FARMS</td>
+        <td>97</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>1,895</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>New distribution; strong early performance.</td>
+      </tr>
+      <tr>
+        <td>URM STORES</td>
+        <td>95</td>
+        <td>43</td>
+        <td class="pos">+121%</td>
+        <td>2,152</td>
+        <td>1,016</td>
+        <td class="pos">+112%</td>
+        <td>More than doubled in both cases and dollars.</td>
+      </tr>
+      <tr>
+        <td>GOOD EARTH FAIRFAX</td>
+        <td>74</td>
+        <td>39</td>
+        <td class="pos">+90%</td>
+        <td>1,658</td>
+        <td>901</td>
+        <td class="pos">+84%</td>
+        <td>Very strong 16-week growth at store level.</td>
+      </tr>
+      <tr>
+        <td>LAZY ACRES</td>
+        <td>27</td>
+        <td>20</td>
+        <td class="pos">+35%</td>
+        <td>471</td>
+        <td>203</td>
+        <td class="pos">+132%</td>
+        <td>Cases up; dollars more than doubled, indicating strong mix/price.</td>
+      </tr>
+      <tr>
+        <td>MARKET OF CHOICE</td>
+        <td>20</td>
+        <td>6</td>
+        <td class="pos">+233%</td>
+        <td>418</td>
+        <td>130</td>
+        <td class="pos">+220%</td>
+        <td>Significant growth; strong proof point in this region.</td>
+      </tr>
+      <tr>
+        <td>NORTHWEST GROCERS</td>
+        <td>19</td>
+        <td>6</td>
+        <td class="pos">+217%</td>
+        <td>437</td>
+        <td>83</td>
+        <td class="pos">+429%</td>
+        <td>High percentage growth; strong incremental dollars.</td>
+      </tr>
+      <tr>
+        <td>ECRS EDI GENERIC</td>
+        <td>9</td>
+        <td>1</td>
+        <td class="pos">+800%</td>
+        <td>193</td>
+        <td>17</td>
+        <td class="pos">+1,015%</td>
+        <td>Small base but very strong percentage lift.</td>
+      </tr>
+      <tr>
+        <td>BIGY GROCERY FULL SERVICE</td>
+        <td>66</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>1,365</td>
+        <td>0</td>
+        <td class="pos">+100%</td>
+        <td>New chain; strong 16-week contribution in cases and dollars.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>New and expanding chains</strong> (Palo Alto Egg, Bristol Farms, Big Y, Piazza’s, CIDS, etc.) are key drivers of the 16-week growth.</li>
+    <li><strong>Established growth accounts</strong> like Super 1 Foods, URM Stores, Raise The Bar, and NCGA are compounding volume on top of an existing base.</li>
+    <li><strong>High % lifts on small bases</strong> (e.g., ECRS EDI GENERIC, Eureka & Harvest, Northwest Grocers) show good traction where distribution is still relatively light.</li>
+  </ul>
+
+  <h3>2.2 Weaknesses / opportunity areas within the top 50</h3>
+  <p>
+    A smaller subset of the top 50 is down year-over-year in the 16-week window.
+    For example, the file shows:
+    “FESTIVAL FOODS 71 111 -40 -36 1237 2313 -47” and
+    “TOWN AND COUNTRY FOODS MONTANA 12 26 -14 -54 210 556 -62”.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Chain</th>
+        <th>Cases – Selected</th>
+        <th>Cases – Prior</th>
+        <th>% Change Cases</th>
+        <th>Sales $ – Selected</th>
+        <th>Sales $ – Prior</th>
+        <th>% Change Sales $</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>FESTIVAL FOODS</td>
+        <td>71</td>
+        <td>111</td>
+        <td class="neg">-36%</td>
+        <td>1,237</td>
+        <td>2,313</td>
+        <td class="neg">-47%</td>
+        <td>Meaningful decline; worth reviewing placement, promo, and in-stock.</td>
+      </tr>
+      <tr>
+        <td>NCG CENTRAL ALL PGM</td>
+        <td>49</td>
+        <td>66</td>
+        <td class="neg">-26%</td>
+        <td>797</td>
+        <td>1,192</td>
+        <td class="neg">-33%</td>
+        <td>Down in both cases and dollars; opportunity to re-engage stores.</td>
+      </tr>
+      <tr>
+        <td>HEN</td>
+        <td>25</td>
+        <td>24</td>
+        <td class="">+4%</td>
+        <td>320</td>
+        <td>442</td>
+        <td class="neg">-28%</td>
+        <td>Cases flat to slightly up, but dollars down; likely discount/mix impact.</td>
+      </tr>
+      <tr>
+        <td>TOWN AND COUNTRY FOODS MONTANA</td>
+        <td>12</td>
+        <td>26</td>
+        <td class="neg">-54%</td>
+        <td>210</td>
+        <td>556</td>
+        <td class="neg">-62%</td>
+        <td>Significant decline; needs a closer look at distribution and support.</td>
+      </tr>
+      <tr>
+        <td>NCG EAST ALL PGM</td>
+        <td>9</td>
+        <td>18</td>
+        <td class="neg">-50%</td>
+        <td>180</td>
+        <td>354</td>
+        <td class="neg">-49%</td>
+        <td>Down roughly half vs prior year; opportunity to re-activate stores.</td>
+      </tr>
+      <tr>
+        <td>BARBUR WORLD FOODS</td>
+        <td>8</td>
+        <td>13</td>
+        <td class="neg">-38%</td>
+        <td>148</td>
+        <td>247</td>
+        <td class="neg">-40%</td>
+        <td>Noticeable decline in a smaller but previously stronger account.</td>
+      </tr>
+      <tr>
+        <td>CENTRAL REGION INDIES</td>
+        <td>10</td>
+        <td>13</td>
+        <td class="neg">-23%</td>
+        <td>212</td>
+        <td>322</td>
+        <td class="neg">-34%</td>
+        <td>Regional indie cluster trending down; may need field attention.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>Festival Foods</strong> is the clearest top-50 risk: both cases and dollars are down sharply.</li>
+    <li><strong>NCG Central / NCG East</strong> show declines that may be tied to specific stores or reset activity.</li>
+    <li><strong>Town & Country Foods Montana</strong> and <strong>Barbur World Foods</strong> are smaller but meaningfully down and worth targeted follow-up.</li>
+  </ul>
+
+  <!-- INDEPENDENT / MOM & POP ACCOUNTS -->
+  <h2>3. Independent & Mom-and-Pop Accounts – Last 16 Weeks (YOY)</h2>
+  <div class="section-note">
+    Source: “UNFI OTHER INDEPENDENTS LAST 16 WEEKS JAN–APR” – 186 smaller, largely independent accounts.
+  </div>
+
+  <h3>3.1 Bright spots among independents</h3>
+  <p>
+    While the independent universe is down overall, there are pockets of growth.
+    For example, the file shows:
+    “SAVE U MORE AK 7 5 2 40 207 116 79” and
+    “ORGANIC ROOTS 3 2 1 50 131 35 273”.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Cases – Selected</th>
+        <th>Cases – Prior</th>
+        <th>% Change Cases</th>
+        <th>Sales $ – Selected</th>
+        <th>Sales $ – Prior</th>
+        <th>% Change Sales $</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SAVE U MORE AK</td>
+        <td>7</td>
+        <td>5</td>
+        <td class="pos">+40%</td>
+        <td>207</td>
+        <td>116</td>
+        <td class="pos">+79%</td>
+        <td>Growing nicely; strong dollar lift on modest volume.</td>
+      </tr>
+      <tr>
+        <td>NEW MOON NATURAL FOODS</td>
+        <td>6</td>
+        <td>3</td>
+        <td class="pos">+100%</td>
+        <td>121</td>
+        <td>69</td>
+        <td class="pos">+75%</td>
+        <td>Cases doubled; dollars up strongly.</td>
+      </tr>
+      <tr>
+        <td>KENS MARKET QUEEN ANNE</td>
+        <td>6</td>
+        <td>3</td>
+        <td class="pos">+100%</td>
+        <td>115</td>
+        <td>69</td>
+        <td class="pos">+67%</td>
+        <td>Good growth in a key Seattle neighborhood store.</td>
+      </tr>
+      <tr>
+        <td>STAFF OF LIFE</td>
+        <td>5</td>
+        <td>5</td>
+        <td>0%</td>
+        <td>133</td>
+        <td>92</td>
+        <td class="pos">+44%</td>
+        <td>Stable cases with higher dollars; likely better mix or pricing.</td>
+      </tr>
+      <tr>
+        <td>ROTHS</td>
+        <td>4</td>
+        <td>1</td>
+        <td class="pos">+300%</td>
+        <td>69</td>
+        <td>20</td>
+        <td class="pos">+250%</td>
+        <td>Small base but strong growth; good regional signal.</td>
+      </tr>
+      <tr>
+        <td>STUMPS</td>
+        <td>4</td>
+        <td>1</td>
+        <td class="pos">+300%</td>
+        <td>92</td>
+        <td>21</td>
+        <td class="pos">+340%</td>
+        <td>High percentage growth; worth nurturing.</td>
+      </tr>
+      <tr>
+        <td>ORGANIC ROOTS</td>
+        <td>3</td>
+        <td>2</td>
+        <td class="pos">+50%</td>
+        <td>131</td>
+        <td>35</td>
+        <td class="pos">+273%</td>
+        <td>Excellent dollar growth; strong productivity for a small account.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>Selective independents are performing well</strong>, with some doubling or tripling their business off small bases.</li>
+    <li><strong>Growth is fragmented</strong> – wins are scattered across regions rather than concentrated in one indie group.</li>
+    <li>These bright spots can be used as <strong>proof points</strong> for similar stores or regions.</li>
+  </ul>
+
+  <h3>3.2 Where independents are down – concentration of declines</h3>
+  <p>
+    The broader independent universe is where the story turns negative. Many accounts have reduced or stopped ordering.
+    For example, the file shows:
+    “NATURAL RETAIL GROUP 1 19 -18 -95 18 393 -95” and
+    “FRESCO COMMUNITY MARKETS 0 10 -10 -100 0 254 -100”.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Account / Group</th>
+        <th>Cases – Selected</th>
+        <th>Cases – Prior</th>
+        <th>% Change Cases</th>
+        <th>Sales $ – Selected</th>
+        <th>Sales $ – Prior</th>
+        <th>% Change Sales $</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>NATURAL RETAIL GROUP</td>
+        <td>1</td>
+        <td>19</td>
+        <td class="neg">-95%</td>
+        <td>18</td>
+        <td>393</td>
+        <td class="neg">-95%</td>
+        <td>Major decline; effectively lost most of this business.</td>
+      </tr>
+      <tr>
+        <td>FRESCO COMMUNITY MARKETS</td>
+        <td>0</td>
+        <td>10</td>
+        <td class="neg">-100%</td>
+        <td>0</td>
+        <td>254</td>
+        <td class="neg">-100%</td>
+        <td>Completely lapsed; no shipments in the current 16 weeks.</td>
+      </tr>
+      <tr>
+        <td>EXPORTERS</td>
+        <td>0</td>
+        <td>14</td>
+        <td class="neg">-100%</td>
+        <td>0</td>
+        <td>323</td>
+        <td class="neg">-100%</td>
+        <td>Export business has gone to zero in this window.</td>
+      </tr>
+      <tr>
+        <td>INFRA ATLANTIC ALL OTHER</td>
+        <td>0</td>
+        <td>12</td>
+        <td class="neg">-100%</td>
+        <td>0</td>
+        <td>258</td>
+        <td class="neg">-100%</td>
+        <td>Significant indie cluster loss in the Atlantic region.</td>
+      </tr>
+      <tr>
+        <td>ROLLIN OATS MARKET</td>
+        <td>0</td>
+        <td>3</td>
+        <td class="neg">-100%</td>
+        <td>0</td>
+        <td>65</td>
+        <td class="neg">-100%</td>
+        <td>Previously active natural account now at zero.</td>
+      </tr>
+      <tr>
+        <td>RAINBOW BLOSSOM</td>
+        <td>1</td>
+        <td>6</td>
+        <td class="neg">-83%</td>
+        <td>24</td>
+        <td>142</td>
+        <td class="neg">-83%</td>
+        <td>Sharp decline; still ordering but at a much lower level.</td>
+      </tr>
+      <tr>
+        <td>COOP EDI CHAIN</td>
+        <td>3</td>
+        <td>17</td>
+        <td class="neg">-82%</td>
+        <td>71</td>
+        <td>384</td>
+        <td class="neg">-82%</td>
+        <td>Co-op cluster significantly down vs prior year.</td>
+      </tr>
+      <tr>
+        <td>ORDER DOG</td>
+        <td>3</td>
+        <td>11</td>
+        <td class="neg">-73%</td>
+        <td>62</td>
+        <td>252</td>
+        <td class="neg">-75%</td>
+        <td>Online/DSD ordering channel has dropped sharply.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>Concentrated losses</strong> in certain groups (Natural Retail Group, Fresco, Exporters, INFRA Atlantic, various co-ops) are pulling the indie segment down.</li>
+    <li><strong>Many accounts have gone to zero</strong> in the current 16 weeks, indicating lost distribution, resets, or lack of reorders.</li>
+    <li><strong>Some accounts are still ordering but at much lower levels</strong> (e.g., Rainbow Blossom, Coop EDI Chain), suggesting opportunity to re-engage rather than rebuild from scratch.</li>
+  </ul>
+
+  <!-- SUMMARY / TALKING POINTS -->
+  <h2>4. Summary – How to talk about the 16-week YOY story</h2>
+  <ul>
+    <li><strong>Overall:</strong> The last 16 weeks show <strong>+15% in sales</strong> and <strong>+23% in cases</strong>, driven primarily by top 50 chains and new/expanding distribution.</li>
+    <li><strong>Top 50 chains:</strong> Strong growth from accounts like Palo Alto Egg, URM, Raise The Bar, NCGA, Super 1, Bristol Farms, Big Y, and several regional banners. A small set of chains (Festival Foods, NCG Central/East, Town & Country Montana, Barbur) are down and represent targeted opportunity areas.</li>
+    <li><strong>Independents:</strong> A handful of independents are performing well, but the segment overall is down, with many accounts either significantly reduced or at zero shipments. Losses are concentrated in specific groups and former strong accounts (Natural Retail Group, Fresco Community Markets, Exporters, INFRA Atlantic, various co-ops).</li>
+    <li><strong>Action lens:</strong> 
+      <ul>
+        <li>Protect and build on the <strong>top 50 growth engines</strong>.</li>
+        <li>Target a short list of <strong>declining chains</strong> for reset/placement/promo conversations.</li>
+        <li>Prioritize <strong>high-potential independents</strong> and a focused reactivation list where business has dropped to zero but was previously meaningful.</li>
+      </ul>
+    </li>
+  </ul>
+
+</body>
