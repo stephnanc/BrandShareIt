@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>SWOFFLE – Velocity Dashboard by Chain – Last 16 Weeks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', sans-serif; background: #f8f8f6; color: #222; margin: 0; padding: 0; line-height: 1.5; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; margin-bottom: 0.4rem; }
+    .hero { background: radial-gradient(circle at center, rgba(46,107,66,0.35), transparent 60%), #111111; padding: 60px 40px; text-align: center; color: white; }
+    .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+    .hero h2 { font-size: 1.3rem; font-weight: 300; opacity: 0.9; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; padding: 30px 40px 10px 40px; }
+    .card { background: #ffffff; border-radius: 12px; padding: 18px 20px; border: 1px solid #e5e5e5; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+    .card-title { font-size: 0.85rem; font-weight: 600; color: #2e6b42; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .card-value { font-size: 1.5rem; font-weight: 600; margin-bottom: 4px; }
+    .card-sub { font-size: 0.9rem; color: #555; }
+    .arrow-up { color: #2e6b42; font-weight: 700; }
+    .arrow-down { color: #b33a3a; font-weight: 700; }
+    section { padding: 20px 40px 30px 40px; }
+    .divider { border: 0; border-top: 1px solid rgba(46,107,66,0.25); margin: 10px 40px 20px 40px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 0.5rem; background: white; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; font-size: 0.9rem; text-align: right; }
+    th { background: #f0f0ed; text-align: left; }
+    .bar-row { display: flex; align-items: center; margin: 4px 0; font-size: 0.85rem; }
+    .bar-label { width: 45%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { flex: 1; background: #e6e6e2; margin: 0 6px; height: 10px; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; }
+    .positive { background: #2e6b42; }
+    .negative { background: #b33a3a; }
+    blockquote { font-size: 0.85rem; color: #555; border-left: 3px solid #ccc; padding-left: 10px; margin-left: 0; }
+    .compare-grid { margin-top: 10px; }
+    .compare-title { font-weight: 600; margin-bottom: 6px; }
+    .compare-sub { font-size: 0.85rem; color: #555; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <h1>SWOFFLE</h1>
+  <h2>Velocity by Chain &ndash; Units &amp; Dollars Per Store Per Week &ndash; Last 16 Weeks (Jan 1 &ndash; Apr 23, 2026)</h2>
+</div>
+
+<!-- ═══════════════════ KPI CARDS ═══════════════════ -->
+<div class="card-grid">
+
+  <div class="card">
+    <div class="card-title">Top Velocity Chain</div>
+    <div class="card-value">Palo Alto Egg Company</div>
+    <div class="card-sub">14.8 UPSPW &nbsp;<span class="arrow-up">&#9650; +100%</span></div>
+    <div class="card-sub">$3,911.83 / store / week &middot; 236 cases (new distribution)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fastest Velocity Growth</div>
+    <div class="card-value">ECRS EDI Generic</div>
+    <div class="card-sub">0.1 &rarr; 0.6 UPSPW &nbsp;<span class="arrow-up">&#9650; +800%</span></div>
+    <div class="card-sub">$17.33 &rarr; $193.21 / store / week &middot; 1 &rarr; 9 cases</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel + New Chain</div>
+    <div class="card-value">Bristol Farms</div>
+    <div class="card-sub">0 &rarr; 0.4 UPSPW &nbsp;<span class="arrow-up">&#9650; +100%</span></div>
+    <div class="card-sub">$126.31 / store / week &middot; 0 &rarr; 97 cases (new)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel Growth Existing</div>
+    <div class="card-value">Raise The Bar</div>
+    <div class="card-sub">2.0 &rarr; 6.3 UPSPW &nbsp;<span class="arrow-up">&#9650; +220.6%</span></div>
+    <div class="card-sub">$727.65 &rarr; $2,251.34 / store / week &middot; 63 &rarr; 101 cases</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Vel Growth Natural</div>
+    <div class="card-value">Good Earth Fairfax</div>
+    <div class="card-sub">1.2 &rarr; 2.3 UPSPW &nbsp;<span class="arrow-up">&#9650; +89.7%</span></div>
+    <div class="card-sub">$450.45 &rarr; $828.88 / store / week &middot; 39 &rarr; 74 cases</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Velocity Risk &ndash; Large Chain</div>
+    <div class="card-value">Festival Foods</div>
+    <div class="card-sub">0.2 &rarr; 0.2 UPSPW &nbsp;<span class="arrow-down">&#9660; &minus;31.6%</span></div>
+    <div class="card-sub">$74.61 &rarr; $42.64 / store / week &middot; 111 &rarr; 71 cases (&minus;36%)</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ VELOCITY EXPLAINER ═══════════════════ -->
+<hr class="divider">
+<section>
+  <h3>What Velocity Means</h3>
+  <blockquote>
+    <strong>UPSPW (Units Per Store Per Week)</strong> measures how many units each store sells on average per week. A higher number means stronger consumer pull-through.<br><br>
+    <strong>$/Store/Week</strong> translates unit velocity into dollar revenue per store per week, reflecting both movement and price realization.<br><br>
+    <strong>% Change</strong> compares the current 16-week period (Jan 1 &ndash; Apr 23, 2026) to the same prior-year window, showing acceleration or deceleration at the store level.
+  </blockquote>
+</section>
+
+<!-- ═══════════════════ TOP VELOCITY PERFORMERS ═══════════════════ -->
+<hr class="divider">
+<section>
+  <h3>Top Velocity Performers</h3>
+  <p style="font-size:0.9rem;color:#555;">Ranked by current UPSPW &ndash; highest consumer pull-through per store</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;">Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>&Delta;</th>
+        <th>% &Delta;</th>
+        <th>$/Store/Week</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left;">Palo Alto Egg Company</td><td>0.0</td><td>14.8</td><td>+14.8</td><td class="arrow-up">+100%</td><td>$3,911.83</td></tr>
+      <tr><td style="text-align:left;">Raise The Bar</td><td>2.0</td><td>6.3</td><td>+4.3</td><td class="arrow-up">+220.6%</td><td>$2,251.34</td></tr>
+      <tr><td style="text-align:left;">Good Earth Fairfax</td><td>1.2</td><td>2.3</td><td>+1.1</td><td class="arrow-up">+89.7%</td><td>$828.88</td></tr>
+      <tr><td style="text-align:left;">New Leaf Independents</td><td>1.5</td><td>1.9</td><td>+0.4</td><td class="arrow-up">+25.0%</td><td>$499.42</td></tr>
+      <tr><td style="text-align:left;">Heinens Inc</td><td>1.5</td><td>1.6</td><td>+0.1</td><td class="arrow-up">+4.2%</td><td>$320.31</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Bar Chart -->
+  <div style="margin-top:14px;">
+    <div class="bar-row"><span class="bar-label">Palo Alto Egg Company (14.8)</span><div class="bar-track"><div class="bar-fill positive" style="width:100%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Raise The Bar (6.3)</span><div class="bar-track"><div class="bar-fill positive" style="width:42.6%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Good Earth Fairfax (2.3)</span><div class="bar-track"><div class="bar-fill positive" style="width:15.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">New Leaf Independents (1.9)</span><div class="bar-track"><div class="bar-fill positive" style="width:12.8%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Heinens Inc (1.6)</span><div class="bar-track"><div class="bar-fill positive" style="width:10.8%"></div></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FASTEST-GROWING VELOCITY ═══════════════════ -->
+<hr class="divider">
+<section>
+  <h3>Fastest-Growing Velocity</h3>
+  <p style="font-size:0.9rem;color:#555;">Ranked by % change in UPSPW &ndash; strongest acceleration vs. prior year</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;">Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>&Delta;</th>
+        <th>% &Delta;</th>
+        <th>Cases</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left;">ECRS EDI Generic</td><td>0.1</td><td>0.6</td><td>+0.5</td><td class="arrow-up">+800%</td><td>1 &rarr; 9</td></tr>
+      <tr><td style="text-align:left;">Wild Oak</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+400%</td><td>3 &rarr; 5</td></tr>
+      <tr><td style="text-align:left;">Stumps</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+300%</td><td>1 &rarr; 4</td></tr>
+      <tr><td style="text-align:left;">Roths</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+300%</td><td>1 &rarr; 4</td></tr>
+      <tr><td style="text-align:left;">Sierra Hills Market</td><td>0.1</td><td>0.5</td><td>+0.4</td><td class="arrow-up">+300%</td><td>2 &rarr; 8</td></tr>
+      <tr><td style="text-align:left;">Raise The Bar</td><td>2.0</td><td>6.3</td><td>+4.3</td><td class="arrow-up">+220.6%</td><td>63 &rarr; 101</td></tr>
+      <tr><td style="text-align:left;">Loch Lomond &amp; Woodlands</td><td>0.1</td><td>0.2</td><td>+0.1</td><td class="arrow-up">+200%</td><td>2 &rarr; 3</td></tr>
+      <tr><td style="text-align:left;">Country Sun Corp</td><td>0.1</td><td>0.2</td><td>+0.1</td><td class="arrow-up">+200%</td><td>1 &rarr; 3</td></tr>
+      <tr><td style="text-align:left;">City Market / Andys Qualit</td><td>0.1</td><td>0.2</td><td>+0.1</td><td class="arrow-up">+200%</td><td>1 &rarr; 3</td></tr>
+      <tr><td style="text-align:left;">Aramark</td><td>0.4</td><td>1.2</td><td>+0.8</td><td class="arrow-up">+189.1%</td><td>32 &rarr; 37</td></tr>
+      <tr><td style="text-align:left;">JBros Gluten Free Market</td><td>0.3</td><td>0.7</td><td>+0.4</td><td class="arrow-up">+175%</td><td>4 &rarr; 11</td></tr>
+      <tr><td style="text-align:left;">Other Avenues Market</td><td>0.2</td><td>0.5</td><td>+0.3</td><td class="arrow-up">+166.7%</td><td>3 &rarr; 8</td></tr>
+      <tr><td style="text-align:left;">Wildberries</td><td>0.3</td><td>0.6</td><td>+0.4</td><td class="arrow-up">+150%</td><td>4 &rarr; 10</td></tr>
+      <tr><td style="text-align:left;">Mt Hope</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+150%</td><td>2 &rarr; 5</td></tr>
+      <tr><td style="text-align:left;">Rockys Market</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+150%</td><td>2 &rarr; 5</td></tr>
+      <tr><td style="text-align:left;">Sherm's Food 4 Less</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+150%</td><td>2 &rarr; 5</td></tr>
+      <tr><td style="text-align:left;">Eureka And Harvest</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+150%</td><td>2 &rarr; 15</td></tr>
+      <tr><td style="text-align:left;">Northwest Grocers</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+137.5%</td><td>6 &rarr; 19</td></tr>
+      <tr><td style="text-align:left;">University of Arizona</td><td>0.5</td><td>1.1</td><td>+0.6</td><td class="arrow-up">+125%</td><td>8 &rarr; 18</td></tr>
+      <tr><td style="text-align:left;">Infra Pacific All Other SW</td><td>0.1</td><td>0.3</td><td>+0.2</td><td class="arrow-up">+125%</td><td>2 &rarr; 9</td></tr>
+      <tr><td style="text-align:left;">Lazy Acres</td><td>0.2</td><td>0.4</td><td>+0.2</td><td class="arrow-up">+102.5%</td><td>20 &rarr; 27</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Bar Chart — Top 10 by % Change -->
+  <div style="margin-top:14px;">
+    <div class="bar-row"><span class="bar-label">ECRS EDI Generic (+800%)</span><div class="bar-track"><div class="bar-fill positive" style="width:100%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Wild Oak (+400%)</span><div class="bar-track"><div class="bar-fill positive" style="width:50%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Stumps (+300%)</span><div class="bar-track"><div class="bar-fill positive" style="width:37.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Roths (+300%)</span><div class="bar-track"><div class="bar-fill positive" style="width:37.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Sierra Hills Market (+300%)</span><div class="bar-track"><div class="bar-fill positive" style="width:37.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Raise The Bar (+220.6%)</span><div class="bar-track"><div class="bar-fill positive" style="width:27.6%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Loch Lomond &amp; Woodlands (+200%)</span><div class="bar-track"><div class="bar-fill positive" style="width:25%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Country Sun Corp (+200%)</span><div class="bar-track"><div class="bar-fill positive" style="width:25%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">City Market / Andys (+200%)</span><div class="bar-track"><div class="bar-fill positive" style="width:25%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Aramark (+189.1%)</span><div class="bar-track"><div class="bar-fill positive" style="width:23.6%"></div></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BIG ACCOUNTS WITH OPPORTUNITY ═══════════════════ -->
+<hr class="divider">
+<section>
+  <h3>Big Accounts with Opportunity</h3>
+  <p style="font-size:0.9rem;color:#555;">High case volume but low velocity &ndash; room for stronger store-level pull-through</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;">Chain</th>
+        <th>UPSPW Current</th>
+        <th>$/Store/Week</th>
+        <th>Cases Prior</th>
+        <th>Cases Current</th>
+        <th>% &Delta; Cases</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left;">Confidential</td><td>0.3</td><td>$89.05</td><td>489</td><td>532</td><td class="arrow-up">+9%</td></tr>
+      <tr><td style="text-align:left;">Demoulas Supermarket</td><td>0.3</td><td>$108.66</td><td>167</td><td>159</td><td class="arrow-down">&minus;5%</td></tr>
+      <tr><td style="text-align:left;">Super 1 Foods</td><td>0.5</td><td>$154.50</td><td>119</td><td>144</td><td class="arrow-up">+21%</td></tr>
+      <tr><td style="text-align:left;">URM Stores</td><td>0.3</td><td>$97.82</td><td>43</td><td>95</td><td class="arrow-up">+121%</td></tr>
+      <tr><td style="text-align:left;">Festival Foods</td><td>0.2</td><td>$42.64</td><td>111</td><td>71</td><td class="arrow-down">&minus;36%</td></tr>
+      <tr><td style="text-align:left;">Harmons Neighborhood Grocer</td><td>0.5</td><td>$117.57</td><td>94</td><td>120</td><td class="arrow-up">+28%</td></tr>
+      <tr><td style="text-align:left;">NCGA</td><td>0.4</td><td>$121.03</td><td>68</td><td>105</td><td class="arrow-up">+54%</td></tr>
+      <tr><td style="text-align:left;">Bristol Farms</td><td>0.4</td><td>$126.31</td><td>0</td><td>97</td><td class="arrow-up">+100%</td></tr>
+      <tr><td style="text-align:left;">Heinens Inc</td><td>0.3</td><td>$72.42</td><td>91</td><td>101</td><td class="arrow-up">+11%</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Volume vs Velocity Bar Pairs -->
+  <div class="compare-grid" style="margin-top:16px;">
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Confidential &mdash; 532 cases | 0.3 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">532 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:100%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.3 UPSPW</span><div class="bar-track"><div class="bar-fill negative" style="width:60%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Demoulas &mdash; 159 cases | 0.3 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">159 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:29.9%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.3 UPSPW</span><div class="bar-track"><div class="bar-fill negative" style="width:60%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Super 1 Foods &mdash; 144 cases | 0.5 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">144 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:27.1%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.5 UPSPW</span><div class="bar-track"><div class="bar-fill positive" style="width:100%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">URM Stores &mdash; 95 cases | 0.3 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">95 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:17.9%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.3 UPSPW</span><div class="bar-track"><div class="bar-fill negative" style="width:60%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Festival Foods &mdash; 71 cases | 0.2 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">71 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:13.3%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.2 UPSPW</span><div class="bar-track"><div class="bar-fill negative" style="width:40%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Harmons Neighborhood Grocer &mdash; 120 cases | 0.5 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">120 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:22.6%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.5 UPSPW</span><div class="bar-track"><div class="bar-fill positive" style="width:100%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">NCGA &mdash; 105 cases | 0.4 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">105 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:19.7%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.4 UPSPW</span><div class="bar-track"><div class="bar-fill positive" style="width:80%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Bristol Farms &mdash; 97 cases | 0.4 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">97 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:18.2%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.4 UPSPW</span><div class="bar-track"><div class="bar-fill positive" style="width:80%"></div></div></div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="compare-title">Heinens Inc &mdash; 101 cases | 0.3 UPSPW</div>
+      <div class="compare-sub">Volume (cases)</div>
+      <div class="bar-row"><span class="bar-label">101 cases</span><div class="bar-track"><div class="bar-fill positive" style="width:19%"></div></div></div>
+      <div class="compare-sub">Velocity (UPSPW)</div>
+      <div class="bar-row"><span class="bar-label">0.3 UPSPW</span><div class="bar-track"><div class="bar-fill negative" style="width:60%"></div></div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════ VELOCITY RISK ACCOUNTS ═══════════════════ -->
+<hr class="divider">
+<section>
+  <h3>Velocity Risk Accounts</h3>
+  <p style="font-size:0.9rem;color:#555;">Declining UPSPW &ndash; store-level pull-through losing momentum</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left;">Chain</th>
+        <th>UPSPW Prior</th>
+        <th>UPSPW Current</th>
+        <th>% &Delta; UPSPW</th>
+        <th>$/Store/Wk Prior</th>
+        <th>$/Store/Wk Current</th>
+        <th>% &Delta; $/Store/Wk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="text-align:left;">Town &amp; Country Foods Montana</td><td>0.4</td><td>0.3</td><td class="arrow-down">&minus;38.5%</td><td>$139.06</td><td>$70.04</td><td class="arrow-down">&minus;49.6%</td></tr>
+      <tr><td style="text-align:left;">Barbur World Foods</td><td>0.4</td><td>0.3</td><td class="arrow-down">&minus;38.5%</td><td>$123.39</td><td>$74.17</td><td class="arrow-down">&minus;39.9%</td></tr>
+      <tr><td style="text-align:left;">The Dipped Donut</td><td>0.6</td><td>0.4</td><td class="arrow-down">&minus;33.3%</td><td>$213.57</td><td>$129.56</td><td class="arrow-down">&minus;39.3%</td></tr>
+      <tr><td style="text-align:left;">Kriegers HFMKTPTW</td><td>0.6</td><td>0.4</td><td class="arrow-down">&minus;33.3%</td><td>$192.24</td><td>$108.82</td><td class="arrow-down">&minus;43.4%</td></tr>
+      <tr><td style="text-align:left;">Festival Foods</td><td>0.2</td><td>0.2</td><td class="arrow-down">&minus;31.6%</td><td>$74.61</td><td>$42.64</td><td class="arrow-down">&minus;42.8%</td></tr>
+      <tr><td style="text-align:left;">Health Hut</td><td>0.3</td><td>0.3</td><td class="arrow-down">&minus;27.3%</td><td>$121.36</td><td>$71.20</td><td class="arrow-down">&minus;41.3%</td></tr>
+      <tr><td style="text-align:left;">Kremers Market</td><td>0.5</td><td>0.4</td><td class="arrow-down">&minus;25%</td><td>$189.84</td><td>$123.15</td><td class="arrow-down">&minus;35.1%</td></tr>
+      <tr><td style="text-align:left;">Murphys Markets</td><td>0.4</td><td>0.3</td><td class="arrow-down">&minus;25%</td><td>$116.41</td><td>$70.33</td><td class="arrow-down">&minus;39.6%</td></tr>
+      <tr><td style="text-align:left;">Demoulas Supermarket</td><td>0.4</td><td>0.3</td><td class="arrow-down">&minus;19.2%</td><td>$132.83</td><td>$108.66</td><td class="arrow-down">&minus;18.2%</td></tr>
+      <tr><td style="text-align:left;">DavesLucky Market</td><td>1.3</td><td>1.1</td><td class="arrow-down">&minus;19%</td><td>$394.68</td><td>$310.36</td><td class="arrow-down">&minus;21.4%</td></tr>
+      <tr><td style="text-align:left;">Plum Market</td><td>0.3</td><td>0.2</td><td class="arrow-down">&minus;18.5%</td><td>$84.69</td><td>$58.47</td><td class="arrow-down">&minus;31%</td></tr>
+      <tr><td style="text-align:left;">NCG Central All PGM</td><td>0.4</td><td>0.3</td><td class="arrow-down">&minus;17.5%</td><td>$119.24</td><td>$88.50</td><td class="arrow-down">&minus;25.8%</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Decline Bar Chart -->
+  <div style="margin-top:14px;">
+    <div class="bar-row"><span class="bar-label">Town &amp; Country Foods (&minus;38.5%)</span><div class="bar-track"><div class="bar-fill negative" style="width:100%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Barbur World Foods (&minus;38.5%)</span><div class="bar-track"><div class="bar-fill negative" style="width:100%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">The Dipped Donut (&minus;33.3%)</span><div class="bar-track"><div class="bar-fill negative" style="width:86.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Kriegers HFMKTPTW (&minus;33.3%)</span><div class="bar-track"><div class="bar-fill negative" style="width:86.5%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Festival Foods (&minus;31.6%)</span><div class="bar-track"><div class="bar-fill negative" style="width:82.1%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Health Hut (&minus;27.3%)</span><div class="bar-track"><div class="bar-fill negative" style="width:70.9%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Kremers Market (&minus;25%)</span><div class="bar-track"><div class="bar-fill negative" style="width:64.9%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Murphys Markets (&minus;25%)</span><div class="bar-track"><div class="bar-fill negative" style="width:64.9%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Demoulas (&minus;19.2%)</span><div class="bar-track"><div class="bar-fill negative" style="width:49.9%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">DavesLucky Market (&minus;19%)</span><div class="bar-track"><div class="bar-fill negative" style="width:49.4%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">Plum Market (&minus;18.5%)</span><div class="bar-track"><div class="bar-fill negative" style="width:48.1%"></div></div></div>
+    <div class="bar-row"><span class="bar-label">NCG Central All PGM (&minus;17.5%)</span><div class="bar-track"><div class="bar-fill negative" style="width:45.5%"></div></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<hr class="divider">
+<section style="text-align:center; padding-bottom:40px;">
+  <p style="font-size:0.85rem; color:#888;">SWOFFLE &ndash; UNFI Velocity Dashboard &ndash; 16-Week Period (Jan 1 &ndash; Apr 23, 2026) &ndash; Data: UNFI Velocity Report</p>
+</section>
+
+</body>
