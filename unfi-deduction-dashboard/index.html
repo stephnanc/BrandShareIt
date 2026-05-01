@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle LLC — UNFI East-West Deduction Tracker Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--white:#fff;--surface:#f7f8fa;--surface2:#eaecef;--border:#d0d7de;--text:#1a1d23;--muted:#57606a;--dim:#9ba3b0;--blue:#1d6fa4;--mono:"IBM Plex Mono",monospace;--sans:"IBM Plex Sans",sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;padding:24px 24px 48px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.card-header{padding:24px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border-bottom:1px solid var(--border);}
+.dist-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
+.card-title{font-size:20px;font-weight:700;}
+.card-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
+.created-by{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.created-name{font-family:var(--mono);font-size:14px;font-weight:600;margin-top:3px;}
+.summary-strip{display:flex;border-bottom:1px solid var(--border);background:var(--surface);}
+.sc{flex:1;padding:14px 20px;border-right:1px solid var(--border);}
+.sc:last-child{border-right:none;}
+.sl{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.1px;}
+.sv{font-family:var(--mono);font-size:15px;font-weight:600;margin-top:4px;}
+.controls-bar{display:flex;align-items:center;gap:10px;padding:12px 20px;background:var(--white);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.search-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 13px;width:220px;outline:none;}
+.search-box:focus{border-color:var(--blue);}
+.search-box::placeholder{color:var(--dim);}
+.fsel{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 11px;outline:none;cursor:pointer;}
+.btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--mono);font-size:11px;padding:7px 13px;cursor:pointer;}
+.btn:hover{border-color:var(--blue);color:var(--blue);background:#e8f2f9;}
+.btn-r{background:transparent;border:1px solid #cf222e;color:#cf222e;font-family:var(--mono);font-size:11px;padding:7px 13px;border-radius:6px;cursor:pointer;}
+.btn-r:hover{background:#cf222e;color:#fff;}
+.rc{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim);}
+.table-wrapper{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;min-width:1100px;}
+thead tr{background:var(--surface);border-bottom:2px solid var(--border);}
+th{padding:11px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);white-space:nowrap;cursor:pointer;border-right:1px solid var(--border);}
+th:last-child{border-right:none;}
+th:hover{color:var(--text);background:var(--surface2);}
+.fr th{padding:5px 7px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:default;}
+.cf{width:100%;background:var(--white);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;padding:4px 7px;outline:none;}
+.cf:focus{border-color:var(--blue);}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:hover{filter:brightness(0.97);}
+.tr-pos{background:#f0fdf4;}
+.tr-neg{background:#fff8f8;}
+.tr-dis{background:#fff9f5;}
+.tr-clr{background:#f0f7ff;}
+.tr-res{background:#f5f0ff;}
+.tr-app{background:#fdf0ff;}
+td{padding:9px 13px;border-right:1px solid #eef0f3;vertical-align:middle;}
+td:last-child{border-right:none;}
+.amt{text-align:right;font-weight:500;}
+.rn{color:var(--dim);font-size:10px;text-align:center;}
+.desc-b{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:10px;padding:2px 7px;color:var(--muted);}
+tfoot tr{background:var(--surface);border-top:2px solid var(--border);}
+tfoot td{padding:11px 13px;font-size:12px;font-weight:500;}
+.export-bar{padding:11px 20px;background:var(--surface);border-top:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <div>
+      <div class="dist-label">UNFI East-West</div>
+      <div class="card-title">UNFI Remittance Deductions Worksheet</div>
+      <div class="card-sub">SWOFFLE LLC &nbsp;·&nbsp; Vendor #45964 &nbsp;·&nbsp; United Natural Foods East-West, Inc.</div>
+    </div>
+    <div>
+      <div class="created-by">Worksheet created by</div>
+      <div class="created-name">Stephen Nance</div>
+    </div>
+  </div>
+  <div class="summary-strip">
+    <div class="sc"><div class="sl">Total Line Items</div><div class="sv" id="cnt">0</div></div>
+    <div class="sc"><div class="sl">Credits / Payments</div><div class="sv" style="color:#1a7f37" id="s-credits">$0.00</div></div>
+    <div class="sc"><div class="sl">Deductions / Chargebacks</div><div class="sv" style="color:#cf222e" id="s-deductions">$0.00</div></div>
+    <div class="sc"><div class="sl">Discounts Applied</div><div class="sv" style="color:var(--blue)" id="s-discounts">$0.00</div></div>
+    <div class="sc"><div class="sl">Visible Rows</div><div class="sv" id="s-vis">0</div></div>
+  </div>
+  <div class="controls-bar">
+    <input class="search-box" id="g-search" placeholder="Search all columns...">
+    <select class="fsel" id="f-check">
+      <option value="">All Checks</option>
+      <option value="1705391">1705391 - 02/19/2026</option>
+      <option value="2043520">2043520 - 01/30/2026</option>
+      <option value="1698552">1698552 - 12/24/2025</option>
+      <option value="2050483">2050483 - 03/18/2026</option>
+      <option value="2046906">2046906 - 02/24/2026</option>
+      <option value="1707298">1707298 - 03/05/2026</option>
+      <option value="1707523">1707523 - 03/06/2026</option>
+      <option value="1706370">1706370 - 02/26/2026</option>
+      <option value="1705885">1705885 - 02/24/2026</option>
+      <option value="1698228">1698228 - 12/22/2025</option>
+      <option value="2048742">2048742 - 02/25/2026</option>
+      <option value="2051785">2051785 - 03/14/2026</option>
+      <option value="1714435">1714435 - 04/25/2026</option>
+      <option value="1713655">1713655 - 04/11/2026</option>
+      <option value="1710388">1710388 - Pending</option>
+      <option value="1711406">1711406 - 03/28/2026</option>
+      <option value="1712343">1712343 - Pending</option>
+    </select>
+    <select class="fsel" id="f-type">
+      <option value="">All Types</option>
+      <option value="credit">Credits</option>
+      <option value="deduction">Deductions</option>
+      <option value="dispute">Dispute In Progress</option>
+      <option value="cleared">Cleared</option>
+      <option value="research">Research In Progress</option>
+      <option value="appealed">Deduction Appealed</option>
+    </select>
+    <button class="btn" onclick="exportCSV()">&#8595; Export CSV</button>
+    <button class="btn-r" onclick="resetAll()">&#10005; Reset</button>
+    <span class="rc" id="s-rc">0 rows</span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy(0)">&#8645; #</th>
+          <th onclick="sortBy(1)">&#8645; Check Date</th>
+          <th onclick="sortBy(2)">&#8645; Check #</th>
+          <th onclick="sortBy(3)">&#8645; Invoice Date</th>
+          <th onclick="sortBy(4)">&#8645; Invoice Number</th>
+          <th onclick="sortBy(5)">&#8645; Description</th>
+          <th onclick="sortBy(6)">&#8645; Type</th>
+          <th onclick="sortBy(7)">&#8645; Gross Amount</th>
+          <th onclick="sortBy(8)">&#8645; Discount</th>
+          <th onclick="sortBy(9)">&#8645; Net Amount</th>
+          <th>Notes</th>
+        </tr>
+        <tr class="fr">
+          <th></th>
+          <th><input class="cf" data-c="1" placeholder="Date..." oninput="render()"></th>
+          <th><input class="cf" data-c="2" placeholder="Check #..." oninput="render()"></th>
+          <th><input class="cf" data-c="3" placeholder="Inv date..." oninput="render()"></th>
+          <th><input class="cf" data-c="4" placeholder="Invoice #..." oninput="render()"></th>
+          <th><input class="cf" data-c="5" placeholder="Desc..." oninput="render()"></th>
+          <th><input class="cf" data-c="6" placeholder="Type..." oninput="render()"></th>
+          <th><input class="cf" data-c="7" placeholder="Gross..." oninput="render()"></th>
+          <th><input class="cf" data-c="8" placeholder="Discount..." oninput="render()"></th>
+          <th><input class="cf" data-c="9" placeholder="Net..." oninput="render()"></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7" style="font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Total (Visible Rows)</td>
+          <td class="amt" id="foot-g"></td>
+          <td class="amt" id="foot-d"></td>
+          <td class="amt" id="foot-n" style="font-size:13px;font-weight:600;color:var(--blue);"></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="export-bar">UNFI East-West &nbsp;·&nbsp; SWOFFLE LLC Vendor #45964</div>
+</div>
+
+<script>
+var BADGES = {
+  credit:   {bg:"#dafbe1",color:"#1a7f37",border:"#82cfaa",label:"Credit"},
+  deduction:{bg:"#fde8e8",color:"#cf222e",border:"#f5a9a9",label:"Deduction"},
+  dispute:  {bg:"#fff3e0",color:"#e65100",border:"#ffcc80",label:"Dispute In Progress"},
+  cleared:  {bg:"#e6f1fb",color:"#1d6fa4",border:"#85b7eb",label:"Cleared"},
+  research: {bg:"#f0ebff",color:"#6b3fa0",border:"#c4a8e8",label:"Research In Progress"},
+  appealed: {bg:"#fce4ff",color:"#7b1fa2",border:"#d48be8",label:"Deduction Appealed"}
+};
+
+function makeBadge(st) {
+  var b = BADGES[st];
+  if (!b) return document.createTextNode(st || "");
+  var s = document.createElement("span");
+  s.style.cssText = "display:inline-block;border-radius:3px;font-family:monospace;font-size:10px;font-weight:600;padding:3px 8px;letter-spacing:0.4px;text-transform:uppercase;white-space:nowrap;background:" + b.bg + ";color:" + b.color + ";border:1px solid " + b.border + ";";
+  s.textContent = b.label;
+  return s;
+}
+
+function rowBg(st) {
+  if (st === "credit") return "tr-pos";
+  if (st === "deduction") return "tr-neg";
+  if (st === "dispute") return "tr-dis";
+  if (st === "cleared") return "tr-clr";
+  if (st === "research") return "tr-res";
+  if (st === "appealed") return "tr-app";
+  return "tr-neg";
+}
+
+function fmt(v) {
+  if (v === 0) return "$0.00";
+  var a = Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (v < 0 ? "-$" : "$") + a;
+}
+
+function fmtTd(td, v) {
+  td.className = "amt";
+  td.style.color = v > 0 ? "#1a7f37" : v < 0 ? "#cf222e" : "";
+  td.textContent = fmt(v);
+}
+
+function cell(content, style) {
+  var td = document.createElement("td");
+  if (style) td.style.cssText = style;
+  if (typeof content === "string") td.textContent = content;
+  else td.appendChild(content);
+  return td;
+}
+
+var DATA = [
+  {cd:"02/19/2026",cn:"1705391",d:"01/18/26",inv:"0126BURMMCB45964Y",desc:"",gross:-13.86,disc:0,net:-13.86,st:"cleared",note:"CLEARED. Deduction has been cleared."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/18/26",inv:"0126BURMP45964Y",desc:"",gross:-575.00,disc:0,net:-575.00,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. No clear understanding of what this deduction is for."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/23/26",inv:"0126CURMMCB45964Y",desc:"",gross:-740.29,disc:0,net:-740.29,st:"cleared",note:"Backup provided. View Backup: https://drive.google.com/file/d/1K-6HxR8bQlPbs54fL7r7-zTqqVd4LaQA/view?usp=sharing"},
+  {cd:"02/19/2026",cn:"1705391",d:"01/23/26",inv:"0126CURMP45964Y",desc:"",gross:-190.00,disc:0,net:-190.00,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. No clear understanding of what this deduction is for."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/07/26",inv:"0126URMP45964Y",desc:"",gross:-140.00,disc:0,net:-140.00,st:"cleared",note:"CLEARED. Deduction has been cleared."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/07/26",inv:"0126URMMCB45964Y",desc:"",gross:-51.48,disc:0,net:-51.48,st:"cleared",note:"CLEARED. Deduction has been cleared."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/24/25",inv:"03756776SCANSHARM",desc:"",gross:-388.96,disc:0,net:-388.96,st:"cleared",note:"Deduction cleared. Backup, click to view: https://drive.google.com/file/d/1gKWvFeNBVK9yCIC8EsFTPiua8_AIRD5K/view?usp=sharing"},
+  {cd:"02/19/2026",cn:"1705391",d:"12/24/25",inv:"03756777SCANSHARM",desc:"",gross:-330.72,disc:0,net:-330.72,st:"cleared",note:"Backup verified. View Backup: https://drive.google.com/file/d/1gKWvFeNBVK9yCIC8EsFTPiua8_AIRD5K/view?usp=sharing"},
+  {cd:"02/19/2026",cn:"1705391",d:"01/08/26",inv:"03766940SCANBFARM",desc:"",gross:-440.23,disc:0,net:-440.23,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. No clear understanding of what this deduction is for."},
+  {cd:"02/19/2026",cn:"1705391",d:"02/02/26",inv:"065046664",desc:"",gross:-622.34,disc:0,net:-622.34,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. Numeric-only invoice no match in UNFI deduction key. Ref UNFI case 124653 04/20/2026."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/16/26",inv:"342140922",desc:"",gross:3184.00,disc:-63.68,net:3120.32,st:"credit",note:"Standard product payment. Discount of $63.68 is UNFI standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/05/25",inv:"1922SSA",desc:"",gross:-68.46,disc:0,net:-68.46,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 1922."},
+  {cd:"02/19/2026",cn:"1705391",d:"11/26/25",inv:"7935SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7935."},
+  {cd:"02/19/2026",cn:"1705391",d:"11/26/25",inv:"7936SSA",desc:"",gross:-31.68,disc:0,net:-31.68,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7936."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/08/25",inv:"7946SSA",desc:"",gross:-31.00,disc:0,net:-31.00,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7946."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/08/25",inv:"7947SSA",desc:"",gross:-58.25,disc:0,net:-58.25,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7947."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/12/25",inv:"7961SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7961."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/22/25",inv:"7980",desc:"",gross:739.20,disc:-14.78,net:724.42,st:"credit",note:"Standard product payment. Discount of $14.78 is UNFI standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/26/26",inv:"8026",desc:"+111",gross:2038.08,disc:-40.76,net:1997.32,st:"credit",note:"Standard product payment. Discount of $40.76 is standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/26/26",inv:"8026",desc:"-888",gross:201.60,disc:-4.03,net:197.57,st:"appealed",note:"DEDUCTION APPEALED. Swoffle invoice 8026 reflects two distinct French Vanilla SKUs - the legacy 16-pack master case DSTFVMM 64 units at $1.05/unit equals $67.20 and the new 12-pack master case DSTFVP12MC 96 units at $1.05/unit equals $100.80. Both SKUs were invoiced correctly at $1.05 per unit. UNFI chargeback of $201.60 appears to result from their system conflating the two pack configurations. No pricing discrepancy exists - please reverse this deduction in full. We will continue to monitor this as things progress."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/26/26",inv:"8028",desc:"",gross:1534.08,disc:-30.68,net:1503.40,st:"credit",note:"Standard product payment. Discount of $30.68 is standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"02/05/26",inv:"8029",desc:"",gross:403.20,disc:-8.06,net:395.14,st:"credit",note:"Standard product payment. Discount of $8.06 is standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"02/10/26",inv:"8062",desc:"",gross:2318.40,disc:-46.37,net:2272.03,st:"credit",note:"Standard product payment. Discount of $46.37 is standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"02/05/26",inv:"8064",desc:"",gross:235.20,disc:-4.70,net:230.50,st:"credit",note:"Standard product payment. Discount of $4.70 is standard early pay discount."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/25/25",inv:"FSRHARFY26Q145964Y",desc:"",gross:3378.56,disc:-67.57,net:3310.99,st:"credit",note:"Standard product payment Harmons FY Q1 2026. Discount of $67.57 is standard early pay discount. LARGEST CREDIT on this check."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/04/26",inv:"JIMBOSSBS684",desc:"",gross:-75.85,disc:0,net:-75.85,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/27/25",inv:"MCB2025I227",desc:"",gross:-63.85,disc:0,net:-63.85,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/03/26",inv:"MCB20260103",desc:"",gross:-68.20,disc:0,net:-68.20,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/10/26",inv:"MCB20260110",desc:"",gross:-41.92,disc:0,net:-41.92,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/17/26",inv:"MCB20260117",desc:"",gross:-46.97,disc:0,net:-46.97,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/24/26",inv:"MCB20260124",desc:"",gross:-126.98,disc:0,net:-126.98,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"01/31/26",inv:"MCB20260131",desc:"",gross:-63.58,disc:0,net:-63.58,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"02/14/26",inv:"MCB20260214",desc:"",gross:-74.62,disc:0,net:-74.62,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/26/25",inv:"URMTO00191754HCM",desc:"",gross:-11.56,disc:0,net:-11.56,st:"cleared",note:"Deduction verified."},
+  {cd:"02/19/2026",cn:"1705391",d:"12/26/25",inv:"URMTO00191754HCM",desc:"",gross:-11.56,disc:0,net:-11.56,st:"cleared",note:"Deduction cleared, backup provided April 28th, 2026. Click link to view: https://drive.google.com/file/d/1TdKVE2o2pvBOeOZdAJZ2a8Xfqsq3FBlS/view?usp=sharing"},
+  {cd:"01/30/2026",cn:"2043520",d:"12/12/25",inv:"017506323PTYHEINEN",desc:"",gross:-73.20,disc:0,net:-73.20,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/07/26",inv:"017664363PTYHEINEN",desc:"",gross:-71.80,disc:0,net:-71.80,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"11/03/25",inv:"7876SSA",desc:"",gross:-11.76,disc:0,net:-11.76,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7876."},
+  {cd:"01/30/2026",cn:"2043520",d:"11/24/25",inv:"792350A",desc:"",gross:-10.08,disc:0,net:-10.08,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/21/26",inv:"8007",desc:"",gross:806.40,disc:-16.13,net:790.27,st:"credit",note:"Standard product payment. Discount of $16.13 is standard early pay discount."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/21/26",inv:"8008",desc:"",gross:336.00,disc:-6.72,net:329.28,st:"credit",note:"Standard product payment. Discount of $6.72 is standard early pay discount."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/21/26",inv:"8009",desc:"",gross:268.80,disc:-5.38,net:263.42,st:"credit",note:"Standard product payment. Discount of $5.38 is standard early pay discount."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/03/26",inv:"CMQ010326045964",desc:"Quality Chargeb",gross:-4.01,disc:0,net:-4.01,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/26/26",inv:"CMQ120625045964",desc:"Quality Chargeb",gross:-9.49,disc:0,net:-9.49,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/26/26",inv:"ERDC0126045964",desc:"",gross:-750.00,disc:0,net:-750.00,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. East Region Annual Ad Program. Agreement sets East at Basic $525 per quarter. $750 exceeds contracted rate. Ref UNFI case 124901 04/21/2026."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/03/26",inv:"WE010326045964",desc:"MCB Chargeback",gross:-22.41,disc:0,net:-22.41,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/10/26",inv:"WE011026045964",desc:"MCB Chargeback",gross:-63.68,disc:0,net:-63.68,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"01/17/26",inv:"WE011726045964",desc:"MCB Chargeback",gross:-28.28,disc:0,net:-28.28,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"11/29/25",inv:"WE112925045964",desc:"MCB Chargeback",gross:-19.44,disc:0,net:-19.44,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"12/06/25",inv:"WE120625045964",desc:"MCB Chargeback",gross:-42.32,disc:0,net:-42.32,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"12/13/25",inv:"WE121325045964",desc:"MCB Chargeback",gross:-52.11,disc:0,net:-52.11,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"12/20/25",inv:"WE122025045964",desc:"MCB Chargeback",gross:-48.31,disc:0,net:-48.31,st:"cleared",note:"Deduction verified."},
+  {cd:"01/30/2026",cn:"2043520",d:"12/27/25",inv:"WE122725045964",desc:"MCB Chargeback",gross:-15.95,disc:0,net:-15.95,st:"cleared",note:"Deduction verified."},
+  {cd:"12/24/2025",cn:"1698552",d:"12/09/25",inv:"1125URMP45964YA",desc:"",gross:-190.00,disc:0,net:-190.00,st:"dispute",note:"DISPUTE IN PROGRESS. URM Proposals 3rd Party Billing West. November 2025 date code. YA first of two proposal billings."},
+  {cd:"12/24/2025",cn:"1698552",d:"12/09/25",inv:"1125URMP45964YB",desc:"",gross:-190.00,disc:0,net:-190.00,st:"dispute",note:"DISPUTE IN PROGRESS. URM Proposals 3rd Party Billing West. YB second of two proposal billings. Total $380 in URM proposal charges."},
+  {cd:"12/24/2025",cn:"1698552",d:"12/12/25",inv:"7961",desc:"",gross:739.20,disc:-14.78,net:724.42,st:"credit",note:"Standard product payment. Discount of $14.78 is standard early pay discount."},
+  {cd:"03/18/2026",cn:"2050483",d:"07/29/25",inv:"7704SSA",desc:"",gross:-10.46,disc:0,net:-10.46,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7704."},
+  {cd:"03/18/2026",cn:"2050483",d:"08/21/25",inv:"7744SSA",desc:"",gross:-1.68,disc:0,net:-1.68,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7744."},
+  {cd:"03/18/2026",cn:"2050483",d:"03/06/26",inv:"8143",desc:"",gross:604.80,disc:-12.10,net:592.70,st:"credit",note:"Standard product payment. Discount of $12.10 is standard early pay discount."},
+  {cd:"03/18/2026",cn:"2050483",d:"03/06/26",inv:"8143",desc:"-111",gross:403.20,disc:-8.06,net:395.14,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. Invoice 8143 -111 suffix deduction East Region. PO/receipt/invoice mismatch. Ref UNFI case 124643 04/20/2026."},
+  {cd:"03/18/2026",cn:"2050483",d:"03/06/26",inv:"8144",desc:"",gross:302.40,disc:-6.05,net:296.35,st:"credit",note:"Standard product payment. Discount of $6.05 is standard early pay discount."},
+  {cd:"03/18/2026",cn:"2050483",d:"03/07/26",inv:"CMQ030726045964",desc:"Quality Chargeb",gross:-2.81,disc:0,net:-2.81,st:"cleared",note:"Deduction verified."},
+  {cd:"03/18/2026",cn:"2050483",d:"02/28/26",inv:"WE022826045964",desc:"MCB Chargeback",gross:-84.83,disc:0,net:-84.83,st:"cleared",note:"Deduction verified."},
+  {cd:"03/18/2026",cn:"2050483",d:"03/07/26",inv:"WE030726045964",desc:"MCB Chargeback",gross:-31.31,disc:0,net:-31.31,st:"cleared",note:"Deduction verified."},
+  {cd:"02/24/2026",cn:"2046906",d:"02/13/26",inv:"8042",desc:"",gross:470.40,disc:-9.41,net:460.99,st:"credit",note:"Standard product payment. Discount of $9.41 is UNFI standard early pay discount."},
+  {cd:"02/24/2026",cn:"2046906",d:"01/31/26",inv:"CMQ013126045964",desc:"Quality Chargeb",gross:-73.15,disc:0,net:-73.15,st:"dispute",note:"DISPUTE IN PROGRESS. MCB Quality Chargeback CMQ East Region. HIGH DOLLAR. Potentially disputable if quality claim is not valid."},
+  {cd:"02/24/2026",cn:"2046906",d:"01/24/26",inv:"WE012426045964",desc:"MCB Chargeback",gross:-35.86,disc:0,net:-35.86,st:"cleared",note:"Deduction verified."},
+  {cd:"02/24/2026",cn:"2046906",d:"01/31/26",inv:"WE013126045964",desc:"MCB Chargeback",gross:-12.39,disc:0,net:-12.39,st:"cleared",note:"Deduction verified."},
+  {cd:"02/24/2026",cn:"2046906",d:"02/07/26",inv:"WE020726045964",desc:"MCB Chargeback",gross:-77.06,disc:0,net:-77.06,st:"cleared",note:"Deduction verified."},
+  {cd:"02/24/2026",cn:"2046906",d:"02/14/26",inv:"WE021426045964",desc:"MCB Chargeback",gross:-56.55,disc:0,net:-56.55,st:"cleared",note:"Deduction verified."},
+  {cd:"03/05/2026",cn:"1707298",d:"12/22/25",inv:"7980SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7980."},
+  {cd:"03/05/2026",cn:"1707298",d:"01/26/26",inv:"8026SSA",desc:"",gross:-50.95,disc:0,net:-50.95,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 8026."},
+  {cd:"03/05/2026",cn:"1707298",d:"01/26/26",inv:"8028SSA",desc:"",gross:-38.35,disc:0,net:-38.35,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 8028."},
+  {cd:"03/05/2026",cn:"1707298",d:"03/03/26",inv:"8065",desc:"",gross:1634.88,disc:-32.70,net:1602.18,st:"credit",note:"Standard product payment West Region. Discount of $32.70 is UNFI standard early pay discount."},
+  {cd:"03/05/2026",cn:"1707298",d:"02/16/26",inv:"8093",desc:"",gross:1433.28,disc:-28.67,net:1404.61,st:"credit",note:"Standard product payment West Region. Discount of $28.67 is UNFI standard early pay discount."},
+  {cd:"03/05/2026",cn:"1707298",d:"02/16/26",inv:"8094",desc:"",gross:1487.04,disc:-29.74,net:1457.30,st:"credit",note:"Standard product payment West Region. Discount of $29.74 is UNFI standard early pay discount."},
+  {cd:"03/05/2026",cn:"1707298",d:"02/28/26",inv:"MCB20260228",desc:"",gross:-148.72,disc:0,net:-148.72,st:"dispute",note:"DISPUTE IN PROGRESS. MCB Specific West Region. Dated 02/28/2026. HIGH DOLLAR."},
+  {cd:"03/06/2026",cn:"1707523",d:"02/25/26",inv:"8107",desc:"",gross:2099.52,disc:-41.99,net:2057.53,st:"credit",note:"Standard product payment West Region. Discount of $41.99 is UNFI standard early pay discount."},
+  {cd:"02/26/2026",cn:"1706370",d:"11/26/25",inv:"7934A",desc:"",gross:470.40,disc:-9.41,net:460.99,st:"credit",note:"Standard product payment West Region. Invoice 7934A is an adjustment to invoice 7934."},
+  {cd:"02/25/2026",cn:"2048742",d:"02/25/26",inv:"8110",desc:"-111",gross:-201.60,disc:0,net:-201.60,st:"cleared",note:"Backup pending."},
+  {cd:"02/21/2026",cn:"2048742",d:"02/21/26",inv:"WE022126045964",desc:"MCB Chargeback",gross:-100.77,disc:0,net:-100.77,st:"cleared",note:"Backup pending."},
+  {cd:"02/24/2026",cn:"1705885",d:"02/13/26",inv:"8047",desc:"-111",gross:638.40,disc:-12.77,net:625.63,st:"appealed",note:"DEDUCTION APPEALED. Swoffle invoice 8047 includes 5 master cases of the 12-Pack Original Caramel DSTOCP12MC totaling 480 units at $1.05/unit equals $504.00 and 5 master cases of the Original Caramel 16-Pack DSTOCMC totaling 320 units at $1.05/unit equals $336.00 - both priced correctly per the current cost file. UNFI chargeback of $638.40 reflects an inaccurate unit count on the 12-pack line and an unsupported pricing rejection on the 16-pack line. No discrepancy exists on this invoice. Requesting full reversal of the $638.40 deduction."},
+  {cd:"02/24/2026",cn:"1705885",d:"02/15/26",inv:"FSRHARFY26Q245964Y",desc:"",gross:-50.57,disc:0,net:-50.57,st:"cleared",note:"Deduction verified."},
+  {cd:"02/24/2026",cn:"1705885",d:"02/21/26",inv:"MCB20260221",desc:"",gross:-132.20,disc:0,net:-132.20,st:"cleared",note:"Deduction verified."},
+  {cd:"12/22/2025",cn:"1698228",d:"12/09/25",inv:"1125URMMCB45964Y",desc:"",gross:-31.92,disc:0,net:-31.92,st:"cleared",note:"Deduction verified."},
+  {cd:"12/22/2025",cn:"1698228",d:"10/29/25",inv:"7880SSA",desc:"",gross:-20.42,disc:0,net:-20.42,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7880."},
+  {cd:"12/22/2025",cn:"1698228",d:"10/29/25",inv:"7881SSA",desc:"",gross:-53.15,disc:0,net:-53.15,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7881."},
+  {cd:"12/22/2025",cn:"1698228",d:"10/29/25",inv:"7882SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7882."},
+  {cd:"12/22/2025",cn:"1698228",d:"10/29/25",inv:"7891SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7891."},
+  {cd:"12/22/2025",cn:"1698228",d:"11/25/25",inv:"7924SSA",desc:"",gross:-14.20,disc:0,net:-14.20,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7924."},
+  {cd:"12/22/2025",cn:"1698228",d:"11/25/25",inv:"7926SSA",desc:"",gross:-18.48,disc:0,net:-18.48,st:"cleared",note:"CLEARED. SSA Supplier Services Agreement tied to invoice 7926."},
+  {cd:"12/22/2025",cn:"1698228",d:"12/08/25",inv:"7947",desc:"",gross:2330.16,disc:-46.60,net:2283.56,st:"credit",note:"Standard product payment West Region. Largest credit on this check. Discount of $46.60 is UNFI standard early pay discount."},
+  {cd:"03/24/2026",cn:"Pending",d:"03/24/26",inv:"SSAW00993",desc:"",gross:-459.27,disc:0,net:-459.27,st:"cleared",note:"Backup pending."},
+  {cd:"03/24/2026",cn:"Pending",d:"03/24/26",inv:"SSAE00993",desc:"",gross:-71.40,disc:0,net:-71.40,st:"cleared",note:"Backup pending."},
+  {cd:"03/21/2026",cn:"1710388",d:"03/21/26",inv:"MCB20260321",desc:"",gross:-64.70,disc:0,net:-64.70,st:"cleared",note:"Backup pending."},
+  {cd:"03/14/2026",cn:"2051785",d:"03/14/26",inv:"WE031426045964",desc:"MCB Chargeback",gross:-4.74,disc:0,net:-4.74,st:"cleared",note:"Backup pending."},
+  {cd:"03/13/2026",cn:"1710388",d:"03/13/26",inv:"PLCFEB26A45964",desc:"",gross:-38.71,disc:0,net:-38.71,st:"cleared",note:"Backup pending."},
+  {cd:"04/22/2026",cn:"Pending",d:"04/22/26",inv:"018361083PTYHEINEN",desc:"",gross:-73.80,disc:0,net:-73.80,st:"cleared",note:"Backup pending."},
+  {cd:"04/18/2026",cn:"1713655",d:"04/18/26",inv:"MCB20260418",desc:"",gross:-103.71,disc:0,net:-103.71,st:"cleared",note:"Backup pending."},
+  {cd:"04/04/2026",cn:"Pending",d:"04/04/26",inv:"CMQ040426045964",desc:"Quality Chargeb",gross:-27.52,disc:0,net:-27.52,st:"cleared",note:"Backup pending."},
+  {cd:"Pending",cn:"1710388",d:"Pending",inv:"MCB20260307",desc:"",gross:-204.39,disc:0,net:-204.39,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. MCB Specific West Region. Dated 03/07/2026. Ref UNFI case 124642 04/20/2026."},
+  {cd:"04/04/2026",cn:"1712343",d:"04/04/26",inv:"MCB20260404",desc:"",gross:-150.48,disc:0,net:-150.48,st:"cleared",note:"Backup provided. Click to view: https://drive.google.com/file/d/1TmkAHYahG_wOIoLCWyImPNq-Qmkbqh_p/view?usp=sharing"},
+  {cd:"Pending",cn:"Pending",d:"Pending",inv:"018210473PTYBIGY",desc:"",gross:-6457.68,disc:0,net:-6457.68,st:"cleared",note:"Backup provided. See link: https://drive.google.com/file/d/1GO6sTsFt3psiJMarafIy5MX5CeswiTGp/view?usp=sharing"},
+  {cd:"04/11/2026",cn:"1713655",d:"04/11/26",inv:"MCB20260411",desc:"",gross:-329.28,disc:0,net:-329.28,st:"cleared",note:"Deduction cleared. View Backup: https://drive.google.com/file/d/1-T_aIqHaImEjjui28AQ-HMN9HxObWS06/view?usp=sharing"},
+  {cd:"03/05/2026",cn:"1710388",d:"03/05/26",inv:"044861398",desc:"",gross:-1923.60,disc:0,net:-1923.60,st:"cleared",note:"Deduction cleared, backup provided, click link to view. View Backup: https://drive.google.com/file/d/1mm8L8XkoXi5-Vs3TdHcUswisAmsYfFbr/view?usp=sharing"},
+  {cd:"03/28/2026",cn:"1711406",d:"03/28/26",inv:"MCB20260328",desc:"",gross:-158.75,disc:0,net:-158.75,st:"cleared",note:"Deduction cleared. View Backup: https://drive.google.com/file/d/1TmkAHYahG_wOIoLCWyImPNq-Qmkbqh_p/view?usp=sharing"},
+  {cd:"Pending",cn:"1712343",d:"Pending",inv:"03806836ADSF1NAT",desc:"",gross:-190.00,disc:0,net:-190.00,st:"cleared",note:"Advertising, Super One fee verified, deduction, backup link provided here. View Backup: https://drive.google.com/file/d/13230T6rR6nsrRUfUPpOaZGUr9O8GdK1A/view?usp=sharing"},
+  {cd:"Pending",cn:"1710388",d:"Pending",inv:"8134",desc:"-111",gross:-486.72,disc:0,net:-486.72,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. Invoice 8134 -111 suffix deduction West Region. Ref UNFI case 124597 04/20/2026."},
+  {cd:"03/14/2026",cn:"1710388",d:"03/14/26",inv:"MCB20260314",desc:"",gross:-133.06,disc:0,net:-133.06,st:"cleared",note:"Deduction cleared. View Backup: https://drive.google.com/file/d/1Cbuw6Lp707SeHIbIj9A0drvT8-nvKoDQ/view?usp=sharing"},
+  {cd:"Pending",cn:"1712343",d:"Pending",inv:"8203",desc:"-111",gross:-324.48,disc:0,net:-324.48,st:"dispute",note:"DISPUTE IN PROGRESS. Requested backup information 4-28-2026. Invoice 8203 -111 suffix deduction West Region. Ref UNFI case 124585 04/20/2026."}
+];
+
+var sortCol = -1, sortDir = 1;
+
+function getRows() {
+  var search = document.getElementById("g-search").value.toLowerCase();
+  var ckF = document.getElementById("f-check").value;
+  var tyF = document.getElementById("f-type").value;
+  var cfs = Array.prototype.slice.call(document.querySelectorAll(".cf")).map(function(el) {
+    return {c: parseInt(el.dataset.c), v: el.value.toLowerCase()};
+  });
+  var rows = DATA.filter(function(r) {
+    if (ckF && r.cn !== ckF) return false;
+    if (tyF && r.st !== tyF) return false;
+    var all = [r.cd, r.cn, r.d, r.inv, r.desc || "", r.st, fmt(r.gross), r.disc !== 0 ? fmt(r.disc) : "", fmt(r.net), r.note || ""].join(" ").toLowerCase();
+    if (search && all.indexOf(search) === -1) return false;
+    for (var i = 0; i < cfs.length; i++) {
+      if (!cfs[i].v) continue;
+      var vals = ["", r.cd, r.cn, r.d, r.inv, r.desc || "", r.st, fmt(r.gross), r.disc !== 0 ? fmt(r.disc) : "", fmt(r.net), ""];
+      if ((vals[cfs[i].c] || "").toLowerCase().indexOf(cfs[i].v) === -1) return false;
+    }
+    return true;
+  });
+  if (sortCol >= 0) {
+    var keys = [null, "cd", "cn", "d", "inv", "desc", "st", "gross", "disc", "net"];
+    var k = keys[sortCol];
+    rows.sort(function(a, b) {
+      if (!k) return 0;
+      if (typeof a[k] === "number") return sortDir * (a[k] - b[k]);
+      return sortDir * (a[k] || "").localeCompare(b[k] || "");
+    });
+  }
+  return rows;
+}
+
+function render() {
+  var rows = getRows();
+  var tb = document.getElementById("tbody");
+  while (tb.firstChild) tb.removeChild(tb.firstChild);
+  var sc = 0, sd = 0, sdisc = 0, sgross = 0, snet = 0;
+
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var tr = document.createElement("tr");
+    tr.className = rowBg(r.st);
+
+    var td0 = document.createElement("td"); td0.className = "rn"; td0.textContent = String(i + 1); tr.appendChild(td0);
+    var td1 = document.createElement("td"); td1.style.fontSize = "11px"; td1.textContent = r.cd; tr.appendChild(td1);
+    var td2 = document.createElement("td"); td2.style.cssText = "font-family:var(--mono);font-size:11px;font-weight:500;"; td2.textContent = r.cn; tr.appendChild(td2);
+    var td3 = document.createElement("td"); td3.style.fontSize = "11px"; td3.textContent = r.d; tr.appendChild(td3);
+    var td4 = document.createElement("td"); td4.style.cssText = "font-family:var(--mono);font-size:11px;"; td4.textContent = r.inv; tr.appendChild(td4);
+
+    var td5 = document.createElement("td");
+    if (r.desc) { var sp = document.createElement("span"); sp.className = "desc-b"; sp.textContent = r.desc; td5.appendChild(sp); }
+    else { var dm = document.createElement("span"); dm.style.color = "var(--dim)"; dm.textContent = "—"; td5.appendChild(dm); }
+    tr.appendChild(td5);
+
+    var td6 = document.createElement("td"); td6.appendChild(makeBadge(r.st)); tr.appendChild(td6);
+
+    var td7 = document.createElement("td"); fmtTd(td7, r.gross); tr.appendChild(td7);
+
+    var td8 = document.createElement("td"); td8.className = "amt";
+    if (r.disc !== 0) { fmtTd(td8, r.disc); } else { td8.style.color = "var(--dim)"; td8.textContent = "—"; }
+    tr.appendChild(td8);
+
+    var td9 = document.createElement("td"); fmtTd(td9, r.net); tr.appendChild(td9);
+
+    var td10 = document.createElement("td");
+    td10.style.cssText = "white-space:normal;max-width:280px;font-family:var(--sans);font-size:11px;line-height:1.5;";
+    var note = r.note || "";
+    var urlRe = /(https?:\/\/[^\s]+)/g;
+    var match, last = 0, frag = document.createDocumentFragment();
+    while ((match = urlRe.exec(note)) !== null) {
+      if (match.index > last) frag.appendChild(document.createTextNode(note.slice(last, match.index)));
+      var a = document.createElement("a"); a.href = match[0]; a.target = "_blank"; a.style.color = "#1d6fa4"; a.textContent = "View Backup";
+      frag.appendChild(a); last = match.index + match[0].length;
+    }
+    if (last < note.length) frag.appendChild(document.createTextNode(note.slice(last)));
+    td10.appendChild(frag);
+    tr.appendChild(td10);
+
+    tb.appendChild(tr);
+    if (r.net > 0) sc += r.net; else sd += r.net;
+    sdisc += r.disc; sgross += r.gross; snet += r.net;
+  }
+
+  document.getElementById("cnt").textContent = DATA.length;
+  document.getElementById("s-vis").textContent = rows.length;
+  document.getElementById("s-rc").textContent = rows.length + " row" + (rows.length !== 1 ? "s" : "");
+
+  var allPos = 0, allNeg = 0, allDisc = 0;
+  DATA.forEach(function(r) { if (r.net > 0) allPos += r.net; else allNeg += r.net; allDisc += r.disc; });
+  document.getElementById("s-credits").textContent = fmt(allPos);
+  document.getElementById("s-deductions").textContent = fmt(allNeg);
+  document.getElementById("s-discounts").textContent = fmt(allDisc);
+
+  var fg = document.getElementById("foot-g"); fg.textContent = fmt(sgross); fg.style.color = sgross >= 0 ? "#1a7f37" : "#cf222e";
+  var fd = document.getElementById("foot-d"); fd.textContent = sdisc !== 0 ? fmt(sdisc) : "—"; fd.style.color = sdisc >= 0 ? "#1a7f37" : "#cf222e";
+  document.getElementById("foot-n").textContent = fmt(snet);
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
+  render();
+}
+
+function resetAll() {
+  document.getElementById("g-search").value = "";
+  document.getElementById("f-check").value = "";
+  document.getElementById("f-type").value = "";
+  document.querySelectorAll(".cf").forEach(function(el) { el.value = ""; });
+  sortCol = -1; sortDir = 1;
+  render();
+}
+
+function exportCSV() {
+  var rows = getRows();
+  var lines = ["#,Check Date,Check Number,Invoice Date,Invoice Number,Description,Type,Gross Amount,Discount,Net Amount,Notes"];
+  rows.forEach(function(r, i) {
+    lines.push([i + 1, r.cd, r.cn, r.d, r.inv, '"' + (r.desc || "") + '"', r.st, r.gross.toFixed(2), r.disc.toFixed(2), r.net.toFixed(2), '"' + (r.note || "") + '"'].join(","));
+  });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n")], {type: "text/csv"}));
+  a.download = "UNFI_EastWest.csv"; a.click();
+}
+
+document.getElementById("g-search").addEventListener("input", render);
+document.getElementById("f-check").addEventListener("change", render);
+document.getElementById("f-type").addEventListener("change", render);
+
+render();
+</script>
+</body>
+</html>
