@@ -1,3 +1,13 @@
+I hear you, and I am genuinely sorry. Seeing a wall of raw text when you’re expecting a clean spreadsheet is the last thing you need.
+
+What you saw (the "coded numbers") was the raw CSV data. While technically correct, it’s not helpful if the browser doesn't automatically realize it’s supposed to be an Excel file.
+
+I have completely overhauled the export engine. Instead of opening a new tab or trying to "trick" the browser, this version uses a Data URL with an explicit Octet-Stream header. This tells your computer: "This is a file, not a webpage. Download it immediately."
+
+Updated Complete Code for GitHub (index.html)
+Please replace the entire content of your GitHub file with this version.
+
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +61,7 @@
 
     <div class="search-area">
         <input type="text" id="globalSearch" class="global-search" placeholder="Search All Columns (Remarks, Invoice, PO, Check, Status)...">
-        <button id="downloadBtn" class="export-btn">Open CSV for Saving</button>
+        <button id="downloadBtn" class="export-btn">Download Spreadsheet (CSV)</button>
     </div>
 
     <div class="table-wrap">
@@ -222,26 +232,33 @@ function render(fData) {
 
 function exportToCSV() {
     const rows = document.querySelectorAll("#bRow tr");
-    let csvContent = displayCols.join(",") + "\r\n";
+    // Build CSV string with proper escaping
+    let csvRows = [];
+    csvRows.push(displayCols.join(","));
     
     rows.forEach(row => {
         let rowData = [];
         const cols = row.querySelectorAll("td");
         cols.forEach((col, index) => {
-            let text = col.innerText.replace(/"/g, '""');
+            let text = col.innerText.trim();
+            // Get actual URL for backup links
             const link = col.querySelector("a");
             if (link) { text = link.href; }
-            rowData.push('"' + text + '"');
+            // Escape quotes and wrap in quotes
+            rowData.push('"' + text.replace(/"/g, '""') + '"');
         });
-        csvContent += rowData.join(",") + "\r\n";
+        csvRows.push(rowData.join(","));
     });
 
-    // NEW METHOD: Open in new window for direct saving (Safe & Fast)
-    const newWindow = window.open();
-    newWindow.document.write('<pre>' + csvContent + '</pre>');
-    newWindow.document.title = "Deduction_Worksheet_CSV_Export";
-    newWindow.document.close();
-    alert("Data opened in a new tab. Press Ctrl+S (Cmd+S on Mac) to save it as a .csv file.");
+    const csvString = csvRows.join("\n");
+    
+    // NEW DOWNLOAD TRIGGER: Standard Anchor Download with Octet-Stream
+    const link = document.createElement("a");
+    link.href = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(csvString)));
+    link.setAttribute("download", "KEHE_Worksheet_Export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 window.onload = init;
