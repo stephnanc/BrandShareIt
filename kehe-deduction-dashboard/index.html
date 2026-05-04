@@ -51,7 +51,7 @@
 
     <div class="search-area">
         <input type="text" id="globalSearch" class="global-search" placeholder="Search All Columns (Remarks, Invoice, PO, Check, Status)...">
-        <button id="downloadBtn" class="export-btn">Download CSV</button>
+        <button id="downloadBtn" class="export-btn">Open CSV for Saving</button>
     </div>
 
     <div class="table-wrap">
@@ -229,7 +229,6 @@ function exportToCSV() {
         const cols = row.querySelectorAll("td");
         cols.forEach((col, index) => {
             let text = col.innerText.replace(/"/g, '""');
-            // If it's the backup links column, grab the actual URL
             const link = col.querySelector("a");
             if (link) { text = link.href; }
             rowData.push('"' + text + '"');
@@ -237,14 +236,12 @@ function exportToCSV() {
         csvContent += rowData.join(",") + "\r\n";
     });
 
-    // STANDARD DATA URI METHOD WITH CHARSET FIX
-    const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "KEHE_Remittance_Worksheet_Export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // NEW METHOD: Open in new window for direct saving (Safe & Fast)
+    const newWindow = window.open();
+    newWindow.document.write('<pre>' + csvContent + '</pre>');
+    newWindow.document.title = "Deduction_Worksheet_CSV_Export";
+    newWindow.document.close();
+    alert("Data opened in a new tab. Press Ctrl+S (Cmd+S on Mac) to save it as a .csv file.");
 }
 
 window.onload = init;
