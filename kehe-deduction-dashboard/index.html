@@ -15,15 +15,27 @@
         .stat-box span { font-size: 18px; font-weight: 700; color: #333; }
         .search-controls { margin-bottom: 20px; }
         input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
-        .table-wrap { overflow-x: auto; max-height: 650px; border: 1px solid #eee; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: #004a99; color: white; position: sticky; top: 0; padding: 12px 10px; text-align: left; z-index: 10; }
-        td { padding: 10px; border-bottom: 1px solid #eee; white-space: nowrap; }
+        
+        .table-wrap { overflow-x: auto; max-height: 700px; border: 1px solid #eee; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
+        th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
+        td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
         tr:hover { background-color: #f1f7ff; }
+        
+        /* Currency & Status Styling */
         .neg { color: #d93025; font-weight: bold; }
         .pos { color: #188038; font-weight: bold; }
-        .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
-        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; white-space: nowrap; }
+        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+        
+        /* Column Width Optimization */
+        .col-notes { 
+            min-width: 150px; 
+            max-width: 250px; 
+            white-space: normal !important; /* Forces text to wrap onto two or more lines */
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -42,7 +54,7 @@
     </div>
 
     <div class="search-controls">
-        <input type="text" id="searchAll" placeholder="Search by Remark number, Invoice #, or Status...">
+        <input type="text" id="searchAll" placeholder="Search by Remark, Invoice, or Status...">
     </div>
 
     <div class="table-wrap">
@@ -54,20 +66,22 @@
 </div>
 
 <script>
-// THIS IS YOUR DATA PROCESSED FROM THE RECENT UPLOAD
-const rawData = """ + data_json + """;
-
-// Filter the columns we want to show
-const displayCols = [
-    "Invoice #", "Date", "Remarks", "PO #", "Invoice Amt", "Status", 
-    "DC Name", "Check #", "Check Amt", "Deduction Dispute Credit Back In Progress", "Notes", "Backup Links"
+// Data from your recent file
+const rawData = [
+    {
+        "Invoice #": "CS003578967", "Date": "2026-01-26", "Remarks": "336642", "PO #": "", "Invoice Amt": "-4.95", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Long Link": "https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d", "Deduction Dispute Credit Back In Progress": "", "Notes": "Spoils Allowance"
+    },
+    // ... remaining data will be injected here via your commit
 ];
+
+const displayCols = ["Invoice #", "Date", "Remarks", "PO #", "Invoice Amt", "Status", "DC Name", "Check #", "Check Amt", "Deduction Dispute Credit Back In Progress", "Backup Links", "Notes"];
 
 function init() {
     const hRow = document.getElementById('hRow');
     displayCols.forEach(c => { 
         const th = document.createElement('th'); 
         th.innerText = c; 
+        if (c === 'Notes') th.className = 'col-notes';
         hRow.appendChild(th); 
     });
     render(rawData);
@@ -88,8 +102,6 @@ function render(fData) {
 
     fData.forEach(r => {
         const tr = document.createElement('tr');
-        
-        // Math logic for the summary boxes
         const invAmt = parseFloat(String(r['Invoice Amt']).replace(/[^0-9.-]/g, '')) || 0;
         const dispAmt = parseFloat(String(r['Deduction Dispute Credit Back In Progress']).replace(/[^0-9.-]/g, '')) || 0;
         
@@ -104,20 +116,19 @@ function render(fData) {
                 const remark = r['Remarks'];
                 if (link && String(link).startsWith('http')) {
                     td.innerHTML = `<a href="${link}" target="_blank" class="link-btn">Backup ${remark}</a>`;
-                } else {
-                    td.innerText = "";
                 }
+            } else if (k === 'Notes') {
+                td.className = 'col-notes';
+                td.innerText = r['Notes'] || '';
             } else {
                 td.innerText = r[k] || '';
                 if (k === 'Deduction Dispute Credit Back In Progress') td.className = 'dispute-cell';
             }
             
-            // Currency Styling
             if (k.includes('Amt')) {
                 const v = parseFloat(String(r[k]).replace(/[^0-9.-]/g, ''));
                 if (v < 0) td.classList.add('neg'); else if (v > 0) td.classList.add('pos');
             }
-            
             tr.appendChild(td);
         });
         body.appendChild(tr);
