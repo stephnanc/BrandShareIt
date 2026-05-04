@@ -14,12 +14,9 @@
         .stat-box label { display: block; font-size: 10px; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
         .stat-box span { font-size: 18px; font-weight: 700; color: #333; }
 
-        .search-area { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
-        .global-search { flex-grow: 1; padding: 12px; border: 2px solid #004a99; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        .search-area { margin-bottom: 20px; }
+        .global-search { width: 100%; padding: 12px; border: 2px solid #004a99; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
         
-        .export-btn { background-color: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-        .export-btn:hover { background-color: #219150; }
-
         .table-wrap { overflow-x: auto; max-height: 700px; border: 1px solid #eee; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
         th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
@@ -31,7 +28,7 @@
         .pos { color: #188038; font-weight: bold; }
         .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
         .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; }
-        .col-notes { min-width: 150px; max-width: 250px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
+        .col-notes { min-width: 150px; max-width: 350px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -51,7 +48,6 @@
 
     <div class="search-area">
         <input type="text" id="globalSearch" class="global-search" placeholder="Search All Columns (Remarks, Invoice, PO, Check, Status)...">
-        <button id="downloadBtn" class="export-btn">Download Spreadsheet (CSV)</button>
     </div>
 
     <div class="table-wrap">
@@ -123,8 +119,8 @@ const rawData = [
   {"Invoice #":"8144200","Date":"2026-04-09","Remarks":"8144200","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:920f38b8-07f9-467c-9b7e-908070d655f2","Notes":"Spoils Allowance"},
   {"Invoice #":"8157140","Date":"2026-04-10","Remarks":"8157140","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:0f699318-7a54-4780-9289-408a2862a988","Notes":"Spoils Allowance"},
   {"Invoice #":"8169997","Date":"2026-04-13","Remarks":"8169997","PO #":"","Invoice Amt":"-52.03","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:637e199d-838f-431f-9ee2-df7a19992f5d","Notes":"Spoils Allowance"},
-  {"Invoice #":"LDF15017256.0426.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"BREINIGSVILLE, PA","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8122"},
-  {"Invoice #":"LDF55017256.0426.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"DOUGLASVILLE, GA","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8136"},
+  {"Invoice #":"LDF15017256.0427.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"BREINIGSVILLE, PA","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8122"},
+  {"Invoice #":"LDF55017256.0427.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"DOUGLASVILLE, GA","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8136"},
   {"Invoice #":"8077IA","Date":"2026-04-14","Remarks":"8077IA","PO #":"09510218","Invoice Amt":"-774.46","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Date":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"774.46","Notes":"Deduction overturned. Swoffle proof of discrepancy $774.46 credited back."},
   {"Invoice #":"8182747","Date":"2026-04-14","Remarks":"8182747","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:f10c663b-6ed9-41e9-9be9-6fdf39396781","Notes":"Spoils Allowance"},
   {"Invoice #":"8195446","Date":"2026-04-15","Remarks":"8195446","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:91df58f2-8438-4e14-93ec-e8a342ef4904","Notes":"Spoils Allowance"},
@@ -136,50 +132,39 @@ const rawData = [
   {"Invoice #":"8271607","Date":"2026-04-23","Remarks":"8271607","PO #":"","Invoice Amt":"-44.33","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:920f38b8-07f9-467c-9b7e-908070d655f2","Notes":"Spoils Allowance"},
   {"Invoice #":"8284357","Date":"2026-04-24","Remarks":"8284357","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:0f699318-7a54-4780-9289-408a2862a988","Notes":"Spoils Allowance"},
   {"Invoice #":"8297241","Date":"2026-04-27","Remarks":"8297241","PO #":"","Invoice Amt":"-14.78","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:2caaa2b7-57ed-4c83-a436-5532258e4442","Notes":"Spoils Allowance"},
-  {"Invoice #":"LDF01017256.0426.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"ELKTON, FL","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8150"},
+  {"Invoice #":"LDF01017256.0427.01","Date":"2026-04-27","Remarks":"Q12026","PO #":"Q12026","Invoice Amt":"-250","Status":"A - In progress","DC Name":"ELKTON, FL","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"250","Long Link":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","Notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8150"},
   {"Invoice #":"RP8126","Date":"2026-04-28","Remarks":"BAL DUE 4792782 UDR 2","PO #":"03548578","Invoice Amt":"395.14","Status":"A - In progress","DC Name":"NORTH EAST, MD","Check #":"","Check Amt":"","Deduction Dispute Credit Back In Progress":"","Long Link":"","Notes":null}
 ];
 
-const displayCols = ["Invoice #", "Date", "Remarks", "PO #", "Invoice Amt", "Status", "DC Name", "Check #", "Check Amt", "Deduction Dispute Credit Back In Progress", "Backup Links", "Notes"];
+const displayCols = ["Invoice #", "Date", "Remarks", "PO #", "Invoice Amt", "Status", "DC Name", "Check #", "Check Amt", "Deduction Dispute Credit Back In Progress", "Notes"];
 
 function init() {
     const hRow = document.getElementById('hRow');
-    if (!hRow) return;
-    
     displayCols.forEach(c => {
         const th = document.createElement('th');
         th.innerText = c;
         if (c === 'Notes') th.className = 'col-notes';
         hRow.appendChild(th);
     });
-
     render(rawData);
     document.getElementById('globalSearch').addEventListener('input', filterTable);
-    document.getElementById('downloadBtn').addEventListener('click', exportToCSV);
 }
 
 function filterTable() {
-    const globalQ = document.getElementById('globalSearch').value.toLowerCase();
-    const filtered = rawData.filter(r => {
-        return Object.values(r).some(v => String(v).toLowerCase().includes(globalQ));
-    });
-    render(filtered);
+    const q = document.getElementById('globalSearch').value.toLowerCase();
+    const fData = rawData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+    render(fData);
 }
 
 function render(fData) {
     const body = document.getElementById('bRow');
-    if (!body) return;
     body.innerHTML = '';
     let credits = 0, deductions = 0, disputed = 0;
 
     fData.forEach(r => {
         const tr = document.createElement('tr');
-        
-        const invAmtStr = String(r['Invoice Amt'] || '0').replace(/[$,()]/g, '');
-        const invAmt = parseFloat(invAmtStr) || 0;
-        
-        const dispAmtStr = String(r['Deduction Dispute Credit Back In Progress'] || '0').replace(/[$,()]/g, '');
-        const dispAmt = parseFloat(dispAmtStr) || 0;
+        const invAmt = parseFloat(String(r['Invoice Amt']).replace(/[$,()]/g, '')) || 0;
+        const dispAmt = parseFloat(String(r['Deduction Dispute Credit Back In Progress']).replace(/[$,()]/g, '')) || 0;
         
         if (r['Invoice #'] !== '8126') {
             if (invAmt > 0) credits += invAmt; else deductions += invAmt;
@@ -188,24 +173,26 @@ function render(fData) {
 
         displayCols.forEach(k => {
             const td = document.createElement('td');
-            if (k === 'Backup Links') {
+            if (k === 'Notes') {
+                td.className = 'col-notes';
+                const note = r[k] || '';
                 const link = r['Long Link'];
                 const remark = r['Remarks'];
-                if (link && String(link).startsWith('http')) {
-                    td.innerHTML = `<a href="${link}" target="_blank" class="link-btn">Backup ${remark}</a>`;
+                // If it's a spoils allowance with a link, add the link button
+                if (link && link.startsWith('http')) {
+                    td.innerHTML = note + `<br><a href="${link}" target="_blank" class="link-btn">Backup ${remark}</a>`;
+                } else {
+                    td.innerText = note;
                 }
-            } else if (k === 'Notes') {
-                td.className = 'col-notes';
-                td.innerText = r['Notes'] || '';
             } else {
                 td.innerText = r[k] || '';
-                if (k === 'Deduction Dispute Credit Back In Progress') td.className = 'dispute-cell';
             }
             
+            if (k === 'Deduction Dispute Credit Back In Progress') td.className = 'dispute-cell';
+            
             if (k.includes('Amt') || k === 'Invoice Amt') {
-                const cleanVal = String(r[k] || '0').replace(/[$,()]/g, '');
-                const v = parseFloat(cleanVal);
-                if (v < 0) td.classList.add('neg'); else if (v > 0) td.classList.add('pos');
+                const val = parseFloat(String(r[k]).replace(/[$,()]/g, '')) || 0;
+                if (val < 0) td.classList.add('neg'); else if (val > 0) td.classList.add('pos');
             }
             tr.appendChild(td);
         });
@@ -218,37 +205,6 @@ function render(fData) {
     document.getElementById('stat-deductions').innerText = "(" + fmt(deductions) + ")";
     document.getElementById('stat-disputed').innerText = fmt(disputed);
     document.getElementById('stat-visible').innerText = fData.length;
-}
-
-function exportToCSV() {
-    const rows = document.querySelectorAll("#bRow tr");
-    // Build CSV string with proper escaping
-    let csvRows = [];
-    csvRows.push(displayCols.join(","));
-    
-    rows.forEach(row => {
-        let rowData = [];
-        const cols = row.querySelectorAll("td");
-        cols.forEach((col, index) => {
-            let text = col.innerText.trim();
-            // Get actual URL for backup links
-            const link = col.querySelector("a");
-            if (link) { text = link.href; }
-            // Escape quotes and wrap in quotes
-            rowData.push('"' + text.replace(/"/g, '""') + '"');
-        });
-        csvRows.push(rowData.join(","));
-    });
-
-    const csvString = csvRows.join("\n");
-    
-    // NEW DOWNLOAD TRIGGER: Standard Anchor Download with Octet-Stream
-    const link = document.createElement("a");
-    link.href = 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(csvString)));
-    link.setAttribute("download", "KEHE_Worksheet_Export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 window.onload = init;
