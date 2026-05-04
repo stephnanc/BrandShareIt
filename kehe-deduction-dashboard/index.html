@@ -51,7 +51,7 @@
 
     <div class="search-area">
         <input type="text" id="globalSearch" class="global-search" placeholder="Search All Columns (Remarks, Invoice, PO, Check, Status)...">
-        <button class="export-btn" onclick="exportToCSV()">Download CSV</button>
+        <button id="downloadBtn" class="export-btn">Download CSV</button>
     </div>
 
     <div class="table-wrap">
@@ -105,7 +105,7 @@ const rawData = [
   {"Invoice #":"7907530","Date":"2026-03-16","Remarks":"7907530","PO #":"","Invoice Amt":"-14.78","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:637e199d-838f-431f-9ee2-df7a19992f5d","Notes":"Spoils Allowance"},
   {"Invoice #":"7920392","Date":"2026-03-17","Remarks":"7920392","PO #":"","Invoice Amt":"-52.03","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:f10c663b-6ed9-41e9-9be9-6fdf39396781","Notes":"Spoils Allowance"},
   {"Invoice #":"8196","Date":"2026-03-24","Remarks":"8196","PO #":"03604063","Invoice Amt":"1548.93","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"","Notes":""},
-  {"Invoice #":"7945952","Date":"2026-03-19","Remarks":"7945952","PO #":"","Invoice Amt":"-14.78","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aeid:sc:US:0f6c2688-299f-449e-ae0c-7b003290680a","Notes":"Spoils Allowance"},
+  {"Invoice #":"7945952","Date":"2026-03-19","Remarks":"7945952","PO #":"","Invoice Amt":"-14.78","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:0f6c2688-299f-449e-ae0c-7b003290680a","Notes":"Spoils Allowance"},
   {"Invoice #":"7958692","Date":"2026-03-20","Remarks":"7958692","PO #":"","Invoice Amt":"-14.78","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:885994f2-86ec-4f81-81d3-360d2979268f","Notes":"Spoils Allowance"},
   {"Invoice #":"7971439","Date":"2026-03-23","Remarks":"7971439","PO #":"","Invoice Amt":"-35.42","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:b59f3e8f-7f9a-4c8d-965a-89a19e5d42ef","Notes":"Spoils Allowance"},
   {"Invoice #":"7984339","Date":"2026-03-24","Remarks":"7984339","PO #":"","Invoice Amt":"-44.33","Status":"P - Paid","DC Name":"NORTH EAST, MD","Check #":"3261693","Check Amt":"7368.08","Deduction Dispute Credit Back In Progress":"","Long Link":"https://acrobat.adobe.com/id/urn:aaid:sc:US:637bc305-645b-465d-b003-8d69786a3455","Notes":"Spoils Allowance"},
@@ -155,6 +155,7 @@ function init() {
 
     render(rawData);
     document.getElementById('globalSearch').addEventListener('input', filterTable);
+    document.getElementById('downloadBtn').addEventListener('click', exportToCSV);
 }
 
 function filterTable() {
@@ -236,13 +237,11 @@ function exportToCSV() {
         csvContent += rowData.join(",") + "\r\n";
     });
 
-    // BLOB METHOD: Creates a real file object for better opening
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // STANDARD DATA URI METHOD WITH CHARSET FIX
+    const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
     const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
+    link.setAttribute("href", encodedUri);
     link.setAttribute("download", "KEHE_Remittance_Worksheet_Export.csv");
-    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
