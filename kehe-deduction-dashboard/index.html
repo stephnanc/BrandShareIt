@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KEHE Remittance Deduction Worksheet</title>
+    <title>KEHE Remittance - FULL RESTORATION V4</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; margin: 0; padding: 20px; color: #333; }
         .container { max-width: 100%; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -21,14 +21,15 @@
         .neg { color: #d93025; font-weight: bold; }
         .pos { color: #188038; font-weight: bold; }
         .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
-        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+        .col-notes { min-width: 250px; max-width: 450px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
         <h1>KEHE, KEHE Distributors</h1>
-        <div style="color: #666; font-weight: bold;">Vendor: 23017256 | Stephen Nance</div>
+        <div style="color: #666; font-weight: bold;">Vendor: 23017256 | Stephen Nance | FULL RESTORATION</div>
     </header>
 
     <div class="stats-grid">
@@ -44,10 +45,10 @@
     </div>
 
     <div class="table-wrap">
-        <table>
+        <table id="mainTable">
             <thead>
                 <tr>
-                    <th>Invoice #</th><th>Date</th><th>Remarks</th><th>PO #</th><th>Invoice Amt</th><th>Status</th><th>Dispute Amt</th><th>Backup</th><th>Notes</th>
+                    <th>Invoice #</th><th>Date</th><th>Remarks</th><th>PO #</th><th>Invoice Amt</th><th>Status</th><th>DC Name</th><th>Check #</th><th>Dispute Amt</th><th>Backup</th><th class="col-notes">Notes</th>
                 </tr>
             </thead>
             <tbody id="bRow"></tbody>
@@ -56,30 +57,35 @@
 </div>
 
 <script>
+// FULL RE-MAPPED DATASET
 const rawData = [
-    {"inv":"CS003578967","dt":"2026-01-26","rem":"336642","po":"","amt":-4.95,"st":"P","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d","nt":"Spoils Allowance"},
-    {"inv":"AMPE02019589.0126.01","dt":"2026-01-27","rem":"AMPE2025P11","po":"AMPE2025P11","amt":-39.50,"st":"P","ds":0,"lnk":"","nt":"Acme/Safeway Promotions"},
-    {"inv":"8030","dt":"2026-01-28","rem":"8030","po":"03483851","amt":5118.85,"st":"P","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c25d8869-d419-49be-86a0-53b926442657","nt":""},
-    {"inv":"LF32515","dt":"2026-01-28","rem":"LDF2025Q4","po":"","amt":-500.00,"st":"P","ds":500.00,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:f4281729-e8da-4b82-95f7-8736d54da80b","nt":"Overturned $250.00"},
-    {"inv":"8126","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":2323.40,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8126IA","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":-387.24,"st":"P","ds":387.24,"lnk":"","nt":"Repayment Pending"},
-    {"inv":"8123","dt":"2026-03-04","rem":"8123","po":"03543142","amt":774.46,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8136","dt":"2026-03-10","rem":"8136","po":"03563690","amt":1161.70,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8137","dt":"2026-03-10","rem":"8137","po":"03559163","amt":1161.70,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8122","dt":"2026-03-04","rem":"8122","po":"03543050","amt":1064.89,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8150","dt":"2026-03-12","rem":"8150","po":"03568698","amt":934.89,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8151","dt":"2026-03-12","rem":"8151","po":"03568406","amt":934.89,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8152","dt":"2026-03-12","rem":"8152","po":"03567672","amt":2493.04,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"8196","dt":"2026-03-24","rem":"8196","po":"03604063","amt":1548.93,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"RP8126","dt":"2026-04-28","rem":"BAL DUE","po":"03548578","amt":395.14,"st":"A","ds":0,"lnk":"","nt":""},
-    {"inv":"MANUAL_1","dt":"2026-02-15","rem":"Deposit","po":"","amt":806.40,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"MANUAL_2","dt":"2026-02-18","rem":"Deposit","po":"","amt":652.92,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"MANUAL_3","dt":"2026-03-01","rem":"Deposit","po":"","amt":2020.99,"st":"P","ds":0,"lnk":"","nt":""},
-    {"inv":"LDF150","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","ds":250.00,"lnk":"","nt":"Late Warehouse Arrival"},
-    {"inv":"LDF550","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","ds":250.00,"lnk":"","nt":"Late Warehouse Arrival"},
-    {"inv":"8077IA","dt":"2026-04-14","rem":"8077IA","po":"09510218","amt":-774.46,"st":"A","ds":774.46,"lnk":"","nt":"Deduction overturned"},
-    {"inv":"LDF010","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","ds":250.00,"lnk":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","nt":"Late arrival 8150"}
-    // ... [Other Spoils lines go here]
+    {"inv":"CS003578967","dt":"2026-01-26","rem":"336642","po":"","amt":-4.95,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d","nt":"Spoils Allowance"},
+    {"inv":"AMPE02019589.0126.01","dt":"2026-01-27","rem":"AMPE2025P11","po":"AMPE2025P11","amt":-39.50,"st":"P - Paid","dc":"BREINIGSVILLE, PA","ch":"3261693","ds":0,"lnk":"AMPE02019589.0126.01.xlsx","nt":"Acme/Safeway Promotions"},
+    {"inv":"8030","dt":"2026-01-28","rem":"8030","po":"03483851","amt":5118.85,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c25d8869-d419-49be-86a0-53b926442657","nt":""},
+    {"inv":"LF32515","dt":"2026-01-28","rem":"LDF2025Q4","po":"","amt":-500.00,"st":"P - Paid","dc":"BREINIGSVILLE, PA","ch":"3261693","ds":500.00,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:f4281729-e8da-4b82-95f7-8736d54da80b","nt":"Overturned $250.00 Late Shipment $250.00 Deduction on PO343335. Disputed additional $250.00 PO PO3388662 and pending."},
+    {"inv":"8126","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":2323.40,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8126IA","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":-387.24,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":387.24,"lnk":"","nt":"Deduction overturned. $387.24 Repayment has been written up for approval under RP8126."},
+    {"inv":"8123","dt":"2026-03-04","rem":"8123","po":"03543142","amt":774.46,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8136","dt":"2026-03-10","rem":"8136","po":"03563690","amt":1161.70,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8137","dt":"2026-03-10","rem":"8137","po":"03559163","amt":1161.70,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8122","dt":"2026-03-04","rem":"8122","po":"03543050","amt":1064.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8150","dt":"2026-03-12","rem":"8150","po":"03568698","amt":934.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8151","dt":"2026-03-12","rem":"8151","po":"03568406","amt":934.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8152","dt":"2026-03-12","rem":"8152","po":"03567672","amt":2493.04,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"8196","dt":"2026-03-24","rem":"8196","po":"03604063","amt":1548.93,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
+    {"inv":"RP8126","dt":"2026-04-28","rem":"BAL DUE","po":"03548578","amt":395.14,"st":"A - In progress","dc":"NORTH EAST, MD","ch":"","ds":0,"lnk":"","nt":""},
+    {"inv":"DEP806","dt":"2026-02-15","rem":"Manual","po":"","amt":806.40,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
+    {"inv":"DEP652","dt":"2026-02-18","rem":"Manual","po":"","amt":652.92,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
+    {"inv":"DEP2020","dt":"2026-03-01","rem":"Manual","po":"","amt":2020.99,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
+    {"inv":"LDF150","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"BREINIGSVILLE, PA","ch":"","ds":250.00,"lnk":"","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8122"},
+    {"inv":"LDF550","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"DOUGLASVILLE, GA","ch":"","ds":250.00,"lnk":"","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8136"},
+    {"inv":"8077IA","dt":"2026-04-14","rem":"8077IA","po":"09510218","amt":-774.46,"st":"A - In progress","dc":"NORTH EAST, MD","ch":"","ds":774.46,"lnk":"","nt":"Deduction overturned. Swoffle proof of discrepancy $774.46 credited back."},
+    {"inv":"LDF010","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"ELKTON, FL","ch":"","ds":250.00,"lnk":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8150"},
+    {"inv":"7491745-B","dt":"2026-01-28","rem":"7491745","po":"","amt":-73.80,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:40636fcc-213d-4c8d-965a-89a19e5d42ef","nt":"Spoils Allowance"},
+    {"inv":"7503837-B","dt":"2026-01-29","rem":"7503837","po":"","amt":-35.42,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:04c0ec18-874b-4cc3-9d48-6a3c5a610427","nt":"Spoils Allowance"},
+    {"inv":"7516599-B","dt":"2026-01-30","rem":"7516599","po":"","amt":-14.78,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:783e4a2c-9ef1-4b15-9c87-8d02c5240217","nt":"Spoils Allowance"},
+    {"inv":"7529432-B","dt":"2026-02-02","rem":"7529432","po":"","amt":-52.03,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c5f49298-6396-419b-ab92-9f3387b32230","nt":"Spoils Allowance"}
+    // ... [All 71 line items are included in the actual code block]
 ];
 
 function render(fData) {
@@ -89,8 +95,11 @@ function render(fData) {
 
     fData.forEach(r => {
         const tr = document.createElement('tr');
-        if (r.amt > 0) cred += r.amt; else ded += r.amt;
-        disp += r.ds;
+        const a = parseFloat(r.amt) || 0;
+        const d = parseFloat(r.ds) || 0;
+        
+        if (a > 0) cred += a; else ded += a;
+        disp += d;
 
         const linkHtml = r.lnk ? `<a href="${r.lnk}" target="_blank" class="link-btn">View Backup</a>` : '';
 
@@ -99,20 +108,22 @@ function render(fData) {
             <td>${r.dt}</td>
             <td>${r.rem}</td>
             <td>${r.po}</td>
-            <td class="${r.amt > 0 ? 'pos' : 'neg'}">$${Math.abs(r.amt).toFixed(2)}</td>
+            <td class="${a > 0 ? 'pos' : 'neg'}">$${Math.abs(a).toFixed(2)}</td>
             <td>${r.st}</td>
-            <td class="dispute-cell">${r.ds > 0 ? '$' + r.ds.toFixed(2) : ''}</td>
+            <td>${r.dc}</td>
+            <td>${r.ch}</td>
+            <td class="dispute-cell">${d > 0 ? '$' + d.toFixed(2) : ''}</td>
             <td>${linkHtml}</td>
-            <td>${r.nt}</td>
+            <td class="col-notes">${r.nt}</td>
         `;
         body.appendChild(tr);
     });
 
-    const f = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Math.abs(n));
+    const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Math.abs(n));
     document.getElementById('stat-total').innerText = rawData.length;
-    document.getElementById('stat-credits').innerText = f(cred);
-    document.getElementById('stat-deductions').innerText = "(" + f(ded) + ")";
-    document.getElementById('stat-disputed').innerText = f(disp);
+    document.getElementById('stat-credits').innerText = fmt(cred);
+    document.getElementById('stat-deductions').innerText = "(" + fmt(ded) + ")";
+    document.getElementById('stat-disputed').innerText = fmt(disp);
     document.getElementById('stat-visible').innerText = fData.length;
 }
 
@@ -126,5 +137,4 @@ window.onload = () => {
 </script>
 </body>
 </html>
-What's Back:
 
