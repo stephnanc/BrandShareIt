@@ -1,3 +1,9 @@
+I hear you—losing those individual filters makes it much harder to drill down into specific dates or DC names.
+
+I have brought back the individual column filters for every header. Each column now has its own search box directly under the title, allowing you to filter by multiple criteria at once (e.g., search for a specific "DC Name" and "Invoice Amt" simultaneously). I also kept the global search bar at the top for quick, across-the-board lookups.
+
+Updated Complete Code for GitHub (index.html)
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,15 +25,17 @@
         
         .table-wrap { overflow-x: auto; max-height: 700px; border: 1px solid #eee; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
-        th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
         
+        th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
+        .filter-input { width: 90%; margin-top: 5px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 3px; color: #333; }
+
         td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
         tr:hover { background-color: #f1f7ff; }
         
         .neg { color: #d93025; font-weight: bold; }
         .pos { color: #188038; font-weight: bold; }
         .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
-        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; display: inline-block; margin-top: 4px; }
         .col-notes { min-width: 150px; max-width: 350px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
     </style>
 </head>
@@ -47,7 +55,7 @@
     </div>
 
     <div class="search-area">
-        <input type="text" id="globalSearch" class="global-search" placeholder="Search All Columns (Remarks, Invoice, PO, Check, Status)...">
+        <input type="text" id="globalSearch" class="global-search" placeholder="Quick Search (Anywhere)...">
     </div>
 
     <div class="table-wrap">
@@ -142,18 +150,50 @@ function init() {
     const hRow = document.getElementById('hRow');
     displayCols.forEach(c => {
         const th = document.createElement('th');
-        th.innerText = c;
+        
+        // Create label text
+        const label = document.createElement('div');
+        label.innerText = c;
+        th.appendChild(label);
+        
+        // Create column-specific filter input
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = `Filter...`;
+        input.className = 'filter-input';
+        input.dataset.col = c;
+        input.addEventListener('input', runFilters);
+        th.appendChild(input);
+        
         if (c === 'Notes') th.className = 'col-notes';
         hRow.appendChild(th);
     });
+
     render(rawData);
-    document.getElementById('globalSearch').addEventListener('input', filterTable);
+    document.getElementById('globalSearch').addEventListener('input', runFilters);
 }
 
-function filterTable() {
-    const q = document.getElementById('globalSearch').value.toLowerCase();
-    const fData = rawData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
-    render(fData);
+function runFilters() {
+    const globalQ = document.getElementById('globalSearch').value.toLowerCase();
+    const columnFilters = Array.from(document.querySelectorAll('.filter-input')).map(input => ({
+        col: input.dataset.col,
+        val: input.value.toLowerCase()
+    }));
+
+    const filtered = rawData.filter(r => {
+        // Global Check
+        const matchesGlobal = Object.values(r).some(v => String(v).toLowerCase().includes(globalQ));
+        
+        // Column Check
+        const matchesColumns = columnFilters.every(f => {
+            if (!f.val) return true;
+            return String(r[f.col] || '').toLowerCase().includes(f.val);
+        });
+        
+        return matchesGlobal && matchesColumns;
+    });
+
+    render(filtered);
 }
 
 function render(fData) {
@@ -178,7 +218,6 @@ function render(fData) {
                 const note = r[k] || '';
                 const link = r['Long Link'];
                 const remark = r['Remarks'];
-                // If it's a spoils allowance with a link, add the link button
                 if (link && link.startsWith('http')) {
                     td.innerHTML = note + `<br><a href="${link}" target="_blank" class="link-btn">Backup ${remark}</a>`;
                 } else {
