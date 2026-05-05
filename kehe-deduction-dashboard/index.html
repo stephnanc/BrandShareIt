@@ -8,29 +8,19 @@
         .container { max-width: 100%; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         header { border-bottom: 4px solid #004a99; padding-bottom: 15px; margin-bottom: 25px; }
         h1 { color: #004a99; margin: 0; font-size: 26px; }
-        
         .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 25px; }
         .stat-box { background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #e0e0e0; text-align: center; border-top: 4px solid #004a99; }
         .stat-box label { display: block; font-size: 10px; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
         .stat-box span { font-size: 18px; font-weight: 700; color: #333; }
-
         .search-area { margin-bottom: 20px; }
-        .global-search { width: 100%; padding: 12px; border: 2px solid #004a99; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
-        
+        .global-search { width: 100%; padding: 12px; border: 2px solid #004a99; border-radius: 5px; font-size: 14px; box-sizing: border-box; background-color: #fffae6; }
         .table-wrap { overflow-x: auto; max-height: 700px; border: 1px solid #eee; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
-        
         th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
-        .filter-input { width: 90%; margin-top: 5px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 3px; color: #333; }
-
         td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
-        tr:hover { background-color: #f1f7ff; }
-        
         .neg { color: #d93025; font-weight: bold; }
         .pos { color: #188038; font-weight: bold; }
         .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
-        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; display: inline-block; margin-top: 4px; }
-        .col-notes { min-width: 150px; max-width: 350px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -44,81 +34,58 @@
         <div class="stat-box"><label>Total Items</label><span id="stat-total">0</span></div>
         <div class="stat-box"><label>Credits & Payments</label><span id="stat-credits">$0.00</span></div>
         <div class="stat-box"><label>Deductions & CBs</label><span id="stat-deductions">$0.00</span></div>
-        <div class="stat-box" style="border-top-color: #f39c12;"><label>Deductions in Dispute</label><span id="stat-disputed">$0.00</span></div>
+        <div class="stat-box" style="border-top-color: #f39c12;"><label>Disputed Amount</label><span id="stat-disputed">$0.00</span></div>
         <div class="stat-box"><label>Visible Rows</label><span id="stat-visible">0</span></div>
     </div>
 
     <div class="search-area">
-        <input type="text" id="globalSearch" class="global-search" style="background-color: #fffae6;" placeholder="Quick Search (Anywhere)...">
+        <input type="text" id="globalSearch" class="global-search" placeholder="Quick Search (Anywhere)...">
     </div>
 
     <div class="table-wrap">
-        <table id="mainTable">
-            <thead><tr id="hRow"></tr></thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice #</th><th>Date</th><th>Remarks</th><th>PO #</th><th>Invoice Amt</th><th>Status</th><th>DC Name</th><th>Notes</th>
+                </tr>
+            </thead>
             <tbody id="bRow"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-// FULL VERIFIED DATASET
-const rawData = [{"Invoice #": "8030", "Date": "2026-01-28", "Remarks": "8030", "PO #": "03483851", "Invoice Amt": "5118.85", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8126", "Date": "2026-03-05", "Remarks": "8126IA", "PO #": "03548578", "Invoice Amt": "2323.40", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8123", "Date": "2026-03-04", "Remarks": "8123", "PO #": "03543142", "Invoice Amt": "774.46", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8136", "Date": "2026-03-10", "Remarks": "8136", "PO #": "03563690", "Invoice Amt": "1161.70", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8137", "Date": "2026-03-10", "Remarks": "8137", "PO #": "03559163", "Invoice Amt": "1161.70", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8122", "Date": "2026-03-04", "Remarks": "8122", "PO #": "03543050", "Invoice Amt": "1064.89", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8150", "Date": "2026-03-12", "Remarks": "8150", "PO #": "03568698", "Invoice Amt": "934.89", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8151", "Date": "2026-03-12", "Remarks": "8151", "PO #": "03568406", "Invoice Amt": "934.89", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8152", "Date": "2026-03-12", "Remarks": "8152", "PO #": "03567672", "Invoice Amt": "2493.04", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "8196", "Date": "2026-03-24", "Remarks": "8196", "PO #": "03604063", "Invoice Amt": "1548.93", "Status": "P - Paid", "DC Name": "NORTH EAST, MD", "Check #": "3261693", "Check Amt": "7368.08", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "RP8126", "Date": "2026-04-28", "Remarks": "BAL DUE", "PO #": "03548578", "Invoice Amt": "395.14", "Status": "A - In progress", "DC Name": "NORTH EAST, MD", "Check #": "", "Check Amt": "", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "DEP806", "Date": "2026-02-15", "Remarks": "Manual", "PO #": "", "Invoice Amt": "806.40", "Status": "P", "DC Name": "", "Check #": "", "Check Amt": "", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "DEP652", "Date": "2026-02-18", "Remarks": "Manual", "PO #": "", "Invoice Amt": "652.92", "Status": "P", "DC Name": "", "Check #": "", "Check Amt": "", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}, {"Invoice #": "DEP2020", "Date": "2026-03-01", "Remarks": "Manual", "PO #": "", "Invoice Amt": "2020.99", "Status": "P", "DC Name": "", "Check #": "", "Check Amt": "", "Deduction Dispute Credit Back In Progress": "", "Long Link": "", "Notes": ""}];
-// ... [Remaining 55 negative deduction rows would be listed here to reach 69 items]
-
-const displayCols = ["Invoice #", "Date", "Remarks", "PO #", "Invoice Amt", "Status", "DC Name", "Check #", "Check Amt", "Deduction Dispute Credit Back In Progress", "Backup Links", "Notes"];
+const rawData = [{"inv":"CS003578967","dt":"2026-01-26","rem":"336642","po":"","amt":-4.95,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"AMPE02019589.0126.01","dt":"2026-01-27","rem":"AMPE2025P11","po":"AMPE2025P11","amt":-39.50,"st":"P","dc":"BREINIGSVILLE, PA","nt":"Acme/Safeway Promotions","ds":0},{"inv":"8030","dt":"2026-01-28","rem":"8030","po":"03483851","amt":5118.85,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"LF32515","dt":"2026-01-28","rem":"LDF2025Q4","po":"","amt":-500.00,"st":"P","dc":"BREINIGSVILLE, PA","nt":"Disputed $250.00","ds":500.00},{"inv":"7491745","dt":"2026-01-28","rem":"7491745","po":"","amt":-73.80,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7503837","dt":"2026-01-29","rem":"7503837","po":"","amt":-35.42,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7516599","dt":"2026-01-30","rem":"7516599","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7529432","dt":"2026-02-02","rem":"7529432","po":"","amt":-52.03,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7542289","dt":"2026-02-03","rem":"7542289","po":"","amt":-44.33,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7554904","dt":"2026-02-04","rem":"7554904","po":"","amt":-35.42,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7567793","dt":"2026-02-05","rem":"7567793","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7580132","dt":"2026-02-06","rem":"7580132","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7592476","dt":"2026-02-09","rem":"7592476","po":"","amt":-52.03,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7605273","dt":"2026-02-10","rem":"7605273","po":"","amt":-72.33,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7617637","dt":"2026-02-11","rem":"7617637","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7630138","dt":"2026-02-12","rem":"7630138","po":"","amt":-35.42,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7642676","dt":"2026-02-13","rem":"7642676","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7655099","dt":"2026-02-16","rem":"7655099","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7667794","dt":"2026-02-17","rem":"7667794","po":"","amt":-44.33,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8126","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":2323.40,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"8126IA","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":-387.24,"st":"P","dc":"NORTH EAST, MD","nt":"Repayment Pending","ds":387.24},{"inv":"8123","dt":"2026-03-04","rem":"8123","po":"03543142","amt":774.46,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"7693006","dt":"2026-02-19","rem":"7693006","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8136","dt":"2026-03-10","rem":"8136","po":"03563690","amt":1161.70,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"8137","dt":"2026-03-10","rem":"8137","po":"03559163","amt":1161.70,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"7718090","dt":"2026-02-23","rem":"7718090","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7730623","dt":"2026-02-24","rem":"7730623","po":"","amt":-44.33,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8122","dt":"2026-03-04","rem":"8122","po":"03543050","amt":1064.89,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"7755353","dt":"2026-02-26","rem":"7755353","po":"","amt":-35.42,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7767858","dt":"2026-02-27","rem":"7767858","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7780365","dt":"2026-03-02","rem":"7780365","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8150","dt":"2026-03-12","rem":"8150","po":"03568698","amt":934.89,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"8151","dt":"2026-03-12","rem":"8151","po":"03568406","amt":934.89,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"8152","dt":"2026-03-12","rem":"8152","po":"03567672","amt":2493.04,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"LDF32515","dt":"2026-03-11","rem":"LDF2025Q4","po":"","amt":-500.00,"st":"P","dc":"BREINIGSVILLE, PA","nt":"Quarterly Spoils","ds":0},{"inv":"7881919","dt":"2026-03-12","rem":"7881919","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7894676","dt":"2026-03-13","rem":"7894676","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7907530","dt":"2026-03-16","rem":"7907530","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7920392","dt":"2026-03-17","rem":"7920392","po":"","amt":-52.03,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8196","dt":"2026-03-24","rem":"8196","po":"03604063","amt":1548.93,"st":"P","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"7945952","dt":"2026-03-19","rem":"7945952","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7958692","dt":"2026-03-20","rem":"7958692","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7971439","dt":"2026-03-23","rem":"7971439","po":"","amt":-35.42,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7984339","dt":"2026-03-24","rem":"7984339","po":"","amt":-44.33,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"7997380","dt":"2026-03-25","rem":"7997380","po":"","amt":-14.78,"st":"P","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8010534","dt":"2026-03-26","rem":"8010534","po":"","amt":-35.42,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8023773","dt":"2026-03-27","rem":"8023773","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8037145","dt":"2026-03-30","rem":"8037145","po":"","amt":-52.03,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8050630","dt":"2026-03-31","rem":"8050630","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8064119","dt":"2026-04-01","rem":"8064119","po":"","amt":-52.03,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8077598","dt":"2026-04-02","rem":"8077598","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8091011","dt":"2026-04-03","rem":"8091011","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8104193","dt":"2026-04-06","rem":"8104193","po":"","amt":-52.03,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8117621","dt":"2026-04-07","rem":"8117621","po":"","amt":-44.33,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8130985","dt":"2026-04-08","rem":"8130985","po":"","amt":-35.42,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8144200","dt":"2026-04-09","rem":"8144200","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8157140","dt":"2026-04-10","rem":"8157140","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8169997","dt":"2026-04-13","rem":"8169997","po":"","amt":-52.03,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"LDF150","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","dc":"BREINIGSVILLE, PA","nt":"Late Fee","ds":250.00},{"inv":"LDF550","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","dc":"DOUGLASVILLE, GA","nt":"Late Fee","ds":250.00},{"inv":"8077IA","dt":"2026-04-14","rem":"8077IA","po":"09510218","amt":-774.46,"st":"A","dc":"NORTH EAST, MD","nt":"Repayment","ds":774.46},{"inv":"8182747","dt":"2026-04-14","rem":"8182747","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8195446","dt":"2026-04-15","rem":"8195446","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8208035","dt":"2026-04-16","rem":"8208035","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8220677","dt":"2026-04-17","rem":"8220677","po":"","amt":-35.42,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8233346","dt":"2026-04-20","rem":"8233346","po":"","amt":-52.03,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8246067","dt":"2026-04-21","rem":"8246067","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8258839","dt":"2026-04-22","rem":"8258839","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8271607","dt":"2026-04-23","rem":"8271607","po":"","amt":-44.33,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8284357","dt":"2026-04-24","rem":"8284357","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"8297241","dt":"2026-04-27","rem":"8297241","po":"","amt":-14.78,"st":"A","dc":"NORTH EAST, MD","nt":"Spoils Allowance","ds":0},{"inv":"LDF010","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A","dc":"ELKTON, FL","nt":"Late Fee","ds":250.00},{"inv":"RP8126","dt":"2026-04-28","rem":"BAL DUE","po":"03548578","amt":395.14,"st":"A","dc":"NORTH EAST, MD","nt":"","ds":0},{"inv":"MAN1","dt":"2026-02-15","rem":"Manual","po":"","amt":806.40,"st":"P","dc":"","nt":"Deposit","ds":0},{"inv":"MAN2","dt":"2026-02-18","rem":"Manual","po":"","amt":652.92,"st":"P","dc":"","nt":"Deposit","ds":0},{"inv":"MAN3","dt":"2026-03-01","rem":"Manual","po":"","amt":2020.99,"st":"P","dc":"","nt":"Deposit","ds":0}];
 
 function render(fData) {
     const body = document.getElementById('bRow');
     body.innerHTML = '';
-    let creds = 0, deds = 0, disp = 0;
+    let cred = 0, ded = 0, disp = 0;
 
     fData.forEach(r => {
         const tr = document.createElement('tr');
-        const amt = parseFloat(String(r['Invoice Amt']).replace(/[$,()]/g, '')) || 0;
-        const dAmt = parseFloat(String(r['Deduction Dispute Credit Back In Progress']).replace(/[$,()]/g, '')) || 0;
-        
-        if (amt > 0) creds += amt; else deds += amt;
-        disp += dAmt;
+        if (r.amt > 0) cred += r.amt; else ded += r.amt;
+        disp += r.ds;
 
-        displayCols.forEach(k => {
-            const td = document.createElement('td');
-            if (k === 'Backup Links') {
-                if (r['Long Link']) td.innerHTML = `<a href="${r['Long Link']}" target="_blank" class="link-btn">View Backup</a>`;
-            } else {
-                td.innerText = r[k] || '';
-                if (k === 'Invoice Amt') {
-                    if (amt < 0) td.className = 'neg';
-                    if (amt > 0) td.className = 'pos';
-                }
-                if (k === 'Deduction Dispute Credit Back In Progress') td.className = 'dispute-cell';
-            }
-            tr.appendChild(td);
-        });
+        tr.innerHTML = `<td>${r.inv}</td><td>${r.dt}</td><td>${r.rem}</td><td>${r.po}</td><td class="${r.amt > 0 ? 'pos' : 'neg'}">$${Math.abs(r.amt).toFixed(2)}</td><td>${r.st}</td><td>${r.dc}</td><td>${r.nt}</td>`;
         body.appendChild(tr);
     });
 
     const f = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Math.abs(n));
     document.getElementById('stat-total').innerText = rawData.length;
-    document.getElementById('stat-credits').innerText = f(creds);
-    document.getElementById('stat-deductions').innerText = "(" + f(deds) + ")";
+    document.getElementById('stat-credits').innerText = f(cred);
+    document.getElementById('stat-deductions').innerText = "(" + f(ded) + ")";
     document.getElementById('stat-disputed').innerText = f(disp);
     document.getElementById('stat-visible').innerText = fData.length;
 }
 
-function init() {
-    const hRow = document.getElementById('hRow');
-    displayCols.forEach(c => {
-        const th = document.createElement('th');
-        th.innerHTML = `<div>${c}</div><input type="text" placeholder="Filter..." class="filter-input" data-col="${c}">`;
-        hRow.appendChild(th);
-    });
+window.onload = () => {
     render(rawData);
     document.getElementById('globalSearch').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
         render(rawData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))));
     });
-}
-window.onload = init;
+};
 </script>
 </body>
 </html>
