@@ -2,36 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Deduction Dashboard V4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swoffle - UNFI Deduction Worksheet</title>
+    <!-- CSS Dependencies -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; padding: 20px; font-family: 'Segoe UI', sans-serif; }
-        .metric-card { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-        .metric-value { font-size: 1.5rem; font-weight: bold; color: #0d6efd; }
-        .metric-label { color: #6c757d; text-transform: uppercase; font-size: 0.7rem; font-weight: 700; margin-bottom: 5px; }
-        .table-container { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; }
+        body { background-color: #f8f9fa; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .header-title { color: #212529; font-weight: 700; margin-bottom: 25px; border-bottom: 2px solid #0d6efd; display: inline-block; padding-bottom: 5px; }
+        .metric-card { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #0d6efd; }
+        .metric-value { font-size: 1.5rem; font-weight: bold; color: #333; }
+        .metric-label { color: #6c757d; text-transform: uppercase; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .table-container { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 25px; }
         .text-red { color: #dc3545 !important; font-weight: bold; }
-        thead input { width: 100%; padding: 4px; font-size: 11px; }
-        th { font-size: 12px; white-space: nowrap; }
-        td { font-size: 12px; }
-        .btn-export { background-color: #198754 !important; color: white !important; border: none !important; }
+        thead input { width: 100%; padding: 4px; box-sizing: border-box; border: 1px solid #dee2e6; border-radius: 4px; font-size: 11px; }
+        th { font-size: 12px; background-color: #f8f9fa !important; white-space: nowrap; }
+        td { font-size: 12px; vertical-align: middle; }
+        .btn-export { background-color: #198754 !important; color: white !important; border: none !important; margin-bottom: 15px; font-weight: 600; }
+        .btn-export:hover { background-color: #157347 !important; }
     </style>
 </head>
 <body>
 
 <div class="container-fluid">
-    <h3 class="mb-4">Deduction Tracker (Accurate Unique Credits)</h3>
+    <h3 class="header-title">Swoffle - UNFI Deduction Worksheet 11-1-2026 to 5/1/2026</h3>
     
+    <!-- Summary Metrics -->
     <div class="row g-3 mb-4">
-        <div class="col-md"><div class="metric-card"><div class="metric-label">Total Items</div><div id="val-count-ded" class="metric-value">107</div></div></div>
-        <div class="col-md"><div class="metric-card"><div class="metric-label">Deduction Total</div><div id="val-amt-ded" class="metric-value text-red">-$32,250.24</div></div></div>
-        <div class="col-md"><div class="metric-card"><div class="metric-label">Disputed Total</div><div id="val-amt-dis" class="metric-value">$15,970.47</div></div></div>
-        <div class="col-md"><div class="metric-card"><div class="metric-label">UNFI Unique Credits</div><div id="val-amt-pay" class="metric-value" style="color: #198754;">$38,854.41</div></div></div>
-        <div class="col-md"><div class="metric-card"><div class="metric-label">Active Disputes</div><div id="val-count-dis" class="metric-value">22</div></div></div>
+        <div class="col-md">
+            <div class="metric-card" style="border-top-color: #6c757d;">
+                <div class="metric-label">Total Items</div>
+                <div id="val-count-ded" class="metric-value">107</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="metric-card" style="border-top-color: #dc3545;">
+                <div class="metric-label">Deduction Total</div>
+                <div id="val-amt-ded" class="metric-value text-red">-$32,250.24</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="metric-card" style="border-top-color: #ffc107;">
+                <div class="metric-label">Disputed Total</div>
+                <div id="val-amt-dis" class="metric-value">$15,970.47</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="metric-card" style="border-top-color: #198754;">
+                <div class="metric-label">UNFI Unique Credits</div>
+                <div id="val-amt-pay" class="metric-value" style="color: #198754;">$38,854.41</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="metric-card" style="border-top-color: #0dcaf0;">
+                <div class="metric-label">Active Disputes</div>
+                <div id="val-count-dis" class="metric-value">22</div>
+            </div>
+        </div>
     </div>
 
+    <!-- Main Interactive Table -->
     <div class="table-container">
         <table border="1" class="dataframe table table-striped table-bordered" id="deductionTable">
   <thead>
@@ -2202,6 +2233,7 @@
     </div>
 </div>
 
+<!-- JS Dependencies -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
@@ -2212,6 +2244,7 @@
 
 <script>
 $(document).ready(function() {
+    // Clone header for individual column filters
     $('#deductionTable thead tr').clone(true).addClass('filters').appendTo('#deductionTable thead');
 
     var table = $('#deductionTable').DataTable({
@@ -2221,11 +2254,12 @@ $(document).ready(function() {
         buttons: [
             {
                 extend: 'csv',
-                text: 'Download CSV',
+                text: 'Download Excel-Ready CSV',
                 className: 'btn btn-export',
                 exportOptions: {
                     format: {
                         body: function (data, row, column, node) {
+                            // Strip symbols for numeric columns in CSV export (Indices 4, 9, 10, 16)
                             if ([4, 9, 10, 16].includes(column)) {
                                 return data.replace(/[\$,]/g, '');
                             }
@@ -2236,13 +2270,13 @@ $(document).ready(function() {
             }
         ],
         columnDefs: [
-            { targets: 4, className: 'text-red' }
+            { targets: 4, className: 'text-red' } // Adj Total Amount column
         ],
         drawCallback: function() {
             var api = this.api();
             var totalDedAmt = 0;
             var totalDisAmt = 0;
-            var uniquePayments = {}; // Object to store unique payment amounts
+            var uniquePayments = {};
             var rowCount = api.rows({ search: 'applied' }).count();
             var disputeCount = 0;
 
@@ -2253,12 +2287,12 @@ $(document).ready(function() {
                     return parseFloat(s.toString().replace(/[^\d.-]/g, '')) || 0;
                 };
 
-                // Sum Deductions & Disputes normally
-                totalDedAmt += cleanNum(d[4]);
-                totalDisAmt += cleanNum(d[16]);
-                if (d[13] && d[13].trim() !== '') disputeCount++;
+                totalDedAmt += cleanNum(d[4]);  // Adj Total Amount
+                totalDisAmt += cleanNum(d[16]); // Disputed Amt
+                
+                if (d[13] && d[13].trim() !== '') disputeCount++; // Dispute # check
 
-                // Correcting UNFI Credits: Only sum once per Payment # (Index 5)
+                // Unique Credit Logic (Keyed by Payment # at index 5)
                 var payID = d[5];
                 var payAmt = cleanNum(d[10]);
                 if (payID && payID !== '') {
@@ -2266,20 +2300,20 @@ $(document).ready(function() {
                 }
             });
 
-            // Calculate total of unique payments
             var totalPayAmt = Object.values(uniquePayments).reduce((a, b) => a + b, 0);
 
+            // Update Top Metrics
             $('#val-count-ded').text(rowCount.toLocaleString());
-            $('#val-amt-ded').text((totalDedAmt < 0 ? '-' : '') + '$' + Math.abs(totalDedAmt).toLocaleString(undefined, {minimumFractionDigits: 2}));
-            $('#val-amt-dis').text('$' + totalDisAmt.toLocaleString(undefined, {minimumFractionDigits: 2}));
-            $('#val-amt-pay').text('$' + totalPayAmt.toLocaleString(undefined, {minimumFractionDigits: 2}));
+            $('#val-amt-ded').text((totalDedAmt < 0 ? '-' : '') + '$' + Math.abs(totalDedAmt).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+            $('#val-amt-dis').text('$' + totalDisAmt.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+            $('#val-amt-pay').text('$' + totalPayAmt.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
             $('#val-count-dis').text(disputeCount.toLocaleString());
         },
         initComplete: function () {
             var api = this.api();
             api.columns().eq(0).each(function (colIdx) {
                 var cell = $('.filters th').eq($(api.column(colIdx).header()).index());
-                $(cell).html('<input type="text" placeholder="Filter" />');
+                $(cell).html('<input type="text" placeholder="Filter..." />');
                 $('input', cell).on('keyup change', function () {
                     api.column(colIdx).search(this.value).draw();
                 });
