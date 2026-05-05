@@ -1,140 +1,639 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>KEHE Remittance - FULL RESTORATION V4</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 100%; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        header { border-bottom: 4px solid #004a99; padding-bottom: 15px; margin-bottom: 25px; }
-        h1 { color: #004a99; margin: 0; font-size: 26px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 25px; }
-        .stat-box { background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #e0e0e0; text-align: center; border-top: 4px solid #004a99; }
-        .stat-box label { display: block; font-size: 10px; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-box span { font-size: 18px; font-weight: 700; color: #333; }
-        .search-area { margin-bottom: 20px; }
-        .global-search { width: 100%; padding: 12px; border: 2px solid #004a99; border-radius: 5px; font-size: 14px; box-sizing: border-box; background-color: #fffae6; }
-        .table-wrap { overflow-x: auto; max-height: 700px; border: 1px solid #eee; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: auto; }
-        th { background: #004a99; color: white; position: sticky; top: 0; padding: 10px; text-align: left; z-index: 10; white-space: nowrap; }
-        td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
-        .neg { color: #d93025; font-weight: bold; }
-        .pos { color: #188038; font-weight: bold; }
-        .dispute-cell { background-color: #fff9eb; font-weight: bold; color: #a67c00; }
-        .link-btn { color: #004a99; font-weight: bold; text-decoration: underline; cursor: pointer; white-space: nowrap; }
-        .col-notes { min-width: 250px; max-width: 450px; white-space: normal !important; word-wrap: break-word; line-height: 1.4; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KeHE Deduction Reconciliation · Swoffle</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #1a1a2e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: #fff;
+  border-bottom: 2px solid #e8eaed;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.page-header-left { display: flex; align-items: center; gap: 14px; }
+.brand { font-size: 18px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.02em; }
+.page-title { font-size: 13px; font-weight: 500; color: #6b7280; }
+.page-header-right { display: flex; align-items: center; gap: 16px; }
+.record-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #374151; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 4px 10px; border-radius: 6px; }
+.header-date { font-size: 12px; color: #9ca3af; }
+
+/* ── SUMMARY CARDS ── */
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #e8eaed;
+  background: #fafafa;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+.card-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 6px; }
+.card-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 500; }
+.card-val.green { color: #059669; }
+.card-val.red { color: #dc2626; }
+.card-val.orange { color: #d97706; }
+.card-val.blue { color: #2563eb; }
+.card-sub { font-size: 11px; color: #9ca3af; margin-top: 3px; }
+
+/* ── QUICK FILTER BAR ── */
+.filter-bar {
+  padding: 14px 28px;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #fff;
+}
+.filter-bar-label { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.07em; }
+.pill-btn {
+  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid #e5e7eb; background: #fff; color: #6b7280;
+  cursor: pointer; transition: all 0.12s; white-space: nowrap;
+}
+.pill-btn:hover { border-color: #9ca3af; color: #374151; }
+.pill-btn.active-all { border-color: #1a1a2e; background: #1a1a2e; color: #fff; }
+.pill-btn.pill-credit  { border-color: #bfdbfe; background: #eff6ff; color: #2563eb; }
+.pill-btn.pill-cleared { border-color: #a7f3d0; background: #ecfdf5; color: #059669; }
+.pill-btn.pill-inprog  { border-color: #fcd34d; background: #fffbeb; color: #d97706; }
+.pill-btn.pill-dispute { border-color: #ddd6fe; background: #f5f3ff; color: #7c3aed; }
+.pill-btn.active-credit  { border-color: #2563eb; background: #2563eb; color: #fff; }
+.pill-btn.active-cleared { border-color: #059669; background: #059669; color: #fff; }
+.pill-btn.active-inprog  { border-color: #d97706; background: #d97706; color: #fff; }
+.pill-btn.active-dispute { border-color: #7c3aed; background: #7c3aed; color: #fff; }
+.reset-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1px solid #e5e7eb; background: #fff; color: #9ca3af;
+  cursor: pointer; transition: all 0.12s; margin-left: auto;
+}
+.reset-btn:hover { border-color: #d1d5db; color: #6b7280; }
+.visible-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9ca3af; white-space: nowrap; }
+.visible-label b { color: #374151; }
+
+/* ── TABLE CONTAINER ── */
+.table-wrap {
+  padding: 0 28px 40px;
+  overflow-x: auto;
+}
+.table-inner { min-width: 1300px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+thead tr.col-headers th {
+  background: #fff;
+  padding: 10px 10px 6px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+thead tr.col-headers th:hover { color: #111; }
+thead tr.col-headers th.active { color: #2563eb; }
+thead tr.col-headers th.r { text-align: right; }
+.th-inner { display: inline-flex; align-items: center; gap: 4px; }
+.sort-arrow { font-size: 9px; color: #9ca3af; }
+thead tr.col-headers th.active .sort-arrow { color: #2563eb; }
+
+thead tr.col-filters th {
+  background: #f9fafb;
+  padding: 4px 6px 6px;
+  border-bottom: 2px solid #e5e7eb;
+}
+.col-filter-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: #374151;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.col-filter-input:focus { border-color: #6b7280; }
+.col-filter-input::placeholder { color: #d1d5db; font-size: 11px; }
+.col-filter-select {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: #374151;
+  background: #fff;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.col-filter-select:focus { border-color: #6b7280; }
+
+tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.08s;
+}
+tbody tr:hover { background: #f9fafb; }
+tbody tr.row-dispute { background: #f0fdf4; }
+tbody tr.row-dispute:hover { background: #dcfce7; }
+
+td {
+  padding: 9px 10px;
+  vertical-align: top;
+  color: #374151;
+}
+td.r { text-align: right; }
+td.mid { vertical-align: middle; }
+
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.cell-invoice { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500; color: #1a1a2e; }
+.cell-date { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #6b7280; white-space: nowrap; }
+.cell-remarks { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b7280; }
+.cell-po { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9ca3af; }
+.cell-notes { font-size: 12px; color: #374151; line-height: 1.45; max-width: 260px; }
+
+.amt-pos { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #059669; }
+.amt-neg { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #dc2626; }
+.amt-zero { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d1d5db; }
+
+.dc-chip { font-size: 10.5px; font-weight: 500; padding: 2px 7px; border-radius: 4px; white-space: nowrap; border: 1px solid; }
+.dc-md { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+.dc-pa { background: #fdf4ff; color: #7e22ce; border-color: #e9d5ff; }
+.dc-ga { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+.dc-fl { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.badge-cleared { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.badge-inprog { background: #fffbeb; color: #d97706; border: 1px solid #fcd34d; }
+.badge-credit { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.badge-credit .badge-dot { background: #2563eb; }
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.badge-cleared .badge-dot { background: #059669; }
+.badge-inprog .badge-dot { background: #d97706; }
+
+.disp-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: #7c3aed; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 2px 7px; border-radius: 20px; }
+
+.dl-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500; color: #2563eb;
+  text-decoration: none; padding: 3px 8px; border-radius: 5px;
+  border: 1px solid #bfdbfe; background: #eff6ff;
+  transition: background 0.12s; white-space: nowrap;
+}
+.dl-link:hover { background: #dbeafe; }
+.dl-icon { width: 12px; height: 12px; flex-shrink: 0; }
+
+tfoot tr td {
+  padding: 9px 10px;
+  border-top: 2px solid #e5e7eb;
+  background: #f9fafb;
+  font-weight: 600;
+  font-size: 12px;
+}
+.footer-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; }
+
+.empty-row td { text-align: center; padding: 48px; color: #9ca3af; font-size: 13px; }
+
+mark { background: #fef9c3; border-radius: 2px; padding: 0 1px; }
+
+@media (max-width: 900px) {
+  .cards-row { grid-template-columns: repeat(2, 1fr); }
+  .page-header, .filter-bar, .cards-row, .table-wrap { padding-left: 14px; padding-right: 14px; }
+}
+</style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>KEHE, KEHE Distributors</h1>
-        <div style="color: #666; font-weight: bold;">Vendor: 23017256 | Stephen Nance | FULL RESTORATION</div>
-    </header>
 
-    <div class="stats-grid">
-        <div class="stat-box"><label>Total Items</label><span id="stat-total">0</span></div>
-        <div class="stat-box"><label>Credits & Payments</label><span id="stat-credits">$0.00</span></div>
-        <div class="stat-box"><label>Deductions & CBs</label><span id="stat-deductions">$0.00</span></div>
-        <div class="stat-box" style="border-top-color: #f39c12;"><label>Deductions in Dispute</label><span id="stat-disputed">$0.00</span></div>
-        <div class="stat-box"><label>Visible Rows</label><span id="stat-visible">0</span></div>
-    </div>
+<div class="page-header">
+  <div class="page-header-left">
+    <span class="brand">Swoffle</span>
+    <span class="page-title">KeHE Deduction Reconciliation Worksheet</span>
+  </div>
+  <div class="page-header-right">
+    <span class="record-count" id="recCount">69 records</span>
+    <span class="header-date" id="hdrDate"></span>
+  </div>
+</div>
 
-    <div class="search-area">
-        <input type="text" id="globalSearch" class="global-search" placeholder="Quick Search (Anywhere)...">
-    </div>
+<div class="cards-row">
+  <div class="card">
+    <div class="card-label">Credits &amp; Payments</div>
+    <div class="card-val green" id="sCredits">—</div>
+    <div class="card-sub" id="sCreditsN">—</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Deductions &amp; Chargebacks</div>
+    <div class="card-val red" id="sDebits">—</div>
+    <div class="card-sub" id="sDebitsN">—</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Disputes In Progress</div>
+    <div class="card-val orange" id="sDisp">—</div>
+    <div class="card-sub" id="sDispN">—</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Net Balance (Visible)</div>
+    <div class="card-val blue" id="sNet">—</div>
+    <div class="card-sub" id="sNetN">—</div>
+  </div>
+</div>
 
-    <div class="table-wrap">
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>Invoice #</th><th>Date</th><th>Remarks</th><th>PO #</th><th>Invoice Amt</th><th>Status</th><th>DC Name</th><th>Check #</th><th>Dispute Amt</th><th>Backup</th><th class="col-notes">Notes</th>
-                </tr>
-            </thead>
-            <tbody id="bRow"></tbody>
-        </table>
-    </div>
+<div class="filter-bar">
+  <span class="filter-bar-label">Status</span>
+  <button class="pill-btn active-all" data-s="all">All</button>
+  <button class="pill-btn pill-credit" data-s="credit">Payment / Credit</button>
+  <button class="pill-btn pill-cleared" data-s="P - Paid">Deduction Cleared</button>
+  <button class="pill-btn pill-inprog" data-s="A - In progress">In Progress</button>
+  <button class="pill-btn pill-dispute" data-s="dispute">Dispute Only</button>
+  <button class="reset-btn" id="resetBtn">↺ Reset All Filters</button>
+  <span class="visible-label">Showing <b id="visCount">69</b> of 69</span>
+</div>
+
+<div class="table-wrap">
+  <div class="table-inner">
+    <table id="mainTable">
+      <thead>
+        <tr class="col-headers">
+          <th onclick="doSort('invoice')" id="th-invoice"><span class="th-inner">Invoice # <span class="sort-arrow" id="sa-invoice">↕</span></span></th>
+          <th onclick="doSort('date')" id="th-date"><span class="th-inner">Date <span class="sort-arrow" id="sa-date">↕</span></span></th>
+          <th onclick="doSort('remarks')" id="th-remarks"><span class="th-inner">Remarks <span class="sort-arrow" id="sa-remarks">↕</span></span></th>
+          <th onclick="doSort('po')" id="th-po"><span class="th-inner">PO # <span class="sort-arrow" id="sa-po">↕</span></span></th>
+          <th onclick="doSort('dc')" id="th-dc"><span class="th-inner">DC <span class="sort-arrow" id="sa-dc">↕</span></span></th>
+          <th onclick="doSort('amt')" id="th-amt" class="r"><span class="th-inner">Invoice Amt <span class="sort-arrow" id="sa-amt">↕</span></span></th>
+          <th onclick="doSort('status')" id="th-status"><span class="th-inner">Status <span class="sort-arrow" id="sa-status">↕</span></span></th>
+          <th onclick="doSort('dispute')" id="th-dispute" class="r"><span class="th-inner">Dispute $ <span class="sort-arrow" id="sa-dispute">↕</span></span></th>
+          <th onclick="doSort('check_num')" id="th-check_num"><span class="th-inner">Check # <span class="sort-arrow" id="sa-check_num">↕</span></span></th>
+          <th onclick="doSort('check_amt')" id="th-check_amt" class="r"><span class="th-inner">Check Amt <span class="sort-arrow" id="sa-check_amt">↕</span></span></th>
+          <th>Deduction Backup</th>
+          <th onclick="doSort('notes')" id="th-notes"><span class="th-inner">Deduction Notes <span class="sort-arrow" id="sa-notes">↕</span></span></th>
+        </tr>
+        <tr class="col-filters" id="filterRow">
+          <th><input class="col-filter-input" id="f-invoice" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-date" placeholder="e.g. Apr" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-remarks" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-po" placeholder="Filter…" oninput="render()"></th>
+          <th>
+            <select class="col-filter-select" id="f-dc" onchange="render()">
+              <option value="">All DCs</option>
+              <option value="NORTH EAST, MD">NE · MD</option>
+              <option value="BREINIGSVILLE, PA">PA · PA</option>
+              <option value="DOUGLASVILLE, GA">GA · GA</option>
+              <option value="ELKTON, FL">FL · FL</option>
+            </select>
+          </th>
+          <th><input class="col-filter-input" id="f-amt" placeholder="e.g. -500" oninput="render()"></th>
+          <th>
+            <select class="col-filter-select" id="f-status" onchange="render()">
+              <option value="">All</option>
+              <option value="credit">Payment / Credit</option>
+              <option value="P - Paid">Deduction Cleared</option>
+              <option value="A - In progress">In Progress</option>
+            </select>
+          </th>
+          <th><input class="col-filter-input" id="f-dispute" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-check_num" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-check_amt" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-backup" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-notes" placeholder="Filter…" oninput="render()"></th>
+        </tr>
+      </thead>
+      <tbody id="tBody"></tbody>
+      <tfoot id="tFoot">
+        <tr>
+          <td colspan="5"><span class="footer-label">Visible Totals</span></td>
+          <td class="r" id="fAmt">—</td>
+          <td></td>
+          <td class="r" id="fDisp">—</td>
+          <td></td>
+          <td class="r" id="fCheck"></td> <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
 <script>
-// FULL RE-MAPPED DATASET
-const rawData = [
-    {"inv":"CS003578967","dt":"2026-01-26","rem":"336642","po":"","amt":-4.95,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d","nt":"Spoils Allowance"},
-    {"inv":"AMPE02019589.0126.01","dt":"2026-01-27","rem":"AMPE2025P11","po":"AMPE2025P11","amt":-39.50,"st":"P - Paid","dc":"BREINIGSVILLE, PA","ch":"3261693","ds":0,"lnk":"AMPE02019589.0126.01.xlsx","nt":"Acme/Safeway Promotions"},
-    {"inv":"8030","dt":"2026-01-28","rem":"8030","po":"03483851","amt":5118.85,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c25d8869-d419-49be-86a0-53b926442657","nt":""},
-    {"inv":"LF32515","dt":"2026-01-28","rem":"LDF2025Q4","po":"","amt":-500.00,"st":"P - Paid","dc":"BREINIGSVILLE, PA","ch":"3261693","ds":500.00,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:f4281729-e8da-4b82-95f7-8736d54da80b","nt":"Overturned $250.00 Late Shipment $250.00 Deduction on PO343335. Disputed additional $250.00 PO PO3388662 and pending."},
-    {"inv":"8126","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":2323.40,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8126IA","dt":"2026-03-05","rem":"8126IA","po":"03548578","amt":-387.24,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":387.24,"lnk":"","nt":"Deduction overturned. $387.24 Repayment has been written up for approval under RP8126."},
-    {"inv":"8123","dt":"2026-03-04","rem":"8123","po":"03543142","amt":774.46,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8136","dt":"2026-03-10","rem":"8136","po":"03563690","amt":1161.70,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8137","dt":"2026-03-10","rem":"8137","po":"03559163","amt":1161.70,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8122","dt":"2026-03-04","rem":"8122","po":"03543050","amt":1064.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8150","dt":"2026-03-12","rem":"8150","po":"03568698","amt":934.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8151","dt":"2026-03-12","rem":"8151","po":"03568406","amt":934.89,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8152","dt":"2026-03-12","rem":"8152","po":"03567672","amt":2493.04,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"8196","dt":"2026-03-24","rem":"8196","po":"03604063","amt":1548.93,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"","nt":""},
-    {"inv":"RP8126","dt":"2026-04-28","rem":"BAL DUE","po":"03548578","amt":395.14,"st":"A - In progress","dc":"NORTH EAST, MD","ch":"","ds":0,"lnk":"","nt":""},
-    {"inv":"DEP806","dt":"2026-02-15","rem":"Manual","po":"","amt":806.40,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
-    {"inv":"DEP652","dt":"2026-02-18","rem":"Manual","po":"","amt":652.92,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
-    {"inv":"DEP2020","dt":"2026-03-01","rem":"Manual","po":"","amt":2020.99,"st":"P - Paid","dc":"","ch":"","ds":0,"lnk":"","nt":"Manual Deposit Entry"},
-    {"inv":"LDF150","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"BREINIGSVILLE, PA","ch":"","ds":250.00,"lnk":"","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8122"},
-    {"inv":"LDF550","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"DOUGLASVILLE, GA","ch":"","ds":250.00,"lnk":"","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8136"},
-    {"inv":"8077IA","dt":"2026-04-14","rem":"8077IA","po":"09510218","amt":-774.46,"st":"A - In progress","dc":"NORTH EAST, MD","ch":"","ds":774.46,"lnk":"","nt":"Deduction overturned. Swoffle proof of discrepancy $774.46 credited back."},
-    {"inv":"LDF010","dt":"2026-04-27","rem":"Q12026","po":"Q12026","amt":-250.00,"st":"A - In progress","dc":"ELKTON, FL","ch":"","ds":250.00,"lnk":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","nt":"$250 Deduction. Disputable deduction. KeHE deduction for late warehouse arrival ON INVOICE 8150"},
-    {"inv":"7491745-B","dt":"2026-01-28","rem":"7491745","po":"","amt":-73.80,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:40636fcc-213d-4c8d-965a-89a19e5d42ef","nt":"Spoils Allowance"},
-    {"inv":"7503837-B","dt":"2026-01-29","rem":"7503837","po":"","amt":-35.42,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:04c0ec18-874b-4cc3-9d48-6a3c5a610427","nt":"Spoils Allowance"},
-    {"inv":"7516599-B","dt":"2026-01-30","rem":"7516599","po":"","amt":-14.78,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:783e4a2c-9ef1-4b15-9c87-8d02c5240217","nt":"Spoils Allowance"},
-    {"inv":"7529432-B","dt":"2026-02-02","rem":"7529432","po":"","amt":-52.03,"st":"P - Paid","dc":"NORTH EAST, MD","ch":"3261693","ds":0,"lnk":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c5f49298-6396-419b-ab92-9f3387b32230","nt":"Spoils Allowance"}
-    // ... [All 71 line items are included in the actual code block]
+const DATA = [
+{"invoice":"CS003578967","date":"2026-01-26","remarks":"336642","po":"","amt":-4.95,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 336642","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d","notes":"Spoils Allowance"},
+{"invoice":"AMPE02019589.0126.01","date":"2026-01-27","remarks":"AMPE2025P11","po":"AMPE2025P11","amt":-39.5,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Acme/Safeway Promotions"},
+{"invoice":"8030","date":"2026-01-28","remarks":"8030","po":"3483851","amt":5118.85,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"LF32515","date":"2026-01-28","remarks":"LDF2025Q4","po":"","amt":-500,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":500,"backup_label":"Backup LDF2025Q4","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:244e385e-9dc1-4938-902b-898caa44dda9","notes":"Overturned $250.00 Late Shipment $250.00 Deduction on PO343335. Disputed additional $250.00 PO PO3388662 and pending"},
+{"invoice":"407753","date":"2026-02-01","remarks":"MCBB","po":"","amt":-98.25,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:007e0283-f765-498d-bb08-d710fd20235a","notes":"$65 Fee excessive and Kehe declined to waive"},
+{"invoice":"CS003594291","date":"2026-02-02","remarks":"3788399","po":"","amt":-13.96,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 3788399","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c7e35127-fe3e-4588-b328-1e57961b082c","notes":"Spoils Allowance"},
+{"invoice":"CS003609570","date":"2026-02-09","remarks":"750542","po":"","amt":-27.53,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 750542","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:2aca77a5-ac02-494d-822b-bbbe98aa47de","notes":"Spoils Allowance"},
+{"invoice":"HB3082315","date":"2026-02-10","remarks":"MidAtlantic2025.12","po":"","amt":-7.98,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MidAtlantic2025.12","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c8295538-0c1e-432d-bb6a-5680ebce7f27","notes":"In Store Credits"},
+{"invoice":"409109","date":"2026-02-15","remarks":"MCBB","po":"","amt":-97.95,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c8295538-0c1e-432d-bb6a-5680ebce7f27","notes":"$65 Fee excessive and Kehe declined to waive"},
+{"invoice":"8077","date":"2026-02-19","remarks":"8077","po":"3510218","amt":2020.99,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"8077IA","date":"2026-02-19","remarks":"8077IA","po":"3510218","amt":-774.46,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":774.46,"backup_label":"Backup 8077IA","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:93071644-8ed7-4de9-ae99-36d0943ce8d5","notes":"Deduction overturned. Swoffle proof of discrepancy $774.46 credited back."},
+{"invoice":"CS003640517","date":"2026-02-23","remarks":"4328412","po":"","amt":-9.76,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 4328412","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:45da5030-145f-4ac6-9db1-bf20bcb87c23","notes":"Spoils Allowance"},
+{"invoice":"LUM16018615","date":"2026-02-24","remarks":"LUM2026.P09","po":"","amt":-4.5,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup LUM2026.P09","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:1fe5b76b-1503-4bbc-a7fc-a1368126837c","notes":"FedEx, Lumper Fee"},
+{"invoice":"28224842","date":"2026-02-24","remarks":"SPOILS","po":"","amt":-11.88,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup SPOILS","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:91d5ade3-3a88-4aaa-b454-ed74a710a4e4","notes":"Spoils General"},
+{"invoice":"AMPE02019589.0226.01","date":"2026-02-24","remarks":"AMP2025P12","po":"AMP2025P12","amt":-38.2,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup AMP2025P12","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQDJ4EYJArMSQJcsn5WDWmrRAbbJCMIfUxQl1f15nmYnSE4?e=Ujw8cK","notes":"Albertsons Merchandising Program"},
+{"invoice":"LUM16018515","date":"2026-02-24","remarks":"LUM2026.P09","po":"","amt":-75,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup LUM2026.P09","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:dc67ffb4-a7f7-4072-9f1b-5883ddd75992","notes":"UPS Lumper fee standard charge is excessive, Fed Ex Only all future Deliveries ($4.50 Lumper Fee)"},
+{"invoice":"410416","date":"2026-03-01","remarks":"MCBB","po":"","amt":-7.15,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:c3a587cf-9483-4ad2-bc9b-840135f77b66","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"CS003656004","date":"2026-03-02","remarks":"7889541","po":"","amt":-13.47,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 7889541","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:7e94f466-0bf3-4a5b-bf3d-1cb119ca729d","notes":"Spoils Allowance"},
+{"invoice":"8126","date":"2026-03-05","remarks":"8126","po":"3548578","amt":2323.4,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"8126IA","date":"2026-03-05","remarks":"8126IA","po":"3548578","amt":-387.24,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":387.24,"backup_label":"Backup 8126IA","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:7e94f466-0bf3-4a5b-bf3d-1cb119ca729d","notes":"Deduction overturned. $387.24 Repayment has been written up for approval under RP8126."},
+{"invoice":"8123","date":"2026-03-09","remarks":"8123","po":"3543142","amt":774.46,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"CS003671495","date":"2026-03-09","remarks":"9675620","po":"","amt":-10.45,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 9675620","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:e4c02912-25a3-44e4-8310-e9535581392f","notes":"Spoils Allowance"},
+{"invoice":"8136","date":"2026-03-10","remarks":"8136","po":"3563690","amt":1161.7,"status":"P - Paid","dc":"DOUGLASVILLE, GA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"8137","date":"2026-03-10","remarks":"8137","po":"3559163","amt":1161.7,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"411827","date":"2026-03-15","remarks":"MCBB","po":"","amt":-11.11,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:us:2272cd4e-a336-4996-86e0-9b12d40cd7d3","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"CS003687029","date":"2026-03-16","remarks":"5220639","po":"","amt":-15.86,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 5220639","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:e0ca4b91-44d2-4e54-85a0-e676381adf85","notes":"Spoils Allowance"},
+{"invoice":"VR27017256.0326.01","date":"2026-03-16","remarks":"VR 392026 -3152026","po":"VR 3/9/2026 -3/15/2026","amt":-3002.76,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup VR 392026 -3152026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQB_-aSCF-wAS5SW7KKl967JAbL3vCSEhPRQWgQufyDkp5M?e=wFpkil","notes":"This deduction has something to do with returning the old 16 and 14 packs. It is in dispute."},
+{"invoice":"8122","date":"2026-03-18","remarks":"8122","po":"3543050","amt":1064.89,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3263385","check_amt":1052.19,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"ACR1515017256.0326.01","date":"2026-03-19","remarks":"MidAtlantic2026.13","po":"MidAtlantic2026.13","amt":-33.06,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup MidAtlantic2026.13","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQCJhGPqXWjHRKKFJmeuT_QIATSfVG97n6hZhU6M7YXk3BI?e=whE1wO","notes":"Albertson/Safeway In Store Credits"},
+{"invoice":"CS003692138","date":"2026-03-23","remarks":"1978892","po":"","amt":-0.5,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3263385","check_amt":1052.19,"dispute":0,"backup_label":"Backup 1978892","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:570cd6dc-5228-4221-938c-fd0a8a0c53e5","notes":"Spoils Allowance"},
+{"invoice":"CS003702546","date":"2026-03-23","remarks":"2987655","po":"","amt":-12.2,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3263385","check_amt":1052.19,"dispute":0,"backup_label":"Backup 2987655","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:2a7ae7af-2743-44a8-9cf0-1e10b3ba59c0","notes":"Spoils Allowance"},
+{"invoice":"8152","date":"2026-03-25","remarks":"8152","po":"3567672","amt":2493.04,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"8150","date":"2026-03-25","remarks":"8150","po":"3568698","amt":934.89,"status":"P - Paid","dc":"DOUGLASVILLE, GA","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"8151","date":"2026-03-25","remarks":"8151","po":"3568406","amt":934.89,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"AMPE02019589.0326.01","date":"2026-03-26","remarks":"AMP2025P13","po":"AMP2025P13","amt":-37.76,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup AMP2025P13","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQBLBDGoK5xYRYvWaXjVrYjaAe_0QB_AxNxkAa8PsuL5Eeo?e=0Qlaom","notes":"Pass-through deduction. Albertsons Merchandising Program"},
+{"invoice":"ACMPL15017256.0326.01","date":"2026-03-27","remarks":"ACME776","po":"ACME776","amt":-13.68,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup ACME776","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQA40XJ0k9oSS5PYp8zAWELqAQRSXgDLaRzI4yqULr2c3Lg?e=hgRcJa","notes":"Pass-through deduction. Acme Free Fill"},
+{"invoice":"413245","date":"2026-03-29","remarks":"MCBB","po":"","amt":-13.86,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:us:9d82e8bd-3c6f-4be2-8966-777258bb7251","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"472950","date":"2026-03-29","remarks":"MCBB","po":"","amt":-424.16,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:e2ff2dc9-04f5-4358-b10d-97bf780fe2a1","notes":"New at KEHE 50% MCB Southeast Promotion."},
+{"invoice":"CS003707604","date":"2026-03-30","remarks":"5531895","po":"","amt":-7.25,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup 5531895","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:cb473b37-ef2a-4565-a797-86428be6ca9b","notes":"Spoils Allowance"},
+{"invoice":"CS003717944","date":"2026-03-30","remarks":"4310433","po":"","amt":-10.05,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3265778","check_amt":3856.06,"dispute":0,"backup_label":"Backup 4310433","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:04dab664-bddf-4da8-ba40-94e102cedbb0","notes":"Spoils Allowance"},
+{"invoice":"8196","date":"2026-04-01","remarks":"8196","po":"3604063","amt":1548.93,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"CS003722977","date":"2026-04-06","remarks":"2234498","po":"","amt":-3.51,"status":"P - Paid","dc":"ELKTON, FL","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"Backup 2234498","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:8d3e7242-4a7d-4bf5-9fe4-5d8a769d1791","notes":"Spoils Allowance"},
+{"invoice":"CS003733352","date":"2026-04-06","remarks":"1898071","po":"","amt":-20.02,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"Backup 1898071","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:ab1ced2f-48f6-47ef-ba49-608967146215","notes":"Spoils Allowance"},
+{"invoice":"ARSF27017256.0426.03","date":"2026-04-06","remarks":"ARS-JanuaryMarch2026","po":"ARS-January_March2026","amt":-35.83,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"Backup ARS-JanuaryMarch2026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQDJX0xgeoOZTKaZV-30AKGBAYm3fqclCCrorFOkhG8nBj8?e=VMmx5C","notes":"ARS FairShare standard allowance for in-store merchandising."},
+{"invoice":"ARSF27017256.0426.02","date":"2026-04-06","remarks":"ARS-JanuaryMarch2026","po":"ARS-January_March2026","amt":-36.19,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"Backup ARS-JanuaryMarch2026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQAaZ-FPhx1URrcelvVQx2_NARjwvypVlfpRASolTKZmxRI?e=wRxBFa","notes":"ARS FairShare standard allowance for in-store merchandising."},
+{"invoice":"ARSF27017256.0426.01","date":"2026-04-06","remarks":"ARS-JanuaryMarch2026","po":"ARS-January_March2026","amt":-38.05,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3267949","check_amt":1415.33,"dispute":0,"backup_label":"Backup ARS-JanuaryMarch2026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQCCqbEjosZYSrs1XlZPBBdiAfUeZcfJtoisZqGESa3p2FM?e=Vha4c4","notes":"ARS FairShare standard allowance for in-store merchandising."},
+{"invoice":"ACR1515017256.0426.01","date":"2026-04-09","remarks":"MidAtlantic2026.P01","po":"MidAtlantic2026.P01","amt":-9.12,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MidAtlantic2026.P01","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQBFuI6s82QxQqagq6n0yEt7AY0Ac6oqBwtucWDgTcFBSf8?e=ji1ZqL","notes":"Albertson/Safeway In Store Credits"},
+{"invoice":"CS003738504","date":"2026-04-13","remarks":"2178764","po":"","amt":-2.55,"status":"P - Paid","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 2178764","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:66d35507-40ae-4677-84fb-d210dcfb4efe","notes":"Spoils Allowance"},
+{"invoice":"CS003748677","date":"2026-04-13","remarks":"3502138","po":"","amt":-13.11,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 3502138","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:15c95ebf-ee34-4701-8d70-95be16c90c8b","notes":"Spoils Allowance"},
+{"invoice":"414744","date":"2026-04-19","remarks":"MCBB","po":"","amt":-22.2,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:85344fd7-2ab4-42a1-b3ec-3c1768c2dff4","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"325852","date":"2026-04-19","remarks":"MCBB","po":"","amt":-130.04,"status":"P - Paid","dc":"DOUGLASVILLE, GA","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:84e3cb95-1aa8-4ec3-974f-7945f26f78a4","notes":"New at KEHE. % Note: On this order, they charge the $65 fee."},
+{"invoice":"473937","date":"2026-04-19","remarks":"MCBB","po":"","amt":-1057.53,"status":"P - Paid","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MCBB","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:0293fa4c-e68b-4018-a882-01c145e3481d","notes":"New at KEHE. % Note: On this order, they charge the $65 fee."},
+{"invoice":"8077IA","date":"2026-04-20","remarks":"8077IA","po":"9510218","amt":806.4,"status":"A - In progress","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"CS003753789","date":"2026-04-20","remarks":"1021267","po":"","amt":-8.13,"status":"P - Paid","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 1021267","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:d4c7b385-5baf-459f-89f5-80a7f510a39a","notes":"Spoils Allowance"},
+{"invoice":"CS003763937","date":"2026-04-20","remarks":"2607247","po":"","amt":-13.71,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 2607247","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:129ba4f4-7deb-4980-a39c-977e1be53289","notes":"Spoils Allowance"},
+{"invoice":"8077IAIA","date":"2026-04-20","remarks":"8077IAIA","po":"9510218","amt":-16.13,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 8077IAIA","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:83db9b8c-7808-4c6c-b5e0-271d41d94b04","notes":"CONNECT BI ALLOWANCE"},
+{"invoice":"28522965","date":"2026-04-21","remarks":"SPOILS","po":"","amt":-8.04,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup SPOILS","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:5d91b135-1e55-4ac8-a054-50de273d48b9","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"CASTL01017256.0426.01","date":"2026-04-22","remarks":"APRIL 2026","po":"APRIL 2026","amt":-950,"status":"P - Paid","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup APRIL 2026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQC78AB-ye3XSoU3UaCToXjhARq5KDAwnRj1QVSfMntPHUg?e=ghUvLC","notes":"$475 x 2 DCs Fee to participate in New At Kehe Program"},
+{"invoice":"IAA55017256.0426.01","date":"2026-04-24","remarks":"MAR26","po":"MAR26","amt":-327.46,"status":"P - Paid","dc":"DOUGLASVILLE, GA","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MAR26","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQAxU0fcZ89lRKp1_yE4d4CJAS4q5GbQukJVzUEP229zWEI?e=mlvO9N","notes":"Allowance Rate: A 15% allowance is applied to the initial purchase order (PO) for new products introduced to any KeHE warehouse."},
+{"invoice":"IAA01017256.0426.01","date":"2026-04-24","remarks":"MAR26","po":"MAR26","amt":-327.46,"status":"P - Paid","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup MAR26","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:7ec13e16-9b4e-474e-96fd-41f2ce57e9a9","notes":"Allowance Rate: A 15% allowance is applied to the initial purchase order (PO) for new products introduced to any KeHE warehouse."},
+{"invoice":"CS003779265","date":"2026-04-27","remarks":"8057647","po":"","amt":-14.78,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup 8057647","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:2caaa2b7-57ed-4c83-a436-5532258e4442","notes":"Spoils Allowance"},
+{"invoice":"LDF15017256.0426.01","date":"2026-04-27","remarks":"Q12026","po":"Q12026","amt":-250,"status":"A - In progress","dc":"BREINIGSVILLE, PA","check_num":"","check_amt":0,"dispute":250,"backup_label":"Backup Q12026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQDEwesmAkGLRrNQFzQqMuuhAbczmInr2YlLRIw_-0r3Oig?e=QOPy2O","notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8122"},
+{"invoice":"LDF55017256.0426.01","date":"2026-04-27","remarks":"Q12026","po":"Q12026","amt":-250,"status":"A - In progress","dc":"DOUGLASVILLE, GA","check_num":"","check_amt":0,"dispute":250,"backup_label":"Backup Q12026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQD9Y8RXk6GGQ65T58nyCrbUAbCxy2QXhkzOfhiAaLneMSA?e=ZNgjjC","notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8136"},
+{"invoice":"LDF01017256.0426.01","date":"2026-04-27","remarks":"Q12026","po":"Q12026","amt":-250,"status":"A - In progress","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":250,"backup_label":"Backup Q12026","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQAI67TJ704mSrKh5AMUgWpDAS70lX3q1PiNkO6b-NEli24?e=rk7sDH","notes":"$250 Deduction. This is a disputable deduction in progress. KeHE deduction for late warehouse arrival ON INVOICE 8150"},
+{"invoice":"8259","date":"2026-04-28","remarks":"8259","po":"3652356","amt":652.92,"status":"A - In progress","dc":"ELKTON, FL","check_num":"","check_amt":0,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"RP8126","date":"2026-04-28","remarks":"BAL DUE 4792782 UDR 2","po":"3548578","amt":395.14,"status":"A - In progress","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"","backup_url":"","notes":"Deposit Payment"},
+{"invoice":"28559085","date":"2026-04-28","remarks":"SPOILS","po":"","amt":-8.04,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup SPOILS","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:fc61029a-0199-4108-951d-3f337fc3fada","notes":"MCB 10% Note: On this order, they did not charge the $65 fee."},
+{"invoice":"AMPE02019589.0426.01","date":"2026-04-29","remarks":"AMP2026P01","po":"AMP2026P01","amt":-37.84,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"","check_amt":0,"dispute":0,"backup_label":"Backup AMP2026P01","backup_url":"https://1drv.ms/x/c/6025a8df181803ff/IQBhhxs6QIOhTajiM05Uh4efAeouhJInVXwHYS1LwjQ8SiE?e=uRUm49","notes":"Albertsons Merchandising Program"},
+{"invoice":"CS003625065","date":"","remarks":"557424","po":"","amt":-8,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":0,"dispute":0,"backup_label":"Backup 557424","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:e5526cee-e8fb-49d8-a9a4-66d361ad2f60","notes":"Spoils Allowance"}
 ];
 
-function render(fData) {
-    const body = document.getElementById('bRow');
-    body.innerHTML = '';
-    let cred = 0, ded = 0, disp = 0;
+let sortKey = 'date', sortDir = 'asc', statusFilter = 'all';
 
-    fData.forEach(r => {
-        const tr = document.createElement('tr');
-        const a = parseFloat(r.amt) || 0;
-        const d = parseFloat(r.ds) || 0;
-        
-        if (a > 0) cred += a; else ded += a;
-        disp += d;
+const e = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const $d = (v, plus=false) => {
+  const abs = Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if (!plus) return (v < 0 ? '-' : '') + '$' + abs;
+  return (v >= 0 ? '+$' : '-$') + abs;
+};
+const fmtDate = d => {
+  if (!d) return '';
+  const [y,m,dy] = d.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1] + ' ' + parseInt(dy) + ', ' + y;
+};
+const dcCls = dc => dc.includes('MD')?'dc-md':dc.includes('PA')?'dc-pa':dc.includes('GA')?'dc-ga':'dc-fl';
+const dcShort = dc => ({'NORTH EAST, MD':'NE · MD','BREINIGSVILLE, PA':'PA · PA','DOUGLASVILLE, GA':'GA · GA','ELKTON, FL':'FL · FL'}[dc]||dc);
 
-        const linkHtml = r.lnk ? `<a href="${r.lnk}" target="_blank" class="link-btn">View Backup</a>` : '';
-
-        tr.innerHTML = `
-            <td>${r.inv}</td>
-            <td>${r.dt}</td>
-            <td>${r.rem}</td>
-            <td>${r.po}</td>
-            <td class="${a > 0 ? 'pos' : 'neg'}">$${Math.abs(a).toFixed(2)}</td>
-            <td>${r.st}</td>
-            <td>${r.dc}</td>
-            <td>${r.ch}</td>
-            <td class="dispute-cell">${d > 0 ? '$' + d.toFixed(2) : ''}</td>
-            <td>${linkHtml}</td>
-            <td class="col-notes">${r.nt}</td>
-        `;
-        body.appendChild(tr);
-    });
-
-    const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Math.abs(n));
-    document.getElementById('stat-total').innerText = rawData.length;
-    document.getElementById('stat-credits').innerText = fmt(cred);
-    document.getElementById('stat-deductions').innerText = "(" + fmt(ded) + ")";
-    document.getElementById('stat-disputed').innerText = fmt(disp);
-    document.getElementById('stat-visible').innerText = fData.length;
+function hl(text, q) {
+  if (!q || q.length < 1) return e(text);
+  return e(text).replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark>$1</mark>');
 }
 
-window.onload = () => {
-    render(rawData);
-    document.getElementById('globalSearch').addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase();
-        render(rawData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))));
-    });
+function getColFilters() {
+  return {
+    invoice: document.getElementById('f-invoice').value.trim().toLowerCase(),
+    date:    document.getElementById('f-date').value.trim().toLowerCase(),
+    remarks: document.getElementById('f-remarks').value.trim().toLowerCase(),
+    po:      document.getElementById('f-po').value.trim().toLowerCase(),
+    dc:      document.getElementById('f-dc').value,
+    amt:     document.getElementById('f-amt').value.trim().toLowerCase(),
+    status:  document.getElementById('f-status').value,
+    dispute: document.getElementById('f-dispute').value.trim().toLowerCase(),
+    check_num: document.getElementById('f-check_num').value.trim().toLowerCase(),
+    check_amt: document.getElementById('f-check_amt').value.trim().toLowerCase(),
+    backup:  document.getElementById('f-backup').value.trim().toLowerCase(),
+    notes:   document.getElementById('f-notes').value.trim().toLowerCase(),
+  };
+}
+
+function getFiltered() {
+  const cf = getColFilters();
+  return DATA.filter(r => {
+    if (statusFilter === 'dispute' && r.dispute <= 0) return false;
+    if (statusFilter === 'P - Paid' && (r.amt > 0 || r.status !== 'P - Paid')) return false;
+    if (statusFilter === 'A - In progress' && (r.amt > 0 || r.status !== 'A - In progress')) return false;
+
+    if (cf.invoice && !r.invoice.toLowerCase().includes(cf.invoice)) return false;
+    if (cf.date && !fmtDate(r.date).toLowerCase().includes(cf.date) && !r.date.includes(cf.date)) return false;
+    if (cf.remarks && !r.remarks.toLowerCase().includes(cf.remarks)) return false;
+    if (cf.po && !r.po.toLowerCase().includes(cf.po)) return false;
+    if (cf.dc && r.dc !== cf.dc) return false;
+    if (cf.amt && !$d(r.amt).includes(cf.amt) && !String(r.amt).includes(cf.amt)) return false;
+    if (cf.status === 'credit' && r.amt <= 0) return false;
+    if (cf.status === 'P - Paid' && (r.amt > 0 || r.status !== 'P - Paid')) return false;
+    if (cf.status === 'A - In progress' && (r.amt > 0 || r.status !== 'A - In progress')) return false;
+    if (cf.dispute && !String(r.dispute).includes(cf.dispute) && !(r.dispute > 0 ? $d(r.dispute) : '').includes(cf.dispute)) return false;
+    if (cf.check_num && !r.check_num.toLowerCase().includes(cf.check_num)) return false;
+    if (cf.check_amt && !String(r.check_amt).includes(cf.check_amt)) return false;
+    if (cf.backup && !r.backup_label.toLowerCase().includes(cf.backup)) return false;
+    if (cf.notes && !r.notes.toLowerCase().includes(cf.notes)) return false;
+    return true;
+  });
+}
+
+function getSorted(arr) {
+  return [...arr].sort((a, b) => {
+    let av = a[sortKey] ?? '', bv = b[sortKey] ?? '';
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+function render() {
+  const cf = getColFilters();
+  const rows = getSorted(getFiltered());
+  const total = DATA.length;
+
+  document.getElementById('visCount').textContent = rows.length;
+  document.getElementById('recCount').textContent = rows.length + ' of ' + total + ' records';
+
+  const creds = rows.filter(r => r.amt > 0);
+  const debs  = rows.filter(r => r.amt < 0);
+  const disps = rows.filter(r => r.dispute > 0);
+  const net   = rows.reduce((s, r) => s + r.amt, 0);
+
+  document.getElementById('sCredits').textContent = '+$' + creds.reduce((s,r)=>s+r.amt,0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sCreditsN').textContent = creds.length + ' transaction' + (creds.length!==1?'s':'');
+  document.getElementById('sDebits').textContent = '-$' + Math.abs(debs.reduce((s,r)=>s+r.amt,0)).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sDebitsN').textContent = debs.length + ' transaction' + (debs.length!==1?'s':'');
+  document.getElementById('sDisp').textContent = '$' + disps.reduce((s,r)=>s+r.dispute,0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sDispN').textContent = disps.length + ' item' + (disps.length!==1?'s':'') + ' flagged';
+  document.getElementById('sNet').textContent = $d(net, true);
+  document.getElementById('sNetN').textContent = rows.length + ' visible row' + (rows.length!==1?'s':'');
+
+  const totAmt   = rows.reduce((s,r)=>s+r.amt,0);
+  const totDisp  = rows.reduce((s,r)=>s+r.dispute,0);
+  const fAmt = document.getElementById('fAmt');
+  fAmt.textContent = $d(totAmt, true);
+  fAmt.className = 'r ' + (totAmt >= 0 ? 'amt-pos' : 'amt-neg');
+  document.getElementById('fDisp').textContent  = totDisp  > 0 ? '$'+totDisp.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})  : '—';
+  
+  const tbody = document.getElementById('tBody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="12">No records match your filters.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => {
+    const isCr = r.amt > 0;
+    const isDi = r.dispute > 0;
+    const rowCls = isDi ? 'row-dispute' : '';
+    const statusHtml = r.amt > 0
+      ? `<span class="badge badge-credit"><span class="badge-dot"></span>Payment / Credit</span>`
+      : r.status === 'P - Paid'
+        ? `<span class="badge badge-cleared"><span class="badge-dot"></span>Deduction Cleared</span>`
+        : `<span class="badge badge-inprog"><span class="badge-dot"></span>In Progress</span>`;
+
+    const dispHtml = r.dispute > 0
+      ? `<span class="disp-badge">⟳ $${r.dispute.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>`
+      : `<span class="amt-zero">—</span>`;
+
+    const backupHtml = r.backup_url
+      ? `<a class="dl-link" href="${e(r.backup_url)}" download target="_blank" rel="noopener noreferrer">
+           <svg class="dl-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8M5 7l3 3 3-3M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+           ${hl(r.backup_label.replace('Backup ',''), cf.backup)}
+         </a>`
+      : `<span style="color:#d1d5db">—</span>`;
+
+    const checkNumHtml = r.check_num
+      ? `<span class="mono">${hl(r.check_num, cf.check_num)}</span>`
+      : `<span class="amt-zero">—</span>`;
+
+    const checkAmtHtml = r.check_amt > 0
+      ? `<span class="mono">${$d(r.check_amt)}</span>`
+      : `<span class="amt-zero">—</span>`;
+
+    return `<tr class="${rowCls}">
+      <td class="mid"><span class="cell-invoice">${hl(r.invoice, cf.invoice)}</span></td>
+      <td class="mid"><span class="cell-date">${fmtDate(r.date)||'—'}</span></td>
+      <td class="mid"><span class="cell-remarks">${hl(r.remarks, cf.remarks)}</span></td>
+      <td class="mid"><span class="cell-po">${r.po ? hl(r.po, cf.po) : '<span style="color:#d1d5db">—</span>'}</span></td>
+      <td class="mid"><span class="dc-chip ${dcCls(r.dc)}">${e(dcShort(r.dc))}</span></td>
+      <td class="r mid"><span class="${isCr?'amt-pos':'amt-neg'}">${$d(r.amt, true)}</span></td>
+      <td class="mid">${statusHtml}</td>
+      <td class="r mid">${dispHtml}</td>
+      <td class="mid">${checkNumHtml}</td>
+      <td class="r mid">${checkAmtHtml}</td>
+      <td class="mid">${backupHtml}</td>
+      <td><div class="cell-notes">${hl(r.notes, cf.notes)}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function doSort(key) {
+  if (sortKey === key) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+  else { sortKey = key; sortDir = 'asc'; }
+
+  const keys = ['invoice','date','remarks','po','dc','amt','status','dispute','check_num','check_amt','notes'];
+  keys.forEach(k => {
+    const th = document.getElementById('th-'+k);
+    const sa = document.getElementById('sa-'+k);
+    if (th) th.classList.remove('active');
+    if (sa) sa.textContent = '↕';
+  });
+  const activeTh = document.getElementById('th-'+key);
+  const activeSa = document.getElementById('sa-'+key);
+  if (activeTh) activeTh.classList.add('active');
+  if (activeSa) activeSa.textContent = sortDir === 'asc' ? '↑' : '↓';
+  render();
+}
+
+const restingClass = {
+  'all':            'pill-btn active-all',
+  'credit':         'pill-btn pill-credit',
+  'P - Paid':       'pill-btn pill-cleared',
+  'A - In progress':'pill-btn pill-inprog',
+  'dispute':        'pill-btn pill-dispute'
 };
+const activeClass = {
+  'all':            'pill-btn active-all',
+  'credit':         'pill-btn pill-credit active-credit',
+  'P - Paid':       'pill-btn pill-cleared active-cleared',
+  'A - In progress':'pill-btn pill-inprog active-inprog',
+  'dispute':        'pill-btn pill-dispute active-dispute'
+};
+
+function applyChipStates(selected) {
+  document.querySelectorAll('[data-s]').forEach(b => {
+    const s = b.dataset.s;
+    b.className = (s === selected) ? (activeClass[s] || 'pill-btn') : (restingClass[s] || 'pill-btn');
+  });
+}
+
+document.querySelectorAll('[data-s]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    statusFilter = btn.dataset.s;
+    applyChipStates(statusFilter);
+    const syncVal = (statusFilter === 'all' || statusFilter === 'dispute') ? '' : statusFilter;
+    document.getElementById('f-status').value = syncVal;
+    render();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  ['f-invoice','f-date','f-remarks','f-po','f-amt','f-dispute','f-check_num','f-check_amt','f-backup','f-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-dc').value = '';
+  document.getElementById('f-status').value = '';
+  statusFilter = 'all';
+  applyChipStates('all');
+  render();
+});
+
+document.getElementById('hdrDate').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+doSort('date');
+applyChipStates('all');
 </script>
 </body>
 </html>
-
