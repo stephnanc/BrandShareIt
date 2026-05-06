@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle — Monthly Sales Dashboard · April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --white: #ffffff; --off-white: #f8f8f6; --ink: #111111; --ink-soft: #3a3a3a;
+    --ink-muted: #777777; --rule: #e8e8e5; --accent: #1a3d26; --accent-mid: #2e6b42;
+    --accent-light: #f0f5f1; --gold: #9a6f2e; --positive: #2e6b42;
+    --negative: #dc2626; --warning: #d97706;
+  }
+  body { font-family: 'Outfit', sans-serif; background: var(--off-white); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .dashboard-header { background: var(--ink); padding: 48px 48px 40px; position: relative; overflow: hidden; }
+  .dashboard-header::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 100% 50%, rgba(46,107,66,0.25) 0%, transparent 70%); pointer-events: none; }
+  .header-inner { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px; }
+  .header-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: #8aab93; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .header-eyebrow::after { content: ''; display: block; width: 32px; height: 1px; background: #8aab93; }
+  .dashboard-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #ffffff; line-height: 1.05; margin-bottom: 8px; }
+  .dashboard-header h1 em { font-style: italic; color: #a8c9b0; }
+  .header-sub { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.45); }
+  .kpi-strip { display: flex; gap: 1px; background: rgba(255,255,255,0.06); }
+  .kpi-cell { background: rgba(255,255,255,0.04); padding: 14px 18px; text-align: center; min-width: 100px; }
+  .kpi-cell-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 5px; }
+  .kpi-cell-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #a8c9b0; line-height: 1; }
+  .tabs-wrap { background: var(--white); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 50; }
+  .tabs-inner { max-width: 1400px; margin: 0 auto; display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn { flex-shrink: 0; padding: 15px 22px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 11px; font-weight: 600; font-family: 'Outfit', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 0.15s, border-color 0.15s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--accent-mid); }
+  .tab-btn.active { color: var(--accent-mid); border-bottom-color: var(--accent-mid); }
+  .container { max-width: 1400px; margin: 0 auto; padding: 28px 48px 80px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .section-card { background: var(--white); border: 1px solid var(--rule); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+  .section-toggle { width: 100%; background: none; border: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; cursor: pointer; text-align: left; transition: background 0.15s; }
+  .section-toggle:hover { background: var(--off-white); }
+  .section-toggle-left { display: flex; align-items: center; gap: 14px; }
+  .section-num { font-family: 'Playfair Display', serif; font-size: 13px; font-style: italic; color: var(--accent-mid); min-width: 24px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 400; color: var(--ink); }
+  .section-arrow { width: 26px; height: 26px; border: 1px solid var(--rule); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+  .section-toggle:hover .section-arrow { border-color: var(--accent-mid); background: var(--accent-light); }
+  .section-arrow svg { width: 10px; height: 10px; stroke: var(--ink-muted); stroke-width: 2; fill: none; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .section-card.open .section-arrow svg { transform: rotate(180deg); }
+  .section-body { display: none; border-top: 1px solid var(--rule); }
+  .section-card.open .section-body { display: block; }
+  .orders-table { width: 100%; border-collapse: collapse; }
+  .orders-table thead { background: var(--off-white); }
+  .orders-table th { padding: 9px 14px; text-align: left; font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  .orders-table td { padding: 11px 14px; border-bottom: 1px solid var(--rule); font-size: 12.5px; font-weight: 300; color: var(--ink-soft); vertical-align: top; }
+  .orders-table tbody tr:last-child td { border-bottom: none; }
+  .orders-table tbody tr:hover td { background: var(--accent-light); }
+  .order-details { line-height: 1.55; color: var(--ink-muted); font-size: 12px; }
+  .order-total { font-weight: 600; color: var(--positive); }
+  .order-cases { font-weight: 600; color: var(--gold); }
+  .empty-state { padding: 40px 24px; text-align: center; color: var(--ink-muted); }
+  .empty-state-icon { display: none; }
+  .empty-state-text { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .empty-state-subtext { font-size: 12px; color: #bbbbbb; }
+  .order-summary { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .order-summary h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 18px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .summary-card { background: var(--white); padding: 18px; position: relative; overflow: hidden; transition: background 0.15s; }
+  .summary-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent-mid); opacity: 0; transition: opacity 0.15s; }
+  .summary-card:hover::before { opacity: 1; }
+  .summary-card:hover { background: var(--accent-light); }
+  .grand-total-card { background: var(--ink); }
+  .grand-total-card::before { background: #a8c9b0; opacity: 1; }
+  .grand-total-card:hover { background: #1a1a1a; }
+  .summary-card-title { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .grand-total-card .summary-card-title { color: #8aab93; border-bottom-color: rgba(255,255,255,0.08); }
+  .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; }
+  .summary-label { font-size: 12px; font-weight: 300; color: var(--ink-muted); }
+  .grand-total-card .summary-label { color: rgba(255,255,255,0.4); }
+  .summary-value { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .summary-value.sales { color: var(--positive); }
+  .grand-total-card .summary-value { font-family: 'Playfair Display', serif; font-size: 18px; color: #a8c9b0; }
+  .no-track { font-size: 10px; color: #bbbbbb; font-style: italic; margin-top: 5px; text-align: right; }
+  .dash-footer { border-top: 1px solid var(--rule); padding: 22px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: var(--white); margin-top: 20px; }
+  .footer-brand { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted); }
+  .footer-link { font-size: 11px; color: var(--accent-mid); text-decoration: none; }
+  @media (max-width: 768px) { .dashboard-header { padding: 36px 20px 28px; } .container { padding: 18px 18px 60px; } .dash-footer { padding: 18px; flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="dashboard-header">
+  <div class="header-inner">
+    <div>
+      <p class="header-eyebrow">Monthly Sales Dashboard · April 2026</p>
+      <h1>Swoffle<br><em>Sales Report.</em></h1>
+      <p class="header-sub">April 1 – April 30, 2026 &nbsp;·&nbsp; Prepared by Stephen Nance</p>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi-cell"><div class="kpi-cell-label">Total Orders</div><div class="kpi-cell-value" id="totalOrders">0</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-label">Total Cases</div><div class="kpi-cell-value" id="totalCases">0</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-label">Total Sales</div><div class="kpi-cell-value" id="totalSales">$0.00</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab(0)">Direct Orders</button>
+    <button class="tab-btn" onclick="switchTab(1)">Admin Reporting</button>
+    <button class="tab-btn" onclick="switchTab(2)">Distributor Prospects</button>
+    <button class="tab-btn" onclick="switchTab(3)">New Business Development</button>
+  </div>
+</div>
+
+<div class="container">
+<!-- TAB 0: DIRECT ORDERS -->
+<div class="tab-content active" id="tab-0">
+
+  <!-- 01 Distributor Direct -->
+  <div class="section-card" id="card-dist"><button class="section-toggle" onclick="toggleSection('card-dist')"><div class="section-toggle-left"><span class="section-num">01</span><span class="section-title">Distributor Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="distributor-orders">
+  <tr><td>Apr 6, 2026</td><td>Atlantic Beverage Distributors</td><td>Holliston, MA</td><td class="order-details">24 Chocolate Caramel 12-Pack Tray Cases<br>32 Caramel 12-Pack Tray Cases<br>1 Caramel 8-Pack 4-CT Case<br>32 Dark Chocolate Dipped 12-Pack Tray Cases<br>24 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">113</td><td class="order-total">$1,685.12</td></tr>
+  <tr><td>Apr 6, 2026</td><td>Snacktree International</td><td>Newark, NJ</td><td class="order-details">16 Chocolate Caramel 12-Pack Tray Cases<br>48 Caramel 12-Pack Tray Cases<br>40 Dark Chocolate Dipped 12-Pack Tray Cases<br>40 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">144</td><td class="order-total">$2,121.60</td></tr>
+  <tr><td>Apr 10, 2026</td><td>UNFI Aurora DC</td><td>Aurora, CO</td><td class="order-details">16 Caramel 12-Pack Tray Cases<br>40 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">56</td><td class="order-total">$1,012.80</td></tr>
+  <tr><td>Apr 10, 2026</td><td>UNFI Rocklin DC</td><td>Rocklin, CA</td><td class="order-details">48 Dark Chocolate Dipped 12-Pack Tray Cases<br>64 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">112</td><td class="order-total">$1,779.84</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Fortune Fish &amp; Gourmet</td><td>Bensenville, IL</td><td class="order-details">152 Caramel 12-Pack Tray Cases</td><td class="order-cases">152</td><td class="order-total">$1,915.20</td></tr>
+  <tr><td>Apr 13, 2026</td><td>Paramount Foods</td><td>Bayonne, NJ</td><td class="order-details">80 Caramel 8-Pack 4-CT Cases<br>40 French Vanilla 8-Pack 4-CT Cases</td><td class="order-cases">120</td><td class="order-total">$3,552.00</td></tr>
+  <tr><td>Apr 16, 2026</td><td>UNFI Greenwood DC</td><td>Greenwood, IN</td><td class="order-details">32 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">32</td><td class="order-total">$403.20</td></tr>
+  <tr><td>Apr 16, 2026</td><td>UNFI Moreno Valley DC</td><td>Riverside, CA</td><td class="order-details">32 Caramel 12-Pack Tray Cases<br>8 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">40</td><td class="order-total">$565.44</td></tr>
+  <tr><td>Apr 16, 2026</td><td>UNFI Ridgefield DC</td><td>Ridgefield, WA</td><td class="order-details">80 Caramel 12-Pack Tray Cases<br>23 Caramel 8-Pack 4-CT Cases<br>10 Dark Chocolate Dipped 8-Pack 4-CT Cases<br>88 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">201</td><td class="order-total">$3,950.72</td></tr>
+  <tr><td>Apr 16, 2026</td><td>UNFI Aurora DC</td><td>Aurora, CO</td><td class="order-details">56 Caramel 12-Pack Tray Cases<br>96 Dark Chocolate Dipped 12-Pack Tray Cases<br>24 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">176</td><td class="order-total">$2,954.88</td></tr>
+  <tr><td>Apr 16, 2026</td><td>UNFI Carlisle DC</td><td>Carlisle, PA</td><td class="order-details">160 Caramel 12-Pack Tray Cases<br>160 Dark Chocolate Dipped 12-Pack Tray Cases<br>160 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">480</td><td class="order-total">$7,284.80</td></tr>
+  <tr><td>Apr 17, 2026</td><td>KeHE Distributors &mdash; Florida</td><td>Elkton, FL</td><td class="order-details">64 Caramel 12-Pack Tray Cases<br>64 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">128</td><td class="order-total">$1,612.80</td></tr>
+  <tr><td>Apr 27, 2026</td><td>Quality Foods Distributing</td><td>Bozeman, MT</td><td class="order-details">24 Chocolate Caramel 12-Pack Tray Cases<br>80 Caramel 12-Pack Tray Cases<br>24 Dark Chocolate Dipped 12-Pack Tray Cases<br>64 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">192</td><td class="order-total">$2,213.04</td></tr>
+  <tr><td>Apr 24, 2026</td><td>UNFI Moreno Valley DC</td><td>Riverside, CA</td><td class="order-details">16 Caramel 12-Pack Tray Cases</td><td class="order-cases">16</td><td class="order-total">$201.60</td></tr>
+  <tr><td>Apr 24, 2026</td><td>Gartland Distributors</td><td>North Berwick, ME</td><td class="order-details">24 Caramel 12-Pack Tray Cases<br>24 Dark Chocolate Dipped 12-Pack Tray Cases<br>24 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">72</td><td class="order-total">$1,091.52</td></tr>
+  <tr><td>Apr 23, 2026</td><td>UNFI Rocklin DC</td><td>Rocklin, CA</td><td class="order-details">56 Caramel 12-Pack Tray Cases<br>56 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">112</td><td class="order-total">$1,841.28</td></tr>
+  <tr><td>Apr 23, 2026</td><td>UNFI Aurora DC</td><td>Aurora, CO</td><td class="order-details">72 Caramel 12-Pack Tray Cases<br>56 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">128</td><td class="order-total">$1,612.80</td></tr>
+  <tr><td>Apr 23, 2026</td><td>Boston Bean Company</td><td>Woburn, MA</td><td class="order-details">64 Chocolate Caramel 12-Pack Tray Cases<br>64 Caramel 12-Pack Tray Cases<br>32 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">160</td><td class="order-total">$2,016.00</td></tr>
+  <tr><td>Apr 22, 2026</td><td>Northeast Specialty Foods</td><td>Sanford, ME</td><td class="order-details">24 Caramel 12-Pack Tray Cases<br>8 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">32</td><td class="order-total">$403.20</td></tr>
+  <tr><td>Apr 21, 2026</td><td>KeHE Distributors FL-DC</td><td>Elkton, FL</td><td class="order-details">24 Caramel 12-Pack Tray Cases<br>8 Dark Chocolate Dipped 12-Pack Tray Cases<br>16 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">48</td><td class="order-total">$666.24</td></tr>
+  <tr><td>Apr 21, 2026</td><td>Rainforest Distribution &mdash; Frederick DC</td><td>Frederick, MD</td><td class="order-details">80 French Vanilla 12-Pack Tray Cases<br>80 Caramel 12-Pack Tray Cases<br>10 Caramel 8-Pack 4-CT Cases<br>50 Dark Chocolate Dipped 8-Pack 4-CT Cases</td><td class="order-cases">220</td><td class="order-total">$3,571.20</td></tr>
+  <tr><td>Apr 27, 2026</td><td>Atlantic Beverage Distributors</td><td>Holliston, MA</td><td class="order-details">40 Chocolate Caramel 12-Pack Tray Cases<br>40 Caramel 12-Pack Tray Cases<br>8 Dark Chocolate Dipped 12-Pack Tray Cases<br>8 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">96</td><td class="order-total">$1,271.04</td></tr>
+  <tr><td>Apr 30, 2026</td><td>UNFI Ridgefield DC</td><td>Ridgefield, WA</td><td class="order-details">23 French Vanilla 8-Pack 4-CT Cases<br>64 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">87</td><td class="order-total">$1,454.08</td></tr>
+  <tr><td>Apr 30, 2026</td><td>KeHE Distributors &mdash; Lehigh Valley DC</td><td>Breinigsville, PA</td><td class="order-details">72 Caramel 12-Pack Tray Cases</td><td class="order-cases">72</td><td class="order-total">$907.20</td></tr>
+  <tr><td>Apr 29, 2026</td><td>KeHE &mdash; Maryland DC</td><td>North East, MD</td><td class="order-details">64 Caramel 12-Pack Tray Cases<br>64 Dark Chocolate Dipped 12-Pack Tray Cases<br>64 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">192</td><td class="order-total">$2,912.72</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 02 Independent Direct -->
+  <div class="section-card" id="card-ind"><button class="section-toggle" onclick="toggleSection('card-ind')"><div class="section-toggle-left"><span class="section-num">02</span><span class="section-title">Independent Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="independent-orders">
+  <tr><td>Apr 2, 2026</td><td>Roots to Rise</td><td>Waltham, MA</td><td class="order-details">8 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$162.24</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 03 Duo Sales -->
+  <div class="section-card" id="card-duo"><button class="section-toggle" onclick="toggleSection('card-duo')"><div class="section-toggle-left"><span class="section-num">03</span><span class="section-title">Duo Sales Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="duo-sales-orders">
+  <tr><td>Apr 7, 2026</td><td>Neversink General Store</td><td>Neversink, NY</td><td class="order-details">1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$112.92</td></tr>
+  <tr><td>Apr 10, 2026</td><td>The Butcher's Market</td><td>Raleigh, NC</td><td class="order-details">3 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$132.84</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Rainbow's End Natural Foods</td><td>Hamilton, MT</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Hy-Vee Fort Dodge</td><td>Fort Dodge, IA</td><td class="order-details">3 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$102.96</td></tr>
+  <tr><td>Apr 16, 2026</td><td>Arcadia Provisions</td><td>Ellsworth, ME</td><td class="order-details">1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">5</td><td class="order-total">$112.92</td></tr>
+  <tr><td>Apr 17, 2026</td><td>Creekside Country Market</td><td>Fairmont, WV</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 24, 2026</td><td>Mike's Market</td><td>Lava Hot Springs, ID</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 22, 2026</td><td>New Harvester Market</td><td>Henniker, NH</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$157.20</td></tr>
+  <tr><td>Apr 22, 2026</td><td>Franconia Market and Deli</td><td>Franconia, NH</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 04 Good Food Services -->
+  <div class="section-card" id="card-gfs"><button class="section-toggle" onclick="toggleSection('card-gfs')"><div class="section-toggle-left"><span class="section-num">04</span><span class="section-title">The Good Food Services Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="good-food-orders">
+  <tr><td>Apr 7, 2026</td><td>BC Foods LLC</td><td>Durham, NC</td><td class="order-details">3 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$102.96</td></tr>
+  <tr><td>Apr 7, 2026</td><td>Pisgah Inn</td><td>Waynesville, NC</td><td class="order-details">2 French Vanilla 12-Pack Tray Cases<br>3 Chocolate Caramel 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$123.52</td></tr>
+  <tr><td>Apr 30, 2026</td><td>Charleston Tea Garden</td><td>Wadmalaw Island, SC</td><td class="order-details">12 Caramel 12-Pack Tray Cases</td><td class="order-cases">12</td><td class="order-total">$205.92</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 05 Lisa Baines -->
+  <div class="section-card" id="card-lisa"><button class="section-toggle" onclick="toggleSection('card-lisa')"><div class="section-toggle-left"><span class="section-num">05</span><span class="section-title">Lisa Baines — Sales Rep</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="lisa-baines-orders">
+  <tr><td>Apr 30, 2026</td><td>Thorp Fruit and Antique Mall</td><td>Thorp, WA</td><td class="order-details">16 French Vanilla 12-Pack Tray Cases<br>16 Chocolate Caramel 12-Pack Tray Cases<br>16 Caramel 12-Pack Tray Cases</td><td class="order-cases">48</td><td class="order-total">$741.30</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 06 Valley Food Specialties -->
+  <div class="section-card" id="card-valley"><button class="section-toggle" onclick="toggleSection('card-valley')"><div class="section-toggle-left"><span class="section-num">06</span><span class="section-title">Valley Food Specialties Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="valley-orders">
+  <tr><td colspan="6"><div class="empty-state"><div class="empty-state-text">No orders recorded yet</div><div class="empty-state-subtext">Valley Food Specialties orders will appear here</div></div></td></tr>
+  </tbody></table></div></div>
+  <!-- 07 HALA Direct -->
+  <div class="section-card" id="card-hala-direct"><button class="section-toggle" onclick="toggleSection('card-hala-direct')"><div class="section-toggle-left"><span class="section-num">07</span><span class="section-title">HALA Direct Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="hala-direct-orders">
+  <tr><td>Apr 1, 2026</td><td>Alaskan and Proud Market</td><td>Ketchikan, AK</td><td class="order-details">6 Chocolate Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$102.96</td></tr>
+  <tr><td>Apr 7, 2026</td><td>Health by Choice</td><td>New Enterprise, PA</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>2 Chocolate Caramel 12-Pack Tray Cases<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 7, 2026</td><td>Nature's Food Patch</td><td>Dunedin, FL</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$157.20</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Abundant Living</td><td>Cleveland, TN</td><td class="order-details">1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$56.46</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Columbia Health Foods</td><td>&mdash;</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$61.44</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Moonflower Community Co-op</td><td>Moab, UT</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$157.20</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Foods of All Nations</td><td>Charlottesville, VA</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 9, 2026</td><td>City Market</td><td>Detroit, MI</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>2 Chocolate Caramel 12-Pack Tray Cases<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$122.88</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Wilkes Meat Market</td><td>Allgood, GA</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$157.20</td></tr>
+  <tr><td>Apr 22, 2026</td><td>Ocean City Organics</td><td>Ocean City, MD</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$157.20</td></tr>
+  <tr><td>Apr 28, 2026</td><td>Morton's Gourmet Market</td><td>Sarasota, FL</td><td class="order-details">3 French Vanilla 12-Pack Tray Cases<br>3 Chocolate Caramel 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">9</td><td class="order-total">$154.44</td></tr>
+  <tr><td>Apr 30, 2026</td><td>Wilkes Meat Market</td><td>Ball Ground, GA</td><td class="order-details">1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$112.92</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 08 HALA Indirect Turnover -->
+  <div class="section-card" id="card-hala-indirect"><button class="section-toggle" onclick="toggleSection('card-hala-indirect')"><div class="section-toggle-left"><span class="section-num">08</span><span class="section-title">HALA Indirect Turnover Orders</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th></tr></thead>
+  <tbody id="hala-indirect-orders">
+  <tr><td>Apr 13, 2026</td><td>NouVaux Market</td><td>Philadelphia, PA</td><td class="order-details">3 Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>3 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">9</td></tr>
+  <tr><td>Apr 13, 2026</td><td>Nature's Corner Market</td><td>Woodstock, GA</td><td class="order-details">1 French Vanilla 12-Pack Tray Case (New at KeHE)</td><td class="order-cases">1</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Harmony Farms Natural Foods</td><td>Raleigh, NC</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">2</td></tr>
+  <tr><td>Apr 10, 2026</td><td>Brighter Day Natural Market</td><td>Savannah, GA</td><td class="order-details">1 Caramel 12-Pack Tray Case (KeHE)<br>1 French Vanilla 12-Pack Tray Case (KeHE)<br>1 Dark Chocolate Dipped 12-Pack Tray Case (KeHE)</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Wild Roots Market</td><td>Boulder Creek, CA</td><td class="order-details">3 Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>3 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">9</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Love Whole Foods</td><td>Ormond Beach, FL</td><td class="order-details">6 Caramel 12-Pack Tray Cases (New at KeHE)<br>6 French Vanilla 12-Pack Tray Cases (New at KeHE)<br>6 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">18</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Love Whole Foods</td><td>Orange Park, FL</td><td class="order-details">6 Caramel 12-Pack Tray Cases (New at KeHE)<br>6 French Vanilla 12-Pack Tray Cases (New at KeHE)<br>6 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">18</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Bee Hive Health Foods</td><td>Miami, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case (New at KeHE)<br>1 French Vanilla 12-Pack Tray Case (New at KeHE)<br>1 Dark Chocolate Dipped 12-Pack Tray Case (New at KeHE)</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 9, 2026</td><td>Healthy Habits</td><td>Winter Haven, FL</td><td class="order-details">1 Dark Chocolate Dipped 12-Pack Tray Case (New at KeHE)<br>2 Caramel 12-Pack Tray Cases (New at KeHE)<br>2 French Vanilla 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">5</td></tr>
+  <tr><td>Apr 9, 2026</td><td>The Healthy Food Store</td><td>Florence, SC</td><td class="order-details">2 Caramel 12-Pack Tray Cases (New at KeHE)<br>2 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">4</td></tr>
+  <tr><td>Apr 8, 2026</td><td>Co-op Food Store</td><td>Lebanon, NH</td><td class="order-details">2 Caramel 12-Pack Tray Cases (New at KeHE)<br>2 French Vanilla 12-Pack Tray Cases (New at KeHE)<br>2 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 8, 2026</td><td>Nature's Temptations</td><td>Ridgefield, CT</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 2, 2026</td><td>David's Natural Market</td><td>Gambrills, MD</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Willimantic Food Co-op</td><td>Willimantic, CT</td><td class="order-details">1 Caramel 12-Pack Tray Case</td><td class="order-cases">1</td></tr>
+  <tr><td>Apr 5, 2026</td><td>Martindale's Natural Food Market</td><td>Springfield, PA</td><td class="order-details">3 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>4 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">9</td></tr>
+  <tr><td>Apr 15, 2026</td><td>Diane's Natural Foods</td><td>St. Augustine, FL</td><td class="order-details">2 Caramel 12-Pack Tray Cases (New at KeHE)<br>2 French Vanilla 12-Pack Tray Cases (New at KeHE)<br>2 Dark Chocolate Dipped 12-Pack Tray Cases (New at KeHE)</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Get Healthy Market</td><td>Brooksville, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Get Healthy Market</td><td>Spring Hill, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Grassroots Natural Market</td><td>Jacksonville, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Judy's Natural Foods</td><td>Holiday, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>M&amp;M Vitamins</td><td>Lake Mary, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Morton's Gourmet Market</td><td>Sarasota, FL</td><td class="order-details">3 Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>4 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">10</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Rollin Oats</td><td>Tampa, FL</td><td class="order-details">3 Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>3 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">9</td></tr>
+  <tr><td>Apr 1, 2026</td><td>The Health Basket</td><td>Mount Dora, FL</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Deep Roots Market</td><td>Greensboro, NC</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Food Matters Market</td><td>Brevard, NC</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Tidal Creek Co-op</td><td>Wilmington, NC</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">2</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Belue Farms Natural Market</td><td>Boiling Springs, SC</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Garner's Natural Foods</td><td>Spartanburg, SC</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Nature's Cupboard Market</td><td>Anderson, SC</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Rosewood Market</td><td>Columbia, SC</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">2</td></tr>
+  <tr><td>Apr 1, 2026</td><td>Debbie's Health Food</td><td>Port Orange, FL</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case</td><td class="order-cases">2</td></tr>
+  <tr><td>Apr 24, 2026</td><td>Frey's Better Foods</td><td>Hellertown, PA</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Chocolate Caramel 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 24, 2026</td><td>David's Natural Market</td><td>Gambrills, MD</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 29, 2026</td><td>Friends and Family Market</td><td>Ellsworth, ME</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 29, 2026</td><td>Broulims Supermarket</td><td>Driggs, ID</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 29, 2026</td><td>Momo's Market</td><td>Burlington, VT</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">3</td></tr>
+  <tr><td>Apr 30, 2026</td><td>North Coast Arcata Co-op</td><td>Arcata, CA</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">6</td></tr>
+  <tr><td>Apr 25, 2026</td><td>Viroqua Food Coop</td><td>Viroqua, WI</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">4</td></tr>
+  </tbody></table></div></div>
+  <!-- 09 Faire -->
+  <div class="section-card" id="card-faire"><button class="section-toggle" onclick="toggleSection('card-faire')"><div class="section-toggle-left"><span class="section-num">09</span><span class="section-title">Faire Online Marketplace</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="faire-orders">
+  <tr><td>Apr 1, 2026</td><td>Bold Cup Coffee</td><td>Melbourne, FL</td><td class="order-details">2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$103.92</td></tr>
+  <tr><td>Apr 6, 2026</td><td>Restoration Gardens</td><td>Sheboygan Falls, WI</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 8-Pack 4-CT Case<br>1 French Vanilla 12-Pack Tray Case<br>1 French Vanilla 8-Pack 4-CT Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">5</td><td class="order-total">$106.84</td></tr>
+  <tr><td>Apr 3, 2026</td><td>Whitefeather Meats</td><td>Creston, OH</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">7</td><td class="order-total">$109.08</td></tr>
+  <tr><td>Apr 3, 2026</td><td>Coastal Roasters</td><td>Tiverton, RI</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$132.48</td></tr>
+  <tr><td>Apr 8, 2026</td><td>Simply Nourished Market</td><td>Mason City, IA</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$103.92</td></tr>
+  <tr><td>Apr 8, 2026</td><td>Artesiano Market</td><td>Bay City, MI</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 8-Pack 4-CT Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 French Vanilla 8-Pack 4-CT Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$130.24</td></tr>
+  <tr><td>Apr 14, 2026</td><td>McKenna's Market</td><td>West Lafayette, OH</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>1 Caramel 8-Pack 4-CT Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case<br>1 French Vanilla 8-Pack 4-CT Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$130.24</td></tr>
+  <tr><td>Apr 15, 2026</td><td>Charlie Rea's</td><td>Johnston, IA</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">7</td><td class="order-total">$109.08</td></tr>
+  <tr><td>Apr 15, 2026</td><td>Mount Princeton Hot Springs Resort</td><td>Nathrop, CO</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">7</td><td class="order-total">$109.48</td></tr>
+  <tr><td>Apr 17, 2026</td><td>Celestial Seasonings</td><td>Boulder, CO</td><td class="order-details">3 Chocolate Caramel 12-Pack Tray Cases<br>3 Dark Chocolate Dipped 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases (Spring Into 33% Off)</td><td class="order-cases">12</td><td class="order-total">$198.72</td></tr>
+  <tr><td>Apr 17, 2026</td><td>Stoa Fine Cigars and Spirits</td><td>Houston, TX</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>1 Dark Chocolate Dipped 12-Pack Tray Case<br>2 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">7</td><td class="order-total">$109.08</td></tr>
+  <tr><td>Apr 15, 2026</td><td>The Mousetrap</td><td>Lexington, KY</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>3 Caramel 12-Pack Tray Cases (Spring Into 33% Off)</td><td class="order-cases">8</td><td class="order-total">$132.48</td></tr>
+  <tr><td>Apr 15, 2026</td><td>Shabam Teas and Spices</td><td>Springfield Township, MO</td><td class="order-details">5 Chocolate Caramel 12-Pack Tray Cases<br>2 Caramel 8-Pack 4-CT Cases<br>5 Dark Chocolate Dipped 12-Pack Tray Cases<br>5 French Vanilla 12-Pack Tray Cases<br>2 French Vanilla 8-Pack 4-CT Cases<br>5 Caramel 12-Pack Tray Cases (Spring Into 33% Off)</td><td class="order-cases">24</td><td class="order-total">$459.20</td></tr>
+  <tr><td>Apr 15, 2026</td><td>O'Neill Coffee Co</td><td>West Middlesex, PA</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>4 Caramel 12-Pack Tray Cases (Spring Into 33% Off)</td><td class="order-cases">9</td><td class="order-total">$128.52</td></tr>
+  <tr><td>Apr 17, 2026</td><td>Hocking Hills Inn and Coffee Emporium</td><td>Logan, OH</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">7</td><td class="order-total">$109.48</td></tr>
+  <tr><td>Apr 20, 2026</td><td>Peak Experiences</td><td>Richmond, VA</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 Dark Chocolate Dipped 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">6</td><td class="order-total">$103.92</td></tr>
+  <tr><td>Apr 20, 2026</td><td>Sperry's Mercantile</td><td>Nashville, TN</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>4 Caramel 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$114.24</td></tr>
+  <tr><td>Apr 27, 2026</td><td>Kent Natural Foods</td><td>Kent, OH</td><td class="order-details">1 Chocolate Caramel 12-Pack Tray Case<br>2 Caramel 8-Pack 4-CT Cases<br>1 French Vanilla 12-Pack Tray Case<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$121.12</td></tr>
+  <tr><td>Apr 29, 2026</td><td>Joey No Nuts Cafe</td><td>Hoboken, NJ</td><td class="order-details">3 Chocolate Caramel 12-Pack Tray Cases<br>3 French Vanilla 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">9</td><td class="order-total">$128.52</td></tr>
+  <tr><td>Apr 28, 2026</td><td>Dogwood Coffee Bar &mdash; East Lake</td><td>Minneapolis, MN</td><td class="order-details">3 Dark Chocolate Dipped 12-Pack Tray Cases<br>3 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$113.04</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 10 Mable -->
+  <div class="section-card" id="card-mable"><button class="section-toggle" onclick="toggleSection('card-mable')"><div class="section-toggle-left"><span class="section-num">10</span><span class="section-title">Mable Online Marketplace</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>City, State</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="mabel-orders">
+  <tr><td>Apr 2, 2026</td><td>Bridgewater State Bear's Den</td><td>Bridgewater, MA</td><td class="order-details">16 Caramel 12-Pack Tray Cases<br>16 Chocolate Caramel 12-Pack Tray Cases<br>16 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">48</td><td class="order-total">$685.44</td></tr>
+  <tr><td>Apr 6, 2026</td><td>Purely Pressed</td><td>Granger, IN</td><td class="order-details">8 Dark Chocolate Dipped 12-Pack Tray Cases</td><td class="order-cases">8</td><td class="order-total">$187.20</td></tr>
+  <tr><td>Apr 12, 2026</td><td>Alltown Select Concord</td><td>Boston, MA</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>1 French Vanilla 12-Pack Tray Case</td><td class="order-cases">3</td><td class="order-total">$37.48</td></tr>
+  <tr><td>Apr 13, 2026</td><td>Alltown Select Manchester</td><td>Manchester, NH</td><td class="order-details">1 French Vanilla 12-Pack Tray Case<br>1 Caramel 12-Pack Tray Case</td><td class="order-cases">2</td><td class="order-total">$28.56</td></tr>
+  <tr><td>Apr 15, 2026</td><td>Alltown Fresh Bolton</td><td>Bolton, CT</td><td class="order-details">1 Caramel 12-Pack Tray Case<br>1 French Vanilla 12-Pack Tray Case</td><td class="order-cases">2</td><td class="order-total">$28.56</td></tr>
+  <tr><td>Apr 24, 2026</td><td>Alltown Select Braintree</td><td>Braintree, MA</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">4</td><td class="order-total">$49.98</td></tr>
+  <tr><td>Apr 23, 2026</td><td>Alltown West Haven</td><td>West Haven, CT</td><td class="order-details">1 Caramel 12-Pack Tray Case</td><td class="order-cases">1</td><td class="order-total">$14.28</td></tr>
+  <tr><td>Apr 24, 2026</td><td>Honey Farms</td><td>Webster, MA</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases</td><td class="order-cases">4</td><td class="order-total">$49.98</td></tr>
+  </tbody></table></div></div>
+
+  <!-- 11 Airgoods -->
+  <div class="section-card" id="card-airgoods"><button class="section-toggle" onclick="toggleSection('card-airgoods')"><div class="section-toggle-left"><span class="section-num">11</span><span class="section-title">Airgoods Online Marketplace</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><table class="orders-table"><thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Order Details</th><th>Total Cases</th><th>Total Order</th></tr></thead>
+  <tbody id="airgoods-orders">
+  <tr><td>Apr 3, 2026</td><td>Odd Provisions</td><td>&mdash;</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>1 Chocolate Caramel 12-Pack Tray Case</td><td class="order-cases">5</td><td class="order-total">$71.40</td></tr>
+  <tr><td>Apr 26, 2026</td><td>Lake Smoke &amp; Vape</td><td>Newton, MA</td><td class="order-details">2 Chocolate Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$85.68</td></tr>
+  <tr><td>Apr 28, 2026</td><td>Spice &amp; Grain</td><td>Ashburnham, MA</td><td class="order-details">2 Caramel 12-Pack Tray Cases<br>2 French Vanilla 12-Pack Tray Cases<br>2 Chocolate Caramel 12-Pack Tray Cases</td><td class="order-cases">6</td><td class="order-total">$85.68</td></tr>
+  </tbody></table></div></div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="order-summary">
+    <h2>Order Summary — April 2026</h2>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="summary-card-title">Distributor Direct</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-distributor-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-distributor-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-distributor-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Independent Direct</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-independent-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-independent-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-independent-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Duo Sales Direct</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-duo-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-duo-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-duo-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Good Food Services</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-good-food-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-good-food-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-good-food-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Lisa Baines — Sales Rep</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-lisa-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-lisa-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-lisa-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Valley Food Specialties</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-valley-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-valley-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-valley-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">HALA Direct</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-hala-direct-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-hala-direct-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-hala-direct-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">HALA Indirect Turnover</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-hala-indirect-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-hala-indirect-cases">0</span></div><p class="no-track">Cases in grand total — not tracked in sales</p></div>
+      <div class="summary-card"><div class="summary-card-title">Faire Online Marketplace</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-faire-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-faire-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-faire-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Mable Online Marketplace</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-mabel-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-mabel-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-mabel-sales">$0.00</span></div></div>
+      <div class="summary-card"><div class="summary-card-title">Airgoods Online Marketplace</div><div class="summary-row"><span class="summary-label">Orders</span><span class="summary-value" id="summary-airgoods-orders">0</span></div><div class="summary-row"><span class="summary-label">Cases</span><span class="summary-value sales" id="summary-airgoods-cases">0</span></div><div class="summary-row"><span class="summary-label">Total</span><span class="summary-value sales" id="summary-airgoods-sales">$0.00</span></div></div>
+      <div class="summary-card grand-total-card"><div class="summary-card-title">Grand Total — April 2026</div><div class="summary-row"><span class="summary-label">Total Orders</span><span class="summary-value" id="summary-grand-orders">0</span></div><div class="summary-row"><span class="summary-label">Total Cases</span><span class="summary-value" id="summary-grand-cases">0</span></div><div class="summary-row"><span class="summary-label">Total Sales</span><span class="summary-value" id="summary-grand-sales">$0.00</span></div></div>
+    </div>
+  </div>
+</div>
+<!-- TAB 1: ADMIN REPORTING -->
+<div class="tab-content" id="tab-1">
+
+  <!-- KeHE Sales Review -->
+  <div class="section-card" id="card-kehe"><button class="section-toggle" onclick="toggleSection('card-kehe')"><div class="section-toggle-left"><span class="section-num">01</span><span class="section-title">KeHE Sales Review &mdash; Swoffle LLC &nbsp;·&nbsp; April 6, 2026</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <p style="font-size:0.875rem; color:#475569; margin-bottom:1.5rem; font-family:'Outfit',sans-serif;">A full analytics summary review across all KeHE time periods (Month to Date, Year to Date, Last 13 Weeks, Last 26 Weeks, Last 12 Months, and Last 52 Weeks) was completed this week. Below are the key highlights.</p>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Fill Rate &mdash; The Standout Story</div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">Swoffle's outbound fill rate has improved dramatically across every time period reviewed. The most compelling number is the <strong>Last 26 Weeks at 95.12%</strong> &mdash; up 21.16 points vs. the same period last year (73.96%). Over the full 52-week trailing period, fill rate sits at <strong>88.13%</strong>, up 11.41 points year over year. This represents a significant operational turnaround and is our strongest talking point heading into any KeHE category review.</p></div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Distribution Growth in 2026</div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">PODs (Points of Distribution) are showing meaningful recovery in the shorter time windows. Month to Date we are <strong>up 22.86% vs. prior year</strong>, and up 13.71% over the Last 13 Weeks. This early-2026 door growth is an encouraging reversal after PODs trended slightly negative over the full 12-month and 52-week views.</p></div>
+    <div style="background:#fdf6ec; border:1px solid #d4b483; border-left:4px solid #9a6f2e; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.5rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#9a6f2e; font-family:'Outfit',sans-serif;">KeHE Buying Activity</div><a href="#" target="_blank" style="display:inline-flex; align-items:center; gap:0.4rem; background:#1a3d26; color:#ffffff; padding:0.4rem 0.85rem; border-radius:2px; font-size:0.75rem; font-weight:600; text-decoration:none; white-space:nowrap; font-family:'Outfit',sans-serif; letter-spacing:0.06em;">Click to View &mdash; KeHE Analytics Dashboard</a></div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">Purchases through KeHE are up across every time period &mdash; most notably <strong>up 128.07% over the Last 13 Weeks</strong> ($23,602 vs. $10,349 PY) and up 68.05% Year to Date. KeHE is actively investing in stocking Swoffle, which is a strong signal of distributor confidence in the brand.</p></div>
+    <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Sales COGS &mdash; Watch Item</div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">Sales COGS is running below prior year across all time periods, ranging from a <strong>6.30% decline over the Last 13 Weeks</strong> to 12.45% over the Last 52 Weeks. Positively, the gap is narrowing in the shorter windows, which suggests the trend is beginning to recover. The primary driver of this decline is the 16-pack to 12-pack SKU transition, which has also significantly impacted SKU Productivity metrics (down approximately 47&ndash;60% across all periods). This is expected to normalize as the 12-pack matures in distribution and velocity builds at the store level.</p></div>
+    <div style="background:#fff5f5; border:1px solid #fecaca; border-left:4px solid #dc2626; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#dc2626; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Deductions</div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">Total deductions remain at <strong>$7,254 (13.17% of COGS)</strong>, with retailer-side deductions representing 60% of the total burden. This is a focus area for upcoming KeHE account conversations.</p></div>
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-left:4px solid #111111; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#111111; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Overall Trajectory</div><p style="font-size:0.85rem; color:#1e293b; line-height:1.7; font-family:'Outfit',sans-serif;">The directional story is improving. Fill rate, PODs, and purchases are all trending positively. The COGS gap is narrowing. As the 12-pack SKU continues to establish velocity across Swoffle's <strong>523 KeHE doors</strong>, the expectation is that revenue and SKU productivity metrics will follow the distribution and fill rate gains already being realized.</p></div>
+  </div></div>
+
+  <!-- OPENER Sample Request List -->
+  <div class="section-card" id="card-opener"><button class="section-toggle" onclick="toggleSection('card-opener')"><div class="section-toggle-left"><span class="section-num">02</span><span class="section-title">OPENER Sample Request List</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body"><div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th>Date</th><th>Account</th><th>Attention</th><th>Address</th><th>Email</th><th>Phone</th><th>Notes</th></tr></thead>
+  <tbody>
+  <tr><td>4/6/26</td><td style="font-weight:600;">LA Grocery &amp; Caf&eacute;</td><td>Caitlin</td><td>5059 Melrose Ave., Los Angeles, CA 90038</td><td>&mdash;</td><td>(323) 822-5092</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>4/6/26</td><td style="font-weight:600;">Refuge Coffee + Beer Garden</td><td>Nichole</td><td>11011 Shaenfield Rd, San Antonio, TX 78254</td><td>&mdash;</td><td>(210) 255-1076</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>4/1/26</td><td style="font-weight:600;">Barber Bros Meat &amp; Provisions</td><td>Jack</td><td>101 Ocean Street, South Portland, ME 04106</td><td>&mdash;</td><td>&mdash;</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>4/1/26</td><td style="font-weight:600;">Honey and Ivy Gluten Free</td><td>Sam</td><td>9105 Center Street, Manassas, VA 20110</td><td>&mdash;</td><td>571-359-2404</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>3/24/26</td><td style="font-weight:600;">Wenatchee Natural Foods</td><td>Joshua Parrish</td><td>222 N. Wenatchee Ave., Wenatchee, WA 98801</td><td>&mdash;</td><td>(509) 665-9999</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>3/24/26</td><td style="font-weight:600;">Jensen's Foods</td><td>Mark</td><td>955 Catalina Blvd #101, San Diego, CA 92106</td><td>&mdash;</td><td>619-550-2097</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  <tr><td>3/24/26</td><td style="font-weight:600;">Morning Sunshine</td><td>Natalia</td><td>3-5 Clinton Avenue, Ellenville, NY 12428</td><td>&mdash;</td><td>845-272-1012</td><td style="color:#777777; font-style:italic;">New sample request from Openers. Please send 1 of each variety.</td></tr>
+  </tbody></table></div></div></div>
+</div>
+<!-- TAB 2: DISTRIBUTOR PROSPECTS -->
+<div class="tab-content" id="tab-2">
+
+  <!-- Fresh Fruit 2 Go -->
+  <div class="section-card" id="card-ff2g"><button class="section-toggle" onclick="toggleSection('card-ff2g')"><div class="section-toggle-left"><span class="section-num">01</span><span class="section-title">Fresh Fruit 2 Go &mdash; Plant City, FL</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Company Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Fresh Fruit 2 Go</strong></div><div style="color:#777777;">4026 McIntosh Estates Lane, Plant City, FL</div><div><strong>Type:</strong> Convenience Store Distributor</div><div><strong>Territory:</strong> Florida &amp; Georgia</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">New Distributor Prospect</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Steve Sargraves</strong></div><div style="color:#777777;">VP Specialty</div><div>office@ff2g.com</div></div></div>
+    </div>
+    <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1rem 1.25rem; margin-bottom:1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Strategic Angle</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Fresh Fruit 2 Go primarily distributes fresh fruit to convenience stores but also carries snacks — making them a viable channel for Swoffle. The standardized 12-pack tray format is a natural checkout fit for their c-store accounts across Florida and Georgia.</p></div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Introduction email sent to Steve Sargraves positioning Swoffle's new 12-pack tray as a perfect fit for convenience store checkout. Key points:</p><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.65rem; margin-bottom:0.75rem;"><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#2e6b42; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Product Highlights</div><div style="font-size:0.82rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div>12 individually wrapped organic &amp; gluten-free Stroopwafels per tray</div><div>Retail: $2.49</div><div>~50% smaller case footprint</div><div>Standardized size — ideal for c-store checkout</div><div>New Chocolate Caramel &mdash; demand exceeding projections</div><div>Line-priced with Caramel &amp; French Vanilla</div></div></div><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#2e6b42; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Next Steps</div><div style="font-size:0.82rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div>Positioned as a golden opportunity for their c-store base</div><div>Samples offered &mdash; ready to ship immediately</div><div>Awaiting shipping address &amp; response</div></div></div></div><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+</div>
+<!-- TAB 3: NEW BUSINESS DEVELOPMENT -->
+<div class="tab-content" id="tab-3">
+  <!-- 01 Big Y -->
+  <div class="section-card" id="card-bigy"><button class="section-toggle" onclick="toggleSection('card-bigy')"><div class="section-toggle-left"><span class="section-num">01</span><span class="section-title">Big Y Foods Inc. &mdash; Chocolate Caramel Intro &mdash; May 2026 Promotion</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+      <a href="https://1drv.ms/p/c/6025a8df181803ff/IQAySmfUt59LRpHQ8DpOUzTSAds-h3bkR7eX9aAjc1Oxras?e=sU72by" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; background:#1a3d26; color:#ffffff; padding:0.6rem 1.1rem; border-radius:2px; font-size:0.85rem; font-weight:600; text-decoration:none; font-family:'Outfit',sans-serif; letter-spacing:0.06em;">Click to View &mdash; Chocolate Caramel Introduction Sheet</a>
+      <a href="https://1drv.ms/x/c/6025a8df181803ff/IQCOV5Lg2dMQSZkjO_Y2ScHrAQ_0NiktCs5n4_1-H-nfElc?e=WwDwAv" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; background:#1a3d26; color:#ffffff; padding:0.6rem 1.1rem; border-radius:2px; font-size:0.85rem; font-weight:600; text-decoration:none; font-family:'Outfit',sans-serif; letter-spacing:0.06em;">Click to View &mdash; Big Y May 2026 Promotion Sheet</a>
+    </div>
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1.25rem; margin-bottom:1.25rem;">
+      <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#aaaaaa; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Email Summary &mdash; April 2, 2026</div>
+      <p style="font-size:0.875rem; color:#111111; margin-bottom:1rem; font-family:'Outfit',sans-serif;">Promotional forms and new item PowerPoint were completed and submitted to Matthew at Big Y, along with an updated 12-pack sales sheet and Chocolate Caramel Sales Sheet for context.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem; margin-bottom:1rem;">
+        <div style="background:white; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#777777; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Chocolate Caramel Item Details</div><div style="font-size:0.8rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div><span style="color:#777777;">Certifications:</span> Organic, Gluten Free</div><div><span style="color:#777777;">Pack:</span> 12/1.16 oz</div><div><span style="color:#777777;">UPC:</span> 850009603074</div><div><span style="color:#777777;">Suggested Retail:</span> $2.29</div><div><span style="color:#777777;">Promo Plan:</span> TPR @15% with 4x MCB annually</div><div><span style="color:#777777;">Projected Velocity:</span> 1.5 units/store/week</div></div></div>
+        <div style="background:white; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#777777; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Key Selling Points</div><ul style="font-size:0.8rem; color:#111111; line-height:1.9; padding-left:1.1rem; font-family:'Outfit',sans-serif;"><li>Not yet set up at UNFI &mdash; can be activated immediately upon Big Y approval</li><li>Already carried at Market Basket and Roche Bros</li><li>12-pack tray case footprint is 50% smaller than the previous 16-pack</li><li>Full 3-flavor 12-pack set takes less shelf space than the old 2-flavor 16-pack set</li><li>All three flavors share 1.16 oz unit size and pack of 12 &mdash; clean, easy to merchandise</li></ul></div>
+      </div>
+    </div>
+  </div></div>
+  <!-- 02 J-Tel -->
+  <div class="section-card" id="card-jtel"><button class="section-toggle" onclick="toggleSection('card-jtel')"><div class="section-toggle-left"><span class="section-num">02</span><span class="section-title">J-Tel Wholesale &mdash; Chester, VA</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Company Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>J-Tel Wholesale</strong> &mdash; Since 2010</div><div>Novelty Items Specialist</div><div style="color:#777777;">12910 Old Stage Road, Chester, VA 23836</div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Contact Details</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Contact: DJ</strong></div><div>Sales: <strong>804-918-8082</strong></div><div>Sales: <strong>804-617-1387</strong></div><div>Fax: 804-918-3316</div></div></div>
+    </div>
+    <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Follow-Up Activity &mdash; April 7, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Following up to determine where J-Tel Wholesale is in the process of bringing Swoffle into their product offering.</p><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Phone call placed</strong> &mdash; called today, April 7, 2026. Left a voicemail message.</div><div><strong>Text message sent</strong> &mdash; followed up via text, continuing our prior text thread.</div></div><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; margin-top:0.75rem; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply received within a few days.</p></div>
+  </div></div>
+
+  <!-- 03 The Goods Vending -->
+  <div class="section-card" id="card-goods"><button class="section-toggle" onclick="toggleSection('card-goods')"><div class="section-toggle-left"><span class="section-num">03</span><span class="section-title">The Goods Premium Vending &mdash; San Rafael, CA</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Corporate HQ</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>The Goods Premium Vending</strong></div><div style="color:#777777;">4340 Redwood Highway, San Rafael, CA 94903</div><div>415-261-8089</div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contacts</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Michael Berry</strong></div><div style="margin-top:0.5rem;"><strong>Tyler Newman</strong></div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 7, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Introduction email sent to Michael Berry and Tyler Newman positioning Swoffle as a premium, better-for-you fit for The Goods' elevated vending platform.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+  <!-- 04 New at KeHE Email Blast -->
+  <div class="section-card" id="card-kehemailblast"><button class="section-toggle" onclick="toggleSection('card-kehemailblast')"><div class="section-toggle-left"><span class="section-num">04</span><span class="section-title">New at KeHE Email Blast</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;"><p style="font-size:0.875rem; color:#777777; margin-bottom:1.25rem; font-family:'Outfit',sans-serif;">Outreach list for the New at KeHE email blast campaign. Stores identified from email addresses.</p>
+  <div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th>#</th><th>Store Name</th><th>Email</th></tr></thead><tbody>
+  <tr><td>1</td><td style="font-weight:600;">Daily Groceries</td><td>&mdash;</td></tr>
+  <tr><td>2</td><td style="font-weight:600;">Center Stage Market</td><td>&mdash;</td></tr>
+  <tr><td>3</td><td style="font-weight:600;">FCS Ministries</td><td>&mdash;</td></tr>
+  <tr><td>4</td><td style="font-weight:600;">Eden Fresh Market</td><td>&mdash;</td></tr>
+  <tr><td>5</td><td style="font-weight:600;">Edoo Market</td><td>&mdash;</td></tr>
+  <tr><td>6</td><td style="font-weight:600;">Farmers Natural Foods</td><td>&mdash;</td></tr>
+  <tr><td>7</td><td style="font-weight:600;">GA Healthy Snacks and Vending</td><td>&mdash;</td></tr>
+  <tr><td>8</td><td style="font-weight:600;">General Store at Serenbe</td><td>&mdash;</td></tr>
+  <tr><td>9</td><td style="font-weight:600;">Good Nutrition (Jerry)</td><td>&mdash;</td></tr>
+  <tr><td>10</td><td style="font-weight:600;">Good Nutrition (Caroline)</td><td>&mdash;</td></tr>
+  <tr><td>11</td><td style="font-weight:600;">Good Nutrition (Linda)</td><td>&mdash;</td></tr>
+  <tr><td>12</td><td style="font-weight:600;">Good Nutrition (Tiffany)</td><td>&mdash;</td></tr>
+  <tr><td>13</td><td style="font-weight:600;">Good Nutrition (Jason)</td><td>&mdash;</td></tr>
+  <tr><td>14</td><td style="font-weight:600;">Grant Park Market</td><td>&mdash;</td></tr>
+  <tr><td>15</td><td style="font-weight:600;">Greens Grocery Store</td><td>&mdash;</td></tr>
+  <tr><td>16</td><td style="font-weight:600;">Half Shepherd</td><td>&mdash;</td></tr>
+  <tr><td>17</td><td style="font-weight:600;">Unknown (Nathanbelinda)</td><td>&mdash;</td></tr>
+  <tr><td>18</td><td style="font-weight:600;">Health Nut</td><td>&mdash;</td></tr>
+  <tr><td>19</td><td style="font-weight:600;">Health Nut (Reza)</td><td>&mdash;</td></tr>
+  <tr><td>20</td><td style="font-weight:600;">Health Unlimited (Kate)</td><td>&mdash;</td></tr>
+  <tr><td>21</td><td style="font-weight:600;">Unknown (Deb)</td><td>&mdash;</td></tr>
+  <tr><td>22</td><td style="font-weight:600;">Cedar Health Shop</td><td>&mdash;</td></tr>
+  <tr><td>23</td><td style="font-weight:600;">Unknown (Yvonne Mourfield)</td><td>&mdash;</td></tr>
+  </tbody></table></div></div></div>
+
+  <!-- 05 UNFI OI Promo -->
+  <div class="section-card" id="card-unfioi"><button class="section-toggle" onclick="toggleSection('card-unfioi')"><div class="section-toggle-left"><span class="section-num">05</span><span class="section-title">UNFI Year-End Off-Invoice Promotion + Chocolate Caramel Intro</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1.25rem;">
+      <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#aaaaaa; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Email Summary &mdash; April 9, 2026 &mdash; To: Sierra (UNFI)</div>
+      <p style="font-size:0.875rem; color:#111111; line-height:1.7; margin-bottom:1rem; font-family:'Outfit',sans-serif;">Two requests submitted to Sierra at UNFI to optimize the back-half promotional calendar and expand the authorized Swoffle item set.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem; margin-bottom:1rem;">
+        <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Request 1 &mdash; Shift October OI to September</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Requesting the October 2026 OI promotion be moved to September 2026. The April 5th window has closed but we are very close. Moving it avoids two back-to-back OIs and balances the lift across the back half of the year.</p></div>
+        <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Request 2 &mdash; Authorize Chocolate Caramel 12-Pack</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Requesting Chocolate Caramel 12-pack be authorized and line-priced to French Vanilla and Original Caramel. Strong national account velocity driver. New 12-pack tray is ~50% smaller, so adding the third flavor is a net shelf gain. Also requesting it be set up with the 90-day automatic new item OI.</p></div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#111111; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">October &amp; November 2026 OI Promotions Currently in UNFI System</div>
+    <div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th>Brand</th><th>East Item #</th><th>West Item #</th><th>Pack</th><th>Size</th><th>Description</th><th>UPC</th><th>OI</th></tr></thead><tbody>
+    <tr><td>SWOFFLE</td><td>326659</td><td>30842</td><td>12</td><td>1.16 oz</td><td>WAF CKY, OG2, FRENCH VAN, GF</td><td>00863852000044</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    <tr><td>SWOFFLE</td><td>326646</td><td>30845</td><td>12</td><td>1.16 oz</td><td>WAFF CKY, OG2, CARAMEL, GF</td><td>00863852000006</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    <tr><td>SWOFFLE</td><td>326660</td><td>30867</td><td>12</td><td>1.45 oz</td><td>WAFF CKY, OG2, DK CHOC, GF</td><td>00863852000075</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    <tr><td>SWOFFLE</td><td>311759</td><td>67370</td><td>8</td><td>4.64 oz</td><td>WAFFLE, OG2, DTCH CMRL 4PK</td><td>00850009603029</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    <tr><td>SWOFFLE</td><td>311760</td><td>67371</td><td>8</td><td>5.80 oz</td><td>WAFFLE, OG2, DTCH DKCHC 4PK</td><td>00850009603012</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    <tr><td>SWOFFLE</td><td>311761</td><td>67372</td><td>8</td><td>4.64 oz</td><td>WAFFLE, OG2, DTCH FRVAN 4PK</td><td>00850009603005</td><td style="font-weight:600; color:#2e6b42;">15% OI</td></tr>
+    </tbody></table></div>
+    <p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; margin-top:1rem; font-family:'Outfit',sans-serif;">Chocolate Caramel Sales Sheet attached to email. Awaiting Sierra's response on both requests.</p>
+  </div></div>
+
+  <!-- 06 KeHE-AGNE Trade Show -->
+  <div class="section-card" id="card-agne"><button class="section-toggle" onclick="toggleSection('card-agne')"><div class="section-toggle-left"><span class="section-num">06</span><span class="section-title">KeHE-AGNE Trade Show Details</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;">
+      <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#aaaaaa; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Call Summary &mdash; April 13, 2026 &mdash; Nick Marchese, AGNE Account Manager</div>
+      <p style="font-size:0.875rem; color:#111111; line-height:1.7; margin-bottom:1rem; font-family:'Outfit',sans-serif;">Spoke with Nick Marchese, AGNE Account Manager, regarding results from the KeHE-AGNE trade show.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem;">
+        <div style="background:#fff5f5; border:1px solid #fecaca; border-left:4px solid #dc2626; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#dc2626; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Show Results</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Sales were not strong. A total of <strong>18 case trades</strong> were sold at the show. Nick acknowledged it was not a good show.</p></div>
+        <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Fee Waived</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Given the results, Nick indicated the <strong>$250 show fee will not be charged</strong>. Agreed and accepted.</p></div>
+        <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Next Step</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Agreed to let Nick pitch the <strong>same promotion for June 2026</strong> to see if a second attempt yields stronger order volume.</p></div>
+      </div>
+    </div>
+  </div></div>
+  <!-- 07 Tomaso's Distributing -->
+  <div class="section-card" id="card-tomaso"><button class="section-toggle" onclick="toggleSection('card-tomaso')"><div class="section-toggle-left"><span class="section-num">07</span><span class="section-title">Tomaso's Distributing &mdash; Blue Lake, CA</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Response Received &mdash; April 15, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Received an email from <strong>John Campbell</strong> expressing excitement and strong interest in carrying and distributing Swoffle in his market.</p><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem; display:inline-block;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#2e6b42; margin-bottom:0.35rem; font-family:'Outfit',sans-serif;">Meeting Scheduled</div><div style="font-size:0.9rem; font-weight:700; color:#111111; font-family:'Playfair Display',serif;">Monday, April 27, 2026 &mdash; 11:00 AM</div><div style="font-size:0.8rem; color:#777777; margin-top:0.2rem; font-family:'Outfit',sans-serif;">Goal: Close the deal</div></div></div>
+    <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Follow-Up Call &mdash; April 28, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Spoke with John Campbell. He received the samples and <strong>loves the product</strong> and is eager to move forward — however, a roadblock has emerged.</p><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.65rem; margin-bottom:0.75rem;"><div style="background:white; border:1px solid #fed7aa; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#d97706; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">The Roadblock</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">The accounts John calls on are already ordering Swoffle through <strong>UNFI Rocklin</strong>. There is also involvement from the <strong>Share Organics brokerage</strong>. This makes it difficult for him to bring Swoffle in as a direct distributor without channel conflict.</p></div><div style="background:white; border:1px solid #fed7aa; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#d97706; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Possible Path Forward</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">John left open the possibility of carrying the <strong>4-pack SKUs</strong> exclusively, which would not conflict with the 12-pack UNFI business. Checking with <strong>John Paino</strong> to confirm if this is a viable option before following back up.</p></div></div><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Next step: Confirm 4-pack availability/terms with John Paino, then circle back to John Campbell.</p></div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Phone Meeting &mdash; April 20, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;"><strong>Agreed in principle to move forward.</strong> Key discussion points from the call with John Campbell:</p><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.65rem; margin-bottom:0.75rem;"><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#2e6b42; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Distribution Footprint</div><div style="font-size:0.82rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div>Works with many independent retailers</div><div>Works with <strong>Safeway East</strong> on a store-by-store authorization basis</div><div>Works with small chain <strong>Ray's</strong></div><div>A couple of co-ops in the area that perform very well</div></div></div><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#2e6b42; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Pricing &amp; Promotions</div><div style="font-size:0.82rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div>Reviewed all pricing and pack details</div><div>Promotions: <strong>3x per year, 4 weeks each</strong></div><div>Suggested <strong>15% off</strong> — John willing to match or contribute</div><div>Sale price achievable: <strong>$1.99</strong></div></div></div><div style="background:white; border:1px solid #a8c9b0; border-radius:2px; padding:0.85rem;"><div style="font-size:0.7rem; font-weight:700; color:#2e6b42; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Game Plan &amp; Next Steps</div><div style="font-size:0.82rem; color:#111111; line-height:1.8; font-family:'Outfit',sans-serif;"><div>John will present Swoffle to his key customer base to gauge interest</div><div>Once interest is confirmed, he will place his first order</div><div>Follow up with John next week to check on sample progress</div></div></div></div></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem;"><div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Company Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Tomaso's Distributing</strong></div><div style="color:#777777;">P.O. Box 908, Blue Lake, CA 95525</div><div>(707) 668-1868</div><div>info@tomasosfoods.com</div></div></div><div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">About Tomaso's</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Originally an Italian restaurant in Old Town Eureka known for its spinach pies, founder Tom Pagano began jarring his family pasta sauce in 1989 for local markets. In 2021, Ryan and Amy purchased the company and continue the Humboldt County tradition of producing and distributing exceptional local products.</p></div></div>
+  </div></div>
+
+  <!-- 08 UNFI Carlisle DC Activation Call List -->
+  <div class="section-card" id="card-carlisle"><button class="section-toggle" onclick="toggleSection('card-carlisle')"><div class="section-toggle-left"><span class="section-num">08</span><span class="section-title">UNFI Carlisle New DC Activation Call List &mdash; Hala</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1.1rem 1.25rem; margin-bottom:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#aaaaaa; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Strategy Note &mdash; Stephen Nance</div><p style="font-size:0.875rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">A targeted call list was created for newly activated UNFI distribution centers. Hala is being deployed to call stores serviced by these DCs to generate new business and drive initial orders into the newly activated pipeline.</p></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; margin-bottom:1rem;">
+      <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.85rem; font-weight:700; color:#111111; font-family:'Outfit',sans-serif;">Hudson Valley, NY</div><div style="font-size:0.8rem; color:#777777; margin-top:0.25rem; font-family:'Outfit',sans-serif;">UNFI DC &mdash; Newly Activated</div></div>
+      <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.85rem; font-weight:700; color:#111111; font-family:'Outfit',sans-serif;">York, PA</div><div style="font-size:0.8rem; color:#777777; margin-top:0.25rem; font-family:'Outfit',sans-serif;">UNFI DC &mdash; Newly Activated</div></div>
+      <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.85rem; font-weight:700; color:#111111; font-family:'Outfit',sans-serif;">Dayville, CT</div><div style="font-size:0.8rem; color:#777777; margin-top:0.25rem; font-family:'Outfit',sans-serif;">UNFI DC &mdash; Newly Activated</div></div>
+      <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1rem;"><div style="font-size:0.85rem; font-weight:700; color:#111111; font-family:'Outfit',sans-serif;">Chesterfield, NH</div><div style="font-size:0.8rem; color:#777777; margin-top:0.25rem; font-family:'Outfit',sans-serif;">UNFI DC &mdash; Newly Activated</div></div>
+    </div>
+    <div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th>Store Name</th><th>City</th><th>State</th><th>Phone</th></tr></thead><tbody>
+    <tr><td colspan="4" style="background:#1a3d26; color:#ffffff; font-weight:600; font-size:0.75rem; padding:0.5rem 0.75rem; font-family:'Outfit',sans-serif; letter-spacing:0.08em;">New York Locations</td></tr>
+    <tr><td style="font-weight:600;">Honest Weight Food Co-op</td><td>Albany</td><td>NY</td><td>(518) 482-2667</td></tr>
+    <tr><td style="font-weight:600;">Beacon Natural Market</td><td>Beacon</td><td>NY</td><td>(845) 838-1288</td></tr>
+    <tr><td style="font-weight:600;">Hawthorne Valley Farm Store</td><td>Hudson</td><td>NY</td><td>(518) 672-7500</td></tr>
+    <tr><td style="font-weight:600;">Sunflower Natural Foods Market</td><td>Kingston</td><td>NY</td><td>(845) 339-5240</td></tr>
+    <tr><td style="font-weight:600;">Heart of the Hudson Valley Farmers Market</td><td>Milton</td><td>NY</td><td>(845) 616-7824</td></tr>
+    <tr><td style="font-weight:600;">Adams Fairacre Farms</td><td>Newburgh</td><td>NY</td><td>(845) 569-0303</td></tr>
+    <tr><td style="font-weight:600;">Bains Natural Food Market</td><td>Peekskill</td><td>NY</td><td>(914) 739-4444</td></tr>
+    <tr><td style="font-weight:600;">Mother Earth's Storehouse</td><td>Poughkeepsie</td><td>NY</td><td>(845) 296-1069</td></tr>
+    <tr><td style="font-weight:600;">Green's Natural Foods</td><td>White Plains</td><td>NY</td><td>(914) 874-5481</td></tr>
+    <tr><td style="font-weight:600;">Green Organic Market</td><td>Yonkers</td><td>NY</td><td>(914) 437-8645</td></tr>
+    <tr><td colspan="4" style="background:#1a3d26; color:#ffffff; font-weight:600; font-size:0.75rem; padding:0.5rem 0.75rem; font-family:'Outfit',sans-serif; letter-spacing:0.08em;">Pennsylvania Locations</td></tr>
+    <tr><td style="font-weight:600;">Sonnewald Natural Foods</td><td>Dallastown</td><td>PA</td><td>(717) 225-3825</td></tr>
+    <tr><td style="font-weight:600;">Radish &amp; Rye Heirloom Market</td><td>Harrisburg</td><td>PA</td><td>(717) 979-8547</td></tr>
+    <tr><td style="font-weight:600;">Green Circle Organics</td><td>Lancaster</td><td>PA</td><td>(717) 572-5164</td></tr>
+    <tr><td colspan="4" style="background:#1a3d26; color:#ffffff; font-weight:600; font-size:0.75rem; padding:0.5rem 0.75rem; font-family:'Outfit',sans-serif; letter-spacing:0.08em;">Connecticut Locations</td></tr>
+    <tr><td style="font-weight:600;">Harvest Moon Health Foods</td><td>Putnam</td><td>CT</td><td>(860) 928-2352</td></tr>
+    <tr><td colspan="4" style="background:#1a3d26; color:#ffffff; font-weight:600; font-size:0.75rem; padding:0.5rem 0.75rem; font-family:'Outfit',sans-serif; letter-spacing:0.08em;">New Hampshire Locations</td></tr>
+    <tr><td style="font-weight:600;">A Simply Wholesome Life</td><td>Chesterfield</td><td>NH</td><td>(603) 363-4700</td></tr>
+    <tr><td style="font-weight:600;">Monadnock Food Co-op</td><td>Keene</td><td>NH</td><td>(603) 355-8008</td></tr>
+    <tr><td style="font-weight:600;">Monadnock Food Co-op (Nearby)</td><td>Swanzey</td><td>NH</td><td>(603) 355-8008</td></tr>
+    <tr><td style="font-weight:600;">Stuart &amp; John's Sugar House</td><td>Westmoreland</td><td>NH</td><td>(603) 399-4486</td></tr>
+    <tr><td colspan="4" style="background:#1a3d26; color:#ffffff; font-weight:600; font-size:0.75rem; padding:0.5rem 0.75rem; font-family:'Outfit',sans-serif; letter-spacing:0.08em;">Vermont Locations</td></tr>
+    <tr><td style="font-weight:600;">Brattleboro Food Co-op</td><td>Brattleboro</td><td>VT</td><td>(802) 257-0236</td></tr>
+    <tr><td style="font-weight:600;">Walker Farm (Organic/Specialty)</td><td>Dummerston</td><td>VT</td><td>(802) 254-2051</td></tr>
+    <tr><td style="font-weight:600;">Guilford Country Store (Local/Organic)</td><td>Guilford</td><td>VT</td><td>(802) 257-0108</td></tr>
+    </tbody></table></div>
+  </div></div>
+  <!-- 09 Cost Plus World Market -->
+  <div class="section-card" id="card-costplus"><button class="section-toggle" onclick="toggleSection('card-costplus')"><div class="section-toggle-left"><span class="section-num">09</span><span class="section-title">Cost Plus World Market &mdash; Alameda, CA &mdash; 275+ Stores</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Account Overview</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Type:</strong> Specialty Import Retail Chain</div><div><strong>Store Count:</strong> 275+ stores</div><div><strong>Territory:</strong> 35 states</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">Business Development Target</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Gina Kwun</strong></div><div>gina.kwun@cpwm.com</div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Detailed introduction email sent to Gina Kwun presenting Swoffle's new 12-pack tray format and 4-pack value offerings. Positioned as a clean-label, premium grab-and-go fit for Cost Plus World Market's specialty retail environment across 275+ stores in 35 states.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; margin-top:0.75rem; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+  <!-- 10 Dave's Marketplace -->
+  <div class="section-card" id="card-daves"><button class="section-toggle" onclick="toggleSection('card-daves')"><div class="section-toggle-left"><span class="section-num">10</span><span class="section-title">Dave's Marketplace &mdash; East Greenwich, RI &mdash; 10 Stores</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Account Overview</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Type:</strong> Independent Grocery Chain</div><div><strong>Store Count:</strong> 10 stores</div><div><strong>Territory:</strong> Rhode Island</div><div><strong>Description:</strong> Largest independent grocery chain in Rhode Island</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">Business Development Target</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Mike Saccoccia</strong> &mdash; Buyer</div><div>mikes@davesmarketplace.com</div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Update email sent to Mike Saccoccia announcing the new 12-pack tray format, now live and available through UNFI.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+  <!-- 11 Market Basket Chain -->
+  <div class="section-card" id="card-marketbasket"><button class="section-toggle" onclick="toggleSection('card-marketbasket')"><div class="section-toggle-left"><span class="section-num">11</span><span class="section-title">Market Basket Chain &mdash; UNFI &mdash; 12-Pack Change</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Overview</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Issue:</strong> Market Basket stores unable to order new 12-pack SKUs</div><div><strong>DC:</strong> UNFI Carlisle Repack DC</div><div><strong>Contact:</strong> Matthew Crothers (UNFI)</div><div>matthew.crothers@unfi.com</div><div><strong>CC:</strong> john@swoffle.com</div></div></div>
+      <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Issue Summary</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">New 12-pack SKUs are active in UNFI Carlisle Repack DC but Market Basket stores are not yet able to order them, creating distribution gaps. Pack change transition not flowing cleanly on the Market Basket side.</p></div>
+    </div>
+    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">New 12-Pack Codes (Active at UNFI Carlisle Repack DC)</div>
+    <div style="overflow-x:auto; margin-bottom:1rem;"><table class="orders-table"><thead><tr><th>Product</th><th>Size</th><th>Inner Pack</th><th>East Item #</th></tr></thead><tbody>
+    <tr><td style="font-weight:600;">Caramel 12-Pack</td><td>1.16 oz</td><td>12</td><td style="font-weight:600; color:#2e6b42;">#326646-7</td></tr>
+    <tr><td style="font-weight:600;">French Vanilla 12-Pack</td><td>1.16 oz</td><td>12</td><td style="font-weight:600; color:#2e6b42;">#326659-0</td></tr>
+    <tr><td style="font-weight:600;">Dark Chocolate Dipped 12-Pack</td><td>1.45 oz</td><td>12</td><td style="font-weight:600; color:#2e6b42;">#326660-8</td></tr>
+    </tbody></table></div>
+    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#dc2626; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Old Pack Codes (Being Replaced)</div>
+    <div style="overflow-x:auto; margin-bottom:1rem;"><table class="orders-table"><thead><tr><th>Product</th><th>Size</th><th>Inner Pack</th><th>East Item #</th></tr></thead><tbody>
+    <tr><td style="font-weight:600;">Caramel 16-Pack</td><td>1.16 oz</td><td>16</td><td style="font-weight:600; color:#dc2626;">#212555</td></tr>
+    <tr><td style="font-weight:600;">French Vanilla 16-Pack</td><td>1.16 oz</td><td>16</td><td style="font-weight:600; color:#dc2626;">#212556</td></tr>
+    <tr><td style="font-weight:600;">Dark Chocolate Dipped 14-Pack</td><td>1.45 oz</td><td>14</td><td style="font-weight:600; color:#dc2626;">#229064</td></tr>
+    </tbody></table></div>
+    <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Email Correspondence Timeline</div><div style="border-left:3px solid #e8e8e5; padding-left:1rem; margin-bottom:0.75rem;"><div style="font-size:0.75rem; font-weight:700; color:#2e6b42; margin-bottom:0.25rem; font-family:'Outfit',sans-serif;">April 17, 2026 &mdash; Initial Email to Matthew Crothers (UNFI)</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Notified Matthew that the new 12-packs are active at UNFI Carlisle Repack DC but stores cannot yet order them. Provided all new and old item codes. Requested investigation. Brand sheet attached. Samples offered.</p></div><div style="border-left:3px solid #e8e8e5; padding-left:1rem;"><div style="font-size:0.75rem; font-weight:700; color:#d97706; margin-bottom:0.25rem; font-family:'Outfit',sans-serif;">April 29, 2026 &mdash; Follow-Up Email</div><p style="font-size:0.82rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Followed up to confirm the 12-packs are now active at Carlisle Repack DC and to ensure the transition is flowing cleanly on the Market Basket side. Awaiting status update from Matthew.</p></div></div>
+  </div></div>
+
+  <!-- 12 DiBruno Brothers -->
+  <div class="section-card" id="card-dibruno"><button class="section-toggle" onclick="toggleSection('card-dibruno')"><div class="section-toggle-left"><span class="section-num">12</span><span class="section-title">DiBruno Brothers &mdash; Philadelphia, PA</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Account Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>DiBruno Brothers</strong></div><div style="color:#777777;">Philadelphia, PA</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">Business Development Target</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>James Dunn</strong></div><div>jdunn@dibruno.com</div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Introduction email sent to James Dunn announcing the new 12-pack tray format, now live and orderable through UNFI or KeHE. 25% MCB offered to get started. Samples offered — awaiting shipping address.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+  <!-- 13 Earth Fare -->
+  <div class="section-card" id="card-earthfare"><button class="section-toggle" onclick="toggleSection('card-earthfare')"><div class="section-toggle-left"><span class="section-num">13</span><span class="section-title">Earth Fare &mdash; Asheville, NC &mdash; 18 Stores</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Account Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Earth Fare</strong></div><div style="color:#777777;">Asheville, NC &mdash; 18 Stores</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">New Contact &mdash; April 29, 2026</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Mara Reitzfeld</strong></div><div style="color:#777777;">Director of Center Store</div><div>mara.reitzfeld@earthfare.com</div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Introduction email sent to Mara Reitzfeld announcing the new 12-pack tray format, now live through UNFI or KeHE. Asked what it would take to get into Earth Fare stores. Category review timing unknown — asked Mara to clarify. Samples offered.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: confirm category review timing and follow up.</p></div>
+  </div></div>
+
+  <!-- 14 NEICC -->
+  <div class="section-card" id="card-neicc"><button class="section-toggle" onclick="toggleSection('card-neicc')"><div class="section-toggle-left"><span class="section-num">14</span><span class="section-title">New England Ice Cream Company (NEICC) &mdash; Norton, MA</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Company Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>New England Ice Cream Company</strong></div><div style="color:#777777;">222 Mansfield Ave, Norton, MA 02766</div><div><strong>Type:</strong> Full-Service Ice Cream &amp; Frozen Foods Distributor</div><div><strong>Coverage:</strong> 11,000+ retail &amp; food service locations across New England</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">New Distributor Prospect</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Max Ginsberg</strong></div><div style="color:#777777;">Category Analyst</div><div>mginsberg@neicc.com</div></div></div>
+    </div>
+    <div style="background:#fff8f0; border:1px solid #fed7aa; border-left:4px solid #d97706; border-radius:2px; padding:1rem 1.25rem; margin-bottom:1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#d97706; margin-bottom:0.4rem; font-family:'Outfit',sans-serif;">Strategic Angle</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; font-family:'Outfit',sans-serif;">Although NEICC is primarily a frozen foods distributor, they do buy outside their frozen category and carry snacks. The standardized 12-pack tray format is an ideal fit for their convenience store accounts at checkout — a strong entry point for Swoffle.</p></div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026 (Reopening Prior Discussion)</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Follow-up email sent to Max Ginsberg reopening previous discussions, announcing the new 12-pack format now live. Samples offered — ready to ship immediately.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+  <!-- 15 Fresh Thyme -->
+  <div class="section-card" id="card-freshthyme"><button class="section-toggle" onclick="toggleSection('card-freshthyme')"><div class="section-toggle-left"><span class="section-num">15</span><span class="section-title">Fresh Thyme &mdash; Downers Grove, IL</span></div><div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div></button>
+  <div class="section-body" style="padding:28px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Account Info</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Fresh Thyme</strong></div><div style="color:#777777;">Downers Grove, IL</div><div><strong>Type:</strong> Natural &amp; Organic Grocery Chain</div><div><strong>Distributor:</strong> KeHE DC 27 &amp; DC 15</div><div><strong>Status:</strong> <span style="color:#d97706; font-weight:700;">Business Development Target</span></div></div></div>
+      <div style="background:#f8f8f6; border:1px solid #e8e8e5; border-radius:2px; padding:1rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#777777; margin-bottom:0.6rem; font-family:'Outfit',sans-serif;">Key Contact</div><div style="font-size:0.85rem; color:#111111; line-height:1.9; font-family:'Outfit',sans-serif;"><div><strong>Ellen Brucher</strong></div><div style="color:#777777;">Grocery Category Manager</div><div>ebrucher@freshthyme.com</div></div></div>
+    </div>
+    <div style="background:#f0f5f1; border:1px solid #a8c9b0; border-left:4px solid #2e6b42; border-radius:2px; padding:1.1rem 1.25rem;"><div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#2e6b42; margin-bottom:0.5rem; font-family:'Outfit',sans-serif;">Outreach Email Summary &mdash; April 29, 2026</div><p style="font-size:0.85rem; color:#111111; line-height:1.7; margin-bottom:0.75rem; font-family:'Outfit',sans-serif;">Introduction email sent to Ellen Brucher announcing the new 12-pack tray format, now live and orderable through KeHE DC 27 and DC 15. Cookie aisle as anchor placement. Checkout as a strong alternate. Samples offered — awaiting shipping address.</p><p style="font-size:0.8rem; color:#aaaaaa; font-style:italic; font-family:'Outfit',sans-serif;">Awaiting response. Next step: follow up if no reply within a few days.</p></div>
+  </div></div>
+
+</div>
+</div><!-- /container -->
+
+<div class="dash-footer">
+  <span class="footer-brand">© 2026 Brand Share It Sales Partners &nbsp;·&nbsp; Swoffle Monthly Sales Dashboard &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Confidential</span>
+  <a class="footer-link" href="https://www.brandshareit.com">brandshareit.com</a>
+</div>
+
+<script>
+  function fmt(v) {
+    return '$' + parseFloat(v || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function switchTab(i) {
+    document.querySelectorAll('.tab-btn').forEach((b, idx) => b.classList.toggle('active', idx === i));
+    document.querySelectorAll('.tab-content').forEach((c, idx) => c.classList.toggle('active', idx === i));
+  }
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+  function getRowData(tbodyId) {
+    const rows = document.querySelectorAll('#' + tbodyId + ' tr');
+    let sales = 0, cases = 0, orders = 0;
+    rows.forEach(row => {
+      const tc = row.querySelector('.order-total');
+      const cc = row.querySelector('.order-cases');
+      if (tc) {
+        const a = parseFloat(tc.textContent.replace(/[$,]/g, ''));
+        if (!isNaN(a)) { sales += a; orders++; }
+      }
+      if (cc) {
+        const c = parseInt(cc.textContent);
+        if (!isNaN(c)) cases += c;
+      }
+    });
+    return { sales, cases, orders };
+  }
+  function updateTotals() {
+    let grandSales = 0, grandCases = 0, grandOrders = 0;
+    const sections = [
+      { id: 'distributor-orders', s: 'summary-distributor-sales', c: 'summary-distributor-cases', o: 'summary-distributor-orders' },
+      { id: 'independent-orders', s: 'summary-independent-sales', c: 'summary-independent-cases', o: 'summary-independent-orders' },
+      { id: 'duo-sales-orders',   s: 'summary-duo-sales',         c: 'summary-duo-cases',         o: 'summary-duo-orders' },
+      { id: 'good-food-orders',   s: 'summary-good-food-sales',   c: 'summary-good-food-cases',   o: 'summary-good-food-orders' },
+      { id: 'lisa-baines-orders', s: 'summary-lisa-sales',        c: 'summary-lisa-cases',        o: 'summary-lisa-orders' },
+      { id: 'valley-orders',      s: 'summary-valley-sales',      c: 'summary-valley-cases',      o: 'summary-valley-orders' },
+      { id: 'hala-direct-orders', s: 'summary-hala-direct-sales', c: 'summary-hala-direct-cases', o: 'summary-hala-direct-orders' },
+      { id: 'faire-orders',       s: 'summary-faire-sales',       c: 'summary-faire-cases',       o: 'summary-faire-orders' },
+      { id: 'mabel-orders',       s: 'summary-mabel-sales',       c: 'summary-mabel-cases',       o: 'summary-mabel-orders' },
+      { id: 'airgoods-orders',    s: 'summary-airgoods-sales',    c: 'summary-airgoods-cases',    o: 'summary-airgoods-orders' },
+    ];
+    sections.forEach(sec => {
+      const { sales, cases, orders } = getRowData(sec.id);
+      document.getElementById(sec.s).textContent = fmt(sales);
+      document.getElementById(sec.c).textContent = cases;
+      document.getElementById(sec.o).textContent = orders;
+      grandSales += sales;
+      grandCases += cases;
+      grandOrders += orders;
+    });
+    const hi = getRowData('hala-indirect-orders');
+    document.getElementById('summary-hala-indirect-orders').textContent = hi.orders;
+    document.getElementById('summary-hala-indirect-cases').textContent = hi.cases;
+    grandCases += hi.cases;
+    grandOrders += hi.orders;
+    document.getElementById('summary-grand-orders').textContent = grandOrders;
+    document.getElementById('summary-grand-cases').textContent = grandCases;
+    document.getElementById('summary-grand-sales').textContent = fmt(grandSales);
+    document.getElementById('totalSales').textContent = fmt(grandSales);
+    document.getElementById('totalCases').textContent = grandCases;
+    document.getElementById('totalOrders').textContent = grandOrders;
+  }
+  document.addEventListener('DOMContentLoaded', updateTotals);
+</script>
+</body>
+</html>
