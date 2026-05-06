@@ -301,6 +301,35 @@ mark { background: #fef9c3; border-radius: 2px; padding: 0 1px; }
           <th>Deduction Backup</th>
           <th onclick="doSort('notes')" id="th-notes"><span class="th-inner">Deduction Notes <span class="sort-arrow" id="sa-notes">↕</span></span></th>
         </tr>
+        <tr class="col-filters" id="filterRow">
+          <th><input class="col-filter-input" id="f-invoice" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-date" placeholder="e.g. Apr" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-remarks" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-po" placeholder="Filter…" oninput="render()"></th>
+          <th>
+            <select class="col-filter-select" id="f-dc" onchange="render()">
+              <option value="">All DCs</option>
+              <option value="NORTH EAST, MD">NE · MD</option>
+              <option value="BREINIGSVILLE, PA">PA · PA</option>
+              <option value="DOUGLASVILLE, GA">GA · GA</option>
+              <option value="ELKTON, FL">FL · FL</option>
+            </select>
+          </th>
+          <th><input class="col-filter-input" id="f-amt" placeholder="e.g. -500" oninput="render()"></th>
+          <th>
+            <select class="col-filter-select" id="f-status" onchange="render()">
+              <option value="">All</option>
+              <option value="credit">Payment / Credit</option>
+              <option value="P - Paid">Deduction Cleared</option>
+              <option value="A - In progress">In Progress</option>
+            </select>
+          </th>
+          <th><input class="col-filter-input" id="f-dispute" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-check_num" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-check_amt" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-backup" placeholder="Filter…" oninput="render()"></th>
+          <th><input class="col-filter-input" id="f-notes" placeholder="Filter…" oninput="render()"></th>
+        </tr>
       </thead>
       <tbody id="tBody"></tbody>
       <tfoot id="tFoot">
@@ -318,6 +347,7 @@ mark { background: #fef9c3; border-radius: 2px; padding: 0 1px; }
 </div>
 
 <script>
+// FULL DATASET WITH 3 SPECIFIC UPDATES
 const DATA = [
 {"invoice":"CS003578967","date":"2026-01-26","remarks":"336642","po":"","amt":-4.95,"status":"P - Paid","dc":"NORTH EAST, MD","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"Backup 336642","backup_url":"https://acrobat.adobe.com/id/urn:aaid:sc:US:24159700-21c6-4dc0-9414-9d415587390d","notes":"Spoils Allowance"},
 {"invoice":"AMPE02019589.0126.01","date":"2026-01-27","remarks":"AMPE2025P11","po":"AMPE2025P11","amt":-39.5,"status":"P - Paid","dc":"BREINIGSVILLE, PA","check_num":"3261693","check_amt":7368.08,"dispute":0,"backup_label":"","backup_url":"","notes":"Acme/Safeway Promotions"},
@@ -428,14 +458,14 @@ function getColFilters() {
 function getFiltered() {
   const cf = getColFilters();
   return DATA.filter(r => {
-    // Status Logic per Request
+    // Status Filter Logic
     if (statusFilter === 'reversal' && !r.is_reversal) return false;
     if (statusFilter === 'dispute' && r.dispute <= 0) return false;
     if (statusFilter === 'credit' && (r.amt <= 0 || r.is_reversal)) return false;
     if (statusFilter === 'P - Paid' && (r.status !== 'P - Paid')) return false;
     if (statusFilter === 'A - In progress' && (r.status !== 'A - In progress')) return false;
 
-    // Column Filter Logic
+    // Search Filter Logic
     if (cf.invoice && !r.invoice.toLowerCase().includes(cf.invoice)) return false;
     if (cf.date && !fmtDate(r.date).toLowerCase().includes(cf.date) && !r.date.includes(cf.date)) return false;
     if (cf.remarks && !r.remarks.toLowerCase().includes(cf.remarks)) return false;
