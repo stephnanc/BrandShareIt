@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle — Monthly Sales Dashboard · May 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --off-white: #f8f8f6;
+    --ink: #111111;
+    --ink-soft: #3a3a3a;
+    --ink-muted: #777777;
+    --rule: #e8e8e5;
+    --accent: #1a3d26;
+    --accent-mid: #2e6b42;
+    --accent-light: #f0f5f1;
+    --gold: #9a6f2e;
+    --positive: #2e6b42;
+    --positive-bg: #f0f5f1;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--off-white);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .dashboard-header {
+    background: var(--ink);
+    padding: 48px 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dashboard-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 100% 50%, rgba(46,107,66,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #8aab93;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-eyebrow::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: #8aab93;
+  }
+
+  .dashboard-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  .dashboard-header h1 em {
+    font-style: italic;
+    color: #a8c9b0;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* KPI STRIP */
+  .kpi-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    min-width: 200px;
+  }
+
+  .kpi-cell {
+    background: rgba(255,255,255,0.04);
+    padding: 16px 20px;
+    text-align: right;
+  }
+
+  .kpi-cell-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 4px;
+  }
+
+  .kpi-cell-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #a8c9b0;
+    line-height: 1;
+  }
+
+  /* ── TABS ── */
+  .tabs-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .tabs-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs-inner::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 16px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--accent-mid); }
+
+  .tab-btn.active {
+    color: var(--accent-mid);
+    border-bottom-color: var(--accent-mid);
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+
+  /* ── TAB CONTENT ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .section-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+
+  .section-toggle:hover { background: var(--off-white); }
+
+  .section-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent-light);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-mid);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .section-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-mid);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-left: 12px;
+  }
+
+  .section-arrow {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .section-toggle:hover .section-arrow {
+    border-color: var(--accent-mid);
+    background: var(--accent-light);
+  }
+
+  .section-arrow svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--ink-muted);
+    stroke-width: 2;
+    fill: none;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .section-card.open .section-arrow svg { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  .section-card.open .section-body { display: block; }
+
+  /* ── TABLE ── */
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .orders-table thead { background: var(--off-white); }
+
+  .orders-table th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+
+  .orders-table th.right { text-align: right; }
+  .orders-table th.center { text-align: center; }
+
+  .orders-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+
+  .orders-table td.right { text-align: right; }
+  .orders-table td.center { text-align: center; }
+
+  .orders-table tbody tr:last-child td { border-bottom: none; }
+  .orders-table tbody tr:hover td { background: var(--accent-light); }
+
+  .order-total {
+    font-weight: 600;
+    color: var(--positive);
+    font-size: 13px;
+  }
+
+  .order-cases {
+    font-weight: 600;
+    color: var(--gold);
+    font-size: 13px;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--ink-muted);
+  }
+
+  .empty-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+
+  .empty-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: #bbbbbb;
+  }
+
+  /* ── ORDER SUMMARY ── */
+  .summary-section {
+    margin-top: 32px;
+  }
+
+  .summary-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .summary-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .summary-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 1px;
+  }
+
+  .summary-card {
+    background: var(--white);
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.15s;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent-mid);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .summary-card:hover::before { opacity: 1; }
+  .summary-card:hover { background: var(--accent-light); }
+
+  .summary-card.grand {
+    background: var(--ink);
+  }
+
+  .summary-card.grand::before { background: #a8c9b0; opacity: 1; }
+  .summary-card.grand:hover { background: #1a1a1a; }
+
+  .summary-card-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .summary-card.grand .summary-card-title {
+    color: #8aab93;
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+  }
+
+  .summary-label {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--ink-muted);
+  }
+
+  .summary-card.grand .summary-label { color: rgba(255,255,255,0.4); }
+
+  .summary-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .summary-value.sales { color: var(--positive); }
+  .summary-value.cases { color: var(--gold); }
+
+  .summary-card.grand .summary-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #a8c9b0;
+  }
+
+  .no-track {
+    font-size: 10px;
+    color: #bbbbbb;
+    font-style: italic;
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  /* ── PLACEHOLDER CONTENT ── */
+  .placeholder-tab {
+    padding: 80px 24px;
+    text-align: center;
+    color: var(--ink-muted);
+  }
+
+  .placeholder-tab p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  .dash-footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: var(--white);
+  }
+
+  .footer-brand {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .footer-link {
+    font-size: 11px;
+    color: var(--accent-mid);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-header { padding: 40px 24px 32px; }
+    .container { padding: 24px 20px 60px; }
+    .kpi-strip { flex-direction: row; }
+    .dash-footer { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="dashboard-header">
+  <div class="header-inner">
+    <div>
+      <p class="header-eyebrow">Monthly Sales Dashboard · May 2026</p>
+      <h1>Swoffle<br><em>Sales Report.</em></h1>
+      <p class="header-sub">May 1 – May 31, 2026 &nbsp;·&nbsp; Prepared by Stephen Nance</p>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi-cell">
+        <div class="kpi-cell-label">Total Orders</div>
+        <div class="kpi-cell-value" id="totalOrders">0</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-cell-label">Total Cases</div>
+        <div class="kpi-cell-value" id="totalCases">0</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-cell-label">Total Sales</div>
+        <div class="kpi-cell-value" id="totalSales">$0.00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab(0)">Direct Orders</button>
+    <button class="tab-btn" onclick="switchTab(1)">Admin Reporting</button>
+    <button class="tab-btn" onclick="switchTab(2)">Distributor Prospects</button>
+    <button class="tab-btn" onclick="switchTab(3)">New Business Development</button>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <!-- TAB 0 — DIRECT ORDERS -->
+  <div class="tab-content active" id="tab-0">
+
+    <!-- Distributor Direct -->
+    <div class="section-card" id="card-distributor">
+      <button class="section-toggle" onclick="toggleSection('card-distributor')">
+        <div class="section-toggle-left">
+          <span class="section-title">Distributor Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th>Total Cases</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="distributor-orders">
+            <tr><td colspan="6"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">Distributor direct orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Independent Direct -->
+    <div class="section-card" id="card-independent">
+      <button class="section-toggle" onclick="toggleSection('card-independent')">
+        <div class="section-toggle-left">
+          <span class="section-title">Independent Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="independent-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">Independent direct orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HALA Direct -->
+    <div class="section-card" id="card-hala-direct">
+      <button class="section-toggle" onclick="toggleSection('card-hala-direct')">
+        <div class="section-toggle-left">
+          <span class="section-title">HALA Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="hala-direct-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">HALA direct orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAIRE Direct -->
+    <div class="section-card" id="card-faire">
+      <button class="section-toggle" onclick="toggleSection('card-faire')">
+        <div class="section-toggle-left">
+          <span class="section-title">FAIRE Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="faire-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">FAIRE direct orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HALA Indirect Turnover -->
+    <div class="section-card" id="card-hala-indirect">
+      <button class="section-toggle" onclick="toggleSection('card-hala-indirect')">
+        <div class="section-toggle-left">
+          <span class="section-title">HALA Indirect Turnover Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th class="right">Total Cases</th>
+            </tr>
+          </thead>
+          <tbody id="hala-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">HALA indirect turnover orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Duo Sales -->
+    <div class="section-card" id="card-duo">
+      <button class="section-toggle" onclick="toggleSection('card-duo')">
+        <div class="section-toggle-left">
+          <span class="section-title">Duo Sales Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>City, State</th>
+              <th>Order Details</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="duo-sales-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">Duo Sales direct orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Valley Food Specialties -->
+    <div class="section-card" id="card-valley">
+      <button class="section-toggle" onclick="toggleSection('card-valley')">
+        <div class="section-toggle-left">
+          <span class="section-title">Valley Food Specialties Direct Orders</span>
+        </div>
+        <div class="section-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></div>
+      </button>
+      <div class="section-body">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Location</th>
+              <th>Order Details</th>
+              <th class="right">Total Order</th>
+            </tr>
+          </thead>
+          <tbody id="valley-orders">
+            <tr><td colspan="5"><div class="empty-state"><div class="empty-title">No orders recorded yet</div><div class="empty-sub">Valley Food Specialties orders will appear here</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="summary-section">
+      <p class="summary-eyebrow">Monthly Totals</p>
+      <h2 class="summary-title">Order Summary — May 2026</h2>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-title">Distributor Direct</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-dist-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-dist-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">Independent Direct</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-ind-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-ind-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">HALA Direct</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-hala-direct-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-hala-direct-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">FAIRE Direct</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-faire-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-faire-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">HALA Indirect Turnover</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-hala-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Total Cases</span><span class="summary-value cases" id="sum-hala-cases">0</span></div>
+          <p class="no-track">Not tracked in order totals</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">Duo Sales Direct</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-duo-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-duo-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-title">Valley Food Specialties</div>
+          <div class="summary-row"><span class="summary-label">Number of Orders</span><span class="summary-value" id="sum-valley-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Combined Total</span><span class="summary-value sales" id="sum-valley-sales">$0.00</span></div>
+        </div>
+        <div class="summary-card grand">
+          <div class="summary-card-title">Grand Total — May 2026</div>
+          <div class="summary-row"><span class="summary-label">Total Orders</span><span class="summary-value" id="sum-grand-orders">0</span></div>
+          <div class="summary-row"><span class="summary-label">Total Sales</span><span class="summary-value" id="sum-grand-sales">$0.00</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB 1 — ADMIN -->
+  <div class="tab-content" id="tab-1">
+    <div class="placeholder-tab">
+      <p>Admin reporting content will appear here.</p>
+    </div>
+  </div>
+
+  <!-- TAB 2 — DISTRIBUTOR PROSPECTS -->
+  <div class="tab-content" id="tab-2">
+    <div class="placeholder-tab">
+      <p>Distributor prospects content will appear here.</p>
+    </div>
+  </div>
+
+  <!-- TAB 3 — NEW BUSINESS -->
+  <div class="tab-content" id="tab-3">
+    <div class="placeholder-tab">
+      <p>New business development content will appear here.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="dash-footer">
+  <span class="footer-brand">© 2026 Brand Share It Sales Partners · Swoffle Monthly Sales Dashboard · May 2026 · Confidential</span>
+  <a class="footer-link" href="https://www.brandshareit.com">brandshareit.com</a>
+</div>
+
+<script>
+  function fmt(amount) {
+    return '$' + parseFloat(amount || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function switchTab(i) {
+    document.querySelectorAll('.tab-btn').forEach((b, idx) => b.classList.toggle('active', idx === i));
+    document.querySelectorAll('.tab-content').forEach((c, idx) => c.classList.toggle('active', idx === i));
+  }
+
+  function toggleSection(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  function calcSection(tbodyId) {
+    const rows = document.querySelectorAll(`#${tbodyId} tr`);
+    let total = 0, count = 0, cases = 0;
+    rows.forEach(row => {
+      const salesCell = row.querySelector('.order-total');
+      const casesCell = row.querySelector('.order-cases');
+      if (salesCell) {
+        const val = parseFloat(salesCell.textContent.replace(/[$,]/g, ''));
+        if (!isNaN(val)) { total += val; count++; }
+      }
+      if (casesCell) {
+        const c = parseInt(casesCell.textContent);
+        if (!isNaN(c)) cases += c;
+      }
+    });
+    return { total, count, cases };
+  }
+
+  function updateTotals() {
+    const sections = [
+      { tbodyId: 'distributor-orders', ordersId: 'sum-dist-orders', salesId: 'sum-dist-sales' },
+      { tbodyId: 'independent-orders', ordersId: 'sum-ind-orders', salesId: 'sum-ind-sales' },
+      { tbodyId: 'hala-direct-orders', ordersId: 'sum-hala-direct-orders', salesId: 'sum-hala-direct-sales' },
+      { tbodyId: 'faire-orders', ordersId: 'sum-faire-orders', salesId: 'sum-faire-sales' },
+      { tbodyId: 'duo-sales-orders', ordersId: 'sum-duo-orders', salesId: 'sum-duo-sales' },
+      { tbodyId: 'valley-orders', ordersId: 'sum-valley-orders', salesId: 'sum-valley-sales' },
+    ];
+
+    let grandTotal = 0, grandOrders = 0, grandCases = 0;
+
+    sections.forEach(s => {
+      const { total, count, cases } = calcSection(s.tbodyId);
+      document.getElementById(s.ordersId).textContent = count;
+      document.getElementById(s.salesId).textContent = fmt(total);
+      grandTotal += total;
+      grandOrders += count;
+      grandCases += cases;
+    });
+
+    // HALA indirect — cases only
+    const hala = calcSection('hala-orders');
+    document.getElementById('sum-hala-orders').textContent = hala.count;
+    document.getElementById('sum-hala-cases').textContent = hala.cases;
+    grandCases += hala.cases;
+
+    document.getElementById('sum-grand-orders').textContent = grandOrders;
+    document.getElementById('sum-grand-sales').textContent = fmt(grandTotal);
+    document.getElementById('totalSales').textContent = fmt(grandTotal);
+    document.getElementById('totalOrders').textContent = grandOrders;
+    document.getElementById('totalCases').textContent = grandCases;
+  }
+
+  document.addEventListener('DOMContentLoaded', updateTotals);
+</script>
+</body>
+</html>
