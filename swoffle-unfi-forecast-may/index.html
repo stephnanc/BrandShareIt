@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swoffle · UNFI Vendor Forecast · May 14, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f7f5;
+    --surface2: #eaeeea;
+    --border: #c8d0c8;
+    --accent: #0d3d1a;
+    --accent2: #0d3d1a;
+    --accent3: #8b0000;
+    --accent4: #0d3d1a;
+    --text: #111311;
+    --muted: #5a6b5c;
+    --good: #0d3d1a;
+    --warn: #7a4a00;
+    --danger: #8b0000;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 32px 40px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: #0d3d1a;
+    position: relative;
+  }
+
+  .header-prepared {
+    position: absolute;
+    bottom: 9px;
+    right: 40px;
+    font-size: 9px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.8px;
+    font-style: italic;
+  }
+
+  .header-left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .header-left .sub {
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+  }
+
+  .stat-pill {
+    text-align: right;
+  }
+
+  .stat-pill .val {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .stat-pill .lbl {
+    color: rgba(255,255,255,0.55);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* FLAGS BAR */
+  .flags-bar {
+    padding: 0 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .flag-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .flag-item:first-child { padding-left: 0; }
+  .flag-item:hover { background: var(--surface); }
+
+  .flag-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .flag-dot.danger { background: var(--danger); }
+  .flag-dot.warn { background: var(--warn); }
+  .flag-dot.good { background: var(--good); }
+
+  .flag-text { color: var(--muted); font-size: 11px; }
+  .flag-text strong { color: var(--text); }
+
+  /* MAIN GRID */
+  .main {
+    padding: 28px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .panel.full { grid-column: 1 / -1; }
+
+  .panel-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .panel-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* DC CARDS */
+  .dc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .dc-card {
+    padding: 18px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .dc-card:nth-child(4n) { border-right: none; }
+  .dc-card:nth-last-child(-n+4) { border-bottom: none; }
+  .dc-card:hover { background: var(--surface2); }
+  .dc-card.active { background: var(--surface2); border-left: 2px solid var(--accent); }
+
+  .dc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .dc-skus {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .dc-metric { margin-bottom: 6px; }
+
+  .dc-metric-label {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .dc-metric-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 2px;
+  }
+
+  .dc-metric-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .fill-forecast { background: var(--accent); }
+  .fill-onhand { background: var(--accent4); }
+  .fill-onorder { background: var(--accent2); }
+
+  .dc-metric-val {
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  .dc-alert {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* SKU TABLE */
+  .sku-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .sku-table thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sku-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .sku-table th.right { text-align: right; }
+
+  .sku-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+
+  .sku-table tbody tr:last-child { border-bottom: none; }
+  .sku-table tbody tr:hover { background: var(--surface2); }
+
+  .sku-table td {
+    padding: 10px 14px;
+    vertical-align: middle;
+  }
+
+  .sku-table td.right { text-align: right; }
+
+  .sku-name {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .sku-upc {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .status-in { background: rgba(13, 61, 26, 0.1); color: #0d3d1a; border: 1px solid rgba(13,61,26,0.25); }
+  .status-a { background: rgba(13, 61, 26, 0.07); color: #0d3d1a; border: 1px solid rgba(13,61,26,0.18); }
+  .status-to { background: rgba(13, 61, 26, 0.07); color: #0d3d1a; border: 1px solid rgba(13,61,26,0.18); }
+
+  .dos-cell {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .dos-good { color: var(--good); }
+  .dos-warn { color: var(--warn); }
+  .dos-danger { color: var(--danger); }
+  .dos-extreme { color: #f87171; font-weight: 500; }
+
+  .flag-cell {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .flag-tag {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .flag-tag.newpack { background: rgba(13,61,26,0.08); color: #0d3d1a; border: 1px solid rgba(13,61,26,0.25); }
+  .flag-tag.stockout { background: rgba(139,0,0,0.08); color: #8b0000; border: 1px solid rgba(139,0,0,0.2); }
+  .flag-tag.excess { background: rgba(122,74,0,0.08); color: #7a4a00; border: 1px solid rgba(122,74,0,0.2); }
+  .flag-tag.no-order { background: rgba(13,61,26,0.08); color: #0d3d1a; border: 1px solid rgba(13,61,26,0.2); }
+  .flag-tag.terminated { background: rgba(139,0,0,0.08); color: #8b0000; border: 1px solid rgba(139,0,0,0.2); }
+
+  /* VELOCITY CHART */
+  .velocity-chart { padding: 18px; }
+
+  .vel-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .vel-row:last-child { margin-bottom: 0; }
+
+  .vel-label {
+    width: 220px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vel-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .vel-bar {
+    height: 100%;
+    border-radius: 3px;
+    background: #0d3d1a;
+    transition: width 0.8s ease;
+  }
+
+  .vel-val {
+    width: 60px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .dc-region-label {
+    grid-column: 1 / -1;
+    padding: 7px 18px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .dc-region-label.west { background: #0d3d1a; }
+  .dc-region-label.east { background: #0d3d1a; border-top: 1px solid var(--border); }
+  .filter-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .filter-tab {
+    padding: 10px 16px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .filter-tab:hover { color: var(--text); }
+  .filter-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* INVENTORY HEALTH */
+  .inv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .inv-cell {
+    padding: 16px 18px;
+    border-right: 1px solid var(--border);
+  }
+
+  .inv-cell:last-child { border-right: none; }
+
+  .inv-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .inv-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .inv-sub {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .footer {
+    padding: 20px 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel { animation: fadeIn 0.4s ease both; }
+  .panel:nth-child(1) { animation-delay: 0.05s; }
+  .panel:nth-child(2) { animation-delay: 0.1s; }
+  .panel:nth-child(3) { animation-delay: 0.15s; }
+  .panel:nth-child(4) { animation-delay: 0.2s; }
+  .panel:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Tooltip */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 10px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 99;
+    pointer-events: none;
+  }
+  .tooltip-wrap:hover .tip { display: block; }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; padding: 16px; }
+    .dc-grid { grid-template-columns: repeat(2, 1fr); }
+    .header { padding: 20px 16px 16px; }
+    .flags-bar { padding: 0 16px; }
+    .inv-grid { grid-template-columns: 1fr; }
+    .inv-cell { border-right: none; border-bottom: 1px solid var(--border); }
+    .panel.full { grid-column: auto; }
+    .footer { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>SWOFFLE · UNFI FORECAST</h1>
+    <div class="sub">Vendor Forecast Report &nbsp;·&nbsp; May 14, 2026 &nbsp;·&nbsp; 8 Distribution Centers</div>
+  </div>
+  <div class="header-right">
+    <div class="stat-pill">
+      <div class="val">244.1</div>
+      <div class="lbl">cases / week</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">1,588</div>
+      <div class="lbl">on hand (cs)</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">413</div>
+      <div class="lbl">on order (cs)</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">26</div>
+      <div class="lbl">active lines</div>
+    </div>
+  </div>
+  <div class="header-prepared">prepared by Stephen Nance</div>
+</div>
+
+<div class="flags-bar">
+  <div class="flag-item">
+    <div class="flag-dot good"></div>
+    <div class="flag-text"><strong>CRL · New Pack Change</strong> — inventory staged for Market Basket (64 stores) &amp; Big Y (60 stores) · distribution pending</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-dot good"></div>
+    <div class="flag-text"><strong>RID French Vanilla</strong> — zero OH, 64 cs replenishment in transit</div>
+  </div>
+  <div class="flag-item">
+    <div class="flag-dot warn"></div>
+    <div class="flag-text"><strong>AUR No On-Order</strong> — 36 cs/wk velocity, 0 replenishment</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- DC OVERVIEW -->
+  <div class="panel full">
+    <div class="panel-header">
+      <div class="panel-title">Distribution Centers</div>
+      <div class="panel-badge">Click to filter table below</div>
+    </div>
+    <div class="dc-grid" id="dcGrid">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- CRL ANNOTATION -->
+  <div class="panel full" style="border-left: 3px solid #0d3d1a;">
+    <div style="padding: 14px 20px;">
+      <div style="font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#0d3d1a; margin-bottom:5px;">CRL DC · New Pack Change</div>
+      <div style="font-size:12px; color:var(--text); line-height:1.7;">
+        Staged inventory reflects a new pack change — not excess. Market Basket (64 stores) and Big Y (60 stores) have not yet received product. Velocity will normalize once distribution begins.
+      </div>
+    </div>
+  </div>
+
+  <!-- SKU VELOCITY -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">SKU Velocity Ranking</div>
+      <div class="panel-badge">cases / week · all DCs</div>
+    </div>
+    <div class="velocity-chart" id="velocityChart"></div>
+  </div>
+
+  <!-- INVENTORY HEALTH -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Inventory Health</div>
+      <div class="panel-badge">network-wide</div>
+    </div>
+    <div class="inv-grid">
+      <div class="inv-cell">
+        <div class="inv-label">Avg Days of Supply</div>
+        <div class="inv-val" style="color:var(--accent)">~6.5<span style="font-size:14px;color:var(--muted)"> wks</span></div>
+        <div class="inv-sub">healthy range</div>
+      </div>
+      <div class="inv-cell">
+        <div class="inv-label">Lines at Zero OH</div>
+        <div class="inv-val" style="color:var(--accent4)">1</div>
+        <div class="inv-sub">RID Fr.Van · replen in transit</div>
+      </div>
+      <div class="inv-cell">
+        <div class="inv-label">Lines &gt;90 DoS</div>
+        <div class="inv-val" style="color:var(--muted)">5</div>
+        <div class="inv-sub">3 CRL new pack staged · 1 RID · 1 TWC</div>
+      </div>
+    </div>
+    <div class="inv-grid" style="border-top:1px solid var(--border)">
+      <div class="inv-cell">
+        <div class="inv-label">Top DC by Velocity</div>
+        <div class="inv-val" style="color:var(--accent4);font-size:20px">RID</div>
+        <div class="inv-sub">68.6 cs/wk · 6 SKUs</div>
+      </div>
+      <div class="inv-cell">
+        <div class="inv-label">On Order Coverage</div>
+        <div class="inv-val" style="color:var(--accent2);font-size:20px">413</div>
+        <div class="inv-sub">cs in pipeline · 5 DCs</div>
+      </div>
+      <div class="inv-cell">
+        <div class="inv-label">TO Status Lines</div>
+        <div class="inv-val" style="color:var(--muted);font-size:20px">1</div>
+        <div class="inv-sub">RID Fr.Van · replen in transit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL TABLE -->
+  <div class="panel full">
+    <div class="filter-tabs" id="filterTabs">
+      <div class="filter-tab active" data-dc="ALL">All DCs</div>
+      <div class="filter-tab" data-dc="RID">RID</div>
+      <div class="filter-tab" data-dc="ROC">ROC</div>
+      <div class="filter-tab" data-dc="AUR">AUR</div>
+      <div class="filter-tab" data-dc="MOR">MOR</div>
+      <div class="filter-tab" data-dc="GRW">GRW</div>
+      <div class="filter-tab" data-dc="CRL">CRL</div>
+      <div class="filter-tab" data-dc="TWC">TWC</div>
+      <div class="filter-tab" data-dc="RAC">RAC</div>
+    </div>
+    <table class="sku-table" id="skuTable">
+      <thead>
+        <tr>
+          <th>DC</th>
+          <th>SKU Description</th>
+          <th>Pack</th>
+          <th>Status</th>
+          <th class="right">Wkly Fcst</th>
+          <th class="right">On Hand</th>
+          <th class="right">On Order</th>
+          <th class="right">DoS (days)</th>
+          <th class="right">Flags</th>
+        </tr>
+      </thead>
+      <tbody id="skuTableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>SWOFFLE LLC &nbsp;·&nbsp; UNFI Supplier Vendor Forecast &nbsp;·&nbsp; Vendor Group 5/14/26</span>
+  <span>Brand Share It Sales Partners &nbsp;·&nbsp; Confidential</span>
+</div>
+
+<script>
+const RAW = [
+  {dc:'GRW', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:10.89, oh:50, oo:32, dos:32.14, upc:'0086385200004', item:'326659'},
+  {dc:'TWC', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:5.65, oh:0, oo:32, dos:0, upc:'0086385200000', item:'326646'},
+  {dc:'TWC', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:0.18, oh:6, oo:0, dos:233.3, upc:'0086385200004', item:'326659'},
+
+  {dc:'GRW', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:12.7, oh:27, oo:40, dos:14.88, upc:'0086385200000', item:'326646'},
+  {dc:'RAC', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:5.84, oh:20, oo:0, dos:23.97, upc:'0086385200000', item:'326646'},
+  {dc:'AUR', desc:'Dark Chocolate GF 12-pk', pack:'12/1.45 OZ', status:'IN', wf:10.16, oh:74, oo:0, dos:50.98, upc:'0086385200007', item:'30867'},
+  {dc:'AUR', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:10.53, oh:73, oo:0, dos:48.53, upc:'0086385200004', item:'30842'},
+  {dc:'AUR', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:15.86, oh:130, oo:0, dos:57.38, upc:'0086385200000', item:'30845'},
+  {dc:'MOR', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:6.83, oh:81, oo:40, dos:83.02, upc:'0086385200004', item:'30842'},
+  {dc:'MOR', desc:'4-Pack Dutch Caramel', pack:'8/4.64 OZ', status:'IN', wf:1.75, oh:10, oo:12, dos:40.0, upc:'0085000960302', item:'67370'},
+  {dc:'MOR', desc:'4-Pack French Vanilla', pack:'8/4.64 OZ', status:'IN', wf:1.85, oh:14, oo:12, dos:52.97, upc:'0085000960300', item:'67372'},
+  {dc:'RID', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'TO', wf:17.99, oh:0, oo:64, dos:0, upc:'0086385200004', item:'30842'},
+  {dc:'RID', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:25.37, oh:111, oo:0, dos:30.63, upc:'0086385200000', item:'30845'},
+  {dc:'RID', desc:'4-Pack Dutch Caramel', pack:'8/4.64 OZ', status:'IN', wf:5.84, oh:49, oo:0, dos:58.73, upc:'0085000960302', item:'67370'},
+  {dc:'RID', desc:'4-Pack French Vanilla', pack:'8/4.64 OZ', status:'IN', wf:4.83, oh:16, oo:23, dos:23.19, upc:'0085000960300', item:'67372'},
+  {dc:'MOR', desc:'Dark Chocolate GF 12-pk', pack:'12/1.45 OZ', status:'IN', wf:7.58, oh:59, oo:0, dos:54.49, upc:'0086385200007', item:'30867'},
+  {dc:'RID', desc:'Dark Chocolate GF 12-pk', pack:'12/1.45 OZ', status:'IN', wf:13.33, oh:87, oo:0, dos:45.69, upc:'0086385200007', item:'30867'},
+  {dc:'RID', desc:'4-Pack Dark Chocolate', pack:'8/5.80 OZ', status:'IN', wf:1.2, oh:17, oo:0, dos:99.17, upc:'0085000960301', item:'67371'},
+  {dc:'ROC', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:16.31, oh:80, oo:0, dos:34.33, upc:'0086385200000', item:'30845'},
+  {dc:'ROC', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:37.86, oh:69, oo:48, dos:12.76, upc:'0086385200004', item:'30842'},
+  {dc:'MOR', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'IN', wf:17.6, oh:119, oo:56, dos:47.33, upc:'0086385200000', item:'30845'},
+  {dc:'MOR', desc:'4-Pack Dark Chocolate', pack:'8/5.80 OZ', status:'IN', wf:0.83, oh:8, oo:6, dos:67.47, upc:'0085000960301', item:'67371'},
+  {dc:'ROC', desc:'Dark Chocolate GF 12-pk', pack:'12/1.45 OZ', status:'IN', wf:9.29, oh:95, oo:48, dos:71.58, upc:'0086385200007', item:'30867'},
+  {dc:'CRL', desc:'Caramel GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:1.33, oh:131, oo:0, dos:689.5, upc:'0086385200000', item:'4364787'},
+  {dc:'CRL', desc:'French Vanilla GF 12-pk', pack:'12/1.16 OZ', status:'A', wf:1.26, oh:132, oo:0, dos:733.3, upc:'0086385200004', item:'4364788'},
+  {dc:'CRL', desc:'Dark Chocolate GF 12-pk', pack:'12/1.45 OZ', status:'A', wf:1.17, oh:130, oo:0, dos:777.8, upc:'0086385200007', item:'4364789'},
+];
+
+// DC summary
+const dcSummary = {};
+RAW.forEach(r => {
+  if (!dcSummary[r.dc]) dcSummary[r.dc] = {skus:0, wf:0, oh:0, oo:0};
+  dcSummary[r.dc].skus++;
+  dcSummary[r.dc].wf += r.wf;
+  dcSummary[r.dc].oh += r.oh;
+  dcSummary[r.dc].oo += r.oo;
+});
+
+const maxWF = Math.max(...Object.values(dcSummary).map(d=>d.wf));
+const maxOH = Math.max(...Object.values(dcSummary).map(d=>d.oh));
+const maxOO = Math.max(...Object.values(dcSummary).map(d=>d.oo));
+
+function dcAlert(dc) {
+  const rows = RAW.filter(r=>r.dc===dc);
+  if (rows.some(r=>r.oh===0 && r.wf>1)) return 'danger';
+  if (dc==='CRL') return 'warn';
+  if (rows.some(r=>r.dos>90)) return 'warn';
+  return null;
+}
+
+const dcGrid = document.getElementById('dcGrid');
+const westDCs = ['RID','ROC','AUR','MOR'];
+const eastDCs = ['GRW','CRL','TWC','RAC'];
+
+function renderDCGroup(dcs, regionClass, regionLabel) {
+  const label = document.createElement('div');
+  label.className = `dc-region-label ${regionClass}`;
+  label.textContent = regionLabel;
+  dcGrid.appendChild(label);
+
+  dcs.forEach(dc => {
+    const d = dcSummary[dc];
+    if (!d) return;
+    const alert = dcAlert(dc);
+    const card = document.createElement('div');
+    card.className = 'dc-card';
+    card.dataset.dc = dc;
+    card.innerHTML = `
+      ${alert ? `<div class="dc-alert" style="background:var(--${alert})"></div>` : ''}
+      <div class="dc-name">${dc}</div>
+      <div class="dc-skus">${d.skus} SKU${d.skus>1?'s':''}</div>
+      <div class="dc-metric">
+        <div class="dc-metric-label">Weekly Forecast</div>
+        <div class="dc-metric-bar"><div class="dc-metric-fill fill-forecast" style="width:${(d.wf/maxWF*100).toFixed(1)}%"></div></div>
+        <div class="dc-metric-val">${d.wf.toFixed(1)} cs/wk</div>
+      </div>
+      <div class="dc-metric">
+        <div class="dc-metric-label">On Hand</div>
+        <div class="dc-metric-bar"><div class="dc-metric-fill fill-onhand" style="width:${(d.oh/maxOH*100).toFixed(1)}%"></div></div>
+        <div class="dc-metric-val">${d.oh} cs</div>
+      </div>
+      <div class="dc-metric">
+        <div class="dc-metric-label">On Order</div>
+        <div class="dc-metric-bar"><div class="dc-metric-fill fill-onorder" style="width:${d.oo>0?(d.oo/maxOO*100).toFixed(1)+'%':'0%'}"></div></div>
+        <div class="dc-metric-val">${d.oo > 0 ? d.oo+' cs' : '<span style="color:var(--muted)">—</span>'}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => filterByDC(dc));
+    dcGrid.appendChild(card);
+  });
+}
+
+renderDCGroup(westDCs, 'west', 'UNFI West');
+renderDCGroup(eastDCs, 'east', 'UNFI East');
+
+// Velocity chart
+const skuVelocity = {};
+RAW.forEach(r => {
+  const key = r.desc;
+  if (!skuVelocity[key]) skuVelocity[key] = 0;
+  skuVelocity[key] += r.wf;
+});
+
+const sorted = Object.entries(skuVelocity).sort((a,b)=>b[1]-a[1]);
+const maxV = sorted[0][1];
+const velChart = document.getElementById('velocityChart');
+sorted.forEach(([name, val]) => {
+  const pct = (val/maxV*100).toFixed(1);
+  velChart.innerHTML += `
+    <div class="vel-row">
+      <div class="vel-label">${name}</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:${pct}%"></div></div>
+      <div class="vel-val">${val.toFixed(1)} cs</div>
+    </div>
+  `;
+});
+
+// Table
+function getFlags(r) {
+  const flags = [];
+  if (r.oh === 0 && r.wf > 1 && r.oo === 0) flags.push('<span class="flag-tag stockout">STOCKOUT RISK</span>');
+  if (r.oh === 0 && r.wf > 1 && r.oo > 0) flags.push('<span class="flag-tag no-order">REPLEN IN TRANSIT</span>');
+  if (r.dos > 180 && r.dc === 'CRL') flags.push('<span class="flag-tag newpack">NEW PACK · PENDING DIST.</span>');
+  else if (r.dos > 180 && !(r.dc === 'TWC' && r.desc.includes('French Vanilla'))) flags.push('<span class="flag-tag excess">EXCESS INV</span>');
+  if (r.oo === 0 && r.wf > 10 && r.dos < 30) flags.push('<span class="flag-tag stockout">NO REPLEN</span>');
+  return flags.join('');
+}
+
+function dosClass(dos, oh) {
+  if (oh === 0) return 'dos-danger';
+  if (dos > 300) return 'dos-extreme';
+  if (dos > 90) return 'dos-warn';
+  if (dos < 14) return 'dos-warn';
+  return 'dos-good';
+}
+
+function statusBadge(s) {
+  if (s==='IN') return '<span class="status-badge status-in">IN</span>';
+  if (s==='A') return '<span class="status-badge status-a">A</span>';
+  if (s==='TO') return '<span class="status-badge status-to">TO</span>';
+  return s;
+}
+
+let activeFilter = 'ALL';
+
+function renderTable(filter) {
+  const body = document.getElementById('skuTableBody');
+  const data = filter === 'ALL' ? RAW : RAW.filter(r => r.dc === filter);
+  body.innerHTML = data.map(r => `
+    <tr>
+      <td><span style="font-family:'Playfair Display',serif;font-weight:700;color:var(--accent);font-size:13px">${r.dc}</span></td>
+      <td>
+        <div class="sku-name">${r.desc}</div>
+        <div class="sku-upc"><span style="font-weight:600; color:#0d3d1a;">Item# ${r.item}</span> &nbsp;·&nbsp; ${r.upc}</div>
+      </td>
+      <td style="color:var(--muted)">${r.pack}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="right">${r.wf.toFixed(2)}</td>
+      <td class="right" style="color:${r.oh===0?'var(--danger)':'var(--text)'}">${r.oh}</td>
+      <td class="right" style="color:${r.oo===0?'var(--muted)':'var(--accent2)'}">${r.oo > 0 ? r.oo : '—'}</td>
+      <td class="right"><span class="${dosClass(r.dos, r.oh)}">${r.oh===0?'—':r.dos.toFixed(0)}</span></td>
+      <td class="right"><div class="flag-cell">${getFlags(r) || '<span style="color:var(--border)">—</span>'}</div></td>
+    </tr>
+  `).join('');
+}
+
+function filterByDC(dc) {
+  activeFilter = dc;
+  document.querySelectorAll('.filter-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.dc === dc);
+  });
+  document.querySelectorAll('.dc-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.dc === dc);
+  });
+  renderTable(dc);
+  document.getElementById('filterTabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Filter tab clicks
+document.getElementById('filterTabs').querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const dc = tab.dataset.dc;
+    activeFilter = dc;
+    document.querySelectorAll('.dc-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.dc === dc);
+    });
+    renderTable(dc);
+  });
+});
+
+renderTable('ALL');
+</script>
+</body>
+</html>
